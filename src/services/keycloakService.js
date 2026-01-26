@@ -21,7 +21,7 @@ class KeycloakService {
     
     try {
       const keycloakConfig = {
-        url: config.url || import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8080/',
+        url: config.url || import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-backend.onrender.com/',
         realm: config.realm || import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm',
         clientId: config.clientId || import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'admin-backend'
       };
