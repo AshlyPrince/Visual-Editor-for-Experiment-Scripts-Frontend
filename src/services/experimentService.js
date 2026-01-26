@@ -1,0 +1,249 @@
+import api from '../lib/api.js';
+import keycloakService from './keycloakService.js';
+import { toCanonical } from '../utils/experimentCanonical.js';
+
+class ExperimentService {
+  async getExperiments(params = {}) {
+    const { page = 1, limit = 20, search = '' } = params;
+    const queryParams = new URLSearchParams({ page, limit });
+    
+    if (search) {
+      queryParams.append('search', search);
+    }
+
+    const url = `/api/experiments?${queryParams}`;
+    
+    try {
+      const response = await api.get(url);
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new Error('Experiments could not be found. Please try again.');
+      } else if (error.response?.status === 500) {
+        throw new Error('Server error occurred while loading experiments. Please try again later.');
+      } else if (!error.response) {
+        throw new Error('Unable to connect to the server. Please check your internet connection.');
+      }
+      throw new Error('Unable to load experiments. Please try again.');
+    }
+  }
+
+  async getExperiment(id) {
+    const response = await api.get(`/api/experiments/${id}`);
+    return response.data;
+  }
+
+  async createExperiment(experimentData) {
+    const response = await api.post('/api/experiments', experimentData);
+    return response.data;
+  }
+
+  async updateExperiment(id, updateData) {
+    const response = await api.put(`/api/experiments/${id}`, updateData);
+    return response.data;
+  }
+
+  async deleteExperiment(id) {
+    const response = await api.delete(`/api/experiments/${id}`);
+    return response.data;
+  }
+
+  async duplicateExperiment(id, duplicateData) {
+    const response = await api.post(`/api/experiments/${id}/duplicate`, duplicateData);
+    return response.data;
+  }
+
+  async createVersion(experimentId, versionData) {
+    const response = await api.post(`/api/experiments/${experimentId}/versions`, versionData);
+    return response.data;
+  }
+
+  async getVersionHistory(experimentId) {
+    const response = await api.get(`/api/experiments/${experimentId}/versions`);
+    return response.data;
+  }
+
+  async checkoutVersion(experimentId, versionId) {
+    const response = await api.post(`/api/experiments/${experimentId}/versions/${versionId}/checkout`);
+    return response.data;
+  }
+
+  async getActivityLog(experimentId, limit = 50) {
+    const response = await api.get(`/api/experiments/${experimentId}/activity?limit=${limit}`);
+    return response.data;
+  }
+
+  async getPublicExperiment(id, versionId = null) {
+    const queryParams = versionId ? `?version_id=${versionId}` : '';
+    const response = await api.get(`/api/experiments/${id}/view${queryParams}`);
+    return response.data;
+  }
+
+  async createFromWizard(wizardData) {
+    const { name, description, duration, subject, gradeLevel, sections } = wizardData;
+    
+    const userInfo = keycloakService.getUserInfo();
+    const isAuthenticated = keycloakService.isAuthenticated();
+    const userId = userInfo?.id || userInfo?.sub || userInfo?.preferred_username || userInfo?.email;
+    
+    if (!userId || !isAuthenticated) {
+      throw new Error('User not authenticated. Please log in to create experiments.');
+    }
+    
+    const experimentData = {
+      title: name || 'Untitled Experiment',
+      ...(description && { description }),
+      created_by: userId,
+      content: {
+        config: {
+          duration: duration || '',
+          subject: subject || '',
+          gradeLevel: gradeLevel || ''
+        },
+        sections: sections  
+      },
+      html_content: this.generateHTMLFromSections(sections, { name, duration, subject, gradeLevel }),
+      commit_message: 'Created with Experiment Wizard'
+    };
+
+    try {
+      return await this.createExperiment(experimentData);
+    } catch (error) {
+      if (error.response?.status === 400) {
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Invalid experiment data';
+        
+        if (errorMessage.includes('created_by') && errorMessage.includes('null')) {
+          throw new Error(
+            'Authentication error: Unable to verify user identity. ' +
+            'Please log out and log in again. If the problem persists, contact support.'
+          );
+        }
+        
+        throw new Error(`Invalid experiment data: ${errorMessage}. Please check all required fields are filled correctly.`);
+      } else if (error.response?.status === 500) {
+        throw new Error('Server error occurred while creating the experiment. Please try again.');
+      }
+      throw new Error('Unable to create experiment. Please try again or contact support.');
+    }
+  }
+
+  
+  async updateFromWizard(experimentId, wizardData) {
+    const currentExperiment = await this.getExperiment(experimentId);
+    const canonical = toCanonical(currentExperiment);
+    
+    const versionData = {
+      title: `Version - ${wizardData.name || 'Updated'}`,
+      content: {
+        ...canonical.content,
+        config: {
+          ...canonical.content.config,
+          duration: wizardData.duration || '',
+          subject: wizardData.subject || '',
+          gradeLevel: wizardData.gradeLevel || ''
+        },
+        sections: wizardData.sections
+      },
+      html_content: this.generateHTMLFromSections(
+        wizardData.sections, 
+        { 
+          name: wizardData.name,
+          duration: wizardData.duration,
+          subject: wizardData.subject,
+          gradeLevel: wizardData.gradeLevel 
+        }
+      ),
+      commit_message: 'Updated with Experiment Wizard'
+    };
+
+    return this.createVersion(experimentId, versionData);
+  }
+
+  generateHTMLFromSections(sections, config = {}) {
+    let html = `
+      <div class="experiment-document">
+        <header class="experiment-header">
+          <h1>${config.name || 'Untitled Experiment'}</h1>
+          <div class="experiment-meta">
+            ${config.gradeLevel ? `<span class="grade-level">${config.gradeLevel}</span>` : ''}
+            ${config.subject ? `<span class="subject">${config.subject}</span>` : ''}
+            ${config.duration ? `<span class="duration">${config.duration}</span>` : ''}
+          </div>
+          ${config.description ? `<p class="description">${config.description}</p>` : ''}
+        </header>
+        <main class="experiment-content">
+    `;
+
+    sections.forEach(section => {
+      html += `
+        <section class="experiment-section" id="section-${section.id}">
+          <h2>${section.icon} ${section.name}</h2>
+          <div class="section-content">
+      `;
+
+      if (section.content) {
+        if (section.id === 'materials' && section.content.materials) {
+          html += `<ul>${section.content.materials.map(item => `<li>${item}</li>`).join('')}</ul>`;
+        } else if (section.id === 'procedure' && section.content.steps) {
+          html += `<ol>${section.content.steps.map(step => `<li>${step}</li>`).join('')}</ol>`;
+        } else if (section.content.text) {
+          html += `<p>${section.content.text}</p>`;
+        }
+      }
+
+      html += `
+          </div>
+        </section>
+      `;
+    });
+
+    html += `
+        </main>
+      </div>
+    `;
+
+    return html;
+  }
+
+  
+  
+  
+
+  
+  formatExperimentForList(experiment) {
+    return {
+      id: experiment.id,
+      title: experiment.title,
+      description: experiment.content?.config?.description || '',
+      subject: experiment.content?.config?.subject || '',
+      gradeLevel: experiment.content?.config?.gradeLevel || '',
+      version: experiment.version_number || 1,
+      updatedAt: new Date(experiment.updated_at),
+      createdAt: new Date(experiment.created_at),
+      isEducational: experiment.content?.type === 'educational_experiment'
+    };
+  }
+
+  
+  extractWizardData(experiment) {
+    if (experiment.content?.type === 'educational_experiment') {
+      return {
+        sections: experiment.content.sections || [],
+        config: experiment.content.config || {}
+      };
+    }
+    
+    
+    return {
+      sections: [],
+      config: {
+        name: experiment.title,
+        description: 'Legacy experiment - edit to convert to educational format'
+      }
+    };
+  }
+}
+
+const experimentService = new ExperimentService();
+
+export default experimentService;

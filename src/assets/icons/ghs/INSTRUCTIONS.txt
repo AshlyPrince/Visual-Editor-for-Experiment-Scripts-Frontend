@@ -1,0 +1,50 @@
+┌─────────────────────────────────────────────────────────────┐
+│  📦 GHS PICTOGRAM PNG FILES - SAVE HERE                     │
+└─────────────────────────────────────────────────────────────┘
+
+You have 8 official GHS pictogram PNG images to save.
+
+📍 LOCATION: Save them in THIS folder (src/assets/icons/ghs/)
+
+📝 FILE NAMES (must be exact):
+
+   1️⃣  GHS01-explosive.png       ← Exploding bomb with sparks
+   2️⃣  GHS02-flammable.png       ← Orange/red flame  
+   3️⃣  GHS04-compressed-gas.png  ← Black gas cylinder
+   4️⃣  GHS05-corrosive.png       ← Test tubes dripping on hand
+   5️⃣  GHS06-toxic.png           ← Skull and crossbones
+   6️⃣  GHS07-irritant.png        ← Black exclamation mark
+   7️⃣  GHS08-health-hazard.png   ← Person silhouette with star
+   8️⃣  GHS09-environmental.png   ← Dead tree and fish
+
+⚠️  MISSING (using SVG fallback):
+   3️⃣  GHS03-oxidizing.png       ← Flame over circle (optional)
+
+────────────────────────────────────────────────────────────────
+
+🚀 QUICK STEPS:
+
+1. Look at your 8 PNG attachments/images
+2. Match each image to the description above
+3. Save/rename each file with the EXACT name from the list
+4. Place all files in THIS folder
+5. Done! The app will automatically use them ✅
+
+────────────────────────────────────────────────────────────────
+
+💡 TIP: The file names MUST match exactly (including the dash 
+        and .png extension) or the imports won't work!
+
+✅ VERIFY: After saving, you should see 8-10 files in this folder:
+   - 8 PNG files (GHS01, GHS02, GHS04-GHS09)
+   - README.txt (this file)
+   - SAVE_IMAGES_HERE.sh (helper script)
+
+────────────────────────────────────────────────────────────────
+
+Need the missing GHS03 (Oxidizing) pictogram?
+→ Download from: https://echa.europa.eu/regulations/clp/clp-pictograms
+→ Look for: Flame over circle symbol
+→ Save as: GHS03-oxidizing.png
+
+────────────────────────────────────────────────────────────────

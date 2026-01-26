@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silent Check SSO</title>
+</head>
+<body>
+    <script>
+        // This page is used by Keycloak for silent authentication checks
+        // It should be served from the same domain as your application
+        parent.postMessage(location.href, location.origin);
+    </script>
+</body>
+</html>
