@@ -244,15 +244,8 @@ function AppContent() {
                     setAuthError(null);
                     window.location.reload();
                   }}
-                  sx={{ mr: 2 }}
                 >
                   Retry Authentication
-                </Button>
-                <Button 
-                  variant="text"
-                  onClick={() => window.location.href = 'mailto:support@example.com'}
-                >
-                  Contact Support
                 </Button>
               </Box>
             </Paper>
