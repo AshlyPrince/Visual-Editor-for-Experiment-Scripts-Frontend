@@ -22,7 +22,6 @@ import {
   ErrorOutline
 } from "@mui/icons-material";
 import { Dashboard, ExperimentDashboard, ExperimentWizard, ExperimentListContainer } from "./containers/exports.js";
-import DevelopmentModeIndicator from "./components/ui/DevelopmentModeIndicator.jsx";
 import UserInfo from "./components/UserInfo.jsx";
 import ExperimentEditor from "./components/ExperimentEditor.jsx";
 import ExperimentViewer from "./components/ExperimentViewer.jsx";
@@ -525,7 +524,6 @@ export default function App() {
     <BrowserRouter>
       <ThemeProvider theme={professionalTheme}>
         <CssBaseline />
-        <DevelopmentModeIndicator />
         <AppContent />
       </ThemeProvider>
     </BrowserRouter>
