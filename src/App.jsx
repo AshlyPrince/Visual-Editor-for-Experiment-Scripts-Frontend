@@ -60,71 +60,18 @@ function AppContent() {
   
   
   const [authenticated, setAuthenticated] = useState(hasExistingToken);
-  const [loading, setLoading] = useState(!hasExistingToken);
-  const [verifying, setVerifying] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [authError, setAuthError] = useState(null);
   const theme = professionalTheme;
 
   useEffect(() => {
-    let mounted = true;
-
-    const initAuth = async () => {
-      try {
-        const wasAlreadyAuth = keycloakService.isAuthenticated();
-        const isAuth = await keycloakService.initialize();
-        
-        if (!mounted) return;
-        
-        // Check if there was an authentication error
-        const error = keycloakService.getAuthError();
-        if (error) {
-          setAuthError(error);
-          setAuthenticated(false);
-          setLoading(false);
-          setVerifying(false);
-          return;
-        }
-        
-        if (!wasAlreadyAuth && !isAuth) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const recheckAuth = keycloakService.isAuthenticated();
-          setAuthenticated(recheckAuth);
-        } else {
-          setAuthenticated(isAuth);
-          if (isAuth && !wasAlreadyAuth) {
-            setShowWelcome(true);
-            setTimeout(() => setShowWelcome(false), 3000);
-          }
-        }
-      } catch {
-        if (mounted) {
-          setAuthenticated(false);
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-          setVerifying(false);
-        }
-      }
-    };
-
-    initAuth();
-    
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    const checkAuthState = () => {
-      if (keycloakService.isAuthenticated()) {
-        setAuthenticated(true);
-        setLoading(false);
-      }
-    };
-
-    checkAuthState();
+    // Only check if user already has a token, don't initialize Keycloak
+    if (hasExistingToken) {
+      const isAuth = keycloakService.isAuthenticated();
+      setAuthenticated(isAuth);
+    }
   }, []);
 
   const handleExperimentCreated = () => {

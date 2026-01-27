@@ -52,10 +52,10 @@ class KeycloakService {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       
-      // Universal configuration that works on all browsers and devices
-      // Using check-sso to avoid immediate redirect - let app show its own UI first
+      // Universal configuration for manual login
+      // Don't use check-sso to avoid silent authentication attempts
       const initOptions = {
-        onLoad: 'check-sso',
+        onLoad: this.keycloak ? 'check-sso' : 'login-required',
         checkLoginIframe: false,
         pkceMethod: 'S256',
         flow: 'standard',
@@ -172,10 +172,19 @@ class KeycloakService {
   /**
    * Initiate login flow
    */
-  login() {
+  async login() {
     // Prevent multiple login attempts
     if (this.isLoggingIn) {
       return;
+    }
+    
+    // Initialize Keycloak if not already done
+    if (!this.keycloak) {
+      try {
+        await this.initialize();
+      } catch (error) {
+        console.error('Failed to initialize Keycloak:', error);
+      }
     }
     
     if (this.keycloak) {
