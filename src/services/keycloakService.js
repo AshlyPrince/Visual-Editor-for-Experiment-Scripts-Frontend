@@ -18,13 +18,15 @@ class KeycloakService {
       return this.authenticated;
     }
     
-    // Prevent infinite retry loops - only attempt once
-    if (this.initAttempted && this.authError) {
+    // Prevent infinite retry loops - only attempt once per session
+    const lastAttempt = sessionStorage.getItem('keycloak_init_attempted');
+    if (this.initAttempted && this.authError && lastAttempt === 'true') {
       return false;
     }
     
     this.initializing = true;
     this.initAttempted = true;
+    sessionStorage.setItem('keycloak_init_attempted', 'true');
     
     try {
       const keycloakConfig = {
@@ -157,6 +159,7 @@ class KeycloakService {
   clearAuthError() {
     this.authError = null;
     this.initAttempted = false;
+    sessionStorage.removeItem('keycloak_init_attempted');
   }
 
   /**
