@@ -60,18 +60,19 @@ function AppContent() {
   
   
   const [authenticated, setAuthenticated] = useState(hasExistingToken);
-  
   const [loading, setLoading] = useState(!hasExistingToken);
-  
   const [verifying, setVerifying] = useState(true);
-  
   const [showWelcome, setShowWelcome] = useState(false);
-  
   const [authError, setAuthError] = useState(null);
-  
+  const [initCompleted, setInitCompleted] = useState(false);
   const theme = professionalTheme;
 
   useEffect(() => {
+    // Prevent multiple initialization attempts
+    if (initCompleted) {
+      return;
+    }
+
     const initAuth = async () => {
       try {
         const wasAlreadyAuth = keycloakService.isAuthenticated();
@@ -81,6 +82,11 @@ function AppContent() {
         const error = keycloakService.getAuthError();
         if (error) {
           setAuthError(error);
+          setAuthenticated(false);
+          setLoading(false);
+          setVerifying(false);
+          setInitCompleted(true);
+          return;
         }
         
         if (!wasAlreadyAuth && !isAuth) {
@@ -99,11 +105,12 @@ function AppContent() {
       } finally {
         setLoading(false);
         setVerifying(false);
+        setInitCompleted(true);
       }
     };
 
     initAuth();
-  }, []);
+  }, [initCompleted]);
 
   useEffect(() => {
     const checkAuthState = () => {
@@ -241,7 +248,9 @@ function AppContent() {
                   onClick={() => {
                     keycloakService.clearAuthError();
                     setAuthError(null);
-                    window.location.reload();
+                    setInitCompleted(false);
+                    setVerifying(true);
+                    setLoading(true);
                   }}
                 >
                   Retry Authentication
