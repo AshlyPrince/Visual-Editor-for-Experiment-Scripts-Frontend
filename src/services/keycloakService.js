@@ -61,10 +61,10 @@ class KeycloakService {
         promiseType: 'native'
       };
 
-      // Initialize Keycloak with longer timeout for mobile networks
+      // Initialize Keycloak with shorter timeout - fail fast on mobile
       const initPromise = this.keycloak.init(initOptions);
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Keycloak init timeout after 15 seconds')), 15000)
+        setTimeout(() => reject(new Error('Keycloak init timeout after 5 seconds')), 5000)
       );
       
       this.authenticated = await Promise.race([initPromise, timeoutPromise]);
