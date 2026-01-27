@@ -181,32 +181,16 @@ class KeycloakService {
     this.isLoggingIn = true;
     
     try {
-      // Initialize Keycloak if not already done
-      if (!this.keycloak) {
-        const keycloakConfig = {
-          url: import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/',
-          realm: import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm',
-          clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor'
-        };
-
-        // Dynamically import Keycloak
-        const Keycloak = (await import('keycloak-js')).default;
-        this.keycloak = new Keycloak(keycloakConfig);
-        
-        // Must initialize before we can call login()
-        // Use check-sso so it doesn't auto-redirect, then we manually redirect
-        await this.keycloak.init({
-          onLoad: 'check-sso',
-          checkLoginIframe: false,
-          pkceMethod: 'S256',
-          flow: 'standard'
-        });
-      }
+      const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/';
+      const realm = import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm';
+      const clientId = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor';
       
-      // Now trigger login - this will redirect to Keycloak
-      this.keycloak.login({
-        redirectUri: window.location.origin
-      });
+      // Build the login URL manually to avoid init issues
+      const redirectUri = encodeURIComponent(window.location.origin);
+      const loginUrl = `${keycloakUrl}realms/${realm}/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
+      
+      // Direct redirect to Keycloak login page
+      window.location.href = loginUrl;
     } catch (error) {
       console.error('Login failed:', error);
       this.isLoggingIn = false;
