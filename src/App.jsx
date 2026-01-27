@@ -321,7 +321,13 @@ function AppContent() {
             <Button 
               variant="contained" 
               size="large"
-              onClick={() => keycloakService.login()}
+              onClick={async () => {
+                try {
+                  await keycloakService.login();
+                } catch (error) {
+                  console.error('Login error:', error);
+                }
+              }}
               sx={{ 
                 mt: 3,
                 py: 1.5,

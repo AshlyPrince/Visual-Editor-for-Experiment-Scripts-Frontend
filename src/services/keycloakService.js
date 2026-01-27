@@ -178,18 +178,35 @@ class KeycloakService {
       return;
     }
     
-    // Initialize Keycloak if not already done
-    if (!this.keycloak) {
-      try {
-        await this.initialize();
-      } catch (error) {
-        console.error('Failed to initialize Keycloak:', error);
-      }
-    }
+    this.isLoggingIn = true;
     
-    if (this.keycloak) {
-      this.isLoggingIn = true;
-      this.keycloak.login();
+    try {
+      // Initialize Keycloak if not already done, with login-required
+      if (!this.keycloak) {
+        const keycloakConfig = {
+          url: import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/',
+          realm: import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm',
+          clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor'
+        };
+
+        // Dynamically import Keycloak
+        const Keycloak = (await import('keycloak-js')).default;
+        this.keycloak = new Keycloak(keycloakConfig);
+        
+        // Initialize with login-required to force redirect
+        await this.keycloak.init({
+          onLoad: 'login-required',
+          checkLoginIframe: false,
+          pkceMethod: 'S256',
+          flow: 'standard'
+        });
+      } else {
+        // If already initialized, just trigger login
+        this.keycloak.login();
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      this.isLoggingIn = false;
     }
   }
 
