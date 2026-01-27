@@ -51,8 +51,9 @@ class KeycloakService {
       }
       
       // Universal configuration that works on all browsers and devices
+      // Using check-sso to avoid immediate redirect - let app show its own UI first
       const initOptions = {
-        onLoad: 'login-required',
+        onLoad: 'check-sso',
         checkLoginIframe: false,
         pkceMethod: 'S256',
         flow: 'standard',
