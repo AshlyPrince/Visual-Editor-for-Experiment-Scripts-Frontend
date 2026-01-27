@@ -181,7 +181,7 @@ class KeycloakService {
     this.isLoggingIn = true;
     
     try {
-      // Initialize Keycloak if not already done, with login-required
+      // Initialize Keycloak if not already done
       if (!this.keycloak) {
         const keycloakConfig = {
           url: import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/',
@@ -192,18 +192,12 @@ class KeycloakService {
         // Dynamically import Keycloak
         const Keycloak = (await import('keycloak-js')).default;
         this.keycloak = new Keycloak(keycloakConfig);
-        
-        // Initialize with login-required to force redirect
-        await this.keycloak.init({
-          onLoad: 'login-required',
-          checkLoginIframe: false,
-          pkceMethod: 'S256',
-          flow: 'standard'
-        });
-      } else {
-        // If already initialized, just trigger login
-        this.keycloak.login();
       }
+      
+      // Directly trigger login - this will redirect to Keycloak
+      this.keycloak.login({
+        redirectUri: window.location.origin
+      });
     } catch (error) {
       console.error('Login failed:', error);
       this.isLoggingIn = false;
