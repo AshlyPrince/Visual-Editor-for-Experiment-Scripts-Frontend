@@ -192,9 +192,18 @@ class KeycloakService {
         // Dynamically import Keycloak
         const Keycloak = (await import('keycloak-js')).default;
         this.keycloak = new Keycloak(keycloakConfig);
+        
+        // Must initialize before we can call login()
+        // Use check-sso so it doesn't auto-redirect, then we manually redirect
+        await this.keycloak.init({
+          onLoad: 'check-sso',
+          checkLoginIframe: false,
+          pkceMethod: 'S256',
+          flow: 'standard'
+        });
       }
       
-      // Directly trigger login - this will redirect to Keycloak
+      // Now trigger login - this will redirect to Keycloak
       this.keycloak.login({
         redirectUri: window.location.origin
       });
