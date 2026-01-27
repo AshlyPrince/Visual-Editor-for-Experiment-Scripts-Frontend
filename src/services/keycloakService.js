@@ -50,14 +50,14 @@ class KeycloakService {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       
+      // Universal configuration that works on all browsers and devices
       const initOptions = {
-        onLoad: 'check-sso',
+        onLoad: 'login-required',
         checkLoginIframe: false,
-        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
         pkceMethod: 'S256',
         flow: 'standard',
         enableLogging: false,
-        checkLoginIframeInterval: 0
+        promiseType: 'native'
       };
 
       // Initialize Keycloak with longer timeout for mobile networks
