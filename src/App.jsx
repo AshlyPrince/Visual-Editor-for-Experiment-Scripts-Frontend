@@ -67,11 +67,38 @@ function AppContent() {
   const theme = professionalTheme;
 
   useEffect(() => {
-    // Only check if user already has a token, don't initialize Keycloak
-    if (hasExistingToken) {
-      const isAuth = keycloakService.isAuthenticated();
-      setAuthenticated(isAuth);
-    }
+    const handleAuth = async () => {
+      // Check if we're returning from Keycloak (URL has ?code= parameter)
+      const urlParams = new URLSearchParams(window.location.search);
+      const authCode = urlParams.get('code');
+      
+      if (authCode) {
+        // We have an auth code, initialize Keycloak to handle the callback
+        setLoading(true);
+        setVerifying(true);
+        try {
+          await keycloakService.initialize();
+          const isAuth = keycloakService.isAuthenticated();
+          setAuthenticated(isAuth);
+          if (isAuth) {
+            // Clean up URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        } catch (error) {
+          console.error('Auth callback failed:', error);
+          setAuthError({ message: 'Authentication failed', details: error.message });
+        } finally {
+          setLoading(false);
+          setVerifying(false);
+        }
+      } else if (hasExistingToken) {
+        // Just check if user already has a valid token
+        const isAuth = keycloakService.isAuthenticated();
+        setAuthenticated(isAuth);
+      }
+    };
+    
+    handleAuth();
   }, []);
 
   const handleExperimentCreated = () => {
