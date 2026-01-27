@@ -48,13 +48,15 @@ class KeycloakService {
         checkLoginIframe: false,
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
         pkceMethod: 'S256',
-        flow: 'standard'
+        flow: 'standard',
+        enableLogging: false,
+        checkLoginIframeInterval: 0
       };
 
-      // Initialize Keycloak with timeout
+      // Initialize Keycloak with longer timeout for mobile networks
       const initPromise = this.keycloak.init(initOptions);
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Keycloak init timeout after 5 seconds')), 5000)
+        setTimeout(() => reject(new Error('Keycloak init timeout after 15 seconds')), 15000)
       );
       
       this.authenticated = await Promise.race([initPromise, timeoutPromise]);
