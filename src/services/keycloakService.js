@@ -5,7 +5,8 @@ class KeycloakService {
     this.userInfo = null;
     this.initializing = false;
     this.isLoggingIn = false;
-    this.authError = null; // Store authentication errors
+    this.authError = null;
+    this.initAttempted = false;
   }
 
   /**
@@ -17,7 +18,13 @@ class KeycloakService {
       return this.authenticated;
     }
     
+    // Prevent infinite retry loops - only attempt once
+    if (this.initAttempted && this.authError) {
+      return false;
+    }
+    
     this.initializing = true;
+    this.initAttempted = true;
     
     try {
       const keycloakConfig = {
@@ -73,10 +80,10 @@ class KeycloakService {
 
       return this.authenticated;
     } catch (error) {
-      // Store the error and return false
+      // Store the error and return false - prevent retry loops
       this.authError = {
         message: 'Authentication service unavailable',
-        details: error.message || 'Unable to connect to authentication server. Please contact support.',
+        details: error.message || 'Unable to connect to authentication server.',
         timestamp: new Date().toISOString()
       };
       this.authenticated = false;
@@ -148,6 +155,7 @@ class KeycloakService {
    */
   clearAuthError() {
     this.authError = null;
+    this.initAttempted = false;
   }
 
   /**
