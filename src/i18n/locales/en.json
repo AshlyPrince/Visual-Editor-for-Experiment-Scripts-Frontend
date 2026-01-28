@@ -36,7 +36,14 @@
     "added": "Added",
     "removed": "Removed",
     "modified": "Modified",
-    "copy": "Copy to clipboard"
+    "copy": "Copy to clipboard",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "draft": "Draft",
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred. Please try refreshing the page.",
+    "sections": "sections"
   },
   "auth": {
     "login": "Login",

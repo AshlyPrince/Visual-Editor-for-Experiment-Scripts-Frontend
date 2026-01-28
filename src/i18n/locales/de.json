@@ -36,7 +36,14 @@
     "added": "Hinzugefügt",
     "removed": "Entfernt",
     "modified": "Geändert",
-    "copy": "In Zwischenablage kopieren"
+    "copy": "In Zwischenablage kopieren",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "pending": "Ausstehend",
+    "draft": "Entwurf",
+    "somethingWentWrong": "Etwas ist schief gelaufen",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte laden Sie die Seite neu.",
+    "sections": "Abschnitte"
   },
   "auth": {
     "login": "Anmelden",

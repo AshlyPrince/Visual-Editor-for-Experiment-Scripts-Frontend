@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Alert,
   AlertTitle,
@@ -189,12 +190,14 @@ export const StatusIndicator = ({
   label,
   size = 'medium' 
 }) => {
+  const { t } = useTranslation();
+  
   const statusConfig = {
-    active: { color: colors.success.main, label: 'Active' },
-    inactive: { color: colors.gray.main, label: 'Inactive' },
-    pending: { color: colors.warning.main, label: 'Pending' },
-    error: { color: colors.error.main, label: 'Error' },
-    draft: { color: colors.blue.main, label: 'Draft' }
+    active: { color: colors.success.main, label: t('common.active') },
+    inactive: { color: colors.gray.main, label: t('common.inactive') },
+    pending: { color: colors.warning.main, label: t('common.pending') },
+    error: { color: colors.error.main, label: t('common.error') },
+    draft: { color: colors.blue.main, label: t('common.draft') }
   };
 
   const config = statusConfig[status] || statusConfig.inactive;
@@ -259,6 +262,18 @@ export const ProgressIndicator = ({
   );
 };
 
+const ErrorBoundaryFallback = () => {
+  const { t } = useTranslation();
+  
+  return (
+    <AlertMessage 
+      severity="error"
+      title={t('common.somethingWentWrong')}
+      message={t('common.unexpectedError')}
+    />
+  );
+};
+
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -274,13 +289,7 @@ export class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return (
-        <AlertMessage 
-          severity="error"
-          title="Something went wrong"
-          message="An unexpected error occurred. Please try refreshing the page."
-        />
-      );
+      return <ErrorBoundaryFallback />;
     }
 
     return this.props.children;
