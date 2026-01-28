@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IconButton,
   Avatar,
@@ -25,6 +26,7 @@ import {
 import { useKeycloak } from './KeycloakContext.jsx';
 
 export const UserMenu = () => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const { userInfo, logout, updateProfile, hasRole } = useKeycloak();
   const theme = useTheme();
@@ -137,7 +139,7 @@ export const UserMenu = () => {
               ))}
               {userInfo.roles.length > 3 && (
                 <Chip
-                  label={`+${userInfo.roles.length - 3} more`}
+                  label={t('auth.moreRoles', { count: userInfo.roles.length - 3 })}
                   size="small"
                   variant="outlined"
                   sx={{ fontSize: '0.75rem', height: 20 }}
@@ -155,9 +157,9 @@ export const UserMenu = () => {
             <AccountCircle />
           </ListItemIcon>
           <ListItemText>
-            <Typography variant="body1">Manage Profile</Typography>
+            <Typography variant="body1">{t('auth.manageProfile')}</Typography>
             <Typography variant="body2" color="text.secondary">
-              Update your account settings
+              {t('auth.updateAccountSettings')}
             </Typography>
           </ListItemText>
         </MenuItem>
@@ -167,9 +169,9 @@ export const UserMenu = () => {
             <Person />
           </ListItemIcon>
           <ListItemText>
-            <Typography variant="body1">User Preferences</Typography>
+            <Typography variant="body1">{t('auth.userPreferences')}</Typography>
             <Typography variant="body2" color="text.secondary">
-              Customize your experience
+              {t('auth.customizeExperience')}
             </Typography>
           </ListItemText>
         </MenuItem>
@@ -183,9 +185,9 @@ export const UserMenu = () => {
                 <AdminPanelSettings />
               </ListItemIcon>
               <ListItemText>
-                <Typography variant="body1">Admin Console</Typography>
+                <Typography variant="body1">{t('auth.adminConsole')}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  System administration
+                  {t('auth.systemAdministration')}
                 </Typography>
               </ListItemText>
             </MenuItem>
@@ -195,9 +197,9 @@ export const UserMenu = () => {
               <Security />
             </ListItemIcon>
             <ListItemText>
-              <Typography variant="body1">Security Settings</Typography>
+              <Typography variant="body1">{t('auth.securitySettings')}</Typography>
               <Typography variant="body2" color="text.secondary">
-                Manage security preferences
+                {t('auth.manageSecurityPreferences')}
               </Typography>
             </ListItemText>
           </MenuItem>
@@ -210,9 +212,9 @@ export const UserMenu = () => {
             <ExitToApp />
           </ListItemIcon>
           <ListItemText>
-            <Typography variant="body1">Sign Out</Typography>
+            <Typography variant="body1">{t('auth.signOut')}</Typography>
             <Typography variant="body2" color="text.secondary">
-              Securely end your session
+              {t('auth.securelyEndSession')}
             </Typography>
           </ListItemText>
         </MenuItem>
@@ -221,7 +223,7 @@ export const UserMenu = () => {
         <Box sx={{ px: 3, py: 2, borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}` }}>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <VpnKey fontSize="inherit" />
-            Secured by Keycloak
+            {t('auth.securedByKeycloak')}
           </Typography>
         </Box>
       </Menu>

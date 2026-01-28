@@ -50,7 +50,19 @@
     "logout": "Abmelden",
     "welcome": "Willkommen",
     "unauthorized": "Nicht autorisierter Zugriff",
-    "accountManagementUnavailable": "Kontoverwaltung konnte nicht geöffnet werden. Bitte überprüfen Sie die Keycloak-Konfiguration."
+    "accountManagementUnavailable": "Kontoverwaltung konnte nicht geöffnet werden. Bitte überprüfen Sie die Keycloak-Konfiguration.",
+    "moreRoles": "+{{count}} weitere",
+    "manageProfile": "Profil verwalten",
+    "updateAccountSettings": "Aktualisieren Sie Ihre Kontoeinstellungen",
+    "userPreferences": "Benutzereinstellungen",
+    "customizeExperience": "Passen Sie Ihre Erfahrung an",
+    "adminConsole": "Admin-Konsole",
+    "systemAdministration": "Systemverwaltung",
+    "securitySettings": "Sicherheitseinstellungen",
+    "manageSecurityPreferences": "Verwalten Sie Ihre Sicherheitseinstellungen",
+    "signOut": "Abmelden",
+    "securelyEndSession": "Beenden Sie Ihre Sitzung sicher",
+    "securedByKeycloak": "Gesichert durch Keycloak"
   },
   "nav": {
     "dashboard": "Dashboard",

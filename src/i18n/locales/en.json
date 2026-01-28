@@ -50,7 +50,19 @@
     "logout": "Logout",
     "welcome": "Welcome",
     "unauthorized": "Unauthorized access",
-    "accountManagementUnavailable": "Unable to open account management. Please check Keycloak configuration."
+    "accountManagementUnavailable": "Unable to open account management. Please check Keycloak configuration.",
+    "moreRoles": "+{{count}} more",
+    "manageProfile": "Manage Profile",
+    "updateAccountSettings": "Update your account settings",
+    "userPreferences": "User Preferences",
+    "customizeExperience": "Customize your experience",
+    "adminConsole": "Admin Console",
+    "systemAdministration": "System administration",
+    "securitySettings": "Security Settings",
+    "manageSecurityPreferences": "Manage security preferences",
+    "signOut": "Sign Out",
+    "securelyEndSession": "Securely end your session",
+    "securedByKeycloak": "Secured by Keycloak"
   },
   "nav": {
     "dashboard": "Dashboard",
