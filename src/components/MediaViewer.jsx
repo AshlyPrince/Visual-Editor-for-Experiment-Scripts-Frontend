@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Card,
@@ -25,6 +26,7 @@ const MediaViewer = ({
   showCaptions = true,
   compact = false
 }) => {
+  const { t } = useTranslation();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewMedia, setPreviewMedia] = useState(null);
 
@@ -64,7 +66,7 @@ const MediaViewer = ({
                   <CardMedia
                     component="img"
                     image={item.data}
-                    alt={item.caption || item.name || 'Image'}
+                    alt={item.caption || item.name || t('editor.image')}
                     sx={{
                       position: 'absolute',
                       top: 0,
@@ -122,7 +124,7 @@ const MediaViewer = ({
 
                 <Chip
                   icon={item.type === 'image' ? <ImageIcon /> : <VideoLibrary />}
-                  label={item.type === 'image' ? 'Image' : 'Video'}
+                  label={item.type === 'image' ? t('editor.image') : t('editor.video')}
                   size="small"
                   sx={{
                     position: 'absolute',
@@ -176,7 +178,7 @@ const MediaViewer = ({
               {previewMedia.type === 'image' ? (
                 <img
                   src={previewMedia.data}
-                  alt={previewMedia.caption || previewMedia.name || 'Image'}
+                  alt={previewMedia.caption || previewMedia.name || t('editor.image')}
                   style={{
                     width: '100%',
                     height: 'auto',
