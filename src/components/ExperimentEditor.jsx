@@ -46,6 +46,7 @@ import ProcedureStepsEditor from './ProcedureStepsEditor.jsx';
 import CreateVersionDialog from './CreateVersionDialog.jsx';
 import VersionHistory from './VersionHistory.jsx';
 import ExportDialog from './ExportDialog.jsx';
+import VersionConflictDialog from './VersionConflictDialog.jsx';
 import MediaUploader from './MediaUploader.jsx';
 import { normalizeExperiment, denormalizeExperiment, denormalizeSection, getContentSummary } from '../utils/experimentDataNormalizer.js';
 
@@ -74,6 +75,8 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const [addSectionOpen, setAddSectionOpen] = useState(false);
   const [metadataDialogOpen, setMetadataDialogOpen] = useState(false);
   const [newSectionType, setNewSectionType] = useState('');
+  const [conflictDialogOpen, setConflictDialogOpen] = useState(false);
+  const [conflictDetails, setConflictDetails] = useState(null);
 
   useEffect(() => {
     if (experimentId) {
@@ -188,7 +191,44 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     setSaveVersionOpen(true);
   };
 
-  const handleVersionCreated = async (newVersion) => {
+  const handleVersionCreated = async (newVersion, errorInfo) => {
+    if (errorInfo?.conflict) {
+      setSaveVersionOpen(false);
+      
+      if (errorInfo?.shouldReload) {
+        const shouldReload = window.confirm(
+          'Version Conflict Detected\n\n' +
+          'Another user has saved changes to this experiment.\n\n' +
+          'Would you like to reload the latest version?\n\n' +
+          'Note: Clicking OK will discard your unsaved changes.\n' +
+          'Click Cancel to copy your changes to clipboard first.'
+        );
+        
+        if (shouldReload) {
+          await loadExperiment();
+          setHasUnsavedChanges(false);
+          alert('Latest version has been loaded successfully.');
+        } else {
+          const changes = JSON.stringify(getUpdatedExperiment(), null, 2);
+          navigator.clipboard.writeText(changes);
+          alert('Your changes have been copied to clipboard.');
+        }
+      } else {
+        try {
+          const latestExp = await experimentService.getExperiment(experimentId);
+          setConflictDetails({
+            yourVersion: experiment.current_version_number,
+            currentVersion: latestExp.current_version_number,
+            updatedBy: latestExp.updated_by || 'Another user',
+          });
+          setConflictDialogOpen(true);
+        } catch (err) {
+          alert('Version conflict detected. Please reload the page.');
+        }
+      }
+      return;
+    }
+
     setHasUnsavedChanges(false);
     setSaveVersionOpen(false);
     
@@ -736,6 +776,27 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <VersionConflictDialog
+        open={conflictDialogOpen}
+        onClose={() => setConflictDialogOpen(false)}
+        conflictDetails={conflictDetails}
+        onReloadLatest={async () => {
+          await loadExperiment();
+          setHasUnsavedChanges(false);
+          setConflictDialogOpen(false);
+        }}
+        onCopyChanges={() => {
+          const changes = JSON.stringify(getUpdatedExperiment(), null, 2);
+          navigator.clipboard.writeText(changes);
+          alert('Your changes have been copied to clipboard!');
+        }}
+        onOpenInNewTab={() => {
+          const changes = getUpdatedExperiment();
+          localStorage.setItem('unsavedExperimentChanges', JSON.stringify(changes));
+          window.open(`/experiments/${experimentId}/edit?restore=true`, '_blank');
+        }}
+      />
     </Container>
   );
 };

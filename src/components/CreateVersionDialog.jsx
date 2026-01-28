@@ -39,25 +39,30 @@ const CreateVersionDialog = ({
 
       const nextVersionNumber = (currentVersion || 0) + 1;
       const versionData = {
-        
         content: updatedContent,
         commit_message: commitMessage.trim(),
+        base_version: currentVersion,
       };
 
       const newVersion = await experimentService.createVersion(experimentId, versionData);
 
-      
       setCommitMessage('');
       setVersionTitle('');
 
-      
       if (onVersionCreated) {
         onVersionCreated(newVersion);
       }
 
       onClose();
     } catch (err) {
-      setError(err.message || 'Unable to create version. Please try again.');
+      if (err.response?.status === 409) {
+        setError('VERSION_CONFLICT');
+        if (onVersionCreated) {
+          onVersionCreated(null, { conflict: true, error: err });
+        }
+      } else {
+        setError(err.message || 'Unable to create version. Please try again.');
+      }
     } finally {
       setSaving(false);
     }
@@ -77,16 +82,31 @@ const CreateVersionDialog = ({
       <DialogTitle>Save as New Version</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2 }}>
-          {error && (
+          {error === 'VERSION_CONFLICT' && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              <Typography variant="body2" fontWeight={600} gutterBottom>
+                Unable to Save Changes
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                This experiment has been modified by another user since you opened it.
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                Please reload the latest version to continue editing.
+              </Typography>
+            </Alert>
+          )}
+
+          {error && error !== 'VERSION_CONFLICT' && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
 
-          <Alert severity="info" sx={{ mb: 3 }}>
-            Your changes will be saved as Version {(currentVersion || 0) + 1}. The previous
-            version will remain in the version history.
-          </Alert>
+          {!error && (
+            <Alert severity="info" sx={{ mb: 3 }}>
+              Changes will be saved as Version {(currentVersion || 0) + 1}.
+            </Alert>
+          )}
 
           <TextField
             label="Commit Message *"
@@ -95,38 +115,54 @@ const CreateVersionDialog = ({
             rows={3}
             value={commitMessage}
             onChange={(e) => setCommitMessage(e.target.value)}
-            placeholder="Describe what changes you made (e.g., Added safety warnings, Updated procedure steps)"
+            placeholder="Describe your changes"
             required
-            disabled={saving}
-            error={error && !commitMessage.trim()}
+            disabled={saving || error === 'VERSION_CONFLICT'}
+            error={error && error !== 'VERSION_CONFLICT' && !commitMessage.trim()}
             helperText={
-              error && !commitMessage.trim()
-                ? 'Commit message is required'
-                : 'Describe the changes you made in this version'
+              error === 'VERSION_CONFLICT'
+                ? 'Unable to save due to version conflict'
+                : error && !commitMessage.trim()
+                ? 'Please enter a commit message'
+                : 'Brief description of your changes'
             }
           />
-
-          <Box sx={{ mt: 2, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              <strong>Tip:</strong> Write clear commit messages to help you identify versions
-              later. Examples: "Added safety section", "Fixed typo in materials list", "Updated
-              procedure with teacher feedback"
-            </Typography>
-          </Box>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} disabled={saving}>
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSave}
-          variant="contained"
-          disabled={saving || !commitMessage.trim()}
-          startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
-        >
-          {saving ? 'Saving...' : 'Save Version'}
-        </Button>
+        {error === 'VERSION_CONFLICT' ? (
+          <>
+            <Button onClick={handleClose} variant="outlined">
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                handleClose();
+                if (onVersionCreated) {
+                  onVersionCreated(null, { conflict: true, shouldReload: true });
+                }
+              }}
+              variant="contained"
+              color="warning"
+            >
+              Reload Latest Version
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button onClick={handleClose} disabled={saving}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              variant="contained"
+              disabled={saving || !commitMessage.trim()}
+              startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
+            >
+              {saving ? 'Saving...' : 'Save Version'}
+            </Button>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   );
