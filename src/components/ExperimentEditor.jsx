@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Container,
@@ -50,17 +51,19 @@ import VersionConflictDialog from './VersionConflictDialog.jsx';
 import MediaUploader from './MediaUploader.jsx';
 import { normalizeExperiment, denormalizeExperiment, denormalizeSection, getContentSummary } from '../utils/experimentDataNormalizer.js';
 
-const availableSectionTemplates = [
-  { id: 'objectives', name: 'Objectives', icon: '🎯', type: 'rich-text' },
-  { id: 'materials', name: 'Materials', icon: '🧪', type: 'list' },
-  { id: 'chemicals', name: 'Chemicals', icon: '⚗️', type: 'list' },
-  { id: 'procedure', name: 'Procedure', icon: '📋', type: 'rich-text' },
-  { id: 'safety', name: 'Safety', icon: '⚠️', type: 'rich-text' },
-  { id: 'hazards', name: 'Potential Hazards', icon: '🚫', type: 'rich-text' },
-  { id: 'disposal', name: 'Disposal', icon: '♻️', type: 'rich-text' },
-];
-
 const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
+  const { t } = useTranslation();
+  
+  const availableSectionTemplates = [
+    { id: 'objectives', name: t('wizard.objectives'), icon: '🎯', type: 'rich-text' },
+    { id: 'materials', name: t('wizard.materials'), icon: '🧪', type: 'list' },
+    { id: 'chemicals', name: t('wizard.chemicals'), icon: '⚗️', type: 'list' },
+    { id: 'procedure', name: t('wizard.procedure'), icon: '📋', type: 'rich-text' },
+    { id: 'safety', name: t('wizard.safety'), icon: '⚠️', type: 'rich-text' },
+    { id: 'hazards', name: t('wizard.potentialHazards'), icon: '🚫', type: 'rich-text' },
+    { id: 'disposal', name: t('wizard.disposal'), icon: '♻️', type: 'rich-text' },
+  ];
+  
   const [experiment, setExperiment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -105,7 +108,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
       }
       
     } catch (err) {
-      setError(err.message || 'Unable to load experiment. Please try again.');
+      setError(err.message || t('messages.loadError'));
     } finally {
       setLoading(false);
     }
@@ -185,7 +188,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
 
   const handleSaveClick = () => {
     if (!hasUnsavedChanges) {
-      alert('No changes to save');
+      alert(t('editor.unsavedChanges'));
       return;
     }
     setSaveVersionOpen(true);
@@ -263,7 +266,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
-        <Button onClick={loadExperiment}>Retry</Button>
+        <Button onClick={loadExperiment}>{t('common.cancel')}</Button>
       </Container>
     );
   }
@@ -271,7 +274,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   if (!experiment) {
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
-        <Alert severity="warning">Experiment not found</Alert>
+        <Alert severity="warning">{t('experiment.noExperiments')}</Alert>
       </Container>
     );
   }
@@ -573,7 +576,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
               startIcon={<ArrowBack />}
               onClick={onClose}
             >
-              Close
+              {t('common.close')}
             </Button>
           </Box>
           <Button
@@ -584,7 +587,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             color="primary"
             size="large"
           >
-            Save as New Version
+            {t('buttons.saveAsNewVersion')}
           </Button>
         </Box>
       </Paper>
@@ -592,14 +595,14 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
       <Paper sx={{ p: 2, mb: 3 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
           <Typography variant="subtitle2" color="text.secondary">
-            Basic Information
+            {t('editor.basicInformation')}
           </Typography>
           <Button
             size="small"
             startIcon={<EditIcon />}
             onClick={() => setMetadataDialogOpen(true)}
           >
-            Edit
+            {t('common.edit')}
           </Button>
         </Box>
         {(duration || course || program) ? (
@@ -628,7 +631,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           </Stack>
         ) : (
           <Typography variant="body2" color="text.secondary" fontStyle="italic">
-            No metadata added yet. Click Edit to add duration, course, or program information.
+            {t('editor.noMetadataYet')}
           </Typography>
         )}
       </Paper>
@@ -664,25 +667,25 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             fullWidth
             sx={{ py: 2 }}
           >
-            Add New Section
+            {t('editor.addNewSection')}
           </Button>
         </Grid>
       </Grid>
 
       <Dialog open={addSectionOpen} onClose={() => setAddSectionOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Add New Section</DialogTitle>
+        <DialogTitle>{t('editor.addNewSection')}</DialogTitle>
         <DialogContent>
           {getAvailableSections().length > 0 ? (
             <>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>
-                Select a section type to add to your experiment. Only sections not yet included are shown.
+                {t('editor.selectSectionType')}
               </Typography>
               <FormControl fullWidth>
-                <InputLabel>Section Type</InputLabel>
+                <InputLabel>{t('editor.sectionType')}</InputLabel>
                 <Select
                   value={newSectionType}
                   onChange={(e) => setNewSectionType(e.target.value)}
-                  label="Section Type"
+                  label={t('editor.sectionType')}
                 >
                   {getAvailableSections().map((template) => (
                     <MenuItem key={template.id} value={template.id}>
@@ -694,7 +697,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             </>
           ) : (
             <Alert severity="info" sx={{ mt: 2 }}>
-              All available section types have been added to this experiment.
+              {t('editor.allSectionsAdded')}
             </Alert>
           )}
         </DialogContent>
@@ -703,14 +706,14 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             setAddSectionOpen(false);
             setNewSectionType('');
           }}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button 
             onClick={handleAddSection} 
             variant="contained" 
             disabled={!newSectionType || getAvailableSections().length === 0}
           >
-            Add Section
+            {t('editor.addSection')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -732,38 +735,38 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Edit Basic Information</DialogTitle>
+        <DialogTitle>{t('editor.editBasicInformation')}</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
               fullWidth
-              label="Duration (Optional)"
+              label={t('experiment.duration')}
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              placeholder="e.g., 45 minutes, 1-2 hours"
-              helperText="How long does this experiment take?"
+              placeholder={t('editor.durationPlaceholder')}
+              helperText={t('editor.durationHelper')}
             />
             <TextField
               fullWidth
-              label="Course / Module (Optional)"
+              label={t('experiment.course')}
               value={course}
               onChange={(e) => setCourse(e.target.value)}
-              placeholder="e.g., Chemistry 101, Physics Lab"
-              helperText="Which course is this experiment for?"
+              placeholder={t('editor.coursePlaceholder')}
+              helperText={t('editor.courseHelper')}
             />
             <TextField
               fullWidth
-              label="Program / Semester (Optional)"
+              label={t('experiment.program')}
               value={program}
               onChange={(e) => setProgram(e.target.value)}
-              placeholder="e.g., Year 1 Semester 2, BSc Chemistry"
-              helperText="Which program or semester?"
+              placeholder={t('editor.programPlaceholder')}
+              helperText={t('editor.programHelper')}
             />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setMetadataDialogOpen(false)}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button 
             variant="contained" 
@@ -772,7 +775,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
               setHasUnsavedChanges(true);
             }}
           >
-            Save
+            {t('common.save')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -789,7 +792,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         onCopyChanges={() => {
           const changes = JSON.stringify(getUpdatedExperiment(), null, 2);
           navigator.clipboard.writeText(changes);
-          alert('Your changes have been copied to clipboard!');
+          alert(t('version.changesCopied'));
         }}
         onOpenInNewTab={() => {
           const changes = getUpdatedExperiment();

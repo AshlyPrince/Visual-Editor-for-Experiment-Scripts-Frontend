@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
@@ -22,6 +23,7 @@ const CreateVersionDialog = ({
   updatedContent,
   onVersionCreated,
 }) => {
+  const { t } = useTranslation();
   const [commitMessage, setCommitMessage] = useState('');
   const [versionTitle, setVersionTitle] = useState('');
   const [saving, setSaving] = useState(false);
@@ -29,7 +31,7 @@ const CreateVersionDialog = ({
 
   const handleSave = async () => {
     if (!commitMessage.trim()) {
-      setError('Please enter a commit message describing your changes');
+      setError(t('version.commitMessageRequired'));
       return;
     }
 
@@ -61,7 +63,7 @@ const CreateVersionDialog = ({
           onVersionCreated(null, { conflict: true, error: err });
         }
       } else {
-        setError(err.message || 'Unable to create version. Please try again.');
+        setError(err.message || t('version.createVersionError'));
       }
     } finally {
       setSaving(false);
@@ -79,19 +81,19 @@ const CreateVersionDialog = ({
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Save as New Version</DialogTitle>
+      <DialogTitle>{t('buttons.saveAsNewVersion')}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2 }}>
           {error === 'VERSION_CONFLICT' && (
             <Alert severity="error" sx={{ mb: 2 }}>
               <Typography variant="body2" fontWeight={600} gutterBottom>
-                Unable to Save Changes
+                {t('version.unableToSave')}
               </Typography>
               <Typography variant="body2" gutterBottom>
-                This experiment has been modified by another user since you opened it.
+                {t('version.modifiedByAnother')}
               </Typography>
               <Typography variant="body2" sx={{ mt: 1 }}>
-                Please reload the latest version to continue editing.
+                {t('version.reloadToContinue')}
               </Typography>
             </Alert>
           )}
@@ -104,27 +106,27 @@ const CreateVersionDialog = ({
 
           {!error && (
             <Alert severity="info" sx={{ mb: 3 }}>
-              Changes will be saved as Version {(currentVersion || 0) + 1}.
+              {t('version.changesWillBeSaved', { version: (currentVersion || 0) + 1 })}
             </Alert>
           )}
 
           <TextField
-            label="Commit Message *"
+            label={t('version.commitMessage')}
             fullWidth
             multiline
             rows={3}
             value={commitMessage}
             onChange={(e) => setCommitMessage(e.target.value)}
-            placeholder="Describe your changes"
+            placeholder={t('version.describeChanges')}
             required
             disabled={saving || error === 'VERSION_CONFLICT'}
             error={error && error !== 'VERSION_CONFLICT' && !commitMessage.trim()}
             helperText={
               error === 'VERSION_CONFLICT'
-                ? 'Unable to save due to version conflict'
+                ? t('version.unableToSaveConflict')
                 : error && !commitMessage.trim()
-                ? 'Please enter a commit message'
-                : 'Brief description of your changes'
+                ? t('version.enterCommitMessage')
+                : t('version.briefDescription')
             }
           />
         </Box>
@@ -133,7 +135,7 @@ const CreateVersionDialog = ({
         {error === 'VERSION_CONFLICT' ? (
           <>
             <Button onClick={handleClose} variant="outlined">
-              Close
+              {t('common.close')}
             </Button>
             <Button
               onClick={() => {
@@ -145,13 +147,13 @@ const CreateVersionDialog = ({
               variant="contained"
               color="warning"
             >
-              Reload Latest Version
+              {t('version.reloadLatestVersion')}
             </Button>
           </>
         ) : (
           <>
             <Button onClick={handleClose} disabled={saving}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSave}
@@ -159,7 +161,7 @@ const CreateVersionDialog = ({
               disabled={saving || !commitMessage.trim()}
               startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
             >
-              {saving ? 'Saving...' : 'Save Version'}
+              {saving ? t('common.saving') : t('buttons.saveVersion')}
             </Button>
           </>
         )}

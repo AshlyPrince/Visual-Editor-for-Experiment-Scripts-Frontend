@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
@@ -19,12 +20,14 @@ const DeleteConfirmDialog = ({
   open,
   onClose,
   onConfirm,
-  title = 'Delete Item?',
+  title,
   itemName,
   itemType = 'item',
   loading = false,
   additionalInfo,
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <Dialog
       open={open}
@@ -35,18 +38,17 @@ const DeleteConfirmDialog = ({
       <DialogTitle>
         <Box display="flex" alignItems="center" gap={1}>
           <WarningIcon color="error" />
-          <Typography variant="h6">{title}</Typography>
+          <Typography variant="h6">{title || t('messages.deleteConfirm')}</Typography>
         </Box>
       </DialogTitle>
       
       <DialogContent>
         <Alert severity="warning" sx={{ mb: 2 }}>
-          <strong>Warning:</strong> This action cannot be undone.
+          <strong>{t('common.warning')}:</strong> {t('messages.actionCannotBeUndone')}
         </Alert>
         
         <DialogContentText>
-          Are you sure you want to delete{' '}
-          <strong>"{itemName}"</strong>?
+          {t('messages.confirmDelete', { itemName })}
         </DialogContentText>
         
         {additionalInfo && (
@@ -56,7 +58,7 @@ const DeleteConfirmDialog = ({
         )}
         
         <DialogContentText sx={{ mt: 2, fontStyle: 'italic', fontSize: '0.875rem' }}>
-          The {itemType} will be permanently removed from the system.
+          {t('messages.itemWillBeRemoved', { itemType })}
         </DialogContentText>
       </DialogContent>
       
@@ -66,7 +68,7 @@ const DeleteConfirmDialog = ({
           disabled={loading}
           variant="outlined"
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={onConfirm}
@@ -75,7 +77,7 @@ const DeleteConfirmDialog = ({
           disabled={loading}
           startIcon={<DeleteIcon />}
         >
-          {loading ? 'Deleting...' : 'Delete'}
+          {loading ? t('messages.deleting') : t('common.delete')}
         </Button>
       </DialogActions>
     </Dialog>
