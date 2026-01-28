@@ -176,7 +176,16 @@
     "stepConfig": "Step 1: Configuration",
     "stepSections": "Step 2: Select Sections",
     "stepContent": "Step 3: Content Creation",
-    "stepReview": "Step 4: Review & Preview"
+    "stepReview": "Step 4: Review & Preview",
+    "basicInformation": "Basic Information",
+    "basicInformationDesc": "Title, duration, course details",
+    "selectSectionsDesc": "Choose which sections to include",
+    "fillContent": "Fill Content",
+    "fillContentDesc": "Add content to each section",
+    "aiPolish": "AI Polish",
+    "aiPolishDesc": "Review and improve with AI",
+    "previewCreate": "Preview & Create",
+    "previewCreateDesc": "Final review and creation"
   },
   "editor": {
     "richTextEditor": "Text Editor",

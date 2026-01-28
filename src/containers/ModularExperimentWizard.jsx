@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Box, 
   Typography, 
@@ -100,6 +101,7 @@ const ModularExperimentWizard = ({
   onComplete, 
   onCancel 
 }) => {
+  const { t } = useTranslation();
   
   
   
@@ -124,11 +126,11 @@ const ModularExperimentWizard = ({
   
   
   const wizardSteps = [
-    { id: 'basic_info', label: 'Basic Information', description: 'Title, duration, course details' },
-    { id: 'sections', label: 'Select Sections', description: 'Choose which sections to include' },
-    { id: 'content', label: 'Fill Content', description: 'Add content to each section' },
-    { id: 'ai_polish', label: 'AI Polish', description: 'Review and improve with AI' },
-    { id: 'preview', label: 'Preview & Create', description: 'Final review and creation' }
+    { id: 'basic_info', label: t('wizard.basicInformation'), description: t('wizard.basicInformationDesc') },
+    { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
+    { id: 'content', label: t('wizard.fillContent'), description: t('wizard.fillContentDesc') },
+    { id: 'ai_polish', label: t('wizard.aiPolish'), description: t('wizard.aiPolishDesc') },
+    { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
   ];
 
   const [currentStep, setCurrentStep] = useState(savedState?.currentStep || 0);

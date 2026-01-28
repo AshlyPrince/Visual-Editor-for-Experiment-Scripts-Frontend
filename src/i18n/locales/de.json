@@ -176,7 +176,16 @@
     "stepConfig": "Schritt 1: Konfiguration",
     "stepSections": "Schritt 2: Abschnitte auswählen",
     "stepContent": "Schritt 3: Inhaltserstellung",
-    "stepReview": "Schritt 4: Überprüfung & Vorschau"
+    "stepReview": "Schritt 4: Überprüfung & Vorschau",
+    "basicInformation": "Grundinformationen",
+    "basicInformationDesc": "Titel, Dauer, Kursdetails",
+    "selectSectionsDesc": "Wählen Sie aus, welche Abschnitte enthalten sein sollen",
+    "fillContent": "Inhalt einfügen",
+    "fillContentDesc": "Fügen Sie Inhalt zu jedem Abschnitt hinzu",
+    "aiPolish": "KI-Verbesserung",
+    "aiPolishDesc": "Mit KI überprüfen und verbessern",
+    "previewCreate": "Vorschau & Erstellen",
+    "previewCreateDesc": "Abschließende Überprüfung und Erstellung"
   },
   "editor": {
     "richTextEditor": "Texteditor",
