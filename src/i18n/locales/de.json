@@ -23,13 +23,18 @@
     "update": "Aktualisieren",
     "view": "Anzeigen",
     "restore": "Wiederherstellen",
+    "add": "Hinzufügen",
+    "remove": "Entfernen",
+    "item": "Element",
+    "items": "Elemente",
     "compare": "Vergleichen"
   },
   "auth": {
     "login": "Anmelden",
     "logout": "Abmelden",
     "welcome": "Willkommen",
-    "unauthorized": "Nicht autorisierter Zugriff"
+    "unauthorized": "Nicht autorisierter Zugriff",
+    "accountManagementUnavailable": "Kontoverwaltung konnte nicht geöffnet werden. Bitte überprüfen Sie die Keycloak-Konfiguration."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -148,6 +153,7 @@
     "reviewPreview": "Überprüfung & Vorschau",
     "createTemplate": "Vorlage erstellen",
     "noSectionsSelected": "Keine Abschnitte ausgewählt",
+    "learningObjectives": "Lernziele",
     "noSectionsInfo": "Kehren Sie zum vorherigen Schritt zurück, um Abschnitte für Ihr Experiment auszuwählen.",
     "stepConfig": "Schritt 1: Konfiguration",
     "stepSections": "Schritt 2: Abschnitte auswählen",
@@ -214,7 +220,9 @@
     "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "itemWillBeRemoved": "{{itemType}} wird dauerhaft aus dem System entfernt.",
     "confirmDeleteInfo": "Alle Versionen und zugehörigen Daten werden dauerhaft entfernt.",
-    "noContentAvailable": "Kein Inhalt verfügbar"
+    "noContentAvailable": "Kein Inhalt verfügbar",
+    "noItemsYet": "Noch keine Elemente hinzugefügt",
+    "itemsCount": "{{count}} / {{max}} Elemente"
   },
   "validation": {
     "required": "Dieses Feld ist erforderlich",

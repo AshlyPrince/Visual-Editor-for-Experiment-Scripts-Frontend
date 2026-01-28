@@ -92,7 +92,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       
       setExperiment(canonical);
     } catch (err) {
-      setError(err.message || 'Unable to load experiment. Please try again.');
+      setError(err.message || t('messages.loadError'));
     } finally {
       setLoading(false);
     }
@@ -304,7 +304,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       <Box sx={{ mb: 4 }} key={section.id}>
         <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, display: 'flex', alignItems: 'center', gap: 1, color: 'primary.main' }}>
           <Box component="span" sx={{ fontSize: '1.5rem' }}>⚠️</Box>
-          Safety Measures
+          {t('wizard.safety')}
         </Typography>
         
         {hasMedia && (
@@ -328,7 +328,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                   <Box
                     component="img"
                     src={mediaItem.data || mediaItem.url}
-                    alt={mediaItem.name || `Safety Icon ${mediaIndex + 1}`}
+                    alt={mediaItem.name || `${t('wizard.safety')} ${mediaIndex + 1}`}
                     sx={{
                       width: 60,
                       height: 60,
@@ -997,7 +997,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             )}
             {(experiment.estimated_duration || config.duration) && (
               <Chip 
-                label={`Duration: ${experiment.estimated_duration || config.duration}`} 
+                label={`${t('experiment.duration')}: ${experiment.estimated_duration || config.duration}`} 
                 variant="outlined" 
               />
             )}
@@ -1009,7 +1009,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         {config.learningObjectives && config.learningObjectives.length > 0 && (
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
-              📚 Learning Objectives
+              📚 {t('wizard.learningObjectives')}
             </Typography>
             <List>
               {config.learningObjectives.map((objective, index) => (

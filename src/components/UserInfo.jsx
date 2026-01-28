@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Box, 
   Typography, 
@@ -18,6 +19,7 @@ import {
 import keycloakService from '../services/keycloakService.js';
 
 const UserInfo = () => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   
@@ -43,7 +45,7 @@ const UserInfo = () => {
     if (accountUrl && accountUrl !== '#') {
       window.open(accountUrl, '_blank');
     } else {
-      alert('Unable to open account management. Please check Keycloak configuration.');
+      alert(t('auth.accountManagementUnavailable'));
     }
     handleClose();
   };
@@ -55,7 +57,7 @@ const UserInfo = () => {
         onClick={() => keycloakService.login()}
         startIcon={<AccountIcon />}
       >
-        Login
+        {t('auth.login')}
       </Button>
     );
   }
@@ -78,7 +80,7 @@ const UserInfo = () => {
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>
-          Welcome, {userInfo.given_name || userInfo.preferred_username}
+          {t('auth.welcome')}, {userInfo.given_name || userInfo.preferred_username}
         </Typography>
         
         <Avatar
@@ -132,7 +134,7 @@ const UserInfo = () => {
             <LogoutIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>
-            Logout
+            {t('auth.logout')}
           </ListItemText>
         </MenuItem>
       </Menu>

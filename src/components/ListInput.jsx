@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   TextField,
@@ -20,14 +21,20 @@ import {
 const ListInput = ({ 
   items = [], 
   onChange, 
-  label = 'Items',
-  placeholder = 'Item',
-  addButtonText = 'Add',
-  emptyText = 'No items added yet',
+  label,
+  placeholder,
+  addButtonText,
+  emptyText,
   maxItems = 50,
   showNumbers = false,
   variant = 'outlined', 
 }) => {
+  const { t } = useTranslation();
+  
+  const finalLabel = label || t('common.items');
+  const finalPlaceholder = placeholder || t('common.item');
+  const finalAddButtonText = addButtonText || t('common.add');
+  const finalEmptyText = emptyText || t('messages.noItemsYet');
   const handleAdd = () => {
     if (items.length < maxItems) {
       onChange([...items, '']);
@@ -61,7 +68,7 @@ const ListInput = ({
               color: 'text.primary'
             }}
           >
-            {label}
+            {finalLabel}
           </Typography>
           {items.length > 0 && (
             <Chip 
@@ -84,7 +91,7 @@ const ListInput = ({
             fontWeight: 500,
           }}
         >
-          {addButtonText}
+          {finalAddButtonText}
         </Button>
       </Box>
       
@@ -135,7 +142,7 @@ const ListInput = ({
                     size="small"
                     value={item}
                     onChange={(e) => handleUpdate(index, e.target.value)}
-                    placeholder={`${placeholder} ${index + 1}`}
+                    placeholder={`${finalPlaceholder} ${index + 1}`}
                     variant={variant}
                     sx={{
                       '& .MuiOutlinedInput-root': {
@@ -186,7 +193,7 @@ const ListInput = ({
               color="text.secondary" 
               sx={{ fontStyle: 'italic', mb: 1 }}
             >
-              {emptyText}
+              {finalEmptyText}
             </Typography>
             <Button
               size="small"
@@ -195,7 +202,7 @@ const ListInput = ({
               onClick={handleAdd}
               sx={{ textTransform: 'none' }}
             >
-              {addButtonText}
+              {finalAddButtonText}
             </Button>
           </Box>
         )}
@@ -207,7 +214,7 @@ const ListInput = ({
           color="text.secondary" 
           sx={{ mt: 0.5, display: 'block' }}
         >
-          {items.length} / {maxItems} items
+          {t('messages.itemsCount', { count: items.length, max: maxItems })}
         </Typography>
       )}
     </Box>
