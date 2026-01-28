@@ -293,6 +293,33 @@
     "iconsSelected": "{{count}} Symbol ausgewählt",
     "iconsSelected_plural": "{{count}} Symbole ausgewählt",
     "addSelected": "Ausgewählte hinzufügen ({{count}})"
+  },
+  "hazard": {
+    "explosive": "Explosionsgefährlich",
+    "explosiveDesc": "Explosionsgefährlich",
+    "flammable": "Entzündbar",
+    "flammableDesc": "Leicht/Hoch entzündlich",
+    "oxidizing": "Brandfördernd",
+    "oxidizingDesc": "Brandfördernd",
+    "compressedGas": "Komprimierte Gase",
+    "compressedGasDesc": "Komprimierte Gase",
+    "corrosive": "Ätzend",
+    "corrosiveDesc": "Ätzend",
+    "toxic": "Akute Toxizität",
+    "toxicDesc": "Giftig/Sehr giftig",
+    "irritant": "Reizend/Gesundheitsschädlich",
+    "irritantDesc": "Gesundheitsgefährdend",
+    "healthHazard": "Gesundheitsgefahr",
+    "healthHazardDesc": "Gesundheitsschädlich",
+    "environmental": "Umweltgefährdend",
+    "environmentalDesc": "Umweltgefährdend",
+    "addHazardPictograms": "Gefahrenpiktogramme hinzufügen",
+    "pictogramLibrary": "Gefahrenpiktogramm-Bibliothek",
+    "selectHazardPictograms": "Gefahrenpiktogramme für Ihr Experiment auswählen",
+    "ghsInfo": "Wählen Sie ein oder mehrere Gefahrenpiktogramme unten aus. Diese folgen den Standards des Global Harmonisierten Systems (GHS).",
+    "pictogramsSelected": "{{count}} Piktogramm ausgewählt",
+    "pictogramsSelected_plural": "{{count}} Piktogramme ausgewählt",
+    "addSelected": "Ausgewählte hinzufügen ({{count}})"
   }
 }
 

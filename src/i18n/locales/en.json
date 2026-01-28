@@ -293,6 +293,33 @@
     "iconsSelected": "{{count}} icon selected",
     "iconsSelected_plural": "{{count}} icons selected",
     "addSelected": "Add Selected ({{count}})"
+  },
+  "hazard": {
+    "explosive": "Explosive",
+    "explosiveDesc": "Explosive hazard",
+    "flammable": "Flammable",
+    "flammableDesc": "Highly/Extremely flammable",
+    "oxidizing": "Oxidizing",
+    "oxidizingDesc": "Oxidizing agent",
+    "compressedGas": "Compressed Gas",
+    "compressedGasDesc": "Compressed gases",
+    "corrosive": "Corrosive",
+    "corrosiveDesc": "Corrosive substance",
+    "toxic": "Acute Toxicity",
+    "toxicDesc": "Toxic/Highly toxic",
+    "irritant": "Irritant/Harmful",
+    "irritantDesc": "Health hazard",
+    "healthHazard": "Health Hazard",
+    "healthHazardDesc": "Harmful to health",
+    "environmental": "Environmental Hazard",
+    "environmentalDesc": "Harmful to environment",
+    "addHazardPictograms": "Add Hazard Pictograms",
+    "pictogramLibrary": "Hazard Pictogram Library",
+    "selectHazardPictograms": "Select hazard pictograms to add to your experiment",
+    "ghsInfo": "Select one or more hazard pictograms below. These follow the Globally Harmonized System (GHS) standards.",
+    "pictogramsSelected": "{{count}} pictogram selected",
+    "pictogramsSelected_plural": "{{count}} pictograms selected",
+    "addSelected": "Add Selected ({{count}})"
   }
 }
 

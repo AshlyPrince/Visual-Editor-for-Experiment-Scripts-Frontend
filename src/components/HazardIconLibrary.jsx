@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
@@ -27,73 +28,74 @@ import ghsIrritant from '../assets/icons/ghs/GHS07-irritant.png';
 import ghsHealthHazard from '../assets/icons/ghs/GHS08-health-hazard.png';
 import ghsEnvironmental from '../assets/icons/ghs/GHS09-environmental.png';
 
-const DEFAULT_HAZARD_ICONS = [
-  {
-    id: 'explosive',
-    code: 'GHS01',
-    name: 'Explosive',
-    description: 'Explosionsgefährlich',
-    data: ghsExplosive
-  },
-  {
-    id: 'flammable',
-    code: 'GHS02',
-    name: 'Flammable',
-    description: 'Leicht/Hoch entzündlich',
-    data: ghsFlammable
-  },
-  {
-    id: 'oxidizing',
-    code: 'GHS03',
-    name: 'Oxidizing',
-    description: 'Brandfördernd',
-    data: ghsOxidizing
-  },
-  {
-    id: 'compressed-gas',
-    code: 'GHS04',
-    name: 'Compressed Gas',
-    description: 'Komprimierte Gase',
-    data: ghsCompressedGas
-  },
-  {
-    id: 'corrosive',
-    code: 'GHS05',
-    name: 'Corrosive',
-    description: 'Ätzend',
-    data: ghsCorrosive
-  },
-  {
-    id: 'toxic',
-    code: 'GHS06',
-    name: 'Acute Toxicity',
-    description: 'Giftig/Sehr giftig',
-    data: ghsToxic
-  },
-  {
-    id: 'irritant',
-    code: 'GHS07',
-    name: 'Irritant/Harmful',
-    description: 'Gesundheitsgefährdend',
-    data: ghsIrritant
-  },
-  {
-    id: 'health-hazard',
-    code: 'GHS08',
-    name: 'Health Hazard',
-    description: 'Gesundheitsschädlich',
-    data: ghsHealthHazard
-  },
-  {
-    id: 'environmental',
-    code: 'GHS09',
-    name: 'Environmental Hazard',
-    description: 'Umweltgefährdend',
-    data: ghsEnvironmental
-  }
-];
-
 const HazardIconLibrary = ({ onIconsSelected }) => {
+  const { t } = useTranslation();
+  
+  const DEFAULT_HAZARD_ICONS = [
+    {
+      id: 'explosive',
+      code: 'GHS01',
+      name: t('hazard.explosive'),
+      description: t('hazard.explosiveDesc'),
+      data: ghsExplosive
+    },
+    {
+      id: 'flammable',
+      code: 'GHS02',
+      name: t('hazard.flammable'),
+      description: t('hazard.flammableDesc'),
+      data: ghsFlammable
+    },
+    {
+      id: 'oxidizing',
+      code: 'GHS03',
+      name: t('hazard.oxidizing'),
+      description: t('hazard.oxidizingDesc'),
+      data: ghsOxidizing
+    },
+    {
+      id: 'compressed-gas',
+      code: 'GHS04',
+      name: t('hazard.compressedGas'),
+      description: t('hazard.compressedGasDesc'),
+      data: ghsCompressedGas
+    },
+    {
+      id: 'corrosive',
+      code: 'GHS05',
+      name: t('hazard.corrosive'),
+      description: t('hazard.corrosiveDesc'),
+      data: ghsCorrosive
+    },
+    {
+      id: 'toxic',
+      code: 'GHS06',
+      name: t('hazard.toxic'),
+      description: t('hazard.toxicDesc'),
+      data: ghsToxic
+    },
+    {
+      id: 'irritant',
+      code: 'GHS07',
+      name: t('hazard.irritant'),
+      description: t('hazard.irritantDesc'),
+      data: ghsIrritant
+    },
+    {
+      id: 'health-hazard',
+      code: 'GHS08',
+      name: t('hazard.healthHazard'),
+      description: t('hazard.healthHazardDesc'),
+      data: ghsHealthHazard
+    },
+    {
+      id: 'environmental',
+      code: 'GHS09',
+      name: t('hazard.environmental'),
+      description: t('hazard.environmentalDesc'),
+      data: ghsEnvironmental
+    }
+  ];
   const [open, setOpen] = useState(false);
   const [selectedIcons, setSelectedIcons] = useState([]);
 
@@ -134,7 +136,7 @@ const HazardIconLibrary = ({ onIconsSelected }) => {
         onClick={() => setOpen(true)}
         sx={{ mb: 1 }}
       >
-        Add Hazard Pictograms
+        {t('hazard.addHazardPictograms')}
       </Button>
 
       <Dialog 
@@ -144,15 +146,15 @@ const HazardIconLibrary = ({ onIconsSelected }) => {
         fullWidth
       >
         <DialogTitle>
-          Hazard Pictogram Library
+          {t('hazard.pictogramLibrary')}
           <Typography variant="body2" color="text.secondary">
-            Select hazard pictograms to add to your experiment
+            {t('hazard.selectHazardPictograms')}
           </Typography>
         </DialogTitle>
         
         <DialogContent>
           <Alert severity="info" sx={{ mb: 2 }}>
-            Select one or more hazard pictograms below. These follow the Globally Harmonized System (GHS) standards.
+            {t('hazard.ghsInfo')}
           </Alert>
 
           <Grid container spacing={2}>
@@ -210,18 +212,18 @@ const HazardIconLibrary = ({ onIconsSelected }) => {
         <DialogActions>
           <Stack direction="row" spacing={2} width="100%" justifyContent="space-between" alignItems="center">
             <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>
-              {selectedIcons.length} pictogram{selectedIcons.length !== 1 ? 's' : ''} selected
+              {t('hazard.pictogramsSelected', { count: selectedIcons.length })}
             </Typography>
             <Box>
               <Button onClick={() => setOpen(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button 
                 variant="contained" 
                 onClick={handleAddSelected}
                 disabled={selectedIcons.length === 0}
               >
-                Add Selected ({selectedIcons.length})
+                {t('hazard.addSelected', { count: selectedIcons.length })}
               </Button>
             </Box>
           </Stack>
