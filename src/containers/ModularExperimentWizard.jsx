@@ -309,13 +309,35 @@ const ModularExperimentWizard = ({
     program: ''
   });
 
-  const [selectedSections, setSelectedSections] = useState(() => {
+  const [selectedSectionIds, setSelectedSectionIds] = useState(() => {
+    if (savedState?.selectedSectionIds) {
+      return savedState.selectedSectionIds;
+    }
+    
+    // For backward compatibility with old savedState
     if (savedState?.selectedSections) {
-      return savedState.selectedSections;
+      return savedState.selectedSections.map(s => s.id);
     }
     
     return [];
   });
+
+  // Compute actual sections from IDs so translations update dynamically
+  const selectedSections = React.useMemo(() => {
+    return selectedSectionIds
+      .map(id => {
+        // First check availableSections
+        const available = availableSections.find(s => s.id === id);
+        if (available) return available;
+        
+        // Then check customSections
+        const custom = customSections.find(s => s.id === id);
+        if (custom) return custom;
+        
+        return null;
+      })
+      .filter(Boolean);
+  }, [selectedSectionIds, availableSections, customSections]);
 
   const [customSections, setCustomSections] = useState(savedState?.customSections || []);
   const [sectionContent, setSectionContent] = useState(savedState?.sectionContent || {});
@@ -334,10 +356,10 @@ const ModularExperimentWizard = ({
 
   
   useEffect(() => {
-    if (!existingExperiment && (basicInfo.title || selectedSections.length > 0)) {
+    if (!existingExperiment && (basicInfo.title || selectedSectionIds.length > 0)) {
       const stateToSave = {
         basicInfo,
-        selectedSections,
+        selectedSectionIds, // Store IDs only for proper translation on reload
         customSections,
         sectionContent,
         currentStep,
@@ -349,7 +371,7 @@ const ModularExperimentWizard = ({
       } catch (error) {
       }
     }
-  }, [basicInfo, selectedSections, customSections, sectionContent, currentStep, completedSteps, existingExperiment]);
+  }, [basicInfo, selectedSectionIds, customSections, sectionContent, currentStep, completedSteps, existingExperiment]);
 
   
   const clearSavedState = () => {
@@ -381,15 +403,33 @@ const ModularExperimentWizard = ({
       setSectionContent(wizardState);
       
       
-      const loadedSections = canonical.content.sections.map(section => {
-        const template = availableSections.find(s => s.id === section.id);
-        return template || { 
+      // Store only IDs so translations work properly
+      const sectionIds = canonical.content.sections.map(section => section.id);
+      setSelectedSectionIds(sectionIds);
+      
+      // Also update customSections for any custom sections
+      const customSecs = canonical.content.sections
+        .filter(section => {
+          const isStandard = availableSections.find(s => s.id === section.id);
+          return !isStandard;
+        })
+        .map(section => ({
           id: section.id, 
           name: section.name, 
-          isCustom: true 
-        };
-      });
-      setSelectedSections(loadedSections);
+          isCustom: true,
+          emoji: '📝',
+          category: 'custom',
+          required: false,
+          locked: false,
+          fields: [
+            { id: 'content', label: 'Content', type: 'richtext', required: false }
+          ],
+          defaultContent: { content: '' }
+        }));
+      
+      if (customSecs.length > 0) {
+        setCustomSections(customSecs);
+      }
     }
   }, [existingExperiment, availableSections]);
 
@@ -400,12 +440,12 @@ const ModularExperimentWizard = ({
   const toggleSection = useCallback((section) => {
     if (section.locked) return; 
     
-    setSelectedSections(prev => {
-      const exists = prev.find(s => s.id === section.id);
+    setSelectedSectionIds(prev => {
+      const exists = prev.includes(section.id);
       if (exists) {
-        return prev.filter(s => s.id !== section.id);
+        return prev.filter(id => id !== section.id);
       } else {
-        return [...prev, { ...section, content: { ...section.defaultContent } }];
+        return [...prev, section.id];
       }
     });
   }, []);
@@ -430,7 +470,7 @@ const ModularExperimentWizard = ({
     };
     
     setCustomSections(prev => [...prev, customSection]);
-    setSelectedSections(prev => [...prev, customSection]);
+    setSelectedSectionIds(prev => [...prev, customId]); // Add ID only
     
     
     setNewCustomSectionName('');
@@ -440,7 +480,7 @@ const ModularExperimentWizard = ({
 
   const deleteCustomSection = useCallback((sectionId) => {
     setCustomSections(prev => prev.filter(s => s.id !== sectionId));
-    setSelectedSections(prev => prev.filter(s => s.id !== sectionId));
+    setSelectedSectionIds(prev => prev.filter(id => id !== sectionId));
     setSectionContent(prev => {
       const newContent = { ...prev };
       delete newContent[sectionId];
@@ -642,14 +682,14 @@ const ModularExperimentWizard = ({
   
   const handleCancel = useCallback(() => {
     
-    if (basicInfo.title || selectedSections.length > 0) {
+    if (basicInfo.title || selectedSectionIds.length > 0) {
       setDiscardDialog(true);
     } else {
       if (onCancel) {
         onCancel();
       }
     }
-  }, [basicInfo.title, selectedSections.length, onCancel]);
+  }, [basicInfo.title, selectedSectionIds.length, onCancel]);
 
   const handleDiscardConfirm = () => {
     clearSavedState();
@@ -837,10 +877,10 @@ const ModularExperimentWizard = ({
                   const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
                   const toIndex = index;
                   if (fromIndex !== toIndex) {
-                    const newSections = [...selectedSections];
-                    const [movedSection] = newSections.splice(fromIndex, 1);
-                    newSections.splice(toIndex, 0, movedSection);
-                    setSelectedSections(newSections);
+                    const newIds = [...selectedSectionIds];
+                    const [movedId] = newIds.splice(fromIndex, 1);
+                    newIds.splice(toIndex, 0, movedId);
+                    setSelectedSectionIds(newIds);
                   }
                 }}
                 sx={{
@@ -1861,7 +1901,6 @@ const ModularExperimentWizard = ({
               </Button>
             }
           >
-            <strong>Draft restored!</strong> Your previous work has been loaded. Last saved: {new Date(savedState.timestamp).toLocaleString()}
           </Alert>
         )}
 
