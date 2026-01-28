@@ -71,7 +71,16 @@
     "insufficientPermissions": "Unzureichende Berechtigungen",
     "authServiceUnavailable": "Authentifizierungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.",
     "profileManagementWouldOpen": "Profilverwaltung würde hier in der Produktion geöffnet",
-    "useKeycloakError": "useKeycloak muss innerhalb eines KeycloakProvider verwendet werden"
+    "useKeycloakError": "useKeycloak muss innerhalb eines KeycloakProvider verwendet werden",
+    "connectingToAuthService": "Verbindung zum Authentifizierungsdienst",
+    "pleaseWaitVerifySession": "Bitte warten Sie, während wir Ihre Sitzung überprüfen...",
+    "visualEditor": "Visueller Editor",
+    "secureAuthenticationPoweredByKeycloak": "Sichere Authentifizierung mit Keycloak",
+    "signIn": "Anmelden",
+    "createAccount": "Konto erstellen",
+    "checkingAuthentication": "Authentifizierung wird überprüft...",
+    "authenticatedAs": "Authentifiziert als {{username}}",
+    "notAuthenticated": "Nicht authentifiziert"
   },
   "nav": {
     "dashboard": "Dashboard",

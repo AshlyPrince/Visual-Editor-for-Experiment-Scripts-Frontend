@@ -71,7 +71,16 @@
     "insufficientPermissions": "Insufficient permissions",
     "authServiceUnavailable": "Authentication service unavailable. Please try again later.",
     "profileManagementWouldOpen": "Profile management would open here in production",
-    "useKeycloakError": "useKeycloak must be used within a KeycloakProvider"
+    "useKeycloakError": "useKeycloak must be used within a KeycloakProvider",
+    "connectingToAuthService": "Connecting to Authentication Service",
+    "pleaseWaitVerifySession": "Please wait while we verify your session...",
+    "visualEditor": "Visual Editor",
+    "secureAuthenticationPoweredByKeycloak": "Secure authentication powered by Keycloak",
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "checkingAuthentication": "Checking authentication...",
+    "authenticatedAs": "Authenticated as {{username}}",
+    "notAuthenticated": "Not authenticated"
   },
   "nav": {
     "dashboard": "Dashboard",

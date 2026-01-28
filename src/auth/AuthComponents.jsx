@@ -17,9 +17,11 @@ import {
   VpnKey,
   AccountCircle
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { useKeycloak } from './KeycloakContext.jsx';
 
 export const LoginCard = () => {
+  const { t } = useTranslation();
   const { login, register, loading, error } = useKeycloak();
   const theme = useTheme();
 
@@ -35,10 +37,10 @@ export const LoginCard = () => {
       }}>
         <CircularProgress size={40} sx={{ mb: 3 }} />
         <Typography variant="h6" sx={{ mb: 1 }}>
-          Connecting to Authentication Service
+          {t('auth.connectingToAuthService')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Please wait while we verify your session...
+          {t('auth.pleaseWaitVerifySession')}
         </Typography>
       </Card>
     );
@@ -66,10 +68,10 @@ export const LoginCard = () => {
           <Security fontSize="large" />
         </Avatar>
         <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
-          Visual Editor
+          {t('auth.visualEditor')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Secure authentication powered by Keycloak
+          {t('auth.secureAuthenticationPoweredByKeycloak')}
         </Typography>
       </Box>
 
@@ -95,7 +97,7 @@ export const LoginCard = () => {
             }
           }}
         >
-          Sign In
+          {t('auth.signIn')}
         </Button>
 
         <Button
@@ -105,7 +107,7 @@ export const LoginCard = () => {
           onClick={register}
           sx={{ py: 1.5 }}
         >
-          Create Account
+          {t('auth.createAccount')}
         </Button>
       </Box>
 
@@ -113,7 +115,7 @@ export const LoginCard = () => {
       <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}` }}>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
           <VpnKey fontSize="inherit" />
-          Secured by Keycloak
+          {t('auth.securedByKeycloak')}
         </Typography>
       </Box>
     </Card>
@@ -170,6 +172,7 @@ export const UserProfile = ({ user }) => {
 };
 
 export const AuthStatus = () => {
+  const { t } = useTranslation();
   const { authenticated, loading, userInfo } = useKeycloak();
   const theme = useTheme();
 
@@ -178,7 +181,7 @@ export const AuthStatus = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <CircularProgress size={16} />
         <Typography variant="body2" color="text.secondary">
-          Checking authentication...
+          {t('auth.checkingAuthentication')}
         </Typography>
       </Box>
     );
@@ -195,7 +198,7 @@ export const AuthStatus = () => {
         }}
       />
       <Typography variant="body2" color="text.secondary">
-        {authenticated ? `Authenticated as ${userInfo?.username}` : 'Not authenticated'}
+        {authenticated ? t('auth.authenticatedAs', { username: userInfo?.username }) : t('auth.notAuthenticated')}
       </Typography>
     </Box>
   );
