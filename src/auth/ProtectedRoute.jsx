@@ -55,7 +55,6 @@ export const ProtectedRoute = ({
     );
   }
 
-  // Render protected content
   return children;
 };
 

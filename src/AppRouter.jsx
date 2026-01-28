@@ -197,7 +197,6 @@ function ExperimentEditRoute() {
         const data = await experimentService.getExperiment(parseInt(id));
         setExperiment(data);
       } catch (err) {
-        // Error is displayed to user via error state
         setError('Failed to load experiment. Please try again.');
       } finally {
         setLoading(false);

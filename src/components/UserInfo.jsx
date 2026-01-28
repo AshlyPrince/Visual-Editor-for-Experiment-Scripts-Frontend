@@ -43,7 +43,6 @@ const UserInfo = () => {
     if (accountUrl && accountUrl !== '#') {
       window.open(accountUrl, '_blank');
     } else {
-      // Error is displayed to user via alert dialog
       alert('Unable to open account management. Please check Keycloak configuration.');
     }
     handleClose();

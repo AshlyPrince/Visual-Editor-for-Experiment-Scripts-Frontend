@@ -216,7 +216,6 @@ export const useAuth = () => {
           setIsAuthenticated(true);
         }
       } catch (error) {
-        // Auth initialization failed - user will need to login manually
       } finally {
         setLoading(false);
       }

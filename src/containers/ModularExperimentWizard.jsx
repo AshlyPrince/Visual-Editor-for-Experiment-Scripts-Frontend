@@ -113,7 +113,6 @@ const ModularExperimentWizard = ({
         return JSON.parse(saved);
       }
     } catch (error) {
-      // Failed to load saved state - user will start fresh
     }
     return null;
   };
@@ -333,7 +332,6 @@ const ModularExperimentWizard = ({
 
   
   useEffect(() => {
-    // Auto-save wizard state to localStorage (except when editing existing experiment)
     if (!existingExperiment && (basicInfo.title || selectedSections.length > 0)) {
       const stateToSave = {
         basicInfo,
@@ -347,7 +345,6 @@ const ModularExperimentWizard = ({
       try {
         localStorage.setItem('wizardState', JSON.stringify(stateToSave));
       } catch (error) {
-        // Failed to save - continue without auto-save
       }
     }
   }, [basicInfo, selectedSections, customSections, sectionContent, currentStep, completedSteps, existingExperiment]);
@@ -357,7 +354,6 @@ const ModularExperimentWizard = ({
     try {
       localStorage.removeItem('wizardState');
     } catch (error) {
-      // Failed to clear saved state - not critical
     }
   };
 

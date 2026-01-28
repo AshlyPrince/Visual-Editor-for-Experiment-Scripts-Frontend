@@ -13,12 +13,10 @@ class KeycloakService {
    * Initialize Keycloak authentication
    */
   async initialize(config = {}) {
-    // Prevent multiple simultaneous initializations
     if (this.initializing) {
       return this.authenticated;
     }
     
-    // Prevent infinite retry loops - only attempt once per session
     const lastAttempt = sessionStorage.getItem('keycloak_init_attempted');
     if (this.initAttempted && this.authError && lastAttempt === 'true') {
       return false;
@@ -30,30 +28,25 @@ class KeycloakService {
     
     try {
       const keycloakConfig = {
-        url: config.url || import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/',
+        url: config.url || import.meta.env.VITE_KEYCLOAK_URL || 'https:
         realm: config.realm || import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm',
         clientId: config.clientId || import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor'
       };
 
-      // Dynamically import Keycloak
       const Keycloak = (await import('keycloak-js')).default;
       
       this.keycloak = new Keycloak(keycloakConfig);
 
-      // Check for error or auth params in URL
       const hasError = window.location.hash.includes('error=');
       const hasAuthParams = window.location.search.includes('code=') || 
                            window.location.hash.includes('code=') ||
                            window.location.search.includes('state=') || 
                            window.location.hash.includes('state=');
       
-      // Clean up error from URL
       if (hasError) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       
-      // Universal configuration for manual login
-      // Don't use check-sso to avoid silent authentication attempts
       const initOptions = {
         onLoad: this.keycloak ? 'check-sso' : 'login-required',
         checkLoginIframe: false,
@@ -63,7 +56,6 @@ class KeycloakService {
         promiseType: 'native'
       };
 
-      // Initialize Keycloak with shorter timeout - fail fast on mobile
       const initPromise = this.keycloak.init(initOptions);
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Keycloak init timeout after 5 seconds')), 5000)
@@ -71,7 +63,6 @@ class KeycloakService {
       
       this.authenticated = await Promise.race([initPromise, timeoutPromise]);
       
-      // Clean up auth params from URL after successful authentication
       if (this.authenticated && hasAuthParams) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -83,7 +74,6 @@ class KeycloakService {
 
       return this.authenticated;
     } catch (error) {
-      // Store the error and return false - prevent retry loops
       this.authError = {
         message: 'Authentication service unavailable',
         details: error.message || 'Unable to connect to authentication server.',
@@ -122,13 +112,11 @@ class KeycloakService {
       setInterval(() => {
         this.keycloak.updateToken(60).then((refreshed) => {
           if (refreshed) {
-            // Token was refreshed successfully
           }
         }).catch(() => {
-          // Token refresh failed - user needs to re-authenticate
           this.authenticated = false;
         });
-      }, 30000); // Check every 30 seconds
+      }, 30000);
     }
   }
 
@@ -173,7 +161,6 @@ class KeycloakService {
    * Initiate login flow
    */
   async login() {
-    // Prevent multiple login attempts
     if (this.isLoggingIn) {
       return;
     }
@@ -181,15 +168,13 @@ class KeycloakService {
     this.isLoggingIn = true;
     
     try {
-      const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/';
+      const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || 'https:
       const realm = import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm';
       const clientId = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor';
       
-      // Build the login URL manually to avoid init issues
       const redirectUri = encodeURIComponent(window.location.origin);
       const loginUrl = `${keycloakUrl}realms/${realm}/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
       
-      // Direct redirect to Keycloak login page
       window.location.href = loginUrl;
     } catch (error) {
       console.error('Login failed:', error);

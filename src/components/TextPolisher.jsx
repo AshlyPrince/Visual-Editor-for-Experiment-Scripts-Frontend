@@ -44,7 +44,6 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
       const improved = await polishText(originalText, context);
       setPolishedText(improved);
     } catch (err) {
-      // Error is displayed to user via Alert component
       setError(err.message || 'Failed to polish text');
     } finally {
       setLoading(false);
@@ -64,7 +63,6 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      // Show error to user via error state
       setError('Failed to copy to clipboard');
     }
   };

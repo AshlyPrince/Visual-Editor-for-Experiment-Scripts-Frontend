@@ -198,7 +198,6 @@ const ExperimentWizard = ({
     switch (currentStepId) {
       case 'sections':
         if (selectedSections.length === 0) {
-          // Validation handled by button disabled state
           return;
         }
         markStepComplete(currentStep);
@@ -207,7 +206,6 @@ const ExperimentWizard = ({
       case 'configure':
         const validation = validateExperimentConfig();
         if (!validation.isValid) {
-          // Validation errors will be shown in form fields
           return;
         }
         markStepComplete(currentStep);
@@ -223,22 +221,18 @@ const ExperimentWizard = ({
         
       case 'create':
         try {
-          // Prepare wizard data
           const wizardData = {
             sections: selectedSections,
             config: stepData[1] || {}
           };
           
-          // Create experiment from wizard data
           const createdExperiment = await experimentService.createFromWizard(wizardData);
           
-          // Call completion callback
           if (onComplete) {
             onComplete(createdExperiment);
           }
           return;
         } catch (error) {
-          // Error will be displayed via createError state in the UI
           return;
         }
     }

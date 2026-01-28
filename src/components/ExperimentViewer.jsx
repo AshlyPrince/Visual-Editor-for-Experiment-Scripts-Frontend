@@ -90,7 +90,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       
       setExperiment(canonical);
     } catch (err) {
-      // Error is displayed to user via error state and UI message
       setError(err.message || 'Unable to load experiment. Please try again.');
     } finally {
       setLoading(false);
@@ -887,7 +886,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         const url = new URL(link.href);
         window.open(url.href, '_blank', 'noopener,noreferrer');
       } catch {
-        // Error is displayed to user via alert dialog
         alert('This link appears to be invalid and cannot be opened.');
       }
     }

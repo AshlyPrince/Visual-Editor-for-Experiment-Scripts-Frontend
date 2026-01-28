@@ -68,12 +68,10 @@ function AppContent() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      // Check if we're returning from Keycloak (URL has ?code= parameter)
       const urlParams = new URLSearchParams(window.location.search);
       const authCode = urlParams.get('code');
       
       if (authCode) {
-        // We have an auth code, initialize Keycloak to handle the callback
         setLoading(true);
         setVerifying(true);
         try {
@@ -81,7 +79,6 @@ function AppContent() {
           const isAuth = keycloakService.isAuthenticated();
           setAuthenticated(isAuth);
           if (isAuth) {
-            // Clean up URL
             window.history.replaceState({}, document.title, window.location.pathname);
           }
         } catch (error) {
@@ -92,7 +89,6 @@ function AppContent() {
           setVerifying(false);
         }
       } else if (hasExistingToken) {
-        // Just check if user already has a valid token
         const isAuth = keycloakService.isAuthenticated();
         setAuthenticated(isAuth);
       }

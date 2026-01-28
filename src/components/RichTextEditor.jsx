@@ -71,7 +71,6 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       updateToolbarState();
       handleContentChange();
     } catch {
-      // Command execution failed silently - editor remains functional
     }
   };
 
@@ -81,7 +80,6 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       setIsItalic(document.queryCommandState('italic'));
       setIsUnderline(document.queryCommandState('underline'));
     } catch {
-      // Toolbar state update failed silently - no user impact
     }
   };
 
@@ -156,15 +154,15 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       let validUrl = linkUrl.trim();
       
       
-      if (!validUrl.match(/^https?:\/\//i)) {
-        validUrl = 'https://' + validUrl;
+      if (!validUrl.match(/^https?:\/\
+        validUrl = 'https:
       }
       
       
       try {
         new URL(validUrl);
       } catch {
-        alert('Please enter a valid URL (e.g., https://example.com)');
+        alert('Please enter a valid URL (e.g., https:
         return;
       }
       
@@ -180,7 +178,6 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
         document.execCommand('insertHTML', false, linkHTML);
         handleContentChange();
       } catch {
-        // Link insertion failed silently - editor remains functional
       }
       
       
@@ -232,7 +229,6 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       setTableCaption(''); 
       editorRef.current?.focus();
     } catch {
-      // Table insertion failed silently - editor remains functional
     }
   };
 
@@ -402,7 +398,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
               label="URL"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
-              placeholder="https://example.com"
+              placeholder="https:
               fullWidth
               autoFocus
               helperText="Enter the web address to link to"

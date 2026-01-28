@@ -366,13 +366,9 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         htmlContent += `
             <div class="media-gallery">
                 ${sectionMedia.map(mediaItem => {
-                      // Check if it's an image (type starts with 'image/')
                       if (mediaItem.type && mediaItem.type.startsWith('image')) {
-                        // Handle both base64 data URLs and file paths
                         let imageSrc = mediaItem.data;
-                        // If it's a relative path (not starting with data: or http), convert to absolute
                         if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
-                          // Convert relative path to absolute URL
                           imageSrc = new URL(imageSrc, window.location.origin).href;
                         }
                         return `
@@ -533,7 +529,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         container.innerHTML += `<div style="margin-bottom: 30px;">`;
         container.innerHTML += `<h2 style="color: #1976d2; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px;">${icon} ${sectionTitle}</h2>`;
 
-        // Render media FIRST (before text content) to match viewer layout
         if (sectionMedia && sectionMedia.length > 0) {
           container.innerHTML += `
             <div style="margin-bottom: 20px;">
@@ -572,7 +567,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           `;
         }
 
-        // Now render text content AFTER media
         if (Array.isArray(sectionContent)) {
           
           container.innerHTML += `

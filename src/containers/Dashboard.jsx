@@ -192,7 +192,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
         setError(null);
       } catch (err) {
-        // Error is displayed to user via error state banner and notification
         setError('Unable to load experiments. Please refresh the page or contact support if the problem persists.');
         setExperiments([]);
         setAllExperiments([]);

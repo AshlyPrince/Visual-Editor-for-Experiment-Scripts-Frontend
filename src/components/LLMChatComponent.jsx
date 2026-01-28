@@ -66,7 +66,6 @@ const LLMChatComponent = ({
         onResponse(response.content, userInput);
       }
     } catch (err) {
-      // Error is displayed to user via error state and Alert component
     }
   };
 

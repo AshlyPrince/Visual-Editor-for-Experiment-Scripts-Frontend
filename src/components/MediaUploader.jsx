@@ -201,7 +201,6 @@ const MediaUploader = ({
       onChange([...media, ...newMediaItems]);
 
     } catch (err) {
-      // Error is displayed to user via Alert component
       setError('Failed to upload files. Please try again.');
     } finally {
       setUploading(false);

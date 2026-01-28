@@ -67,7 +67,6 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
       const comparisonResult = compareVersions(version1, version2);
       setComparison(comparisonResult);
     } catch (err) {
-      // Error is displayed to user via error state with Alert component and Retry button
       setError(err.message || 'Failed to compare versions');
     } finally {
       setLoading(false);

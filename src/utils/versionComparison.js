@@ -488,17 +488,16 @@ export const formatValue = (value) => {
   
   
   if (typeof value === 'string' && value.includes('<')) {
-    // Strip HTML tags and decode HTML entities
     const strippedValue = value
-      .replace(/<br\s*\/?>/gi, '\n')  // Replace <br> with newline
-      .replace(/<\/p>/gi, '\n')       // Replace closing </p> with newline
-      .replace(/<[^>]+>/g, '')        // Remove all remaining HTML tags
-      .replace(/&nbsp;/g, ' ')        // Decode non-breaking spaces
-      .replace(/&lt;/g, '<')          // Decode less than
-      .replace(/&gt;/g, '>')          // Decode greater than
-      .replace(/&amp;/g, '&')         // Decode ampersand
-      .replace(/&quot;/g, '"')        // Decode quotes
-      .replace(/&#39;/g, "'")         // Decode apostrophes
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
       .trim();
     
     return strippedValue || '(empty)';

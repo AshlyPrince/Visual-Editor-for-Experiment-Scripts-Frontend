@@ -270,7 +270,6 @@ export class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Error is displayed to user via AlertMessage in render method
   }
 
   render() {

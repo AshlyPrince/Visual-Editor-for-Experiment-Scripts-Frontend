@@ -49,7 +49,6 @@ export const KeycloakProvider = ({ children }) => {
           setUserInfo(null);
         }
       } catch {
-        // Error is stored in error state and handled by parent components
         setError('Authentication service unavailable. Please try again later.');
       } finally {
         setLoading(false);
