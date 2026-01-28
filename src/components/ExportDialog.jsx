@@ -527,13 +527,52 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         
         const sectionContent = section.content;
         const sectionMedia = section.media || []; 
-        const icon = getSectionIcon(section.id);
+        const icon = section.emoji || getSectionIcon(section.id);
         const sectionTitle = section.name || section.title || section.id || 'Section';
         
         container.innerHTML += `<div style="margin-bottom: 30px;">`;
         container.innerHTML += `<h2 style="color: #1976d2; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px;">${icon} ${sectionTitle}</h2>`;
 
-        
+        // Render media FIRST (before text content) to match viewer layout
+        if (sectionMedia && sectionMedia.length > 0) {
+          container.innerHTML += `
+            <div style="margin-bottom: 20px;">
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                ${sectionMedia.map(mediaItem => {
+                  if (mediaItem.type === 'image') {
+                    return `
+                      <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #f5f5f5;">
+                        <img src="${mediaItem.data}" 
+                             alt="${mediaItem.caption || mediaItem.name || 'Image'}" 
+                             style="width: 100%; height: auto; display: block; max-height: 300px; object-fit: contain;"
+                             crossorigin="anonymous" />
+                        ${mediaItem.caption ? `
+                          <div style="padding: 8px; background-color: #f5f5f5; font-size: 11px; color: #666; font-style: italic; text-align: center;">
+                            ${mediaItem.caption}
+                          </div>
+                        ` : ''}
+                      </div>
+                    `;
+                  } else if (mediaItem.type === 'video') {
+                    return `
+                      <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #000; position: relative; min-height: 150px; display: flex; align-items: center; justify-content: center;">
+                        <div style="color: white; text-align: center; padding: 20px;">
+                          <div style="font-size: 48px; margin-bottom: 10px;">🎥</div>
+                          <div style="font-size: 12px;">${mediaItem.name || 'Video file'}</div>
+                          ${mediaItem.caption ? `<div style="font-size: 10px; margin-top: 5px; font-style: italic;">${mediaItem.caption}</div>` : ''}
+                          <div style="font-size: 10px; margin-top: 10px; color: #999;">Videos cannot be embedded in PDF</div>
+                        </div>
+                      </div>
+                    `;
+                  }
+                  return '';
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        // Now render text content AFTER media
         if (Array.isArray(sectionContent)) {
           
           container.innerHTML += `
@@ -574,46 +613,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
               `;
             }
           });
-        }
-        
-        
-        if (sectionMedia && sectionMedia.length > 0) {
-          container.innerHTML += `
-            <div style="margin-top: 20px;">
-              <div style="font-weight: bold; color: #555; margin-bottom: 10px; font-size: 14px;">📷 Media (${sectionMedia.length})</div>
-              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                ${sectionMedia.map(mediaItem => {
-                  if (mediaItem.type === 'image') {
-                    return `
-                      <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #f5f5f5;">
-                        <img src="${mediaItem.data}" 
-                             alt="${mediaItem.caption || mediaItem.name || 'Image'}" 
-                             style="width: 100%; height: auto; display: block; max-height: 300px; object-fit: contain;"
-                             crossorigin="anonymous" />
-                        ${mediaItem.caption ? `
-                          <div style="padding: 8px; background-color: #f5f5f5; font-size: 11px; color: #666; font-style: italic; text-align: center;">
-                            ${mediaItem.caption}
-                          </div>
-                        ` : ''}
-                      </div>
-                    `;
-                  } else if (mediaItem.type === 'video') {
-                    return `
-                      <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #000; position: relative; min-height: 150px; display: flex; align-items: center; justify-content: center;">
-                        <div style="color: white; text-align: center; padding: 20px;">
-                          <div style="font-size: 48px; margin-bottom: 10px;">🎥</div>
-                          <div style="font-size: 12px;">${mediaItem.name || 'Video file'}</div>
-                          ${mediaItem.caption ? `<div style="font-size: 10px; margin-top: 5px; font-style: italic;">${mediaItem.caption}</div>` : ''}
-                          <div style="font-size: 10px; margin-top: 10px; color: #999;">Videos cannot be embedded in PDF</div>
-                        </div>
-                      </div>
-                    `;
-                  }
-                  return '';
-                }).join('')}
-              </div>
-            </div>
-          `;
         }
         
         container.innerHTML += `</div>`;
