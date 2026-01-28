@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import App from './App.jsx'
 import { professionalTheme } from './styles/theme'
 import './index.css'
+import './i18n/config.js'
 
 window.keycloak = null;
 
