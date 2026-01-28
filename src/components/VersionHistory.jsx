@@ -69,7 +69,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
       setExperiment(expData);
       setVersions(versionsData);
     } catch (err) {
-      setError(err.message || 'Unable to load version history. Please try again.');
+      setError(err.message || t('versionHistory.unableToLoad'));
     } finally {
       setLoading(false);
     }
@@ -129,7 +129,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
         onVersionRestored(versionToRestore);
       }
     } catch (err) {
-      alert('Unable to restore version. ' + err.message);
+      alert(t('versionHistory.unableToRestore') + ' ' + err.message);
     } finally {
       setRestoring(false);
     }
@@ -189,7 +189,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
       <Box p={3}>
         <Alert severity="error">{error}</Alert>
         <Button onClick={loadData} sx={{ mt: 2 }}>
-          Retry
+          {t('common.retry')}
         </Button>
       </Box>
     );
@@ -393,7 +393,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                 <strong>{t('version.commitMessage')}:</strong> {versionToRestore.commit_message}
               </Typography>
               <Typography variant="body2" sx={{ mt: 1 }}>
-                <strong>Created:</strong> {formatDate(versionToRestore.created_at)}
+                <strong>{t('versionHistory.created')}:</strong> {formatDate(versionToRestore.created_at)}
               </Typography>
             </Box>
           )}
@@ -427,14 +427,14 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box>
               <Typography variant="h5" component="span" fontWeight={600}>
-                Version {versionToView?.version_number}
+                {t('version.versionNumber', { number: versionToView?.version_number })}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 {formatDate(versionToView?.created_at)}
               </Typography>
             </Box>
             <Chip
-              label={versionToView?.commit_message || 'No message'}
+              label={versionToView?.commit_message || t('versionHistory.noMessage')}
               variant="outlined"
               sx={{ fontStyle: 'italic' }}
             />
@@ -445,7 +445,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
         </DialogContent>
         <DialogActions sx={{ borderTop: 1, borderColor: 'divider', p: 2 }}>
           <Button onClick={handleViewClose} size="large">
-            Close
+            {t('versionHistory.closeButton')}
           </Button>
           {!isCurrent(versionToView) && (
             <Button
@@ -458,7 +458,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
               startIcon={<Restore />}
               size="large"
             >
-              Restore This Version
+              {t('versionHistory.restoreThisVersion')}
             </Button>
           )}
         </DialogActions>
@@ -476,17 +476,17 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
         <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h5" component="span" fontWeight={600}>
-              Compare Versions
+              {t('version.compareVersions')}
             </Typography>
             <Box display="flex" gap={2}>
               <Chip 
-                label={`Version ${compareVersions.v1?.version_number}`} 
+                label={t('version.versionNumber', { number: compareVersions.v1?.version_number })}
                 color="info"
                 variant="outlined"
               />
               <CompareArrows />
               <Chip 
-                label={`Version ${compareVersions.v2?.version_number}`} 
+                label={t('version.versionNumber', { number: compareVersions.v2?.version_number })}
                 color="success"
                 variant="outlined"
               />
@@ -504,7 +504,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
         </DialogContent>
         <DialogActions sx={{ borderTop: 1, borderColor: 'divider', p: 2 }}>
           <Button onClick={handleCompareClose} size="large">
-            Close
+            {t('versionHistory.closeButton')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -521,7 +521,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
     if (!version?.content) {
       return (
         <Alert severity="info">
-          No content available for this version.
+          {t('versionHistory.noContentAvailable')}
         </Alert>
       );
     }
@@ -539,7 +539,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
       <Box>
         <Paper elevation={0} sx={{ p: 3, mb: 4, mt: 3, bgcolor: 'primary.50', borderRadius: 2 }}>
           <Typography variant="h4" gutterBottom fontWeight={600}>
-            {version.title || actualContent.title || 'Untitled Experiment'}
+            {version.title || actualContent.title || t('versionHistory.untitledExperiment')}
           </Typography>
           
           {(() => {
@@ -566,7 +566,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                   )}
                   {duration && (
                     <Chip 
-                      label={`Duration: ${duration}`} 
+                      label={`${t('versionHistory.duration')}: ${duration}`} 
                       variant="outlined"
                       size="medium"
                     />
@@ -669,7 +669,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                         ) : (
                           
                           <Typography variant="body2" color="text.secondary">
-                            Unable to display content
+                            {t('versionHistory.unableToDisplay')}
                           </Typography>
                         )}
                       </Box>
@@ -680,7 +680,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                         <Typography variant="subtitle2" color="text.secondary" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           {sectionMedia.some(m => m.type === 'image') && <ImageIcon fontSize="small" />}
                           {sectionMedia.some(m => m.type === 'video') && <VideoIcon fontSize="small" />}
-                          Media ({sectionMedia.length})
+                          {t('versionHistory.media')} ({sectionMedia.length})
                         </Typography>
                         <Grid container spacing={2} sx={{ mt: 1 }}>
                           {sectionMedia.map((media, mediaIdx) => (
@@ -698,7 +698,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
           </Stack>
         ) : (
           <Alert severity="info">
-            No sections defined for this version.
+            {t('versionHistory.noSectionsDefined')}
           </Alert>
         )}
       </Box>

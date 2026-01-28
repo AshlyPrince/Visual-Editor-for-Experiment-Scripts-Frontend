@@ -149,6 +149,20 @@
     "newValue": "New Value",
     "deletedValue": "Deleted Value"
   },
+  "versionHistory": {
+    "unableToLoad": "Unable to load version history. Please try again.",
+    "unableToRestore": "Unable to restore version.",
+    "noMessage": "No message",
+    "closeButton": "Close",
+    "restoreThisVersion": "Restore This Version",
+    "created": "Created",
+    "duration": "Duration",
+    "untitledExperiment": "Untitled Experiment",
+    "noContentAvailable": "No content available for this version.",
+    "noSectionsDefined": "No sections defined for this version.",
+    "unableToDisplay": "Unable to display content",
+    "media": "Media"
+  },
   "export": {
     "exportExperiment": "Export Experiment",
     "exportAs": "Export as",

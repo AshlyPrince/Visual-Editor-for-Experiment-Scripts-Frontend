@@ -149,6 +149,20 @@
     "newValue": "Neuer Wert",
     "deletedValue": "Gelöschter Wert"
   },
+  "versionHistory": {
+    "unableToLoad": "Versionsverlauf konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "unableToRestore": "Version konnte nicht wiederhergestellt werden.",
+    "noMessage": "Keine Nachricht",
+    "closeButton": "Schließen",
+    "restoreThisVersion": "Diese Version wiederherstellen",
+    "created": "Erstellt",
+    "duration": "Dauer",
+    "untitledExperiment": "Unbenanntes Experiment",
+    "noContentAvailable": "Kein Inhalt für diese Version verfügbar.",
+    "noSectionsDefined": "Keine Abschnitte für diese Version definiert.",
+    "unableToDisplay": "Inhalt kann nicht angezeigt werden",
+    "media": "Medien"
+  },
   "export": {
     "exportExperiment": "Experiment exportieren",
     "exportAs": "Exportieren als",
