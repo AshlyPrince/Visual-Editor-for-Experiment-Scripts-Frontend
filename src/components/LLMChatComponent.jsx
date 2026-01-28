@@ -21,8 +21,8 @@ import { useLLMChat } from '../../hooks/useLLMChat';
 import { useTranslation } from 'react-i18next';
 
 const LLMChatComponent = ({
-  title = 'AI Assistant',
-  placeholder = 'Ask me anything...',
+  title,
+  placeholder,
   systemPrompt = null,
   onResponse = null,
   initialMessages = [],
@@ -34,6 +34,10 @@ const LLMChatComponent = ({
   const { messages, loading, error, sendMessage, sendWithSystemPrompt, clearMessages, setConversation } = useLLMChat();
   
   const { t } = useTranslation();
+  
+  // Use translated defaults if not provided
+  const displayTitle = title || t('llm.chat.title');
+  const displayPlaceholder = placeholder || t('llm.chat.placeholder');
 
   
   useEffect(() => {
@@ -86,7 +90,7 @@ const LLMChatComponent = ({
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <SmartToyIcon color="primary" />
-              <Typography variant="h6">{title}</Typography>
+              <Typography variant="h6">{displayTitle}</Typography>
             </Box>
             <Tooltip title={t('llm.chat.clearConversation')}>
               <IconButton onClick={clearMessages} size="small" disabled={loading || messages.length === 0}>
@@ -212,7 +216,7 @@ const LLMChatComponent = ({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={placeholder}
+            placeholder={displayPlaceholder}
             disabled={loading}
             variant="outlined"
             size="small"
