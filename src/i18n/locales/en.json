@@ -640,6 +640,7 @@
     "addSelected": "Add Selected ({{count}})"
   },
   "llm": {
+    "failedToSendMessage": "Failed to send message",
     "tabs": {
       "chat": "Chat",
       "improve": "Improve",

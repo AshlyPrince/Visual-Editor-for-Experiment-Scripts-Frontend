@@ -1,9 +1,11 @@
  
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { sendChatConversation } from '../services/llmService';
 
 export const useLLMChat = (initialOptions = {}) => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,7 +45,7 @@ export const useLLMChat = (initialOptions = {}) => {
       
       return assistantMessage;
     } catch (err) {
-      const errorMessage = err.message || 'Failed to send message';
+      const errorMessage = err.message || t('llm.failedToSendMessage');
       setError(errorMessage);
       
       
@@ -84,7 +86,7 @@ export const useLLMChat = (initialOptions = {}) => {
       
       return assistantMessage;
     } catch (err) {
-      const errorMessage = err.message || 'Failed to send message';
+      const errorMessage = err.message || t('llm.failedToSendMessage');
       setError(errorMessage);
       throw err;
     } finally {

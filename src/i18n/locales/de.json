@@ -640,6 +640,7 @@
     "addSelected": "Ausgewählte hinzufügen ({{count}})"
   },
   "llm": {
+    "failedToSendMessage": "Nachricht konnte nicht gesendet werden",
     "tabs": {
       "chat": "Chat",
       "improve": "Verbessern",
