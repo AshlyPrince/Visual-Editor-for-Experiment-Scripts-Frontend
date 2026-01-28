@@ -215,7 +215,9 @@
     "addImagesVideos": "Bilder / Videos hinzufügen",
     "attachMediaToStep": "📷 Bilder oder Videos zu diesem Schritt hinzufügen:",
     "addAdditionalInfo": "Zusätzliche Informationen, Tabellen oder Notizen für diesen Schritt hinzufügen:",
-    "notesPlaceholder": "Tabellen, formatierten Text, Links oder zusätzliche Anweisungen hinzufügen..."
+    "notesPlaceholder": "Tabellen, formatierten Text, Links oder zusätzliche Anweisungen hinzufügen...",
+    "attachImagesVideos": "Bilder oder Videos anhängen",
+    "addCaption": "Bildunterschrift hinzufügen..."
   },
   "buttons": {
     "backToDashboard": "Zurück zum Dashboard",
@@ -250,7 +252,13 @@
     "confirmDeleteInfo": "Alle Versionen und zugehörigen Daten werden dauerhaft entfernt.",
     "noContentAvailable": "Kein Inhalt verfügbar",
     "noItemsYet": "Noch keine Elemente hinzugefügt",
-    "itemsCount": "{{count}} / {{max}} Elemente"
+    "itemsCount": "{{count}} / {{max}} Elemente",
+    "fileExceedsLimit": "Datei \"{{name}}\" überschreitet das Limit von {{size}}MB",
+    "unsupportedFileType": "Datei \"{{name}}\" ist kein unterstützter Medientyp",
+    "imagesNotAccepted": "Bilder werden nicht akzeptiert",
+    "videosNotAccepted": "Videos werden nicht akzeptiert",
+    "maxFilesExceeded": "Maximal {{max}} Dateien erlaubt",
+    "uploadFailed": "Fehler beim Hochladen der Dateien. Bitte versuchen Sie es erneut."
   },
   "validation": {
     "required": "Dieses Feld ist erforderlich",

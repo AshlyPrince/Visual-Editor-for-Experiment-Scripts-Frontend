@@ -215,7 +215,9 @@
     "addImagesVideos": "Add Images / Videos",
     "attachMediaToStep": "📷 Attach images or videos to this step:",
     "addAdditionalInfo": "Add additional information, tables, or notes for this step:",
-    "notesPlaceholder": "Add tables, formatted text, links, or additional instructions..."
+    "notesPlaceholder": "Add tables, formatted text, links, or additional instructions...",
+    "attachImagesVideos": "Attach Images or Videos",
+    "addCaption": "Add caption..."
   },
   "buttons": {
     "backToDashboard": "Back to Dashboard",
@@ -250,7 +252,13 @@
     "confirmDeleteInfo": "All versions and associated data will be permanently removed.",
     "noContentAvailable": "No content available",
     "noItemsYet": "No items added yet",
-    "itemsCount": "{{count}} / {{max}} items"
+    "itemsCount": "{{count}} / {{max}} items",
+    "fileExceedsLimit": "File \"{{name}}\" exceeds {{size}}MB limit",
+    "unsupportedFileType": "File \"{{name}}\" is not a supported media type",
+    "imagesNotAccepted": "Images are not accepted",
+    "videosNotAccepted": "Videos are not accepted",
+    "maxFilesExceeded": "Maximum {{max}} files allowed",
+    "uploadFailed": "Failed to upload files. Please try again."
   },
   "validation": {
     "required": "This field is required",

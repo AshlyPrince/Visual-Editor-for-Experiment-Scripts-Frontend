@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
@@ -37,8 +38,10 @@ const MediaUploader = ({
   showCaptions = true,
   showSafetyIcons = false,
   showHazardIcons = false,
-  label = 'Attach Images or Videos'
+  label
 }) => {
+  const { t } = useTranslation();
+  const defaultLabel = label || t('editor.attachImagesVideos');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -116,7 +119,7 @@ const MediaUploader = ({
     
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSize) {
-      return `File "${file.name}" exceeds ${maxSize}MB limit`;
+      return t('messages.fileExceedsLimit', { name: file.name, size: maxSize });
     }
 
     
@@ -124,15 +127,15 @@ const MediaUploader = ({
     const isVideo = file.type.startsWith('video/');
     
     if (!isImage && !isVideo) {
-      return `File "${file.name}" is not a supported media type`;
+      return t('messages.unsupportedFileType', { name: file.name });
     }
 
     if (isImage && !acceptImages) {
-      return `Images are not accepted`;
+      return t('messages.imagesNotAccepted');
     }
 
     if (isVideo && !acceptVideos) {
-      return `Videos are not accepted`;
+      return t('messages.videosNotAccepted');
     }
 
     return null;
@@ -146,7 +149,7 @@ const MediaUploader = ({
 
     
     if (media.length + files.length > maxFiles) {
-      setError(`Maximum ${maxFiles} files allowed`);
+      setError(t('messages.maxFilesExceeded', { max: maxFiles }));
       return;
     }
 
@@ -201,7 +204,7 @@ const MediaUploader = ({
       onChange([...media, ...newMediaItems]);
 
     } catch (err) {
-      setError('Failed to upload files. Please try again.');
+      setError(t('messages.uploadFailed'));
     } finally {
       setUploading(false);
       
@@ -265,7 +268,7 @@ const MediaUploader = ({
             disabled={uploading || media.length >= maxFiles}
             fullWidth
           >
-            {label} ({media.length}/{maxFiles})
+            {defaultLabel} ({media.length}/{maxFiles})
           </Button>
         </label>
         
@@ -382,7 +385,7 @@ const MediaUploader = ({
                   {showCaptions && (
                     <input
                       type="text"
-                      placeholder="Add caption..."
+                      placeholder={t('editor.addCaption')}
                       value={item.caption || ''}
                       onChange={(e) => handleCaptionChange(item.id, e.target.value)}
                       style={{
@@ -403,7 +406,7 @@ const MediaUploader = ({
                     onClick={() => handleRemove(item.id)}
                     fullWidth
                   >
-                    Remove
+                    {t('common.remove')}
                   </Button>
                 </CardContent>
               </Card>
