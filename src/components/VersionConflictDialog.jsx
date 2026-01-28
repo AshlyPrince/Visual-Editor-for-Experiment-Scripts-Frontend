@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
@@ -28,6 +29,7 @@ const VersionConflictDialog = ({
   onOpenInNewTab,
   conflictDetails,
 }) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const handleReload = async () => {
@@ -36,7 +38,7 @@ const VersionConflictDialog = ({
       await onReloadLatest();
       onClose();
     } catch (error) {
-      alert('Failed to reload: ' + error.message);
+      alert(t('version.reloadFailed') + ': ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -66,7 +68,7 @@ const VersionConflictDialog = ({
       <DialogTitle>
         <Box display="flex" alignItems="center" gap={1}>
           <WarningIcon color="warning" fontSize="large" />
-          <Typography variant="h6">Version Conflict Detected</Typography>
+          <Typography variant="h6">{t('version.versionConflict')}</Typography>
         </Box>
       </DialogTitle>
       
@@ -74,22 +76,22 @@ const VersionConflictDialog = ({
         <Stack spacing={2}>
           <Alert severity="warning" variant="outlined">
             <Typography variant="body2" gutterBottom>
-              <strong>Version Conflict Detected</strong>
+              <strong>{t('version.conflictDetected')}</strong>
             </Typography>
             <Typography variant="body2">
-              Another user has saved changes to this experiment. Please reload the latest version before continuing.
+              {t('version.conflictMessage')}
             </Typography>
           </Alert>
 
           {conflictDetails && (
             <Paper variant="outlined" sx={{ p: 2, bgcolor: 'background.default' }}>
               <Typography variant="subtitle2" gutterBottom>
-                Conflict Information
+                {t('version.conflictDetails')}
               </Typography>
               <Stack spacing={1}>
                 <Box display="flex" justifyContent="space-between">
                   <Typography variant="body2" color="text.secondary">
-                    Your version:
+                    {t('version.yourVersion')}:
                   </Typography>
                   <Chip 
                     label={`v${conflictDetails.yourVersion}`} 
@@ -99,7 +101,7 @@ const VersionConflictDialog = ({
                 </Box>
                 <Box display="flex" justifyContent="space-between">
                   <Typography variant="body2" color="text.secondary">
-                    Current version:
+                    {t('version.latestVersion')}:
                   </Typography>
                   <Chip 
                     label={`v${conflictDetails.currentVersion}`} 
@@ -110,7 +112,7 @@ const VersionConflictDialog = ({
                 {conflictDetails.updatedBy && (
                   <Box display="flex" justifyContent="space-between">
                     <Typography variant="body2" color="text.secondary">
-                      Modified by:
+                      {t('version.lastModified')}:
                     </Typography>
                     <Typography variant="body2">
                       {conflictDetails.updatedBy}
@@ -124,7 +126,7 @@ const VersionConflictDialog = ({
           <Divider />
 
           <Typography variant="body2" color="text.secondary">
-            Please choose an action to resolve this conflict:
+            {t('version.conflictOptions')}:
           </Typography>
         </Stack>
       </DialogContent>
@@ -139,10 +141,10 @@ const VersionConflictDialog = ({
           fullWidth
           size="large"
         >
-          Reload Latest Version
+          {t('version.reloadLatestVersion')}
         </Button>
         <Typography variant="caption" color="text.secondary" sx={{ px: 2, textAlign: 'center' }}>
-          Load the current version and discard your changes
+          {t('version.reloadLatestDesc')}
         </Typography>
 
         <Divider sx={{ my: 1 }} />
@@ -153,10 +155,10 @@ const VersionConflictDialog = ({
           startIcon={<CopyIcon />}
           fullWidth
         >
-          Copy Changes to Clipboard
+          {t('version.copyChanges')}
         </Button>
         <Typography variant="caption" color="text.secondary" sx={{ px: 2, textAlign: 'center' }}>
-          Save your changes before reloading
+          {t('version.copyChangesDesc')}
         </Typography>
 
         {onOpenInNewTab && (
@@ -167,10 +169,10 @@ const VersionConflictDialog = ({
               startIcon={<OpenInNewIcon />}
               fullWidth
             >
-              Open in New Tab
+              {t('version.openNewTab')}
             </Button>
             <Typography variant="caption" color="text.secondary" sx={{ px: 2, textAlign: 'center' }}>
-              View your changes in a separate window
+              {t('version.openNewTabDesc')}
             </Typography>
           </>
         )}

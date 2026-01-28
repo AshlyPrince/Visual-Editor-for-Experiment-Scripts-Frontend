@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
@@ -21,6 +22,7 @@ import {
 } from '@mui/icons-material';
 
 const ExportDialog = ({ open, onClose, experiment, onExported }) => {
+  const { t } = useTranslation();
   const [exporting, setExporting] = useState(false);
   const [exportType, setExportType] = useState(null);
   const [exportSuccess, setExportSuccess] = useState(false);
@@ -701,7 +703,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         setExportSuccess(false);
       }, 2000);
     } catch {
-      alert('Unable to export PDF. ' + error.message);
+      alert(t('export.exportFailed') + ': ' + error.message);
     } finally {
       setExporting(false);
       setExportType(null);
@@ -717,14 +719,14 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       <DialogTitle>
         <Box display="flex" alignItems="center" gap={1}>
           <ExportIcon color="primary" />
-          <Typography variant="h6">Export Experiment</Typography>
+          <Typography variant="h6">{t('export.exportExperiment')}</Typography>
         </Box>
       </DialogTitle>
       
       <DialogContent>
         <Stack spacing={3}>
           <Alert severity="info">
-            Export your experiment as HTML for web viewing or PDF for printing and sharing.
+            {t('export.exportInfo')}
           </Alert>
 
           <Paper variant="outlined" sx={{ p: 2 }}>
@@ -732,7 +734,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
               <strong>{experiment.title}</strong>
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Version {experiment.version_number || 1}
+              {t('version.version')} {experiment.version_number || 1}
             </Typography>
           </Paper>
 
@@ -760,10 +762,10 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
               >
                 <Box flex={1}>
                   <Typography variant="subtitle1" fontWeight={600}>
-                    {exporting && exportType === 'html' ? 'Generating HTML...' : 'Export as HTML'}
+                    {exporting && exportType === 'html' ? t('export.generatingHTML') : t('export.exportHTML')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Best for web viewing and easy sharing
+                    {t('export.htmlDescription')}
                   </Typography>
                 </Box>
               </Button>
@@ -790,10 +792,10 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
               >
                 <Box flex={1}>
                   <Typography variant="subtitle1" fontWeight={600}>
-                    {exporting && exportType === 'pdf' ? 'Generating PDF...' : 'Export as PDF'}
+                    {exporting && exportType === 'pdf' ? t('export.generatingPDF') : t('export.exportPDF')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Best for printing and professional distribution
+                    {t('export.pdfDescription')}
                   </Typography>
                 </Box>
               </Button>
@@ -806,7 +808,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
               icon={<SuccessIcon />}
               sx={{ animation: 'fadeIn 0.3s' }}
             >
-              Export completed successfully!
+              {t('export.exportSuccess')}
             </Alert>
           )}
         </Stack>
@@ -814,7 +816,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
       <DialogActions>
         <Button onClick={onClose} disabled={exporting}>
-          Close
+          {t('common.close')}
         </Button>
       </DialogActions>
     </Dialog>

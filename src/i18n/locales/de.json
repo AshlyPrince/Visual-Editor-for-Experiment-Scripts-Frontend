@@ -100,6 +100,7 @@
     "unableToSaveConflict": "Speichern wegen Versionskonflikt nicht möglich",
     "changesWillBeSaved": "Änderungen werden als Version {{version}} gespeichert.",
     "reloadLatestVersion": "Neueste Version laden",
+    "reloadFailed": "Neuladen fehlgeschlagen",
     "changesCopied": "Ihre Änderungen wurden in die Zwischenablage kopiert!",
     "noVersions": "Keine Versionen gefunden",
     "restoreVersion": "Version wiederherstellen",
@@ -129,8 +130,13 @@
     "exportAs": "Exportieren als",
     "exportPDF": "Als PDF exportieren",
     "exportHTML": "Als HTML exportieren",
-    "exportSuccess": "Experiment erfolgreich exportiert",
+    "exportSuccess": "Export erfolgreich abgeschlossen!",
+    "exportFailed": "Export fehlgeschlagen",
     "exportInfo": "Exportieren Sie Ihr Experiment als HTML für die Webanzeige oder als PDF zum Drucken und Teilen.",
+    "htmlDescription": "Optimal für Webanzeige und einfaches Teilen",
+    "pdfDescription": "Optimal zum Drucken und professionellen Verteilen",
+    "generatingHTML": "HTML wird generiert...",
+    "generatingPDF": "PDF wird generiert...",
     "downloading": "Wird heruntergeladen..."
   },
   "wizard": {
