@@ -138,11 +138,6 @@ export const CANONICAL_EXPERIMENT = {
   ]
 };
 
-/**
- * Get section definitions with translated names and descriptions.
- * @param {Function} t - The i18next translation function
- * @returns {Object} Section definitions with translated strings
- */
 export function getSectionDefinitions(t) {
   return {
     
@@ -444,17 +439,9 @@ export function getSectionDefinitions(t) {
   };
 }
 
-/**
- * Get section definition with optional translation support.
- * @param {string} sectionId - The section ID
- * @param {Function} t - Optional i18next translation function. If not provided, returns English defaults.
- * @returns {Object|null} Section definition or null if not found
- */
 export function getSectionDefinition(sectionId, t) {
-  
   const baseId = sectionId.replace(/_\d+$/, '');
   
-  // If no translation function provided, use English defaults for backward compatibility
   if (!t) {
     t = (key) => {
       const fallbacks = {
@@ -535,11 +522,6 @@ export function validateSectionAgainstDefinition(section, t = null) {
   return errors;
 }
 
-/**
- * Get available section templates with optional translation support.
- * @param {Function} t - Optional i18next translation function. If not provided, returns English defaults.
- * @returns {Array} Array of section template objects
- */
 export function getAvailableSectionTemplates(t = null) {
   const definitions = getSectionDefinitions(t || ((key) => key));
   return Object.values(definitions).map(def => ({
