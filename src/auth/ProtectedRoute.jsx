@@ -1,4 +1,5 @@
 import { Box, Container, Typography, CircularProgress } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useKeycloak } from './KeycloakContext.jsx';
 import { LoginCard } from './AuthComponents.jsx';
 
@@ -8,6 +9,7 @@ export const ProtectedRoute = ({
   fallback = null,
   showLoginCard = true
 }) => {
+  const { t } = useTranslation();
   const { authenticated, loading, hasAnyRole, userInfo } = useKeycloak();
 
   
@@ -16,7 +18,7 @@ export const ProtectedRoute = ({
       <Container maxWidth="sm" sx={{ py: 8, textAlign: 'center' }}>
         <CircularProgress size={60} sx={{ mb: 3 }} />
         <Typography variant="h6" color="text.secondary">
-          Authenticating...
+          {t('auth.authenticating')}
         </Typography>
       </Container>
     );
@@ -40,16 +42,16 @@ export const ProtectedRoute = ({
     return (
       <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>
-          Access Denied
+          {t('auth.accessDenied')}
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          You don't have permission to access this resource.
+          {t('auth.noPermissionResource')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Current user: {userInfo?.fullName || userInfo?.username}
+          {t('auth.currentUser')}: {userInfo?.fullName || userInfo?.username}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Required roles: {roles.join(', ')}
+          {t('auth.requiredRoles')}: {roles.join(', ')}
         </Typography>
       </Container>
     );
@@ -59,13 +61,14 @@ export const ProtectedRoute = ({
 };
 
 export const RequireRole = ({ roles, children, fallback = null }) => {
+  const { t } = useTranslation();
   const { hasAnyRole } = useKeycloak();
   
   if (!hasAnyRole(roles)) {
     return fallback || (
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
-          Insufficient permissions
+          {t('auth.insufficientPermissions')}
         </Typography>
       </Box>
     );

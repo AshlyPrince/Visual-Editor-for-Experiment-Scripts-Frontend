@@ -62,7 +62,13 @@
     "manageSecurityPreferences": "Manage security preferences",
     "signOut": "Sign Out",
     "securelyEndSession": "Securely end your session",
-    "securedByKeycloak": "Secured by Keycloak"
+    "securedByKeycloak": "Secured by Keycloak",
+    "authenticating": "Authenticating...",
+    "accessDenied": "Access Denied",
+    "noPermissionResource": "You don't have permission to access this resource.",
+    "currentUser": "Current user",
+    "requiredRoles": "Required roles",
+    "insufficientPermissions": "Insufficient permissions"
   },
   "nav": {
     "dashboard": "Dashboard",

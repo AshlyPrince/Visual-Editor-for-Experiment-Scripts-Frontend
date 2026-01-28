@@ -62,7 +62,13 @@
     "manageSecurityPreferences": "Verwalten Sie Ihre Sicherheitseinstellungen",
     "signOut": "Abmelden",
     "securelyEndSession": "Beenden Sie Ihre Sitzung sicher",
-    "securedByKeycloak": "Gesichert durch Keycloak"
+    "securedByKeycloak": "Gesichert durch Keycloak",
+    "authenticating": "Authentifizierung läuft...",
+    "accessDenied": "Zugriff verweigert",
+    "noPermissionResource": "Sie haben keine Berechtigung, auf diese Ressource zuzugreifen.",
+    "currentUser": "Aktueller Benutzer",
+    "requiredRoles": "Erforderliche Rollen",
+    "insufficientPermissions": "Unzureichende Berechtigungen"
   },
   "nav": {
     "dashboard": "Dashboard",
