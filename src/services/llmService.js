@@ -2,7 +2,7 @@
 
 import api from '../lib/api';
 
-export const sendChatMessage = async (message, options = {}) => {
+export const sendChatMessage = async (message, options = {}, t = null) => {
   const {
     model,  
     temperature = 0.7,
@@ -27,24 +27,25 @@ export const sendChatMessage = async (message, options = {}) => {
     
     return response.data;
   } catch {
+    const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
     if (error.response?.status === 500) {
-      throw new Error('AI service is temporarily unavailable. Please try again in a moment.');
+      throw new Error(errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.'));
     } else if (error.response?.status === 404) {
-      throw new Error('AI service is not available. Please contact support.');
+      throw new Error(errorMsg('llm.errors.serviceNotAvailable', 'AI service is not available. Please contact support.'));
     } else if (error.response?.status === 401 || error.response?.status === 403) {
-      throw new Error('Your session has expired. Please log in again.');
+      throw new Error(errorMsg('llm.errors.sessionExpired', 'Your session has expired. Please log in again.'));
     } else if (error.response?.status === 429) {
-      throw new Error('Too many requests. Please wait a moment before trying again.');
+      throw new Error(errorMsg('llm.errors.tooManyRequests', 'Too many requests. Please wait a moment before trying again.'));
     } else if (!error.response) {
-      throw new Error('Unable to connect to AI service. Please check your internet connection.');
+      throw new Error(errorMsg('llm.errors.connectionFailed', 'Unable to connect to AI service. Please check your internet connection.'));
     }
     
-    throw new Error('AI assistance is temporarily unavailable. Please try again.');
+    throw new Error(errorMsg('llm.errors.generalError', 'AI assistance is temporarily unavailable. Please try again.'));
   }
 };
 
-export const sendChatConversation = async (messages, options = {}) => {
+export const sendChatConversation = async (messages, options = {}, t = null) => {
   const {
     model,  
     temperature = 0.7,
@@ -67,27 +68,29 @@ export const sendChatConversation = async (messages, options = {}) => {
     
     return response.data;
   } catch {
+    const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
     if (error.response?.status === 500) {
-      throw new Error('AI service is temporarily unavailable. Please try again in a moment.');
+      throw new Error(errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.'));
     } else if (error.response?.status === 404) {
-      throw new Error('AI service is not available. Please contact support.');
+      throw new Error(errorMsg('llm.errors.serviceNotAvailable', 'AI service is not available. Please contact support.'));
     } else if (error.response?.status === 401 || error.response?.status === 403) {
-      throw new Error('Your session has expired. Please log in again.');
+      throw new Error(errorMsg('llm.errors.sessionExpired', 'Your session has expired. Please log in again.'));
     } else if (error.response?.status === 429) {
-      throw new Error('Too many requests. Please wait a moment before trying again.');
+      throw new Error(errorMsg('llm.errors.tooManyRequests', 'Too many requests. Please wait a moment before trying again.'));
     } else if (!error.response) {
-      throw new Error('Unable to connect to AI service. Please check your internet connection.');
+      throw new Error(errorMsg('llm.errors.connectionFailed', 'Unable to connect to AI service. Please check your internet connection.'));
     }
     
-    throw new Error('AI assistance is temporarily unavailable. Please try again.');
+    throw new Error(errorMsg('llm.errors.generalError', 'AI assistance is temporarily unavailable. Please try again.'));
   }
 };
 
-export const polishText = async (text, context = '') => {
+export const polishText = async (text, context = '', t = null) => {
   
   const trimmedText = text?.trim() || '';
   
+  const errorMsg = (key, fallback) => t ? t(key) : fallback;
   
   const MIN_LENGTH = 10;
   const MIN_WORDS = 2;
@@ -105,11 +108,11 @@ export const polishText = async (text, context = '') => {
   if (isInvalid) {
     
     if (!trimmedText) {
-      return 'No content provided to improve';
+      return errorMsg('llm.feedback.noContent', 'No content provided to improve');
     } else if (trimmedText.length < MIN_LENGTH || wordCount < MIN_WORDS) {
-      return 'Content too short - please add more detail before polishing';
+      return errorMsg('llm.feedback.contentTooShort', 'Content too short - please add more detail before polishing');
     } else {
-      return 'Invalid input - please provide meaningful text';
+      return errorMsg('llm.feedback.invalidInput', 'Invalid input - please provide meaningful text');
     }
   }
   
@@ -190,12 +193,13 @@ Return ONLY the improved text with no explanations or meta-commentary.`;
     );
     
     if (isExplanation) {
-      return 'Needs more detail before polishing';
+      return errorMsg('llm.feedback.needsMoreDetail', 'Needs more detail before polishing');
     }
     
     return improved;
   } catch {
-    throw new Error(`Failed to polish text: ${error.message}`);
+    const errorMessage = errorMsg('llm.feedback.polishFailed', `Failed to polish text: ${error.message}`);
+    throw new Error(errorMessage);
   }
 };
 

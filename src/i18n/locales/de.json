@@ -717,6 +717,21 @@
   },
   "llm": {
     "failedToSendMessage": "Nachricht konnte nicht gesendet werden",
+    "errors": {
+      "serviceUnavailable": "KI-Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.",
+      "serviceNotAvailable": "KI-Dienst ist nicht verfügbar. Bitte kontaktieren Sie den Support.",
+      "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "tooManyRequests": "Zu viele Anfragen. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
+      "connectionFailed": "Verbindung zum KI-Dienst nicht möglich. Bitte überprüfen Sie Ihre Internetverbindung.",
+      "generalError": "KI-Unterstützung ist vorübergehend nicht verfügbar. Bitte versuchen Sie es erneut."
+    },
+    "feedback": {
+      "noContent": "Kein Inhalt zum Verbessern bereitgestellt",
+      "contentTooShort": "Inhalt zu kurz - bitte fügen Sie mehr Details hinzu, bevor Sie polieren",
+      "invalidInput": "Ungültige Eingabe - bitte geben Sie sinnvollen Text ein",
+      "needsMoreDetail": "Benötigt mehr Details vor dem Polieren",
+      "polishFailed": "Text konnte nicht poliert werden: {{message}}"
+    },
     "tabs": {
       "chat": "Chat",
       "improve": "Verbessern",

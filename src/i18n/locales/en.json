@@ -717,6 +717,21 @@
   },
   "llm": {
     "failedToSendMessage": "Failed to send message",
+    "errors": {
+      "serviceUnavailable": "AI service is temporarily unavailable. Please try again in a moment.",
+      "serviceNotAvailable": "AI service is not available. Please contact support.",
+      "sessionExpired": "Your session has expired. Please log in again.",
+      "tooManyRequests": "Too many requests. Please wait a moment before trying again.",
+      "connectionFailed": "Unable to connect to AI service. Please check your internet connection.",
+      "generalError": "AI assistance is temporarily unavailable. Please try again."
+    },
+    "feedback": {
+      "noContent": "No content provided to improve",
+      "contentTooShort": "Content too short - please add more detail before polishing",
+      "invalidInput": "Invalid input - please provide meaningful text",
+      "needsMoreDetail": "Needs more detail before polishing",
+      "polishFailed": "Failed to polish text: {{message}}"
+    },
     "tabs": {
       "chat": "Chat",
       "improve": "Improve",
