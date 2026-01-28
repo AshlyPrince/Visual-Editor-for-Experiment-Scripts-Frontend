@@ -200,21 +200,21 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
       
       if (errorInfo?.shouldReload) {
         const shouldReload = window.confirm(
-          'Version Conflict Detected\n\n' +
-          'Another user has saved changes to this experiment.\n\n' +
-          'Would you like to reload the latest version?\n\n' +
-          'Note: Clicking OK will discard your unsaved changes.\n' +
-          'Click Cancel to copy your changes to clipboard first.'
+          t('editor.versionConflictDetected') + '\n\n' +
+          t('editor.anotherUserSavedChanges') + '\n\n' +
+          t('editor.reloadLatestVersion') + '\n\n' +
+          t('editor.reloadDiscardNote') + '\n' +
+          t('editor.cancelToCopyChanges')
         );
         
         if (shouldReload) {
           await loadExperiment();
           setHasUnsavedChanges(false);
-          alert('Latest version has been loaded successfully.');
+          alert(t('editor.latestVersionLoaded'));
         } else {
           const changes = JSON.stringify(getUpdatedExperiment(), null, 2);
           navigator.clipboard.writeText(changes);
-          alert('Your changes have been copied to clipboard.');
+          alert(t('editor.changesCopiedToClipboard'));
         }
       } else {
         try {
@@ -222,11 +222,11 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           setConflictDetails({
             yourVersion: experiment.current_version_number,
             currentVersion: latestExp.current_version_number,
-            updatedBy: latestExp.updated_by || 'Another user',
+            updatedBy: latestExp.updated_by || t('editor.anotherUser'),
           });
           setConflictDialogOpen(true);
         } catch (err) {
-          alert('Version conflict detected. Please reload the page.');
+          alert(t('editor.versionConflictReload'));
         }
       }
       return;
@@ -325,13 +325,13 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             <ListInput
               items={listItems}
               onChange={(newContent) => updateSectionContent(section.id, newContent)}
-              placeholder={`Add ${section.name.toLowerCase()} items...`}
+              placeholder={t('editor.addItemsPlaceholder', { section: section.name.toLowerCase() })}
             />
           ) : section.type === 'materials_with_media' && section.id !== 'hazards' ? (
             <Box>
               <Alert severity="info" sx={{ mb: 2 }}>
                 <Typography variant="body2">
-                  List all materials students need. You can optionally add a photo to help with recognition.
+                  {t('editor.materialsInstructions')}
                 </Typography>
               </Alert>
               
@@ -340,15 +340,15 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
                   <Card key={index} variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                       <Typography variant="subtitle2" color="text.secondary">
-                        Material {index + 1}
+                        {t('editor.materialNumber', { number: index + 1 })}
                       </Typography>
                     </Box>
                     
                     <Stack spacing={2}>
                       <TextField
                         fullWidth
-                        label="Material name"
-                        placeholder="e.g., Beaker (250ml), Safety goggles, pH meter"
+                        label={t('editor.materialName')}
+                        placeholder={t('editor.materialNamePlaceholder')}
                         value={item.name || ''}
                         onChange={(e) => {
                           const newItems = [...materialsItems];
@@ -361,13 +361,13 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
                       {item.media && item.media.data ? (
                         <Box>
                           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                            Reference photo
+                            {t('editor.referencePhoto')}
                           </Typography>
                           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                             <Box
                               component="img"
                               src={item.media.data}
-                              alt={item.media.name || 'Material photo'}
+                              alt={item.media.name || t('editor.materialPhoto')}
                               sx={{
                                 width: 120,
                                 height: 120,
@@ -383,7 +383,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
                                 variant="outlined"
                                 component="label"
                               >
-                                Replace photo
+                                {t('editor.replacePhoto')}
                                 <input
                                   type="file"
                                   hidden
@@ -420,7 +420,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
                                   updateSectionContent(section.id, newItems);
                                 }}
                               >
-                                Remove photo
+                                {t('editor.removePhoto')}
                               </Button>
                             </Stack>
                           </Box>
@@ -432,7 +432,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
                           component="label"
                           sx={{ alignSelf: 'flex-start' }}
                         >
-                          + Add reference photo (optional)
+                          {t('editor.addReferencePhoto')}
                           <input
                             type="file"
                             hidden
@@ -471,7 +471,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
                           }}
                           sx={{ textTransform: 'none' }}
                         >
-                          Remove material
+                          {t('editor.removeMaterial')}
                         </Button>
                       </Box>
                     </Stack>
@@ -487,7 +487,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
                   }}
                   sx={{ alignSelf: 'flex-start' }}
                 >
-                  Add Material
+                  {t('editor.addMaterial')}
                 </Button>
               </Stack>
             </Box>
@@ -495,7 +495,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             <RichTextEditor
               value={typeof section.content === 'string' ? section.content : ''}
               onChange={(newContent) => updateSectionContent(section.id, newContent)}
-              placeholder={`Enter ${section.name.toLowerCase()}...`}
+              placeholder={t('editor.enterPlaceholder', { section: section.name.toLowerCase() })}
             />
           ) : (
             <TextField
@@ -504,7 +504,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
               rows={3}
               value={typeof section.content === 'string' ? section.content : ''}
               onChange={(e) => updateSectionContent(section.id, e.target.value)}
-              placeholder={`Enter ${section.name.toLowerCase()}...`}
+              placeholder={t('editor.enterPlaceholder', { section: section.name.toLowerCase() })}
             />
           )}
         </Box>
@@ -512,7 +512,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         {!isProcedureWithComplexSteps && section.type !== 'materials_with_media' && (
           <Box>
             <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              📷 Media (Images & Videos)
+              {t('editor.mediaImagesVideos')}
             </Typography>
             
             <MediaUploader
@@ -541,7 +541,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             setTitle(e.target.value);
             setHasUnsavedChanges(true);
           }}
-          placeholder="Experiment Title"
+          placeholder={t('editor.experimentTitlePlaceholder')}
           sx={{
             mb: 2,
             '& .MuiInputBase-input': {
@@ -554,13 +554,13 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         
         <Stack direction="row" spacing={1} alignItems="center">
           <Chip
-            label={`Version ${experiment?.current_version_number || 1}`}
+            label={t('editor.versionNumber', { version: experiment?.current_version_number || 1 })}
             color="primary"
             size="small"
           />
           {hasUnsavedChanges && (
             <Chip
-              label="Unsaved Changes"
+              label={t('editor.unsavedChangesLabel')}
               color="warning"
               size="small"
             />
