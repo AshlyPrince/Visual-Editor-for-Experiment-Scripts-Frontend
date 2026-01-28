@@ -145,15 +145,15 @@ const ModularExperimentWizard = ({
     
     { 
       id: 'objectives', 
-      name: 'Learning Objectives', 
-      description: 'Purpose and learning objectives of the experiment',
+      name: t('wizard.sectionDefinitions.objectives.name'),
+      description: t('wizard.sectionDefinitions.objectives.description'),
       emoji: '🎯',
       category: 'optional',
       required: false,
       locked: false,
       fields: [
-        { id: 'purpose', label: 'Purpose and learning objectives of the experiment', type: 'richtext', required: true },
-        { id: 'media', label: 'Supporting Media', type: 'media', required: false, help: 'Add images or videos to illustrate learning objectives' }
+        { id: 'purpose', label: t('wizard.sectionDefinitions.objectives.fields.purpose'), type: 'richtext', required: true },
+        { id: 'media', label: t('wizard.sectionDefinitions.objectives.fields.media'), type: 'media', required: false, help: t('wizard.sectionDefinitions.objectives.fields.mediaHelp') }
       ],
       defaultContent: {
         purpose: '',
@@ -162,18 +162,18 @@ const ModularExperimentWizard = ({
     },
     { 
       id: 'background', 
-      name: 'Background Theory', 
-      description: 'Scientific principles and theoretical foundation',
+      name: t('wizard.sectionDefinitions.background.name'),
+      description: t('wizard.sectionDefinitions.background.description'),
       emoji: '🧠',
       category: 'optional',
       required: false,
       locked: false,
       supportsMedia: true, 
       fields: [
-        { id: 'content', label: 'Theoretical background, key principles, and biological/chemical context', type: 'richtext', required: true },
-        { id: 'media', label: 'Workflow Diagrams & Illustrations', type: 'media', required: false, 
+        { id: 'content', label: t('wizard.sectionDefinitions.background.fields.content'), type: 'richtext', required: true },
+        { id: 'media', label: t('wizard.sectionDefinitions.background.fields.media'), type: 'media', required: false, 
           accept: 'image/*,video/*', 
-          help: 'Upload workflow diagrams, concept illustrations, or explanatory videos' }
+          help: t('wizard.sectionDefinitions.background.fields.mediaHelp') }
       ],
       defaultContent: {
         content: '',
@@ -182,16 +182,16 @@ const ModularExperimentWizard = ({
     },
     { 
       id: 'materials', 
-      name: 'Materials & Equipment', 
-      description: 'Lab equipment and materials (separate from chemicals)',
+      name: t('wizard.sectionDefinitions.materials.name'),
+      description: t('wizard.sectionDefinitions.materials.description'),
       emoji: '🧰',
       category: 'optional',
       required: false,
       locked: false,
       supportsMedia: true,
       fields: [
-        { id: 'items', label: 'Materials and Equipment', type: 'materials_with_media', required: true, 
-          help: 'Add each material or equipment item. You can attach a photo to each item.' }
+        { id: 'items', label: t('wizard.sectionDefinitions.materials.fields.items'), type: 'materials_with_media', required: true, 
+          help: t('wizard.sectionDefinitions.materials.fields.itemsHelp') }
       ],
       defaultContent: {
         items: []
@@ -199,15 +199,15 @@ const ModularExperimentWizard = ({
     },
     { 
       id: 'chemicals', 
-      name: 'Chemicals & Reagents', 
-      description: 'Chemical substances, concentrations, kits, primers',
+      name: t('wizard.sectionDefinitions.chemicals.name'),
+      description: t('wizard.sectionDefinitions.chemicals.description'),
       emoji: '☣️',
       category: 'optional',
       required: false,
       locked: false,
       supportsMedia: true,
       fields: [
-        { id: 'items', label: 'Chemicals, reagents, concentrations, and kits', type: 'list', required: true }
+        { id: 'items', label: t('wizard.sectionDefinitions.chemicals.fields.items'), type: 'list', required: true }
       ],
       defaultContent: {
         items: []
@@ -215,18 +215,18 @@ const ModularExperimentWizard = ({
     },
     { 
       id: 'safety', 
-      name: 'Safety Measures', 
-      description: 'Safety briefing and visual safety guides',
+      name: t('wizard.sectionDefinitions.safety.name'),
+      description: t('wizard.sectionDefinitions.safety.description'),
       emoji: '⚠️',
       category: 'optional',
       required: false,
       locked: false,
       supportsMedia: true, 
       fields: [
-        { id: 'safety_briefing', label: 'Safety Briefing Notes', type: 'richtext', required: true },
-        { id: 'media', label: 'Safety Visuals', type: 'media', required: false,
+        { id: 'safety_briefing', label: t('wizard.sectionDefinitions.safety.fields.safety_briefing'), type: 'richtext', required: true },
+        { id: 'media', label: t('wizard.sectionDefinitions.safety.fields.media'), type: 'media', required: false,
           accept: 'image/*,video/*',
-          help: 'Upload safety icons, demonstration videos, or pictograms' }
+          help: t('wizard.sectionDefinitions.safety.fields.mediaHelp') }
       ],
       defaultContent: {
         ppe: [],
@@ -237,19 +237,19 @@ const ModularExperimentWizard = ({
     },
     { 
       id: 'hazards', 
-      name: 'Potential Hazards', 
-      description: 'Identify hazards, H-statements, and danger pictograms',
+      name: t('wizard.sectionDefinitions.hazards.name'),
+      description: t('wizard.sectionDefinitions.hazards.description'),
       emoji: '🚫',
       category: 'optional',
       required: false,
       locked: false,
       supportsMedia: true, 
       fields: [
-        { id: 'hazard_description', label: 'Hazard Information', type: 'richtext', required: true,
-          help: 'Describe identified hazards, H-statements, and danger pictograms' },
-        { id: 'media', label: 'Hazard Pictograms', type: 'media', required: false,
+        { id: 'hazard_description', label: t('wizard.sectionDefinitions.hazards.fields.hazard_description'), type: 'richtext', required: true,
+          help: t('wizard.sectionDefinitions.hazards.fields.hazardHelp') },
+        { id: 'media', label: t('wizard.sectionDefinitions.hazards.fields.media'), type: 'media', required: false,
           accept: 'image/*',
-          help: 'Add GHS pictograms or hazard warning icons' }
+          help: t('wizard.sectionDefinitions.hazards.fields.mediaHelp') }
       ],
       defaultContent: {
         hazard_description: '',
@@ -258,8 +258,8 @@ const ModularExperimentWizard = ({
     },
     { 
       id: 'procedure', 
-      name: 'Step-by-Step Procedure', 
-      description: 'Numbered steps with substeps and checkboxes',
+      name: t('wizard.sectionDefinitions.procedure.name'),
+      description: t('wizard.sectionDefinitions.procedure.description'),
       emoji: '📝',
       category: 'optional',
       required: false,
@@ -267,9 +267,9 @@ const ModularExperimentWizard = ({
       supportsMedia: true, 
       stepLevelMedia: true, 
       fields: [
-        { id: 'steps', label: 'Procedure Steps', type: 'steps', required: true,
+        { id: 'steps', label: t('wizard.sectionDefinitions.procedure.fields.steps'), type: 'steps', required: true,
           supportsMedia: true,
-          help: 'Add step-by-step instructions. Each step can include images/videos for visual guidance, and additional notes with tables and formatted text.' }
+          help: t('wizard.sectionDefinitions.procedure.fields.stepsHelp') }
       ],
       defaultContent: {
         steps: []
@@ -277,26 +277,26 @@ const ModularExperimentWizard = ({
     },
     { 
       id: 'disposal', 
-      name: 'Disposal Instructions', 
-      description: 'Waste disposal and cleanup procedures',
+      name: t('wizard.sectionDefinitions.disposal.name'),
+      description: t('wizard.sectionDefinitions.disposal.description'),
       emoji: '♻️',
       category: 'optional',
       required: false,
       locked: false,
       supportsMedia: true, 
       fields: [
-        { id: 'disposal_instructions', label: 'Disposal and Cleanup Instructions', type: 'richtext', required: true,
-          help: 'Describe waste disposal procedures, waste categories, and cleanup steps' },
-        { id: 'media', label: 'Waste Container Symbols & Disposal Diagrams', type: 'media', required: false,
+        { id: 'disposal_instructions', label: t('wizard.sectionDefinitions.disposal.fields.disposal_instructions'), type: 'richtext', required: true,
+          help: t('wizard.sectionDefinitions.disposal.fields.disposalHelp') },
+        { id: 'media', label: t('wizard.sectionDefinitions.disposal.fields.media'), type: 'media', required: false,
           accept: 'image/*',
-          help: 'Upload waste container symbols or disposal process diagrams' }
+          help: t('wizard.sectionDefinitions.disposal.fields.mediaHelp') }
       ],
       defaultContent: {
         disposal_instructions: '',
         media: []
       }
     }
-  ], []); 
+  ], [t]); 
 
   
   

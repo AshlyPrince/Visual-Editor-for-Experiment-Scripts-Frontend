@@ -555,6 +555,78 @@
       "discardDraft": "Discard: Permanently delete all unsaved changes",
       "keepButton": "Keep Draft",
       "discardButton": "Discard"
+    },
+    "sectionDefinitions": {
+      "objectives": {
+        "name": "Learning Objectives",
+        "description": "Purpose and learning objectives of the experiment",
+        "fields": {
+          "purpose": "Purpose and learning objectives of the experiment",
+          "media": "Supporting Media",
+          "mediaHelp": "Add images or videos to illustrate learning objectives"
+        }
+      },
+      "background": {
+        "name": "Background Theory",
+        "description": "Scientific principles and theoretical foundation",
+        "fields": {
+          "content": "Theoretical background, key principles, and biological/chemical context",
+          "media": "Workflow Diagrams & Illustrations",
+          "mediaHelp": "Upload workflow diagrams, concept illustrations, or explanatory videos"
+        }
+      },
+      "materials": {
+        "name": "Materials & Equipment",
+        "description": "Lab equipment and materials (separate from chemicals)",
+        "fields": {
+          "items": "Materials and Equipment",
+          "itemsHelp": "Add each material or equipment item. You can attach a photo to each item."
+        }
+      },
+      "chemicals": {
+        "name": "Chemicals & Reagents",
+        "description": "Chemical substances, concentrations, kits, primers",
+        "fields": {
+          "items": "Chemicals, reagents, concentrations, and kits"
+        }
+      },
+      "safety": {
+        "name": "Safety Measures",
+        "description": "Safety briefing and visual safety guides",
+        "fields": {
+          "safety_briefing": "Safety Briefing Notes",
+          "media": "Safety Visuals",
+          "mediaHelp": "Upload safety icons, demonstration videos, or pictograms"
+        }
+      },
+      "hazards": {
+        "name": "Potential Hazards",
+        "description": "Identify hazards, H-statements, and danger pictograms",
+        "fields": {
+          "hazard_description": "Hazard Information",
+          "hazardHelp": "Describe identified hazards, H-statements, and danger pictograms",
+          "media": "Hazard Pictograms",
+          "mediaHelp": "Add GHS pictograms or hazard warning icons"
+        }
+      },
+      "procedure": {
+        "name": "Step-by-Step Procedure",
+        "description": "Numbered steps with substeps and checkboxes",
+        "fields": {
+          "steps": "Procedure Steps",
+          "stepsHelp": "Add step-by-step instructions. Each step can include images/videos for visual guidance, and additional notes with tables and formatted text."
+        }
+      },
+      "disposal": {
+        "name": "Disposal Instructions",
+        "description": "Waste disposal and cleanup procedures",
+        "fields": {
+          "disposal_instructions": "Disposal and Cleanup Instructions",
+          "disposalHelp": "Describe waste disposal procedures, waste categories, and cleanup steps",
+          "media": "Waste Container Symbols & Disposal Diagrams",
+          "mediaHelp": "Upload waste container symbols or disposal process diagrams"
+        }
+      }
     }
   },
   "editor": {

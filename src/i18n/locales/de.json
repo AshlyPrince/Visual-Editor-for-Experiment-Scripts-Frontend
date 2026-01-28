@@ -555,6 +555,78 @@
       "discardDraft": "Verwerfen: Alle nicht gespeicherten Änderungen dauerhaft löschen",
       "keepButton": "Entwurf behalten",
       "discardButton": "Verwerfen"
+    },
+    "sectionDefinitions": {
+      "objectives": {
+        "name": "Lernziele",
+        "description": "Zweck und Lernziele des Experiments",
+        "fields": {
+          "purpose": "Zweck und Lernziele des Experiments",
+          "media": "Unterstützende Medien",
+          "mediaHelp": "Fügen Sie Bilder oder Videos hinzu, um die Lernziele zu veranschaulichen"
+        }
+      },
+      "background": {
+        "name": "Theoretischer Hintergrund",
+        "description": "Wissenschaftliche Prinzipien und theoretische Grundlagen",
+        "fields": {
+          "content": "Theoretischer Hintergrund, Schlüsselprinzipien und biologischer/chemischer Kontext",
+          "media": "Arbeitsablaufdiagramme & Illustrationen",
+          "mediaHelp": "Laden Sie Arbeitsablaufdiagramme, Konzeptillustrationen oder Erklärvideos hoch"
+        }
+      },
+      "materials": {
+        "name": "Materialien & Ausrüstung",
+        "description": "Laborausrüstung und Materialien (getrennt von Chemikalien)",
+        "fields": {
+          "items": "Materialien und Ausrüstung",
+          "itemsHelp": "Fügen Sie jedes Material oder Ausrüstungsgegenstand hinzu. Sie können jedem Gegenstand ein Foto hinzufügen."
+        }
+      },
+      "chemicals": {
+        "name": "Chemikalien & Reagenzien",
+        "description": "Chemische Substanzen, Konzentrationen, Kits, Primer",
+        "fields": {
+          "items": "Chemikalien, Reagenzien, Konzentrationen und Kits"
+        }
+      },
+      "safety": {
+        "name": "Sicherheitsmaßnahmen",
+        "description": "Sicherheitseinweisung und visuelle Sicherheitsleitfäden",
+        "fields": {
+          "safety_briefing": "Sicherheitseinweisungen",
+          "media": "Sicherheitsvisualisierungen",
+          "mediaHelp": "Laden Sie Sicherheitssymbole, Demonstrationsvideos oder Piktogramme hoch"
+        }
+      },
+      "hazards": {
+        "name": "Potenzielle Gefahren",
+        "description": "Gefahren, H-Sätze und Gefahrenpiktogramme identifizieren",
+        "fields": {
+          "hazard_description": "Gefahreninformationen",
+          "hazardHelp": "Beschreiben Sie identifizierte Gefahren, H-Sätze und Gefahrenpiktogramme",
+          "media": "Gefahrenpiktogramme",
+          "mediaHelp": "Fügen Sie GHS-Piktogramme oder Gefahrenwarnsymbole hinzu"
+        }
+      },
+      "procedure": {
+        "name": "Schritt-für-Schritt-Anleitung",
+        "description": "Nummerierte Schritte mit Unterschritten und Kontrollkästchen",
+        "fields": {
+          "steps": "Verfahrensschritte",
+          "stepsHelp": "Fügen Sie Schritt-für-Schritt-Anleitungen hinzu. Jeder Schritt kann Bilder/Videos zur visuellen Anleitung sowie zusätzliche Hinweise mit Tabellen und formatiertem Text enthalten."
+        }
+      },
+      "disposal": {
+        "name": "Entsorgungsanweisungen",
+        "description": "Abfallentsorgung und Reinigungsverfahren",
+        "fields": {
+          "disposal_instructions": "Entsorgungs- und Reinigungsanweisungen",
+          "disposalHelp": "Beschreiben Sie Abfallentsorgungsverfahren, Abfallkategorien und Reinigungsschritte",
+          "media": "Abfallbehältersymbole & Entsorgungsdiagramme",
+          "mediaHelp": "Laden Sie Abfallbehältersymbole oder Entsorgungsprozessdiagramme hoch"
+        }
+      }
     }
   },
   "editor": {
