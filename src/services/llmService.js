@@ -120,44 +120,77 @@ export const polishText = async (text, context = '', t = null) => {
   let prompt;
   
   if (context.includes('title')) {
-    prompt = `You are a scientific writing assistant. Your role is to IMPROVE the teacher's existing text, not write new content.
+    const p = t ? {
+      role: t('llm.prompts.polishTitle.role'),
+      userTitle: t('llm.prompts.polishTitle.userTitle'),
+      task: t('llm.prompts.polishTitle.task'),
+      guidelines: t('llm.prompts.polishTitle.guidelines'),
+      instruction: t('llm.prompts.polishTitle.instruction')
+    } : {
+      role: 'You are a scientific writing assistant. Your role is to IMPROVE the teacher\'s existing text, not write new content.',
+      userTitle: 'Teacher\'s experiment title:',
+      task: 'Task: Polish this title for clarity and professionalism while keeping the same meaning and topic.',
+      guidelines: '- Keep it concise (under 15 words)\n- Maintain the original subject and focus\n- Fix grammar, clarity, or phrasing issues\n- Do NOT invent new topics or change the fundamental content',
+      instruction: 'Return ONLY the improved title with no explanations, no meta-commentary, and no additional text.'
+    };
+    
+    prompt = `${p.role}
 
-Teacher's experiment title:
+${p.userTitle}
 "${trimmedText}"
 
-Task: Polish this title for clarity and professionalism while keeping the same meaning and topic.
-- Keep it concise (under 15 words)
-- Maintain the original subject and focus
-- Fix grammar, clarity, or phrasing issues
-- Do NOT invent new topics or change the fundamental content
+${p.task}
+${p.guidelines}
 
-Return ONLY the improved title with no explanations, no meta-commentary, and no additional text.`;
+${p.instruction}`;
   } else if (context.includes('description')) {
-    prompt = `You are a scientific writing assistant. Your role is to IMPROVE the teacher's existing text, not write new content.
+    const p = t ? {
+      role: t('llm.prompts.polishDescription.role'),
+      userDescription: t('llm.prompts.polishDescription.userDescription'),
+      task: t('llm.prompts.polishDescription.task'),
+      guidelines: t('llm.prompts.polishDescription.guidelines'),
+      instruction: t('llm.prompts.polishDescription.instruction')
+    } : {
+      role: 'You are a scientific writing assistant. Your role is to IMPROVE the teacher\'s existing text, not write new content.',
+      userDescription: 'Teacher\'s description:',
+      task: 'Task: Polish this description for clarity, grammar, and professionalism.',
+      guidelines: '- Keep all key details and meaning\n- Maintain the teacher\'s voice and intent\n- Fix grammar, structure, and phrasing\n- Do NOT add new information or change the content significantly',
+      instruction: 'Return ONLY the improved description with no explanations, no "Upon reviewing...", and no meta-commentary.'
+    };
+    
+    prompt = `${p.role}
 
-Teacher's description:
+${p.userDescription}
 ${trimmedText}
 
-Task: Polish this description for clarity, grammar, and professionalism.
-- Keep all key details and meaning
-- Maintain the teacher's voice and intent
-- Fix grammar, structure, and phrasing
-- Do NOT add new information or change the content significantly
+${p.task}
+${p.guidelines}
 
-Return ONLY the improved description with no explanations, no "Upon reviewing...", and no meta-commentary.`;
+${p.instruction}`;
   } else {
-    prompt = `You are a scientific writing assistant. Your role is to IMPROVE the teacher's existing text, not write new content.
+    const p = t ? {
+      role: t('llm.prompts.polishGeneric.role'),
+      userContent: t('llm.prompts.polishGeneric.userContent', { context }),
+      task: t('llm.prompts.polishGeneric.task'),
+      guidelines: t('llm.prompts.polishGeneric.guidelines'),
+      instruction: t('llm.prompts.polishGeneric.instruction')
+    } : {
+      role: 'You are a scientific writing assistant. Your role is to IMPROVE the teacher\'s existing text, not write new content.',
+      userContent: `Teacher's ${context}:`,
+      task: 'Task: Polish this text for clarity, grammar, and professionalism.',
+      guidelines: '- Preserve the original meaning and content\n- Maintain the teacher\'s voice\n- Fix grammar, structure, and phrasing issues\n- Do NOT add new information or change the fundamental content',
+      instruction: 'Return ONLY the improved text with no explanations or meta-commentary.'
+    };
+    
+    prompt = `${p.role}
 
-Teacher's ${context}:
+${p.userContent}
 ${trimmedText}
 
-Task: Polish this text for clarity, grammar, and professionalism.
-- Preserve the original meaning and content
-- Maintain the teacher's voice
-- Fix grammar, structure, and phrasing issues
-- Do NOT add new information or change the fundamental content
+${p.task}
+${p.guidelines}
 
-Return ONLY the improved text with no explanations or meta-commentary.`;
+${p.instruction}`;
   }
 
   try {
@@ -203,27 +236,33 @@ Return ONLY the improved text with no explanations or meta-commentary.`;
   }
 };
 
-export const getSectionSuggestions = async (sectionType, currentContent, experimentContext = {}) => {
-  const prompt = `You are assisting with a scientific experiment. 
-Section Type: ${sectionType}
-Current Content: ${currentContent || '(empty)'}
+export const getSectionSuggestions = async (sectionType, currentContent, experimentContext = {}, t = null) => {
+  const p = t ? {
+    intro: t('llm.prompts.sectionSuggestions.intro'),
+    sectionType: t('llm.prompts.sectionSuggestions.sectionType', { sectionType }),
+    currentContent: t('llm.prompts.sectionSuggestions.currentContent', { content: currentContent || t('llm.prompts.empty') }),
+    task: t('llm.prompts.sectionSuggestions.task'),
+    format: t('llm.prompts.sectionSuggestions.format')
+  } : {
+    intro: 'You are assisting with a scientific experiment.',
+    sectionType: `Section Type: ${sectionType}`,
+    currentContent: `Current Content: ${currentContent || '(empty)'}`,
+    task: 'Please provide:\n1. Improved version of the content\n2. Three specific suggestions for enhancing this section\n3. Any potential issues or missing elements',
+    format: 'Respond in JSON format:\n{\n  "improved": "improved content here",\n  "suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"],\n  "issues": ["issue 1", "issue 2"]\n}'
+  };
+  
+  const prompt = `${p.intro}
+${p.sectionType}
+${p.currentContent}
 
-Please provide:
-1. Improved version of the content
-2. Three specific suggestions for enhancing this section
-3. Any potential issues or missing elements
+${p.task}
 
-Respond in JSON format:
-{
-  "improved": "improved content here",
-  "suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"],
-  "issues": ["issue 1", "issue 2"]
-}`;
+${p.format}`;
 
   const response = await sendChatMessage(prompt, {
     temperature: 0.7,
     max_tokens: 1024
-  });
+  }, t);
 
   try {
     return JSON.parse(response.choices[0].message.content);
@@ -237,32 +276,51 @@ Respond in JSON format:
   }
 };
 
-export const checkConsistency = async (sections) => {
-  const prompt = `You are reviewing a scientific experiment for consistency and completeness. Please analyze these sections carefully:
+export const checkConsistency = async (sections, t = null) => {
+  const p = t ? {
+    intro: t('llm.prompts.checkConsistency.intro'),
+    checkTitle: t('llm.prompts.checkConsistency.checkTitle'),
+    checkMaterials: t('llm.prompts.checkConsistency.checkMaterials'),
+    checkSafety: t('llm.prompts.checkConsistency.checkSafety'),
+    checkHypothesis: t('llm.prompts.checkConsistency.checkHypothesis'),
+    checkCompleteness: t('llm.prompts.checkConsistency.checkCompleteness'),
+    checkCompliance: t('llm.prompts.checkConsistency.checkCompliance'),
+    format: t('llm.prompts.checkConsistency.format'),
+    instruction: t('llm.prompts.checkConsistency.instruction'),
+    empty: t('llm.prompts.empty')
+  } : {
+    intro: 'You are reviewing a scientific experiment for consistency and completeness. Please analyze these sections carefully:',
+    checkTitle: '1. **Title-Description Consistency**: Does the title accurately reflect the description?',
+    checkMaterials: '2. **Materials-Procedures Alignment**: Are all materials mentioned in procedures actually listed in the materials section?',
+    checkSafety: '3. **Safety-Materials Correlation**: Are safety precautions appropriate for the chemicals and materials being used?',
+    checkHypothesis: '4. **Hypothesis-Methodology Alignment**: Does the methodology properly test the hypothesis?',
+    checkCompleteness: '5. **Completeness**: Are any critical sections missing or incomplete?',
+    checkCompliance: '6. **Safety Compliance**: Are hazardous materials properly addressed with safety equipment and procedures?',
+    format: 'Respond in JSON format:\n{\n  "consistent": true/false,\n  "issues": ["specific issue 1", "specific issue 2", ...],\n  "recommendations": ["specific recommendation 1", "specific recommendation 2", ...]\n}',
+    instruction: 'Be specific and actionable in your issues and recommendations.',
+    empty: '(empty)'
+  };
+  
+  const prompt = `${p.intro}
 
-${Object.entries(sections).map(([key, value]) => `${key.toUpperCase()}:\n${value || '(empty)'}\n`).join('\n')}
+${Object.entries(sections).map(([key, value]) => `${key.toUpperCase()}:\n${value || p.empty}\n`).join('\n')}
 
 Please check for:
-1. **Title-Description Consistency**: Does the title accurately reflect the description?
-2. **Materials-Procedures Alignment**: Are all materials mentioned in procedures actually listed in the materials section?
-3. **Safety-Materials Correlation**: Are safety precautions appropriate for the chemicals and materials being used?
-4. **Hypothesis-Methodology Alignment**: Does the methodology properly test the hypothesis?
-5. **Completeness**: Are any critical sections missing or incomplete?
-6. **Safety Compliance**: Are hazardous materials properly addressed with safety equipment and procedures?
+${p.checkTitle}
+${p.checkMaterials}
+${p.checkSafety}
+${p.checkHypothesis}
+${p.checkCompleteness}
+${p.checkCompliance}
 
-Respond in JSON format:
-{
-  "consistent": true/false,
-  "issues": ["specific issue 1", "specific issue 2", ...],
-  "recommendations": ["specific recommendation 1", "specific recommendation 2", ...]
-}
+${p.format}
 
-Be specific and actionable in your issues and recommendations.`;
+${p.instruction}`;
 
   const response = await sendChatMessage(prompt, {
     temperature: 0.3,
     max_tokens: 1500
-  });
+  }, t);
 
   try {
     
@@ -292,17 +350,25 @@ Be specific and actionable in your issues and recommendations.`;
   }
 };
 
-export const generateTitleSuggestions = async (description) => {
-  const prompt = `Based on this experiment description, suggest 5 concise and descriptive titles (max 10 words each):
+export const generateTitleSuggestions = async (description, t = null) => {
+  const p = t ? {
+    intro: t('llm.prompts.generateTitles.intro'),
+    format: t('llm.prompts.generateTitles.format')
+  } : {
+    intro: 'Based on this experiment description, suggest 5 concise and descriptive titles (max 10 words each):',
+    format: 'Respond with only a JSON array of strings: ["title 1", "title 2", "title 3", "title 4", "title 5"]'
+  };
+  
+  const prompt = `${p.intro}
 
 ${description}
 
-Respond with only a JSON array of strings: ["title 1", "title 2", "title 3", "title 4", "title 5"]`;
+${p.format}`;
 
   const response = await sendChatMessage(prompt, {
     temperature: 0.8,
     max_tokens: 256
-  });
+  }, t);
 
   try {
     return JSON.parse(response.choices[0].message.content);
@@ -314,26 +380,36 @@ Respond with only a JSON array of strings: ["title 1", "title 2", "title 3", "ti
   }
 };
 
-export const generateSafetyRecommendations = async (materials, procedures) => {
-  const prompt = `Based on these materials and procedures, provide safety recommendations:
+export const generateSafetyRecommendations = async (materials, procedures, t = null) => {
+  const p = t ? {
+    intro: t('llm.prompts.safetyRecommendations.intro'),
+    materials: t('llm.prompts.safetyRecommendations.materials'),
+    procedures: t('llm.prompts.safetyRecommendations.procedures'),
+    task: t('llm.prompts.safetyRecommendations.task'),
+    format: t('llm.prompts.safetyRecommendations.format')
+  } : {
+    intro: 'Based on these materials and procedures, provide safety recommendations:',
+    materials: 'MATERIALS:',
+    procedures: 'PROCEDURES:',
+    task: 'Provide 3-5 specific safety recommendations. Respond in JSON format:',
+    format: '{\n  "recommendations": ["recommendation 1", "recommendation 2", ...],\n  "hazards": ["hazard 1", "hazard 2", ...],\n  "ppe": ["PPE item 1", "PPE item 2", ...]\n}'
+  };
+  
+  const prompt = `${p.intro}
 
-MATERIALS:
+${p.materials}
 ${materials}
 
-PROCEDURES:
+${p.procedures}
 ${procedures}
 
-Provide 3-5 specific safety recommendations. Respond in JSON format:
-{
-  "recommendations": ["recommendation 1", "recommendation 2", ...],
-  "hazards": ["hazard 1", "hazard 2", ...],
-  "ppe": ["PPE item 1", "PPE item 2", ...]
-}`;
+${p.task}
+${p.format}`;
 
   const response = await sendChatMessage(prompt, {
     temperature: 0.3,
     max_tokens: 1024
-  });
+  }, t);
 
   try {
     return JSON.parse(response.choices[0].message.content);

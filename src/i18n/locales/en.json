@@ -732,6 +732,59 @@
       "needsMoreDetail": "Needs more detail before polishing",
       "polishFailed": "Failed to polish text: {{message}}"
     },
+    "prompts": {
+      "polishTitle": {
+        "role": "You are a scientific writing assistant. Your role is to IMPROVE the teacher's existing text, not write new content.",
+        "userTitle": "Teacher's experiment title:",
+        "task": "Task: Polish this title for clarity and professionalism while keeping the same meaning and topic.",
+        "guidelines": "- Keep it concise (under 15 words)\n- Maintain the original subject and focus\n- Fix grammar, clarity, or phrasing issues\n- Do NOT invent new topics or change the fundamental content",
+        "instruction": "Return ONLY the improved title with no explanations, no meta-commentary, and no additional text."
+      },
+      "polishDescription": {
+        "role": "You are a scientific writing assistant. Your role is to IMPROVE the teacher's existing text, not write new content.",
+        "userDescription": "Teacher's description:",
+        "task": "Task: Polish this description for clarity, grammar, and professionalism.",
+        "guidelines": "- Keep all key details and meaning\n- Maintain the teacher's voice and intent\n- Fix grammar, structure, and phrasing\n- Do NOT add new information or change the content significantly",
+        "instruction": "Return ONLY the improved description with no explanations, no \"Upon reviewing...\", and no meta-commentary."
+      },
+      "polishGeneric": {
+        "role": "You are a scientific writing assistant. Your role is to IMPROVE the teacher's existing text, not write new content.",
+        "userContent": "Teacher's {{context}}:",
+        "task": "Task: Polish this text for clarity, grammar, and professionalism.",
+        "guidelines": "- Preserve the original meaning and content\n- Maintain the teacher's voice\n- Fix grammar, structure, and phrasing issues\n- Do NOT add new information or change the fundamental content",
+        "instruction": "Return ONLY the improved text with no explanations or meta-commentary."
+      },
+      "sectionSuggestions": {
+        "intro": "You are assisting with a scientific experiment.",
+        "sectionType": "Section Type: {{sectionType}}",
+        "currentContent": "Current Content: {{content}}",
+        "task": "Please provide:\n1. Improved version of the content\n2. Three specific suggestions for enhancing this section\n3. Any potential issues or missing elements",
+        "format": "Respond in JSON format:\n{\n  \"improved\": \"improved content here\",\n  \"suggestions\": [\"suggestion 1\", \"suggestion 2\", \"suggestion 3\"],\n  \"issues\": [\"issue 1\", \"issue 2\"]\n}"
+      },
+      "checkConsistency": {
+        "intro": "You are reviewing a scientific experiment for consistency and completeness. Please analyze these sections carefully:",
+        "checkTitle": "1. **Title-Description Consistency**: Does the title accurately reflect the description?",
+        "checkMaterials": "2. **Materials-Procedures Alignment**: Are all materials mentioned in procedures actually listed in the materials section?",
+        "checkSafety": "3. **Safety-Materials Correlation**: Are safety precautions appropriate for the chemicals and materials being used?",
+        "checkHypothesis": "4. **Hypothesis-Methodology Alignment**: Does the methodology properly test the hypothesis?",
+        "checkCompleteness": "5. **Completeness**: Are any critical sections missing or incomplete?",
+        "checkCompliance": "6. **Safety Compliance**: Are hazardous materials properly addressed with safety equipment and procedures?",
+        "format": "Respond in JSON format:\n{\n  \"consistent\": true/false,\n  \"issues\": [\"specific issue 1\", \"specific issue 2\", ...],\n  \"recommendations\": [\"specific recommendation 1\", \"specific recommendation 2\", ...]\n}",
+        "instruction": "Be specific and actionable in your issues and recommendations."
+      },
+      "generateTitles": {
+        "intro": "Based on this experiment description, suggest 5 concise and descriptive titles (max 10 words each):",
+        "format": "Respond with only a JSON array of strings: [\"title 1\", \"title 2\", \"title 3\", \"title 4\", \"title 5\"]"
+      },
+      "safetyRecommendations": {
+        "intro": "Based on these materials and procedures, provide safety recommendations:",
+        "materials": "MATERIALS:",
+        "procedures": "PROCEDURES:",
+        "task": "Provide 3-5 specific safety recommendations. Respond in JSON format:",
+        "format": "{\n  \"recommendations\": [\"recommendation 1\", \"recommendation 2\", ...],\n  \"hazards\": [\"hazard 1\", \"hazard 2\", ...],\n  \"ppe\": [\"PPE item 1\", \"PPE item 2\", ...]\n}"
+      },
+      "empty": "(empty)"
+    },
     "tabs": {
       "chat": "Chat",
       "improve": "Improve",

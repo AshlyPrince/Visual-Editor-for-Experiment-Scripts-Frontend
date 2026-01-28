@@ -732,6 +732,59 @@
       "needsMoreDetail": "Benötigt mehr Details vor dem Polieren",
       "polishFailed": "Text konnte nicht poliert werden: {{message}}"
     },
+    "prompts": {
+      "polishTitle": {
+        "role": "Sie sind ein wissenschaftlicher Schreibassistent. Ihre Aufgabe ist es, den bestehenden Text des Lehrers zu VERBESSERN, nicht neue Inhalte zu schreiben.",
+        "userTitle": "Experimenttitel des Lehrers:",
+        "task": "Aufgabe: Polieren Sie diesen Titel für Klarheit und Professionalität, während Sie die gleiche Bedeutung und das gleiche Thema beibehalten.",
+        "guidelines": "- Halten Sie ihn prägnant (unter 15 Wörtern)\n- Behalten Sie das ursprüngliche Thema und den Fokus bei\n- Beheben Sie Grammatik-, Klarheits- oder Formulierungsprobleme\n- Erfinden Sie KEINE neuen Themen oder ändern Sie den grundlegenden Inhalt",
+        "instruction": "Geben Sie NUR den verbesserten Titel zurück, ohne Erklärungen, ohne Meta-Kommentare und ohne zusätzlichen Text."
+      },
+      "polishDescription": {
+        "role": "Sie sind ein wissenschaftlicher Schreibassistent. Ihre Aufgabe ist es, den bestehenden Text des Lehrers zu VERBESSERN, nicht neue Inhalte zu schreiben.",
+        "userDescription": "Beschreibung des Lehrers:",
+        "task": "Aufgabe: Polieren Sie diese Beschreibung für Klarheit, Grammatik und Professionalität.",
+        "guidelines": "- Behalten Sie alle wichtigen Details und Bedeutungen bei\n- Behalten Sie die Stimme und Absicht des Lehrers bei\n- Beheben Sie Grammatik, Struktur und Formulierung\n- Fügen Sie KEINE neuen Informationen hinzu oder ändern Sie den Inhalt erheblich",
+        "instruction": "Geben Sie NUR die verbesserte Beschreibung zurück, ohne Erklärungen, ohne \"Bei der Überprüfung...\" und ohne Meta-Kommentare."
+      },
+      "polishGeneric": {
+        "role": "Sie sind ein wissenschaftlicher Schreibassistent. Ihre Aufgabe ist es, den bestehenden Text des Lehrers zu VERBESSERN, nicht neue Inhalte zu schreiben.",
+        "userContent": "{{context}} des Lehrers:",
+        "task": "Aufgabe: Polieren Sie diesen Text für Klarheit, Grammatik und Professionalität.",
+        "guidelines": "- Bewahren Sie die ursprüngliche Bedeutung und den Inhalt\n- Behalten Sie die Stimme des Lehrers bei\n- Beheben Sie Grammatik-, Struktur- und Formulierungsprobleme\n- Fügen Sie KEINE neuen Informationen hinzu oder ändern Sie den grundlegenden Inhalt",
+        "instruction": "Geben Sie NUR den verbesserten Text zurück, ohne Erklärungen oder Meta-Kommentare."
+      },
+      "sectionSuggestions": {
+        "intro": "Sie helfen bei einem wissenschaftlichen Experiment.",
+        "sectionType": "Abschnittstyp: {{sectionType}}",
+        "currentContent": "Aktueller Inhalt: {{content}}",
+        "task": "Bitte geben Sie an:\n1. Verbesserte Version des Inhalts\n2. Drei spezifische Vorschläge zur Verbesserung dieses Abschnitts\n3. Potenzielle Probleme oder fehlende Elemente",
+        "format": "Antworten Sie im JSON-Format:\n{\n  \"improved\": \"verbesserter Inhalt hier\",\n  \"suggestions\": [\"Vorschlag 1\", \"Vorschlag 2\", \"Vorschlag 3\"],\n  \"issues\": [\"Problem 1\", \"Problem 2\"]\n}"
+      },
+      "checkConsistency": {
+        "intro": "Sie überprüfen ein wissenschaftliches Experiment auf Konsistenz und Vollständigkeit. Bitte analysieren Sie diese Abschnitte sorgfältig:",
+        "checkTitle": "1. **Titel-Beschreibung-Konsistenz**: Spiegelt der Titel die Beschreibung genau wider?",
+        "checkMaterials": "2. **Materialien-Verfahren-Ausrichtung**: Sind alle in den Verfahren erwähnten Materialien tatsächlich im Materialienabschnitt aufgeführt?",
+        "checkSafety": "3. **Sicherheits-Materialien-Korrelation**: Sind die Sicherheitsvorkehrungen für die verwendeten Chemikalien und Materialien angemessen?",
+        "checkHypothesis": "4. **Hypothese-Methodologie-Ausrichtung**: Prüft die Methodologie die Hypothese ordnungsgemäß?",
+        "checkCompleteness": "5. **Vollständigkeit**: Fehlen kritische Abschnitte oder sind sie unvollständig?",
+        "checkCompliance": "6. **Sicherheitskonformität**: Werden gefährliche Materialien ordnungsgemäß mit Sicherheitsausrüstung und -verfahren behandelt?",
+        "format": "Antworten Sie im JSON-Format:\n{\n  \"consistent\": true/false,\n  \"issues\": [\"spezifisches Problem 1\", \"spezifisches Problem 2\", ...],\n  \"recommendations\": [\"spezifische Empfehlung 1\", \"spezifische Empfehlung 2\", ...]\n}",
+        "instruction": "Seien Sie spezifisch und umsetzbar in Ihren Problemen und Empfehlungen."
+      },
+      "generateTitles": {
+        "intro": "Schlagen Sie basierend auf dieser Experimentbeschreibung 5 prägnante und beschreibende Titel vor (maximal 10 Wörter pro Titel):",
+        "format": "Antworten Sie nur mit einem JSON-Array von Strings: [\"Titel 1\", \"Titel 2\", \"Titel 3\", \"Titel 4\", \"Titel 5\"]"
+      },
+      "safetyRecommendations": {
+        "intro": "Geben Sie basierend auf diesen Materialien und Verfahren Sicherheitsempfehlungen:",
+        "materials": "MATERIALIEN:",
+        "procedures": "VERFAHREN:",
+        "task": "Geben Sie 3-5 spezifische Sicherheitsempfehlungen an. Antworten Sie im JSON-Format:",
+        "format": "{\n  \"recommendations\": [\"Empfehlung 1\", \"Empfehlung 2\", ...],\n  \"hazards\": [\"Gefahr 1\", \"Gefahr 2\", ...],\n  \"ppe\": [\"PSA-Artikel 1\", \"PSA-Artikel 2\", ...]\n}"
+      },
+      "empty": "(leer)"
+    },
     "tabs": {
       "chat": "Chat",
       "improve": "Verbessern",
