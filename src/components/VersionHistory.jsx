@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -35,6 +36,7 @@ import MediaViewer from './MediaViewer.jsx';
 import VersionComparison from './VersionComparison.jsx';
 
 const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
+  const { t } = useTranslation();
   const [experiment, setExperiment] = useState(null);
   const [versions, setVersions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -199,11 +201,11 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
         <Box display="flex" alignItems="center" gap={1.5}>
           <HistoryIcon fontSize="large" color="primary" />
           <Typography variant="h5" fontWeight={600}>
-            Version History
+            {t('version.versionHistory')}
           </Typography>
         </Box>
         <Button onClick={onClose} variant="outlined" color="inherit">
-          Close
+          {t('common.close')}
         </Button>
       </Box>
 
@@ -220,14 +222,14 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box>
               <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Experiment
+                {t('nav.experiments')}
               </Typography>
               <Typography variant="h6" color="text.primary">
                 {experiment?.title}
               </Typography>
             </Box>
             <Chip
-              label={`Version ${experiment?.version_number}`}
+              label={t('version.versionNumber', { number: experiment?.version_number })}
               color="success"
               size="medium"
               icon={<Check />}
@@ -250,7 +252,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                 startIcon={<CompareArrows />}
                 onClick={handleCompare}
               >
-                Compare
+                {t('common.compare')}
               </Button>
               <Button
                 color="inherit"
@@ -258,13 +260,13 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                 variant="outlined"
                 onClick={() => setSelectedVersions([])}
               >
-                Clear
+                {t('common.clear')}
               </Button>
             </Stack>
           }
           sx={{ mb: 3 }}
         >
-          <strong>Ready to compare:</strong> Select "Compare" to view differences side-by-side
+          {t('version.readyToCompare')}
         </Alert>
       )}
 
@@ -302,7 +304,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                   <Box flex={1}>
                     <Box display="flex" alignItems="center" gap={1} mb={1}>
                       <Chip
-                        label={`Version ${version.version_number}`}
+                        label={t('version.versionNumber', { number: version.version_number })}
                         color="primary"
                         size="small"
                         variant={isCurrent ? "filled" : "outlined"}
@@ -311,7 +313,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                       {isCurrent && (
                         <Chip
                           icon={<Check />}
-                          label="CURRENT"
+                          label={t('version.currentVersion').toUpperCase()}
                           color="success"
                           size="small"
                           sx={{ fontWeight: 600 }}
@@ -349,7 +351,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                   onClick={() => handleViewVersion(version)}
                   variant="outlined"
                 >
-                  View
+                  {t('common.view')}
                 </Button>
                 {!isCurrent && (
                   <Button
@@ -359,7 +361,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                     color="primary"
                     variant="contained"
                   >
-                    Restore
+                    {t('common.restore')}
                   </Button>
                 )}
               </CardActions>
@@ -374,22 +376,21 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Restore Version?</DialogTitle>
+        <DialogTitle>{t('version.restoreVersion')}?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to restore <strong>Version {versionToRestore?.version_number}</strong>?
+            {t('version.restoreConfirm', { number: versionToRestore?.version_number })}
           </DialogContentText>
           <DialogContentText sx={{ mt: 2 }}>
-            This will make Version {versionToRestore?.version_number} the current version.
-            Your current work will not be lost - it will remain in the version history.
+            {t('version.restoreInfo', { number: versionToRestore?.version_number })}
           </DialogContentText>
           {versionToRestore && (
             <Box sx={{ mt: 2, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
               <Typography variant="body2">
-                <strong>Title:</strong> {versionToRestore.title}
+                <strong>{t('experiment.title')}:</strong> {versionToRestore.title}
               </Typography>
               <Typography variant="body2" sx={{ mt: 1 }}>
-                <strong>Message:</strong> {versionToRestore.commit_message}
+                <strong>{t('version.commitMessage')}:</strong> {versionToRestore.commit_message}
               </Typography>
               <Typography variant="body2" sx={{ mt: 1 }}>
                 <strong>Created:</strong> {formatDate(versionToRestore.created_at)}
@@ -399,7 +400,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleRestoreCancel} disabled={restoring}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             onClick={handleRestoreConfirm}
@@ -408,7 +409,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
             disabled={restoring}
             startIcon={restoring ? <CircularProgress size={20} /> : <Restore />}
           >
-            {restoring ? 'Restoring...' : 'Restore'}
+            {restoring ? t('messages.loadingVersions') : t('common.restore')}
           </Button>
         </DialogActions>
       </Dialog>

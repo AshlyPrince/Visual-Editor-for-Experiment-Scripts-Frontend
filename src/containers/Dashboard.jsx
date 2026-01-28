@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Box, 
   Typography, 
@@ -73,6 +74,7 @@ const ExperimentCard = styled(Card)(({ theme }) => ({
 }));
 
 const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, onEditExperiment }) => {
+  const { t } = useTranslation();
   const [stats, setStats] = useState({
     totalExperiments: 0
   });
@@ -332,7 +334,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       
       addNotification({
         type: 'success',
-        message: `"${experimentToDelete.title}" deleted successfully`
+        message: t('experiment.experimentDeleted')
       });
       
       setDeleteDialogOpen(false);
@@ -340,7 +342,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     } catch {
       addNotification({
         type: 'error',
-        message: 'Failed to delete experiment'
+        message: t('messages.errorDeletingExperiment')
       });
     }
   };
@@ -390,7 +392,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
             mb: 1,
             color: 'text.primary'
           }}>
-            Experiment Dashboard
+            {t('dashboard.title')}
           </Typography>
         </Box>
 
@@ -409,7 +411,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
               fontSize: '0.95rem'
             }}
           >
-            Create Experiment
+            {t('experiment.createNew')}
           </Button>
         )}
       </Box>
@@ -418,7 +420,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         <Box sx={{ mb: 3 }}>
           <TextField
             fullWidth
-            placeholder="Search by title, course, program, keywords..."
+            placeholder={t('common.search')}
             value={searchQuery}
             onChange={handleSearchChange}
             variant="outlined"
@@ -481,10 +483,10 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
             <ScienceIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              No Experiments Yet
+              {t('experiment.noExperiments')}
             </Typography>
             <Typography variant="body2" sx={{ mb: 3 }}>
-              Create your first experiment to get started.
+              {t('experiment.noExperimentsDesc')}
             </Typography>
             <Button
               variant="contained"
@@ -492,7 +494,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
               startIcon={<AddIcon />}
               onClick={onCreateExperiment}
             >
-              Create Your First Experiment
+              {t('experiment.createNew')}
             </Button>
           </Box>
         ) : (
@@ -599,19 +601,19 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       >
         <MenuItem onClick={handleEdit}>
           <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          Edit Experiment
+          {t('experiment.editExperiment')}
         </MenuItem>
         <MenuItem onClick={handleVersionHistory}>
           <HistoryIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          Version History
+          {t('version.versionHistory')}
         </MenuItem>
         <MenuItem onClick={handleExport}>
           <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          Export
+          {t('common.export')}
         </MenuItem>
         <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
           <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          Delete
+          {t('common.delete')}
         </MenuItem>
       </Menu>
 
@@ -639,7 +641,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           fullWidth
         >
           <DialogTitle>
-            Version History - {versionHistoryExperiment.title}
+            {t('version.versionHistory')} - {versionHistoryExperiment.title}
           </DialogTitle>
           <DialogContent>
             <VersionHistory
@@ -649,7 +651,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setVersionHistoryOpen(false)}>
-              Close
+              {t('common.close')}
             </Button>
           </DialogActions>
         </Dialog>

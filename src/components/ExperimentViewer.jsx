@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Container,
@@ -31,6 +32,7 @@ import ExportDialog from './ExportDialog';
 import { toCanonical } from '../utils/experimentCanonical.js';
 
 const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
+  const { t } = useTranslation();
   const [experiment, setExperiment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -108,13 +110,13 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     return (
       <Box sx={{ p: 4, textAlign: 'center' }}>
         <Typography color="error" variant="h6" gutterBottom>
-          Error Loading Experiment
+          {t('messages.errorLoadingExperiment')}
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
           {error}
         </Typography>
         <Button variant="outlined" onClick={onClose}>
-          Back to Dashboard
+          {t('buttons.backToDashboard')}
         </Button>
       </Box>
     );
@@ -907,7 +909,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           onClick={onClose}
           sx={{ order: { xs: 1, sm: 0 } }}
         >
-          Back to Dashboard
+          {t('buttons.backToDashboard')}
         </Button>
         <Box sx={{ 
           display: 'flex', 
@@ -920,14 +922,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             startIcon={<HistoryIcon />}
             onClick={() => setHistoryOpen(true)}
           >
-            Version History
+            {t('version.versionHistory')}
           </Button>
           <Button
             variant="outlined"
             startIcon={<ExportIcon />}
             onClick={() => setExportOpen(true)}
           >
-            Export
+            {t('common.export')}
           </Button>
           {onEdit && (
             <Button
@@ -935,7 +937,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               startIcon={<EditIcon />}
               onClick={() => onEdit(experiment)}
             >
-              Edit Experiment
+              {t('experiment.editExperiment')}
             </Button>
           )}
         </Box>

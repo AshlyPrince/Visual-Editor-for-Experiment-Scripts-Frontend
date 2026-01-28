@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Grid,
@@ -68,6 +69,7 @@ const StatusChip = styled(Chip)(({ theme }) => ({
 }));
 
 const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashboard }) => {
+  const { t } = useTranslation();
   const [experiments, setExperiments] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedExperiment, setSelectedExperiment] = useState(null);
@@ -243,15 +245,15 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-              My Experiments
+              {t('nav.myExperiments')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {experiments.length} experiment{experiments.length !== 1 ? 's' : ''} total
+              {experiments.length} {experiments.length === 1 ? t('nav.experiments').toLowerCase() : t('nav.experiments').toLowerCase()} {t('dashboard.totalExperiments').toLowerCase()}
             </Typography>
           </Box>
           {onBackToDashboard && (
             <SecondaryButton onClick={onBackToDashboard}>
-              Back to Dashboard
+              {t('buttons.backToDashboard')}
             </SecondaryButton>
           )}
         </Box>
@@ -347,7 +349,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
                       onClick={() => handleEditClick(experiment)}
                       startIcon={<EditIcon />}
                     >
-                      Edit
+                      {t('common.edit')}
                     </SecondaryButton>
                   </CardActions>
                 </ExperimentCard>
@@ -363,20 +365,20 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
         >
           <MenuItem onClick={handleEdit}>
             <EditIcon sx={{ mr: 1 }} />
-            Edit Experiment
+            {t('experiment.editExperiment')}
           </MenuItem>
           <MenuItem onClick={handleVersionHistory}>
             <HistoryIcon sx={{ mr: 1 }} />
-            Version History
+            {t('version.versionHistory')}
           </MenuItem>
           <MenuItem onClick={handleExport}>
             <ExportIcon sx={{ mr: 1 }} />
-            Export
+            {t('common.export')}
           </MenuItem>
           <Divider />
           <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
             <DeleteIcon sx={{ mr: 1 }} />
-            Delete
+            {t('common.delete')}
           </MenuItem>
         </Menu>
 
