@@ -142,6 +142,7 @@
     "experimentUpdated": "Experiment erfolgreich aktualisiert",
     "experimentDeleted": "Experiment erfolgreich gelöscht",
     "untitledExperiment": "Unbenanntes Experiment",
+    "unnamedSection": "Unbenannter Abschnitt",
     "createdWithWizard": "Erstellt mit Experiment-Assistent",
     "updatedWithWizard": "Aktualisiert mit Experiment-Assistent",
     "version": "Version",

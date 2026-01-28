@@ -2,12 +2,12 @@
 
 import { validateSection, VALID_SECTION_TYPES } from '../schemas/experimentSchema.js';
 
-export function normalizeSectionContent(section) {
+export function normalizeSectionContent(section, t = null) {
   if (!section) return null;
 
   const normalized = {
     id: section.id || '',
-    name: section.name || 'Unnamed Section',
+    name: section.name || (t ? t('experiment.unnamedSection') : 'Unnamed Section'),
     icon: section.icon || '📝',
     type: section.type || 'rich-text',
     content: null,
@@ -125,7 +125,7 @@ export function normalizeSectionContent(section) {
   return normalized;
 }
 
-export function normalizeExperiment(experiment) {
+export function normalizeExperiment(experiment, t = null) {
   if (!experiment) return null;
 
   
@@ -134,7 +134,7 @@ export function normalizeExperiment(experiment) {
 
   const normalized = {
     id: experiment.id,
-    title: experiment.title || 'Untitled Experiment',
+    title: experiment.title || (t ? t('experiment.untitledExperiment') : 'Untitled Experiment'),
     
     estimated_duration: (config.duration && config.duration.trim()) || experiment.estimated_duration || '',
     course: (config.subject && config.subject.trim()) || experiment.course || '',
@@ -171,7 +171,7 @@ export function normalizeExperiment(experiment) {
                !sectionName.includes('title') && 
                !sectionName.includes('header info');
       })
-      .map(section => normalizeSectionContent(section));
+      .map(section => normalizeSectionContent(section, t));
   }
 
   return normalized;
