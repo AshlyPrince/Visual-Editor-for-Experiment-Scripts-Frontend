@@ -40,7 +40,7 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
-const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' }) => {
+const RichTextEditor = ({ value = '', onChange, placeholder }) => {
   const editorRef = useRef(null);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
@@ -60,6 +60,8 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', onConfirm: null });
   
   const { t } = useTranslation();
+  
+  const editorPlaceholder = placeholder || t('editor.placeholder');
 
   useEffect(() => {
     if (editorRef.current && value && !editorRef.current.innerHTML) {
@@ -165,7 +167,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       try {
         new URL(validUrl);
       } catch {
-        alert('Please enter a valid URL (e.g., https://example.com)');
+        alert(t('editor.invalidUrlError'));
         return;
       }
       
@@ -329,8 +331,8 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
     if (rows[0]?.children.length <= 1) {
       setConfirmDialog({
         open: true,
-        title: 'Cannot Delete Column',
-        message: 'Cannot delete the last column in the table.',
+        title: t('editor.table.cannotDeleteColumn'),
+        message: t('editor.table.cannotDeleteLastColumn'),
         onConfirm: () => setConfirmDialog({ open: false, title: '', message: '', onConfirm: null })
       });
       return;
@@ -351,8 +353,8 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
     
     setConfirmDialog({
       open: true,
-      title: 'Delete Table?',
-      message: 'Are you sure you want to delete this entire table? This action cannot be undone.',
+      title: t('editor.table.deleteTableTitle'),
+      message: t('editor.table.deleteTableMessage'),
       onConfirm: () => {
         currentTable.remove();
         handleContentChange();
@@ -380,45 +382,45 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
             onClick={() => setConfirmDialog({ open: false, title: '', message: '', onConfirm: null })}
             color="inherit"
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button 
             onClick={confirmDialog.onConfirm || (() => setConfirmDialog({ open: false, title: '', message: '', onConfirm: null }))}
             variant="contained"
-            color={confirmDialog.title.includes('Delete') ? 'error' : 'primary'}
+            color={confirmDialog.title.includes('Delete') || confirmDialog.title.includes('löschen') ? 'error' : 'primary'}
             autoFocus
           >
-            OK
+            {t('common.ok')}
           </Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={linkDialogOpen} onClose={() => setLinkDialogOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Insert Link</DialogTitle>
+        <DialogTitle>{t('editor.link.insertLink')}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
             <TextField
-              label="URL"
+              label={t('editor.link.linkUrl')}
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
-              placeholder="https://example.com"
+              placeholder={t('editor.link.linkUrlPlaceholder')}
               fullWidth
               autoFocus
-              helperText="Enter the web address to link to"
+              helperText={t('editor.link.linkUrlHelper')}
             />
             <TextField
-              label="Link Text (optional)"
+              label={t('editor.link.linkText')}
               value={linkText}
               onChange={(e) => setLinkText(e.target.value)}
-              placeholder="Click here"
+              placeholder={t('editor.link.linkTextPlaceholder')}
               fullWidth
-              helperText="Leave empty to use selected text or URL as link text"
+              helperText={t('editor.link.linkTextHelper')}
             />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setLinkDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleInsertLink} variant="contained" disabled={!linkUrl.trim()}>Insert Link</Button>
+          <Button onClick={() => setLinkDialogOpen(false)}>{t('common.cancel')}</Button>
+          <Button onClick={handleInsertLink} variant="contained" disabled={!linkUrl.trim()}>{t('editor.link.insertLink')}</Button>
         </DialogActions>
       </Dialog>
 
@@ -622,23 +624,23 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
           flexWrap: 'wrap'
         }}>
           <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main', mr: 1 }}>
-            📊 Table Tools
+            📊 {t('editor.table.tableToolsTitle')}
           </Typography>
           
           <ButtonGroup size="small" variant="contained">
-            <Tooltip title="Add Row Above">
+            <Tooltip title={t('editor.table.addRowAbove')}>
               <Button onClick={addRowAbove} sx={{ minWidth: '90px' }}>
-                ↑ Row
+                ↑ {t('editor.table.rowButton')}
               </Button>
             </Tooltip>
-            <Tooltip title="Add Row Below">
+            <Tooltip title={t('editor.table.addRowBelow')}>
               <Button onClick={addRowBelow} sx={{ minWidth: '90px' }}>
-                ↓ Row
+                ↓ {t('editor.table.rowButton')}
               </Button>
             </Tooltip>
-            <Tooltip title="Delete Row">
+            <Tooltip title={t('editor.table.deleteRow')}>
               <Button onClick={deleteRow} color="error" sx={{ minWidth: '90px' }}>
-                ✕ Row
+                ✕ {t('editor.table.rowButton')}
               </Button>
             </Tooltip>
           </ButtonGroup>
@@ -646,26 +648,26 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
           <Divider orientation="vertical" flexItem sx={{ borderColor: 'primary.light' }} />
 
           <ButtonGroup size="small" variant="contained">
-            <Tooltip title="Add Column Left">
+            <Tooltip title={t('editor.table.addColumnLeft')}>
               <Button onClick={addColumnLeft} sx={{ minWidth: '90px' }}>
-                ← Col
+                ← {t('editor.table.colButton')}
               </Button>
             </Tooltip>
-            <Tooltip title="Add Column Right">
+            <Tooltip title={t('editor.table.addColumnRight')}>
               <Button onClick={addColumnRight} sx={{ minWidth: '90px' }}>
-                → Col
+                → {t('editor.table.colButton')}
               </Button>
             </Tooltip>
-            <Tooltip title="Delete Column">
+            <Tooltip title={t('editor.table.deleteColumn')}>
               <Button onClick={deleteColumn} color="error" sx={{ minWidth: '90px' }}>
-                ✕ Col
+                ✕ {t('editor.table.colButton')}
               </Button>
             </Tooltip>
           </ButtonGroup>
 
           <Divider orientation="vertical" flexItem sx={{ borderColor: 'primary.light' }} />
 
-          <Tooltip title="Delete Entire Table">
+          <Tooltip title={t('editor.table.deleteEntireTable')}>
             <Button 
               onClick={deleteTable} 
               variant="contained" 
@@ -674,7 +676,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
               startIcon={<DeleteIcon />}
               sx={{ minWidth: '120px' }}
             >
-              Delete Table
+              {t('editor.table.deleteTable')}
             </Button>
           </Tooltip>
         </Box>
@@ -696,7 +698,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
             bgcolor: 'background.paper',
           },
           '&:empty:before': {
-            content: `"${placeholder}"`,
+            content: `"${editorPlaceholder}"`,
             color: 'text.disabled',
           },
           '& a': {
@@ -725,8 +727,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       
       <Box sx={{ px: 2, py: 1, bgcolor: 'grey.50', borderTop: '1px solid', borderColor: 'divider' }}>
         <Box component="span" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
-          💡 <strong>Table tips:</strong> Triple-click a table to select it, then press Delete/Backspace to remove. 
-          To modify: click in a cell, use your browser's right-click menu for row/column operations.
+          💡 <strong>{t('editor.table.tableTips').split(':')[0]}:</strong> {t('editor.table.tableTips').split(':').slice(1).join(':')}
         </Box>
       </Box>
     </Box>
