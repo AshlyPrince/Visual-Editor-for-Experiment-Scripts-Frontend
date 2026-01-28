@@ -328,18 +328,32 @@ export const compareVersions = (version1, version2) => {
   };
 };
 
-export const getChangeType = (change) => {
+export const getChangeType = (change, t = null) => {
+  const fallback = {
+    'N': 'Added',
+    'D': 'Deleted',
+    'E': 'Edited',
+    'A': 'Array changed',
+    'default': 'Changed'
+  };
+  
+  if (!t) {
+    return fallback[change.kind] || fallback.default;
+  }
+  
   switch (change.kind) {
-    case 'N': return 'Added';
-    case 'D': return 'Deleted';
-    case 'E': return 'Edited';
-    case 'A': return 'Array changed';
-    default: return 'Changed';
+    case 'N': return t('versionComparison.changeTypes.added');
+    case 'D': return t('versionComparison.changeTypes.deleted');
+    case 'E': return t('versionComparison.changeTypes.edited');
+    case 'A': return t('versionComparison.changeTypes.arrayChanged');
+    default: return t('versionComparison.changeTypes.changed');
   }
 };
 
-export const getChangePath = (change, version1 = null, version2 = null) => {
-  if (!change.path || change.path.length === 0) return 'root';
+export const getChangePath = (change, version1 = null, version2 = null, t = null) => {
+  if (!change.path || change.path.length === 0) {
+    return t ? t('versionComparison.paths.root') : 'root';
+  }
   
   const path = [...change.path];
   const readableParts = [];
@@ -362,13 +376,13 @@ export const getChangePath = (change, version1 = null, version2 = null) => {
     
     
     if (typeof part === 'number') {
-      readableParts.push(`Item ${part + 1}`);
+      readableParts.push(t ? t('versionComparison.paths.item', { number: part + 1 }) : `Item ${part + 1}`);
     } else if (part === 'content') {
-      readableParts.push('Content');
+      readableParts.push(t ? t('versionComparison.paths.content') : 'Content');
     } else if (part === 'media') {
-      readableParts.push('Media');
+      readableParts.push(t ? t('versionComparison.paths.media') : 'Media');
     } else if (part === 'config') {
-      readableParts.push('Settings');
+      readableParts.push(t ? t('versionComparison.paths.settings') : 'Settings');
     } else {
       
       const formatted = part.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -399,15 +413,17 @@ export const getChangeBgColor = (change) => {
   }
 };
 
-export const formatValue = (value) => {
-  if (value === null) return '(empty)';
-  if (value === undefined) return '(not set)';
-  if (value === '') return '(blank)';
+export const formatValue = (value, t = null) => {
+  const msg = (key, fallback, params = {}) => t ? t(key, params) : fallback;
+  
+  if (value === null) return msg('versionComparison.values.empty', '(empty)');
+  if (value === undefined) return msg('versionComparison.values.notSet', '(not set)');
+  if (value === '') return msg('versionComparison.values.blank', '(blank)');
   
   if (typeof value === 'object') {
     
     if (Array.isArray(value)) {
-      if (value.length === 0) return '(no items)';
+      if (value.length === 0) return msg('versionComparison.values.noItems', '(no items)');
       
       
       if (value.every(item => typeof item === 'string')) {
@@ -426,24 +442,24 @@ export const formatValue = (value) => {
         
         if (value[0].url || value[0].data || value[0].type) {
           return value.map(item => 
-            item.caption || item.filename || item.type || 'Media item'
+            item.caption || item.filename || item.type || msg('versionComparison.values.mediaItem', 'Media item')
           ).join(', ');
         }
         
         
         return value.slice(0, 3).map(item => 
           JSON.stringify(item)
-        ).join(',\n') + (value.length > 3 ? `\n... and ${value.length - 3} more` : '');
+        ).join(',\n') + (value.length > 3 ? `\n${msg('versionComparison.values.andMore', '... and {{count}} more', { count: value.length - 3 })}` : '');
       }
       
       
-      return `${value.length} items`;
+      return msg('versionComparison.values.items', '{{count}} items', { count: value.length });
     }
     
     
     if (value.config) {
       
-      return '(configuration metadata - hidden)';
+      return msg('versionComparison.values.configHidden', '(configuration metadata - hidden)');
     }
     
     
@@ -469,21 +485,21 @@ export const formatValue = (value) => {
       val !== null && val !== undefined && val !== '' && !metadataFields.includes(key)
     );
     
-    if (entries.length === 0) return '(empty object)';
+    if (entries.length === 0) return msg('versionComparison.values.emptyObject', '(empty object)');
     
     
     if (entries.length <= 5) {
       return entries.map(([key, val]) => {
         const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         if (typeof val === 'object') {
-          return `${formattedKey}: [nested data]`;
+          return `${formattedKey}: ${msg('versionComparison.values.nestedData', '[nested data]')}`;
         }
         return `${formattedKey}: ${val}`;
       }).join('\n');
     }
     
     
-    return `Object with ${entries.length} fields`;
+    return msg('versionComparison.values.objectWithFields', 'Object with {{count}} fields', { count: entries.length });
   }
   
   
@@ -500,7 +516,7 @@ export const formatValue = (value) => {
       .replace(/&#39;/g, "'")
       .trim();
     
-    return strippedValue || '(empty)';
+    return strippedValue || msg('versionComparison.values.empty', '(empty)');
   }
   
   return String(value);

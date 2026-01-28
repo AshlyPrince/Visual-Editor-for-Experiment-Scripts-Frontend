@@ -916,6 +916,35 @@
     "experimentVersion": "Experimentversion: {{version}}",
     "lastUpdated": "Zuletzt aktualisiert",
     "browserNoVideoSupport": "Ihr Browser unterstützt das Video-Tag nicht."
+  },
+  "versionComparison": {
+    "changeTypes": {
+      "added": "Hinzugefügt",
+      "deleted": "Gelöscht",
+      "edited": "Bearbeitet",
+      "arrayChanged": "Array geändert",
+      "changed": "Geändert"
+    },
+    "paths": {
+      "root": "Wurzel",
+      "item": "Element {{number}}",
+      "content": "Inhalt",
+      "media": "Medien",
+      "settings": "Einstellungen"
+    },
+    "values": {
+      "empty": "(leer)",
+      "notSet": "(nicht gesetzt)",
+      "blank": "(leer)",
+      "noItems": "(keine Elemente)",
+      "mediaItem": "Medienelement",
+      "configHidden": "(Konfigurationsmetadaten - ausgeblendet)",
+      "emptyObject": "(leeres Objekt)",
+      "nestedData": "[verschachtelte Daten]",
+      "objectWithFields": "Objekt mit {{count}} Feldern",
+      "andMore": "... und {{count}} weitere",
+      "items": "{{count}} Elemente"
+    }
   }
 }
 

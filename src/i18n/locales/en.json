@@ -916,6 +916,35 @@
     "experimentVersion": "Experiment Version: {{version}}",
     "lastUpdated": "Last Updated",
     "browserNoVideoSupport": "Your browser does not support the video tag."
+  },
+  "versionComparison": {
+    "changeTypes": {
+      "added": "Added",
+      "deleted": "Deleted",
+      "edited": "Edited",
+      "arrayChanged": "Array changed",
+      "changed": "Changed"
+    },
+    "paths": {
+      "root": "root",
+      "item": "Item {{number}}",
+      "content": "Content",
+      "media": "Media",
+      "settings": "Settings"
+    },
+    "values": {
+      "empty": "(empty)",
+      "notSet": "(not set)",
+      "blank": "(blank)",
+      "noItems": "(no items)",
+      "mediaItem": "Media item",
+      "configHidden": "(configuration metadata - hidden)",
+      "emptyObject": "(empty object)",
+      "nestedData": "[nested data]",
+      "objectWithFields": "Object with {{count}} fields",
+      "andMore": "... and {{count}} more",
+      "items": "{{count}} items"
+    }
   }
 }
 
