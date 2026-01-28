@@ -100,7 +100,18 @@
     "versionControl": "Versionsverwaltung",
     "versionControlDesc": "Verfolgen Sie Änderungen und verwalten Sie Experimentversionen",
     "aiAssistant": "KI-Assistent",
-    "aiAssistantDesc": "Erhalten Sie Hilfe bei Experimentinhalten und -struktur"
+    "aiAssistantDesc": "Erhalten Sie Hilfe bei Experimentinhalten und -struktur",
+    "quickDuration": "Schnell (<30 Min.)",
+    "mediumDuration": "Mittel (30-60 Min.)",
+    "longDuration": "Lang (60-90 Min.)",
+    "extendedDuration": "Erweitert (>90 Min.)",
+    "result": "Ergebnis",
+    "results": "Ergebnisse",
+    "found": "gefunden",
+    "experimentNumber": "Experiment #{{id}}",
+    "new": "Neu",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "showing": "Zeige {{start}}-{{end}} von {{total}} Experimenten"
   },
   "experiment": {
     "title": "Titel",
@@ -400,6 +411,8 @@
     "deleteExperimentFailed": "Fehler beim Löschen des Experiments",
     "loadingError": "Ladefehler",
     "loadExperimentsError": "Fehler beim Laden der Experimente. Bitte versuchen Sie es erneut.",
+    "unableToLoadExperiments": "Experimente konnten nicht geladen werden. Bitte aktualisieren Sie die Seite oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht.",
+    "loadExperimentsFailed": "Fehler beim Laden der Experimente",
     "confirmDelete": "Möchten Sie \"{{itemName}}\" wirklich löschen?",
     "deleteConfirm": "Element löschen?",
     "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",

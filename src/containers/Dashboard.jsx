@@ -123,10 +123,10 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       const durationMatch = experiment.estimated_duration.match(/\d+/);
       if (durationMatch) {
         const minutes = parseInt(durationMatch[0]);
-        if (minutes <= 30) tags.push('Quick (<30min)');
-        else if (minutes <= 60) tags.push('Medium (30-60min)');
-        else if (minutes <= 90) tags.push('Long (60-90min)');
-        else tags.push('Extended (>90min)');
+        if (minutes <= 30) tags.push(t('dashboard.quickDuration'));
+        else if (minutes <= 60) tags.push(t('dashboard.mediumDuration'));
+        else if (minutes <= 90) tags.push(t('dashboard.longDuration'));
+        else tags.push(t('dashboard.extendedDuration'));
       }
     }
     
@@ -194,7 +194,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
         setError(null);
       } catch (err) {
-        setError('Unable to load experiments. Please refresh the page or contact support if the problem persists.');
+        setError(t('messages.unableToLoadExperiments'));
         setExperiments([]);
         setAllExperiments([]);
         setFilteredExperiments([]);
@@ -202,7 +202,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         
         addNotification({
           type: 'error',
-          message: 'Failed to load experiments'
+          message: t('messages.loadExperimentsFailed')
         });
       } finally {
         setLoading(false);
@@ -460,7 +460,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           />
           {searchQuery && (
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-              {totalExperiments} {totalExperiments === 1 ? 'result' : 'results'} found
+              {totalExperiments} {totalExperiments === 1 ? t('dashboard.result') : t('dashboard.results')} {t('dashboard.found')}
             </Typography>
           )}
         </Box>
@@ -529,7 +529,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                       >
                         {experiment.title && experiment.title !== 'Untitled Experiment' 
                           ? experiment.title 
-                          : `Experiment #${experiment.id || 'New'}`}
+                          : t('dashboard.experimentNumber', { id: experiment.id || t('dashboard.new') })}
                       </Typography>
                       <IconButton
                         size="small"
@@ -550,7 +550,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
                     <Box sx={{ mt: 'auto' }}>
                       <Typography variant="body2" color="text.secondary">
-                        Last updated: {formatDate(experiment.updated_at)}
+                        {t('dashboard.lastUpdated')}: {formatDate(experiment.updated_at)}
                       </Typography>
                     </Box>
                   </CardContent>
@@ -583,7 +583,11 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           )}
           
           <Typography variant="body2" color="text.secondary">
-            Showing {page * rowsPerPage + 1}-{Math.min((page + 1) * rowsPerPage, totalExperiments)} of {totalExperiments} experiments
+            {t('dashboard.showing', { 
+              start: page * rowsPerPage + 1,
+              end: Math.min((page + 1) * rowsPerPage, totalExperiments),
+              total: totalExperiments
+            })}
           </Typography>
         </Box>
       )}

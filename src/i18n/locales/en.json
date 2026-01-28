@@ -100,7 +100,18 @@
     "versionControl": "Version Control",
     "versionControlDesc": "Track changes and manage experiment versions",
     "aiAssistant": "AI Assistant",
-    "aiAssistantDesc": "Get help with experiment content and structure"
+    "aiAssistantDesc": "Get help with experiment content and structure",
+    "quickDuration": "Quick (<30min)",
+    "mediumDuration": "Medium (30-60min)",
+    "longDuration": "Long (60-90min)",
+    "extendedDuration": "Extended (>90min)",
+    "result": "result",
+    "results": "results",
+    "found": "found",
+    "experimentNumber": "Experiment #{{id}}",
+    "new": "New",
+    "lastUpdated": "Last updated",
+    "showing": "Showing {{start}}-{{end}} of {{total}} experiments"
   },
   "experiment": {
     "title": "Title",
@@ -400,6 +411,8 @@
     "deleteExperimentFailed": "Failed to delete experiment",
     "loadingError": "Loading Error",
     "loadExperimentsError": "Failed to load experiments. Please try again.",
+    "unableToLoadExperiments": "Unable to load experiments. Please refresh the page or contact support if the problem persists.",
+    "loadExperimentsFailed": "Failed to load experiments",
     "confirmDelete": "Are you sure you want to delete \"{{itemName}}\"?",
     "deleteConfirm": "Delete Item?",
     "actionCannotBeUndone": "This action cannot be undone.",
