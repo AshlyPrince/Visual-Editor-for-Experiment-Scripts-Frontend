@@ -154,15 +154,15 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       let validUrl = linkUrl.trim();
       
       
-      if (!validUrl.match(/^https?:\/\
-        validUrl = 'https:
+      if (!validUrl.match(/^https?:\/\//)) {
+        validUrl = 'https://' + validUrl;
       }
       
       
       try {
         new URL(validUrl);
       } catch {
-        alert('Please enter a valid URL (e.g., https:
+        alert('Please enter a valid URL (e.g., https://example.com)');
         return;
       }
       
@@ -398,7 +398,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
               label="URL"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
-              placeholder="https:
+              placeholder="https://example.com"
               fullWidth
               autoFocus
               helperText="Enter the web address to link to"

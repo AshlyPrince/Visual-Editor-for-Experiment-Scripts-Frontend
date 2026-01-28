@@ -28,7 +28,7 @@ class KeycloakService {
     
     try {
       const keycloakConfig = {
-        url: config.url || import.meta.env.VITE_KEYCLOAK_URL || 'https:
+        url: config.url || import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/',
         realm: config.realm || import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm',
         clientId: config.clientId || import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor'
       };
@@ -168,7 +168,7 @@ class KeycloakService {
     this.isLoggingIn = true;
     
     try {
-      const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || 'https:
+      const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/';
       const realm = import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm';
       const clientId = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor';
       

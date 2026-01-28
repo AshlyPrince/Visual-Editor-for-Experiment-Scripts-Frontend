@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https:
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://visual-editor-backend.onrender.com",
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
