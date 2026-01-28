@@ -3,7 +3,7 @@ import keycloakService from './keycloakService.js';
 import { toCanonical } from '../utils/experimentCanonical.js';
 
 class ExperimentService {
-  async getExperiments(params = {}) {
+  async getExperiments(params = {}, t = null) {
     const { page = 1, limit = 20, search = '' } = params;
     const queryParams = new URLSearchParams({ page, limit });
     
@@ -17,14 +17,25 @@ class ExperimentService {
       const response = await api.get(url);
       return response.data;
     } catch (error) {
-      if (error.response?.status === 404) {
-        throw new Error('Experiments could not be found. Please try again.');
-      } else if (error.response?.status === 500) {
-        throw new Error('Server error occurred while loading experiments. Please try again later.');
-      } else if (!error.response) {
-        throw new Error('Unable to connect to the server. Please check your internet connection.');
+      if (!t) {
+        if (error.response?.status === 404) {
+          throw new Error('Experiments could not be found. Please try again.');
+        } else if (error.response?.status === 500) {
+          throw new Error('Server error occurred while loading experiments. Please try again later.');
+        } else if (!error.response) {
+          throw new Error('Unable to connect to the server. Please check your internet connection.');
+        }
+        throw new Error('Unable to load experiments. Please try again.');
       }
-      throw new Error('Unable to load experiments. Please try again.');
+      
+      if (error.response?.status === 404) {
+        throw new Error(t('errors.experimentsNotFound'));
+      } else if (error.response?.status === 500) {
+        throw new Error(t('errors.serverError'));
+      } else if (!error.response) {
+        throw new Error(t('errors.connectionError'));
+      }
+      throw new Error(t('errors.loadExperimentsFailed'));
     }
   }
 
@@ -79,7 +90,7 @@ class ExperimentService {
     return response.data;
   }
 
-  async createFromWizard(wizardData) {
+  async createFromWizard(wizardData, t = null) {
     const { name, description, duration, subject, gradeLevel, sections } = wizardData;
     
     const userInfo = keycloakService.getUserInfo();
@@ -87,11 +98,17 @@ class ExperimentService {
     const userId = userInfo?.id || userInfo?.sub || userInfo?.preferred_username || userInfo?.email;
     
     if (!userId || !isAuthenticated) {
-      throw new Error('User not authenticated. Please log in to create experiments.');
+      const errorMsg = t 
+        ? t('errors.userNotAuthenticated')
+        : 'User not authenticated. Please log in to create experiments.';
+      throw new Error(errorMsg);
     }
     
+    const defaultTitle = t ? t('experiment.untitledExperiment') : 'Untitled Experiment';
+    const commitMsg = t ? t('experiment.createdWithWizard') : 'Created with Experiment Wizard';
+    
     const experimentData = {
-      title: name || 'Untitled Experiment',
+      title: name || defaultTitle,
       ...(description && { description }),
       created_by: userId,
       content: {
@@ -102,38 +119,51 @@ class ExperimentService {
         },
         sections: sections  
       },
-      html_content: this.generateHTMLFromSections(sections, { name, duration, subject, gradeLevel }),
-      commit_message: 'Created with Experiment Wizard'
+      html_content: this.generateHTMLFromSections(sections, { name, duration, subject, gradeLevel }, t),
+      commit_message: commitMsg
     };
 
     try {
       return await this.createExperiment(experimentData);
     } catch (error) {
       if (error.response?.status === 400) {
-        const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Invalid experiment data';
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || 
+          (t ? t('errors.invalidExperimentData') : 'Invalid experiment data');
         
         if (errorMessage.includes('created_by') && errorMessage.includes('null')) {
-          throw new Error(
-            'Authentication error: Unable to verify user identity. ' +
-            'Please log out and log in again. If the problem persists, contact support.'
-          );
+          const authError = t 
+            ? t('errors.authenticationError')
+            : 'Authentication error: Unable to verify user identity. Please log out and log in again. If the problem persists, contact support.';
+          throw new Error(authError);
         }
         
-        throw new Error(`Invalid experiment data: ${errorMessage}. Please check all required fields are filled correctly.`);
+        const validationError = t
+          ? t('errors.invalidExperimentDataWithDetails', { errorMessage })
+          : `Invalid experiment data: ${errorMessage}. Please check all required fields are filled correctly.`;
+        throw new Error(validationError);
       } else if (error.response?.status === 500) {
-        throw new Error('Server error occurred while creating the experiment. Please try again.');
+        const serverError = t
+          ? t('errors.serverErrorCreating')
+          : 'Server error occurred while creating the experiment. Please try again.';
+        throw new Error(serverError);
       }
-      throw new Error('Unable to create experiment. Please try again or contact support.');
+      const generalError = t
+        ? t('errors.unableToCreateExperiment')
+        : 'Unable to create experiment. Please try again or contact support.';
+      throw new Error(generalError);
     }
   }
 
   
-  async updateFromWizard(experimentId, wizardData) {
+  async updateFromWizard(experimentId, wizardData, t = null) {
     const currentExperiment = await this.getExperiment(experimentId);
     const canonical = toCanonical(currentExperiment);
     
+    const defaultVersionName = t ? t('experiment.updated') : 'Updated';
+    const commitMsg = t ? t('experiment.updatedWithWizard') : 'Updated with Experiment Wizard';
+    
     const versionData = {
-      title: `Version - ${wizardData.name || 'Updated'}`,
+      title: `${t ? t('experiment.version') : 'Version'} - ${wizardData.name || defaultVersionName}`,
       content: {
         ...canonical.content,
         config: {
@@ -151,19 +181,22 @@ class ExperimentService {
           duration: wizardData.duration,
           subject: wizardData.subject,
           gradeLevel: wizardData.gradeLevel 
-        }
+        },
+        t
       ),
-      commit_message: 'Updated with Experiment Wizard'
+      commit_message: commitMsg
     };
 
     return this.createVersion(experimentId, versionData);
   }
 
-  generateHTMLFromSections(sections, config = {}) {
+  generateHTMLFromSections(sections, config = {}, t = null) {
+    const defaultTitle = t ? t('experiment.untitledExperiment') : 'Untitled Experiment';
+    
     let html = `
       <div class="experiment-document">
         <header class="experiment-header">
-          <h1>${config.name || 'Untitled Experiment'}</h1>
+          <h1>${config.name || defaultTitle}</h1>
           <div class="experiment-meta">
             ${config.gradeLevel ? `<span class="grade-level">${config.gradeLevel}</span>` : ''}
             ${config.subject ? `<span class="subject">${config.subject}</span>` : ''}
@@ -224,8 +257,7 @@ class ExperimentService {
     };
   }
 
-  
-  extractWizardData(experiment) {
+  extractWizardData(experiment, t = null) {
     if (experiment.content?.type === 'educational_experiment') {
       return {
         sections: experiment.content.sections || [],
@@ -233,12 +265,15 @@ class ExperimentService {
       };
     }
     
+    const legacyDescription = t
+      ? t('experiment.legacyDescription')
+      : 'Legacy experiment - edit to convert to educational format';
     
     return {
       sections: [],
       config: {
         name: experiment.title,
-        description: 'Legacy experiment - edit to convert to educational format'
+        description: legacyDescription
       }
     };
   }

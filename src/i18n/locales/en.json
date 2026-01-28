@@ -140,7 +140,13 @@
     "noExperimentsDesc": "Start by creating your first experiment",
     "experimentCreated": "Experiment created successfully",
     "experimentUpdated": "Experiment updated successfully",
-    "experimentDeleted": "Experiment deleted successfully"
+    "experimentDeleted": "Experiment deleted successfully",
+    "untitledExperiment": "Untitled Experiment",
+    "createdWithWizard": "Created with Experiment Wizard",
+    "updatedWithWizard": "Updated with Experiment Wizard",
+    "version": "Version",
+    "updated": "Updated",
+    "legacyDescription": "Legacy experiment - edit to convert to educational format"
   },
   "version": {
     "versionHistory": "Version History",
@@ -206,6 +212,18 @@
     "deleteExperimentTitle": "Delete Experiment?",
     "thisExperiment": "this experiment",
     "experiment": "experiment"
+  },
+  "errors": {
+    "experimentsNotFound": "Experiments could not be found. Please try again.",
+    "serverError": "Server error occurred while loading experiments. Please try again later.",
+    "connectionError": "Unable to connect to the server. Please check your internet connection.",
+    "loadExperimentsFailed": "Unable to load experiments. Please try again.",
+    "userNotAuthenticated": "User not authenticated. Please log in to create experiments.",
+    "authenticationError": "Authentication error: Unable to verify user identity. Please log out and log in again. If the problem persists, contact support.",
+    "invalidExperimentData": "Invalid experiment data",
+    "invalidExperimentDataWithDetails": "Invalid experiment data: {{errorMessage}}. Please check all required fields are filled correctly.",
+    "serverErrorCreating": "Server error occurred while creating the experiment. Please try again.",
+    "unableToCreateExperiment": "Unable to create experiment. Please try again or contact support."
   },
   "fields": {
     "duration": "Duration",

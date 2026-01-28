@@ -140,7 +140,13 @@
     "noExperimentsDesc": "Beginnen Sie mit der Erstellung Ihres ersten Experiments",
     "experimentCreated": "Experiment erfolgreich erstellt",
     "experimentUpdated": "Experiment erfolgreich aktualisiert",
-    "experimentDeleted": "Experiment erfolgreich gelöscht"
+    "experimentDeleted": "Experiment erfolgreich gelöscht",
+    "untitledExperiment": "Unbenanntes Experiment",
+    "createdWithWizard": "Erstellt mit Experiment-Assistent",
+    "updatedWithWizard": "Aktualisiert mit Experiment-Assistent",
+    "version": "Version",
+    "updated": "Aktualisiert",
+    "legacyDescription": "Legacy-Experiment - bearbeiten, um in Bildungsformat zu konvertieren"
   },
   "version": {
     "versionHistory": "Versionsverlauf",
@@ -206,6 +212,18 @@
     "deleteExperimentTitle": "Experiment löschen?",
     "thisExperiment": "dieses Experiment",
     "experiment": "Experiment"
+  },
+  "errors": {
+    "experimentsNotFound": "Experimente konnten nicht gefunden werden. Bitte versuchen Sie es erneut.",
+    "serverError": "Serverfehler beim Laden der Experimente. Bitte versuchen Sie es später erneut.",
+    "connectionError": "Keine Verbindung zum Server möglich. Bitte überprüfen Sie Ihre Internetverbindung.",
+    "loadExperimentsFailed": "Experimente konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "userNotAuthenticated": "Benutzer nicht authentifiziert. Bitte melden Sie sich an, um Experimente zu erstellen.",
+    "authenticationError": "Authentifizierungsfehler: Benutzeridentität konnte nicht überprüft werden. Bitte melden Sie sich ab und erneut an. Wenn das Problem weiterhin besteht, kontaktieren Sie den Support.",
+    "invalidExperimentData": "Ungültige Experimentdaten",
+    "invalidExperimentDataWithDetails": "Ungültige Experimentdaten: {{errorMessage}}. Bitte überprüfen Sie, ob alle erforderlichen Felder korrekt ausgefüllt sind.",
+    "serverErrorCreating": "Serverfehler beim Erstellen des Experiments. Bitte versuchen Sie es erneut.",
+    "unableToCreateExperiment": "Experiment konnte nicht erstellt werden. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
   },
   "fields": {
     "duration": "Dauer",
