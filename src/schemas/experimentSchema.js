@@ -138,15 +138,20 @@ export const CANONICAL_EXPERIMENT = {
   ]
 };
 
-export const SECTION_DEFINITIONS = {
-  
-  
+/**
+ * Get section definitions with translated names and descriptions.
+ * @param {Function} t - The i18next translation function
+ * @returns {Object} Section definitions with translated strings
+ */
+export function getSectionDefinitions(t) {
+  return {
+    
   'objectives': {
     id: 'objectives',
-    name: 'Learning Objectives',
+    name: t('sections.objectives.name'),
     icon: '🎯',
     type: 'rich-text',
-    description: 'What students will learn from this experiment',
+    description: t('sections.objectives.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -160,10 +165,10 @@ export const SECTION_DEFINITIONS = {
   
   'background': {
     id: 'background',
-    name: 'Background Theory',
+    name: t('sections.background.name'),
     icon: '📚',
     type: 'rich-text',
-    description: 'Theoretical background and scientific context',
+    description: t('sections.background.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -177,10 +182,10 @@ export const SECTION_DEFINITIONS = {
   
   'materials': {
     id: 'materials',
-    name: 'Materials & Equipment',
+    name: t('sections.materials.name'),
     icon: '🧪',
     type: 'materials_with_media',
-    description: 'List of materials needed with optional photos',
+    description: t('sections.materials.description'),
     contentFormat: {
       type: 'object',
       structure: {
@@ -206,10 +211,10 @@ export const SECTION_DEFINITIONS = {
   
   'chemicals': {
     id: 'chemicals',
-    name: 'Chemicals',
+    name: t('sections.chemicals.name'),
     icon: '⚗️',
     type: 'materials_with_media',
-    description: 'Chemical substances used in the experiment',
+    description: t('sections.chemicals.description'),
     contentFormat: {
       type: 'object',
       structure: {
@@ -235,10 +240,10 @@ export const SECTION_DEFINITIONS = {
   
   'safety': {
     id: 'safety',
-    name: 'Safety Measures',
+    name: t('sections.safety.name'),
     icon: '🦺',
     type: 'rich-text',
-    description: 'Safety precautions and protective equipment',
+    description: t('sections.safety.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -252,10 +257,10 @@ export const SECTION_DEFINITIONS = {
   
   'hazards': {
     id: 'hazards',
-    name: 'Potential Hazards',
+    name: t('sections.hazards.name'),
     icon: '⚠️',
     type: 'rich-text',
-    description: 'Potential dangers and warning information',
+    description: t('sections.hazards.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -269,10 +274,10 @@ export const SECTION_DEFINITIONS = {
   
   'procedure': {
     id: 'procedure',
-    name: 'Step-by-Step Procedure',
+    name: t('sections.procedure.name'),
     icon: '📋',
     type: 'procedure-steps',
-    description: 'Detailed experimental procedure with steps',
+    description: t('sections.procedure.description'),
     contentFormat: {
       type: 'object',
       structure: {
@@ -307,10 +312,10 @@ export const SECTION_DEFINITIONS = {
   
   'observations': {
     id: 'observations',
-    name: 'Observations & Data',
+    name: t('sections.observations.name'),
     icon: '🔬',
     type: 'rich-text',
-    description: 'What to observe and how to record data',
+    description: t('sections.observations.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -324,10 +329,10 @@ export const SECTION_DEFINITIONS = {
   
   'analysis': {
     id: 'analysis',
-    name: 'Analysis & Calculations',
+    name: t('sections.analysis.name'),
     icon: '📊',
     type: 'rich-text',
-    description: 'How to analyze results and perform calculations',
+    description: t('sections.analysis.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -341,10 +346,10 @@ export const SECTION_DEFINITIONS = {
   
   'conclusions': {
     id: 'conclusions',
-    name: 'Conclusions',
+    name: t('sections.conclusions.name'),
     icon: '🎓',
     type: 'rich-text',
-    description: 'Expected conclusions and learning outcomes',
+    description: t('sections.conclusions.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -358,10 +363,10 @@ export const SECTION_DEFINITIONS = {
   
   'references': {
     id: 'references',
-    name: 'References',
+    name: t('sections.references.name'),
     icon: '📖',
     type: 'list',
-    description: 'Citations and references',
+    description: t('sections.references.description'),
     contentFormat: {
       type: 'object',
       structure: {
@@ -382,10 +387,10 @@ export const SECTION_DEFINITIONS = {
   
   'disposal': {
     id: 'disposal',
-    name: 'Disposal Instructions',
+    name: t('sections.disposal.name'),
     icon: '♻️',
     type: 'rich-text',
-    description: 'How to properly dispose of chemicals and materials',
+    description: t('sections.disposal.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -399,10 +404,10 @@ export const SECTION_DEFINITIONS = {
   
   'risk_assessment': {
     id: 'risk_assessment',
-    name: 'Risk Assessment',
+    name: t('sections.risk_assessment.name'),
     icon: '📋',
     type: 'rich-text',
-    description: 'Formal risk assessment documentation',
+    description: t('sections.risk_assessment.description'),
     contentFormat: {
       type: 'string',
       format: 'HTML',
@@ -416,10 +421,10 @@ export const SECTION_DEFINITIONS = {
   
   'questions': {
     id: 'questions',
-    name: 'Questions & Discussion',
+    name: t('sections.questions.name'),
     icon: '❓',
     type: 'list',
-    description: 'Questions for students to consider',
+    description: t('sections.questions.description'),
     contentFormat: {
       type: 'object',
       structure: {
@@ -436,16 +441,62 @@ export const SECTION_DEFINITIONS = {
     mediaLocation: null,
     required: false
   }
-};
-
-export function getSectionDefinition(sectionId) {
-  
-  const baseId = sectionId.replace(/_\d+$/, '');
-  return SECTION_DEFINITIONS[baseId] || null;
+  };
 }
 
-export function validateSectionAgainstDefinition(section) {
-  const definition = getSectionDefinition(section.id);
+/**
+ * Get section definition with optional translation support.
+ * @param {string} sectionId - The section ID
+ * @param {Function} t - Optional i18next translation function. If not provided, returns English defaults.
+ * @returns {Object|null} Section definition or null if not found
+ */
+export function getSectionDefinition(sectionId, t) {
+  
+  const baseId = sectionId.replace(/_\d+$/, '');
+  
+  // If no translation function provided, use English defaults for backward compatibility
+  if (!t) {
+    t = (key) => {
+      const fallbacks = {
+        'sections.objectives.name': 'Learning Objectives',
+        'sections.objectives.description': 'What students will learn from this experiment',
+        'sections.background.name': 'Background Theory',
+        'sections.background.description': 'Theoretical background and scientific context',
+        'sections.materials.name': 'Materials & Equipment',
+        'sections.materials.description': 'List of materials needed with optional photos',
+        'sections.chemicals.name': 'Chemicals',
+        'sections.chemicals.description': 'Chemical substances used in the experiment',
+        'sections.safety.name': 'Safety Measures',
+        'sections.safety.description': 'Safety precautions and protective equipment',
+        'sections.hazards.name': 'Potential Hazards',
+        'sections.hazards.description': 'Potential dangers and warning information',
+        'sections.procedure.name': 'Step-by-Step Procedure',
+        'sections.procedure.description': 'Detailed experimental procedure with steps',
+        'sections.observations.name': 'Observations & Data',
+        'sections.observations.description': 'What to observe and how to record data',
+        'sections.analysis.name': 'Analysis & Calculations',
+        'sections.analysis.description': 'How to analyze results and perform calculations',
+        'sections.conclusions.name': 'Conclusions',
+        'sections.conclusions.description': 'Expected conclusions and learning outcomes',
+        'sections.references.name': 'References',
+        'sections.references.description': 'Citations and references',
+        'sections.disposal.name': 'Disposal Instructions',
+        'sections.disposal.description': 'How to properly dispose of chemicals and materials',
+        'sections.risk_assessment.name': 'Risk Assessment',
+        'sections.risk_assessment.description': 'Formal risk assessment documentation',
+        'sections.questions.name': 'Questions & Discussion',
+        'sections.questions.description': 'Questions for students to consider'
+      };
+      return fallbacks[key] || key;
+    };
+  }
+  
+  const definitions = getSectionDefinitions(t);
+  return definitions[baseId] || null;
+}
+
+export function validateSectionAgainstDefinition(section, t = null) {
+  const definition = getSectionDefinition(section.id, t);
   const errors = [];
   
   if (!definition) {
@@ -484,8 +535,14 @@ export function validateSectionAgainstDefinition(section) {
   return errors;
 }
 
-export function getAvailableSectionTemplates() {
-  return Object.values(SECTION_DEFINITIONS).map(def => ({
+/**
+ * Get available section templates with optional translation support.
+ * @param {Function} t - Optional i18next translation function. If not provided, returns English defaults.
+ * @returns {Array} Array of section template objects
+ */
+export function getAvailableSectionTemplates(t = null) {
+  const definitions = getSectionDefinitions(t || ((key) => key));
+  return Object.values(definitions).map(def => ({
     id: def.id,
     name: def.name,
     icon: def.icon,

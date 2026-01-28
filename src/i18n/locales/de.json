@@ -536,6 +536,64 @@
     "addItem": "Element hinzufügen",
     "removeItem": "Element entfernen"
   },
+  "sections": {
+    "objectives": {
+      "name": "Lernziele",
+      "description": "Was die Schüler aus diesem Experiment lernen werden"
+    },
+    "background": {
+      "name": "Theoretischer Hintergrund",
+      "description": "Theoretischer Hintergrund und wissenschaftlicher Kontext"
+    },
+    "materials": {
+      "name": "Materialien & Ausrüstung",
+      "description": "Liste der benötigten Materialien mit optionalen Fotos"
+    },
+    "chemicals": {
+      "name": "Chemikalien",
+      "description": "Im Experiment verwendete chemische Substanzen"
+    },
+    "safety": {
+      "name": "Sicherheitsmaßnahmen",
+      "description": "Sicherheitsvorkehrungen und Schutzausrüstung"
+    },
+    "hazards": {
+      "name": "Potenzielle Gefahren",
+      "description": "Mögliche Gefahren und Warninformationen"
+    },
+    "procedure": {
+      "name": "Schritt-für-Schritt-Anleitung",
+      "description": "Detaillierte experimentelle Vorgehensweise mit Schritten"
+    },
+    "observations": {
+      "name": "Beobachtungen & Daten",
+      "description": "Was zu beobachten ist und wie Daten aufgezeichnet werden"
+    },
+    "analysis": {
+      "name": "Analyse & Berechnungen",
+      "description": "Wie Ergebnisse analysiert und Berechnungen durchgeführt werden"
+    },
+    "conclusions": {
+      "name": "Schlussfolgerungen",
+      "description": "Erwartete Schlussfolgerungen und Lernergebnisse"
+    },
+    "references": {
+      "name": "Referenzen",
+      "description": "Zitate und Referenzen"
+    },
+    "disposal": {
+      "name": "Entsorgungsanweisungen",
+      "description": "Wie Chemikalien und Materialien ordnungsgemäß entsorgt werden"
+    },
+    "risk_assessment": {
+      "name": "Risikobewertung",
+      "description": "Formale Risikobewertungsdokumentation"
+    },
+    "questions": {
+      "name": "Fragen & Diskussion",
+      "description": "Fragen für Schüler zum Nachdenken"
+    }
+  },
   "messages": {
     "loadingExperiment": "Experiment wird geladen...",
     "loadingVersions": "Versionen werden geladen...",

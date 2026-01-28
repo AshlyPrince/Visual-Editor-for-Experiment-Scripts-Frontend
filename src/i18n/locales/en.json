@@ -536,6 +536,64 @@
     "addItem": "Add Item",
     "removeItem": "Remove Item"
   },
+  "sections": {
+    "objectives": {
+      "name": "Learning Objectives",
+      "description": "What students will learn from this experiment"
+    },
+    "background": {
+      "name": "Background Theory",
+      "description": "Theoretical background and scientific context"
+    },
+    "materials": {
+      "name": "Materials & Equipment",
+      "description": "List of materials needed with optional photos"
+    },
+    "chemicals": {
+      "name": "Chemicals",
+      "description": "Chemical substances used in the experiment"
+    },
+    "safety": {
+      "name": "Safety Measures",
+      "description": "Safety precautions and protective equipment"
+    },
+    "hazards": {
+      "name": "Potential Hazards",
+      "description": "Potential dangers and warning information"
+    },
+    "procedure": {
+      "name": "Step-by-Step Procedure",
+      "description": "Detailed experimental procedure with steps"
+    },
+    "observations": {
+      "name": "Observations & Data",
+      "description": "What to observe and how to record data"
+    },
+    "analysis": {
+      "name": "Analysis & Calculations",
+      "description": "How to analyze results and perform calculations"
+    },
+    "conclusions": {
+      "name": "Conclusions",
+      "description": "Expected conclusions and learning outcomes"
+    },
+    "references": {
+      "name": "References",
+      "description": "Citations and references"
+    },
+    "disposal": {
+      "name": "Disposal Instructions",
+      "description": "How to properly dispose of chemicals and materials"
+    },
+    "risk_assessment": {
+      "name": "Risk Assessment",
+      "description": "Formal risk assessment documentation"
+    },
+    "questions": {
+      "name": "Questions & Discussion",
+      "description": "Questions for students to consider"
+    }
+  },
   "messages": {
     "loadingExperiment": "Loading experiment...",
     "loadingVersions": "Loading versions...",
