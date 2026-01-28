@@ -1,6 +1,7 @@
  
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -36,6 +37,7 @@ import {
 import { polishText, checkConsistency } from '../services/llmService';
 
 const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection = true }) => {
+  const { t } = useTranslation();
   const [polishing, setPolishing] = useState(false);
   const [checking, setChecking] = useState(false);
   const [polishedFields, setPolishedFields] = useState({});
@@ -56,9 +58,9 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
     if (experimentData.title) {
       fields.push({ 
         key: 'title', 
-        label: 'Experiment Title', 
+        label: t('llm.polish.experimentTitle'), 
         value: experimentData.title,
-        context: 'scientific experiment title' 
+        context: t('llm.polish.scientificExperimentTitle')
       });
     }
     
@@ -95,16 +97,16 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
   const getGuidanceMessage = (fieldKey, fieldLabel) => {
     const messages = {
       title: {
-        guidance: 'Try adding 1–2 complete phrases describing what the experiment teaches or demonstrates.',
-        example: '"Polymerase Chain Reaction (PCR): Amplification of DNA Sequences"'
+        guidance: t('llm.polish.guidanceTitle'),
+        example: t('llm.polish.exampleTitle')
       },
       purpose: {
-        guidance: 'Add 1–2 sentences describing what students should learn from this experiment.',
-        example: '"Students understand the basic principles of polymer formation and their applications in everyday materials."'
+        guidance: t('llm.polish.guidancePurpose'),
+        example: t('llm.polish.examplePurpose')
       },
       default: {
-        guidance: `Add more descriptive content to ${fieldLabel.toLowerCase()} before polishing.`,
-        example: 'Include specific details, methods, or learning outcomes.'
+        guidance: t('llm.polish.guidanceDefault', { field: fieldLabel.toLowerCase() }),
+        example: t('llm.polish.exampleDefault')
       }
     };
     
@@ -118,7 +120,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
     const currentValue = field.value;
     
     if (!currentValue || currentValue.trim().length === 0) {
-      setError(`${field.label} is empty. Please add content before polishing.`);
+      setError(t('llm.polish.fieldEmpty', { field: field.label }));
       return;
     }
 
@@ -132,9 +134,9 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
       } else {
         
         if (field.key === 'title') {
-          promptContext = 'Improve this scientific experiment title for clarity and professionalism while keeping it concise';
+          promptContext = t('llm.polish.improveTitlePrompt');
         } else {
-          promptContext = `Improve this ${field.context} content for a scientific experiment. Enhance clarity, grammar, and professionalism while maintaining scientific accuracy`;
+          promptContext = t('llm.polish.improveContentPrompt', { context: field.context });
         }
       }
       
@@ -148,7 +150,12 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
         improved.toLowerCase().includes('invalid input') ||
         improved.toLowerCase().includes('please add more detail') ||
         improved.toLowerCase().includes('please provide') ||
-        improved.toLowerCase().includes('needs more detail before polishing')
+        improved.toLowerCase().includes('needs more detail before polishing') ||
+        improved.toLowerCase().includes('kein inhalt') ||
+        improved.toLowerCase().includes('zu kurz') ||
+        improved.toLowerCase().includes('ungültige eingabe') ||
+        improved.toLowerCase().includes('bitte weitere details') ||
+        improved.toLowerCase().includes('mehr details erforderlich')
       );
       
       
@@ -180,7 +187,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
         }
       }));
     } catch (err) {
-      setError(`Failed to polish ${field.label}: ${err.message}`);
+      setError(t('llm.polish.failedToPolish', { field: field.label, error: err.message }));
     } finally {
       setPolishing(false);
       setSelectedFieldForCustom(null);
@@ -207,9 +214,9 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
           
           let promptContext;
           if (field.key === 'title') {
-            promptContext = 'Improve this scientific experiment title for clarity and professionalism while keeping it concise';
+            promptContext = t('llm.polish.improveTitlePrompt');
           } else {
-            promptContext = `Improve this ${field.context} content for a scientific experiment. Enhance clarity, grammar, and professionalism while maintaining scientific accuracy`;
+            promptContext = t('llm.polish.improveContentPrompt', { context: field.context });
           }
           
           const improved = await polishText(field.value, promptContext);
@@ -222,7 +229,12 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
             improved.toLowerCase().includes('invalid input') ||
             improved.toLowerCase().includes('please add more detail') ||
             improved.toLowerCase().includes('please provide') ||
-            improved.toLowerCase().includes('needs more detail before polishing')
+            improved.toLowerCase().includes('needs more detail before polishing') ||
+            improved.toLowerCase().includes('kein inhalt') ||
+            improved.toLowerCase().includes('zu kurz') ||
+            improved.toLowerCase().includes('ungültige eingabe') ||
+            improved.toLowerCase().includes('bitte weitere details') ||
+            improved.toLowerCase().includes('mehr details erforderlich')
           );
           
           if (!isFeedbackMessage) {
@@ -241,7 +253,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
             }));
           }
         } catch (err) {
-          setError(`Unable to improve ${field.label}. ${err.message}`);
+          setError(t('llm.polish.unableToImprove', { field: field.label, error: err.message }));
         }
       }
     }
@@ -286,7 +298,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
           score: 0,
           issues: [{
             type: 'warning',
-            message: 'All sections are empty, making it impossible to evaluate the experiment\'s consistency, completeness, or safety compliance.'
+            message: t('llm.polish.allSectionsEmpty')
           }]
         });
         setChecking(false);
@@ -296,7 +308,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
       const results = await checkConsistency(sectionsToCheck);
       setConsistencyResults(results);
     } catch (err) {
-      setError(`Unable to check consistency. ${err.message}`);
+      setError(t('llm.polish.unableToCheckConsistency', { error: err.message }));
     } finally {
       setChecking(false);
     }
@@ -405,12 +417,10 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
         <Paper sx={{ p: 3, bgcolor: 'primary.50', border: '1px solid', borderColor: 'primary.200' }}>
           <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <PolishIcon color="primary" />
-            AI Polish & Validation
+            {t('llm.polish.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Use AI to polish your experiment title, description, and key sections for clarity and professionalism. 
-            Then run a comprehensive consistency check to validate that all sections (materials, procedures, safety) 
-            are properly aligned and complete.
+            {t('llm.polish.description')}
           </Typography>
         </Paper>
       )}
@@ -424,7 +434,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
       {showPolishSection && (
       <Paper sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h6">Text Polishing</Typography>
+          <Typography variant="h6">{t('llm.polish.textPolishing')}</Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
               variant="outlined"
@@ -432,7 +442,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
               onClick={handlePolishAll}
               disabled={polishing || polishableFields.length === 0}
             >
-              {polishing ? 'Polishing...' : 'Polish All Fields'}
+              {polishing ? t('llm.polish.polishing') : t('llm.polish.polishAllFields')}
             </Button>
           </Box>
         </Box>
@@ -440,7 +450,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
         {polishableFields.length === 0 ? (
           <Box sx={{ py: 4, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
-              No content available to polish. Please add content to your sections first.
+              {t('llm.polish.noContentAvailable')}
             </Typography>
           </Box>
         ) : (
@@ -449,16 +459,16 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
               <>
                 <Box sx={{ py: 2, textAlign: 'center' }}>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Click "Polish All Fields" to improve text clarity and grammar across all sections.
+                    {t('llm.polish.clickPolishAll')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                    Or polish individual fields:
+                    {t('llm.polish.orPolishIndividual')}
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'center', mb: 3 }}>
                     {polishableFields.map(field => (
                       <Chip
                         key={field.key}
-                        label={`Polish: ${field.label}`}
+                        label={t('llm.polish.polishField', { field: field.label })}
                         onClick={() => handlePolishField(field)}
                         disabled={polishing}
                         clickable
@@ -473,15 +483,15 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                 <Divider sx={{ my: 2 }} />
                 <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
                   <Typography variant="subtitle2" gutterBottom>
-                    Custom Prompt Polish
+                    {t('llm.polish.customPromptPolish')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Select a field and provide a custom instruction for AI to improve it.
+                    {t('llm.polish.customPromptDescription')}
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <TextField
                       select
-                      label="Select Field"
+                      label={t('llm.polish.selectField')}
                       value={selectedFieldForCustom?.key || ''}
                       onChange={(e) => {
                         const field = polishableFields.find(f => f.key === e.target.value);
@@ -491,7 +501,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                       size="small"
                     >
                       <MenuItem value="">
-                        <em>-- Select a field --</em>
+                        <em>{t('llm.polish.selectFieldPlaceholder')}</em>
                       </MenuItem>
                       {polishableFields.map(field => (
                         <MenuItem key={field.key} value={field.key}>
@@ -500,8 +510,8 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                       ))}
                     </TextField>
                     <TextField
-                      label="Custom Prompt"
-                      placeholder="e.g., Make it more concise, Add more technical details, Simplify for beginners..."
+                      label={t('llm.polish.customPrompt')}
+                      placeholder={t('llm.polish.customPromptPlaceholder')}
                       value={customPrompt}
                       onChange={(e) => setCustomPrompt(e.target.value)}
                       multiline
@@ -517,7 +527,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                       disabled={!selectedFieldForCustom || !customPrompt.trim() || polishing}
                       fullWidth
                     >
-                      Apply Custom Polish
+                      {t('llm.polish.applyCustomPolish')}
                     </Button>
                   </Box>
                 </Box>
@@ -529,7 +539,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
             ).length > 0 && (
               <Box sx={{ mb: 2, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                  Fields available to polish:
+                  {t('llm.polish.fieldsAvailableToPolish')}
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {polishableFields
@@ -562,7 +572,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                       <Typography sx={{ flexGrow: 1 }}>{field.label}</Typography>
                       <Chip
                         icon={<InfoIcon />}
-                        label="Cannot Improve Yet"
+                        label={t('llm.polish.cannotImproveYet')}
                         color="warning"
                         size="small"
                       />
@@ -574,7 +584,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                           <EditIcon fontSize="small" color="primary" />
                           <Typography variant="subtitle2" color="primary" sx={{ fontWeight: 600 }}>
-                            Edit Your Content Here
+                            {t('llm.polish.editYourContentHere')}
                           </Typography>
                         </Box>
                         <TextField
@@ -596,8 +606,8 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                             }
                           }}
                           variant="outlined"
-                          placeholder={`Add more detail to ${field.label.toLowerCase()}...`}
-                          helperText="💡 Type or paste your content here, then click 'Try Polish Again'"
+                          placeholder={t('llm.polish.addMoreDetail', { field: field.label.toLowerCase() })}
+                          helperText={t('llm.polish.typeAndTryAgain')}
                           sx={{
                             '& .MuiOutlinedInput-root': {
                               bgcolor: 'white',
@@ -617,14 +627,14 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                       <Grid item xs={12} md={6}>
                         <Alert severity="warning" icon={<InfoIcon />} sx={{ bgcolor: '#fff9f0', border: '1px solid', borderColor: 'warning.light' }}>
                           <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600, color: 'warning.dark' }}>
-                            ⚠️ {errorMessage.includes('short') || errorMessage.includes('detail') ? 'Needs more detail before polishing' : 'Cannot improve yet'}
+                            ⚠️ {errorMessage.includes('short') || errorMessage.includes('detail') || errorMessage.includes('kurz') || errorMessage.includes('detail') ? t('llm.polish.needsMoreDetail') : t('llm.polish.cannotImproveYet')}
                           </Typography>
                           <Typography variant="body2" sx={{ mb: 2, color: 'text.primary' }}>
                             {getGuidanceMessage(key, field.label).guidance}
                           </Typography>
                           <Box sx={{ bgcolor: 'grey.50', p: 1.5, borderRadius: 1, border: '1px dashed', borderColor: 'grey.300' }}>
                             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontWeight: 600, mb: 0.5 }}>
-                              Example:
+                              {t('llm.polish.example')}:
                             </Typography>
                             <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
                               {getGuidanceMessage(key, field.label).example}
@@ -648,7 +658,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                               handlePolishField(field);
                             }}
                           >
-                            Try Polish Again
+                            {t('llm.polish.tryPolishAgain')}
                           </Button>
                           <Button
                             size="small"
@@ -662,7 +672,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                               });
                             }}
                           >
-                            Dismiss
+                            {t('llm.polish.dismiss')}
                           </Button>
                         </Box>
                       </Grid>
@@ -690,7 +700,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                         <Chip
                           icon={<DoneIcon />}
-                          label="Approved"
+                          label={t('llm.polish.approved')}
                           color="success"
                           size="small"
                         />
@@ -711,7 +721,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                               handlePolishField(field);
                             }
                           }}
-                          title="Re-polish this field"
+                          title={t('llm.polish.rePolishTooltip')}
                           sx={{ color: 'primary.main' }}
                         >
                           <RefreshIcon fontSize="small" />
@@ -728,7 +738,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                           }}
                           sx={{ minWidth: 'auto', px: 1.5 }}
                         >
-                          Keep Original
+                          {t('llm.polish.keepOriginal')}
                         </Button>
                         <Button
                           size="small"
@@ -740,7 +750,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                           }}
                           sx={{ minWidth: 'auto', px: 1.5 }}
                         >
-                          Use Suggestion
+                          {t('llm.polish.useSuggestion')}
                         </Button>
                       </Box>
                     )}
@@ -751,7 +761,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                     <Grid item xs={12} md={6}>
                       <Box sx={{ mb: 1, height: '32px', display: 'flex', alignItems: 'center' }}>
                         <Typography variant="subtitle2" color="text.secondary">
-                          Original
+                          {t('llm.polish.original')}
                         </Typography>
                       </Box>
                       <Paper sx={{ p: 2, bgcolor: 'grey.50', minHeight: 200, maxHeight: 200, overflow: 'auto' }}>
@@ -762,7 +772,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                     <Grid item xs={12} md={6}>
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, height: '32px' }}>
                         <Typography variant="subtitle2" color="success.main">
-                          Suggested Improvement
+                          {t('llm.polish.suggestedImprovement')}
                         </Typography>
                         {!approvedFields[key] && (
                           <IconButton
@@ -791,7 +801,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                               startIcon={<DoneIcon />}
                               onClick={() => handleSaveEdit(key)}
                             >
-                              Save
+                              {t('common.save')}
                             </Button>
                             <Button
                               size="small"
@@ -799,7 +809,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                               startIcon={<CloseIcon />}
                               onClick={handleCancelEdit}
                             >
-                              Cancel
+                              {t('common.cancel')}
                             </Button>
                           </Box>
                         </Box>
@@ -814,14 +824,14 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                       <Grid item xs={12}>
                         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
                           <Typography variant="caption" color="text.secondary" sx={{ mr: 'auto', fontStyle: 'italic' }}>
-                            You can undo this change later
+                            {t('llm.polish.canUndoLater')}
                           </Typography>
                           <Button
                             size="small"
                             variant="outlined"
                             onClick={() => handleKeepOriginal(key)}
                           >
-                            Keep Original
+                            {t('llm.polish.keepOriginal')}
                           </Button>
                           <Button
                             size="small"
@@ -830,7 +840,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                             startIcon={<DoneIcon />}
                             onClick={() => handleApplyPolished(key)}
                           >
-                            Use Suggested Version
+                            {t('llm.polish.useSuggestedVersion')}
                           </Button>
                         </Box>
                       </Grid>
@@ -848,7 +858,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                   startIcon={<DoneIcon />}
                   onClick={handleApplyAll}
                 >
-                  Use All Suggestions
+                  {t('llm.polish.useAllSuggestions')}
                 </Button>
               </Box>
             )}
@@ -861,21 +871,21 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
 
       <Paper sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h6">Consistency Check</Typography>
+          <Typography variant="h6">{t('llm.polish.consistencyCheck')}</Typography>
           <Button
             variant="outlined"
             startIcon={checking ? <CircularProgress size={20} /> : <CheckIcon />}
             onClick={handleConsistencyCheck}
             disabled={checking}
           >
-            {checking ? 'Checking...' : 'Run Consistency Check'}
+            {checking ? t('llm.polish.checking') : t('llm.polish.runConsistencyCheck')}
           </Button>
         </Box>
 
         {!consistencyResults ? (
           <Box sx={{ py: 4, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
-              Check for consistency between materials, chemicals, and safety instructions.
+              {t('llm.polish.checkConsistencyDescription')}
             </Typography>
           </Box>
         ) : (
@@ -885,14 +895,14 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
               sx={{ mb: 2 }}
             >
               {consistencyResults.consistent
-                ? 'Your experiment sections are consistent! ✓'
-                : 'Found some inconsistencies that need attention.'}
+                ? t('llm.polish.sectionsConsistent')
+                : t('llm.polish.inconsistenciesFound')}
             </Alert>
 
             {consistencyResults.issues && consistencyResults.issues.length > 0 && (
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" gutterBottom>
-                  Issues Found:
+                  {t('llm.polish.issuesFound')}:
                 </Typography>
                 <List dense>
                   {consistencyResults.issues.map((issue, idx) => {
@@ -921,7 +931,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
             {consistencyResults.recommendations && consistencyResults.recommendations.length > 0 && (
               <Box>
                 <Typography variant="subtitle2" gutterBottom>
-                  Recommendations:
+                  {t('llm.polish.recommendations')}:
                 </Typography>
                 <List dense>
                   {consistencyResults.recommendations.map((rec, idx) => {
@@ -954,7 +964,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
                 onClick={handleConsistencyCheck}
                 disabled={checking}
               >
-                Re-check
+                {t('llm.polish.reCheck')}
               </Button>
             </Box>
           </Box>
@@ -963,18 +973,21 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
 
       <Paper sx={{ p: 3, bgcolor: 'success.50', border: '1px solid', borderColor: 'success.200' }}>
         <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-          Ready to Create?
+          {t('llm.polish.readyToCreate')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {allFieldsReviewed && consistencyResults
-            ? 'All changes have been reviewed and consistency check is complete. You can now proceed to create your experiment.'
-            : 'Please review all polished text and run a consistency check before proceeding.'}
+            ? t('llm.polish.allReviewedComplete')
+            : t('llm.polish.pleaseReviewAll')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           {Object.keys(polishedFields).length > 0 && (
             <Chip
               icon={allFieldsReviewed ? <CheckIcon /> : <WarningIcon />}
-              label={`Text Review: ${Object.keys(polishedFields).filter(k => approvedFields[k]).length}/${Object.keys(polishedFields).length} approved`}
+              label={t('llm.polish.textReviewStatus', { 
+                approved: Object.keys(polishedFields).filter(k => approvedFields[k]).length, 
+                total: Object.keys(polishedFields).length 
+              })}
               color={allFieldsReviewed ? 'success' : 'warning'}
               size="small"
             />
@@ -982,7 +995,7 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
           {consistencyResults && (
             <Chip
               icon={<CheckIcon />}
-              label="Consistency Check: Complete"
+              label={t('llm.polish.consistencyCheckComplete')}
               color="success"
               size="small"
             />
