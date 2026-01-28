@@ -191,7 +191,18 @@
     "pdfDescription": "Best for printing and professional distribution",
     "generatingHTML": "Generating HTML...",
     "generatingPDF": "Generating PDF...",
-    "downloading": "Downloading..."
+    "downloading": "Downloading...",
+    "experimentFallback": "Experiment",
+    "experimentProtocol": "Experiment Protocol",
+    "duration": "Duration",
+    "description": "Description",
+    "customSection": "Custom Section",
+    "section": "Section",
+    "generatedFrom": "Generated from Visual Editor Platform",
+    "created": "Created",
+    "videoFile": "Video file",
+    "videosCannotBeEmbedded": "Videos cannot be embedded in PDF",
+    "unableToExportHTML": "Unable to export HTML."
   },
   "wizard": {
     "createExperiment": "Create Educational Experiment",

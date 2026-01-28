@@ -45,7 +45,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${experiment.title || 'Experiment'}</title>
+    <title>${experiment.title || t('export.experimentFallback')}</title>
     <style>
         * {
             margin: 0;
@@ -270,11 +270,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 </head>
 <body>
     <div class="header">
-        <h1>${experiment.title || 'Experiment Protocol'}</h1>
+        <h1>${experiment.title || t('export.experimentProtocol')}</h1>
         <div class="meta-info">
             ${config?.subject || experiment.course ? `<span class="meta-badge">${config?.subject || experiment.course}</span>` : ''}
             ${config?.gradeLevel || experiment.program ? `<span class="meta-badge">${config?.gradeLevel || experiment.program}</span>` : ''}
-            ${config?.duration || experiment.estimated_duration ? `<span class="meta-badge">Duration: ${config?.duration || experiment.estimated_duration}</span>` : ''}
+            ${config?.duration || experiment.estimated_duration ? `<span class="meta-badge">${t('export.duration')}: ${config?.duration || experiment.estimated_duration}</span>` : ''}
         </div>
     </div>
 `;
@@ -283,7 +283,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
     if (config?.description) {
       htmlContent += `
     <div class="section">
-        <h2 class="section-title">📝 Description</h2>
+        <h2 class="section-title">📝 ${t('export.description')}</h2>
         <div class="section-content">
             <p>${config.description}</p>
         </div>
@@ -305,7 +305,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       
       
       const sectionTitle = section.name || section.title || 
-        (section.id?.startsWith('custom_') ? 'Custom Section' : section.id || 'Section');
+        (section.id?.startsWith('custom_') ? t('export.customSection') : section.id || t('export.section'));
       
       htmlContent += `
     <div class="section">
@@ -407,7 +407,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
     htmlContent += `
     <div class="footer">
-        <p>Generated from Visual Editor Platform</p>
+        <p>${t('export.generatedFrom')}</p>
         <p>${new Date().toLocaleString()}</p>
     </div>
 </body>
@@ -459,8 +459,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       setTimeout(() => {
         setExportSuccess(false);
       }, 2000);
-    } catch {
-      alert('Unable to export HTML. ' + error.message);
+    } catch (error) {
+      alert(t('export.unableToExportHTML') + ' ' + error.message);
     } finally {
       setExporting(false);
       setExportType(null);
@@ -501,10 +501,10 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       
       container.innerHTML = `
         <div style="text-align: center; border-bottom: 2px solid #1976d2; padding-bottom: 20px; margin-bottom: 30px;">
-          <h1 style="color: #1976d2; font-size: 28px; margin: 0 0 10px 0;">${experiment.title || 'Experiment'}</h1>
+          <h1 style="color: #1976d2; font-size: 28px; margin: 0 0 10px 0;">${experiment.title || t('export.experimentFallback')}</h1>
           <div style="color: #666; font-size: 12px;">
-            <p style="margin: 5px 0;">Version ${experiment.version_number || 1}</p>
-            <p style="margin: 5px 0;">Created: ${new Date(experiment.created_at).toLocaleDateString()}</p>
+            <p style="margin: 5px 0;">${t('version.version')} ${experiment.version_number || 1}</p>
+            <p style="margin: 5px 0;">${t('export.created')}: ${new Date(experiment.created_at).toLocaleDateString()}</p>
           </div>
         </div>
       `;
@@ -513,7 +513,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       if (content?.config?.description) {
         container.innerHTML += `
           <div style="margin-bottom: 30px;">
-            <h2 style="color: #1976d2; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px;">📝 Description</h2>
+            <h2 style="color: #1976d2; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px;">📝 ${t('export.description')}</h2>
             <p style="margin: 0; line-height: 1.6;">${content.config.description}</p>
           </div>
         `;
@@ -555,9 +555,9 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                       <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #000; position: relative; min-height: 150px; display: flex; align-items: center; justify-content: center;">
                         <div style="color: white; text-align: center; padding: 20px;">
                           <div style="font-size: 48px; margin-bottom: 10px;">🎥</div>
-                          <div style="font-size: 12px;">${mediaItem.name || 'Video file'}</div>
+                          <div style="font-size: 12px;">${mediaItem.name || t('export.videoFile')}</div>
                           ${mediaItem.caption ? `<div style="font-size: 10px; margin-top: 5px; font-style: italic;">${mediaItem.caption}</div>` : ''}
-                          <div style="font-size: 10px; margin-top: 10px; color: #999;">Videos cannot be embedded in PDF</div>
+                          <div style="font-size: 10px; margin-top: 10px; color: #999;">${t('export.videosCannotBeEmbedded')}</div>
                         </div>
                       </div>
                     `;
@@ -617,7 +617,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       
       container.innerHTML += `
         <div style="margin-top: 40px; padding-top: 15px; border-top: 1px solid #ccc; text-align: center; color: #666; font-size: 11px;">
-          <p style="margin: 5px 0;">Generated from Visual Editor Platform</p>
+          <p style="margin: 5px 0;">${t('export.generatedFrom')}</p>
           <p style="margin: 5px 0;">${new Date().toLocaleString()}</p>
         </div>
       `;
