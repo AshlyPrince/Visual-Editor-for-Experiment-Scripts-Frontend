@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import i18next from 'i18next';
 
 const KeycloakContext = createContext();
 
@@ -49,7 +50,7 @@ export const KeycloakProvider = ({ children }) => {
           setUserInfo(null);
         }
       } catch {
-        setError('Authentication service unavailable. Please try again later.');
+        setError(i18next.t('auth.authServiceUnavailable'));
       } finally {
         setLoading(false);
       }
@@ -99,7 +100,7 @@ export const KeycloakProvider = ({ children }) => {
 
   const updateProfile = () => {
     if (isDevelopmentMode) {
-      alert('Profile management would open here in production');
+      alert(i18next.t('auth.profileManagementWouldOpen'));
     } else {
       keycloak?.accountManagement();
     }
@@ -130,7 +131,7 @@ export const KeycloakProvider = ({ children }) => {
 export const useKeycloak = () => {
   const context = useContext(KeycloakContext);
   if (!context) {
-    throw new Error('useKeycloak must be used within a KeycloakProvider');
+    throw new Error(i18next.t('auth.useKeycloakError'));
   }
   return context;
 };

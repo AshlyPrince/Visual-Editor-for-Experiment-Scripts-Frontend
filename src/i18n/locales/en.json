@@ -68,7 +68,10 @@
     "noPermissionResource": "You don't have permission to access this resource.",
     "currentUser": "Current user",
     "requiredRoles": "Required roles",
-    "insufficientPermissions": "Insufficient permissions"
+    "insufficientPermissions": "Insufficient permissions",
+    "authServiceUnavailable": "Authentication service unavailable. Please try again later.",
+    "profileManagementWouldOpen": "Profile management would open here in production",
+    "useKeycloakError": "useKeycloak must be used within a KeycloakProvider"
   },
   "nav": {
     "dashboard": "Dashboard",

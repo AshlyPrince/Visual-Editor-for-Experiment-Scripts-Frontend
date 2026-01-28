@@ -68,7 +68,10 @@
     "noPermissionResource": "Sie haben keine Berechtigung, auf diese Ressource zuzugreifen.",
     "currentUser": "Aktueller Benutzer",
     "requiredRoles": "Erforderliche Rollen",
-    "insufficientPermissions": "Unzureichende Berechtigungen"
+    "insufficientPermissions": "Unzureichende Berechtigungen",
+    "authServiceUnavailable": "Authentifizierungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.",
+    "profileManagementWouldOpen": "Profilverwaltung würde hier in der Produktion geöffnet",
+    "useKeycloakError": "useKeycloak muss innerhalb eines KeycloakProvider verwendet werden"
   },
   "nav": {
     "dashboard": "Dashboard",
