@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Box, 
   Typography, 
@@ -59,12 +60,13 @@ const ExperimentWizard = ({
   onComplete, 
   onCancel 
 }) => {
+  const { t } = useTranslation();
   const wizardSteps = [
-    { id: 'sections', label: 'Select Sections', description: 'Choose template sections to include' },
-    { id: 'configure', label: 'Configure', description: 'Set up experiment details' },
-    { id: 'customize', label: 'Customize Sections', description: 'Customize selected sections' },
-    { id: 'review', label: 'Review', description: 'Review and confirm template' },
-    { id: 'create', label: 'Create', description: 'Create the experiment template' }
+    { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
+    { id: 'configure', label: t('wizard.configure'), description: t('wizard.configureDesc') },
+    { id: 'customize', label: t('wizard.customizeSections'), description: t('wizard.customizeSectionsDesc') },
+    { id: 'review', label: t('wizard.review'), description: t('wizard.reviewDesc') },
+    { id: 'create', label: t('wizard.create'), description: t('wizard.createDesc') }
   ];
 
   const {
@@ -109,16 +111,16 @@ const ExperimentWizard = ({
   const availableSections = [
     { 
       id: 'title', 
-      name: 'Title', 
-      description: 'Experiment title and introduction',
+      name: t('wizard.sections.title'), 
+      description: t('wizard.sections.titleDesc'),
       icon: '📝',
       required: true,
-      defaultContent: { text: 'Enter your experiment title' }
+      defaultContent: { text: t('wizard.placeholders.experimentTitle') }
     },
     { 
       id: 'background', 
-      name: 'Background Theory', 
-      description: 'Scientific concepts and theory behind the experiment',
+      name: t('wizard.sections.backgroundTheory'), 
+      description: t('wizard.sections.backgroundTheoryDesc'),
       icon: '🔬',
       required: false,
       defaultContent: { 
@@ -129,8 +131,8 @@ const ExperimentWizard = ({
     },
     { 
       id: 'materials', 
-      name: 'Materials & Equipment', 
-      description: 'List of required materials and equipment',
+      name: t('wizard.sections.materialsEquipment'), 
+      description: t('wizard.sections.materialsEquipmentDesc'),
       icon: '🧪',
       required: true,
       defaultContent: { 
@@ -141,8 +143,8 @@ const ExperimentWizard = ({
     },
     { 
       id: 'hypothesis', 
-      name: 'Hypothesis', 
-      description: 'Expected outcomes and predictions',
+      name: t('wizard.sections.hypothesis'), 
+      description: t('wizard.sections.hypothesisDesc'),
       icon: '💭',
       required: false,
       defaultContent: { 
@@ -152,8 +154,8 @@ const ExperimentWizard = ({
     },
     { 
       id: 'procedure', 
-      name: 'Procedure', 
-      description: 'Step-by-step experiment instructions',
+      name: t('wizard.sections.procedure'), 
+      description: t('wizard.sections.procedureDesc'),
       icon: '📋',
       required: true,
       defaultContent: { 
@@ -164,8 +166,8 @@ const ExperimentWizard = ({
     },
     { 
       id: 'safety', 
-      name: 'Safety Guidelines', 
-      description: 'Safety precautions and guidelines',
+      name: t('wizard.sections.safetyGuidelines'), 
+      description: t('wizard.sections.safetyGuidelinesDesc'),
       icon: '⚠️',
       required: true,
       defaultContent: { 
@@ -248,11 +250,11 @@ const ExperimentWizard = ({
     const errors = [];
     const config = stepData[1] || {};
     
-    if (!config.name?.trim()) errors.push('Experiment name is required');
-    if (!config.description?.trim()) errors.push('Description and learning goals are required');
-    if (!config.gradeLevel) errors.push('Grade level must be selected');
-    if (!config.duration) errors.push('Estimated duration must be selected');
-    if (!config.subject) errors.push('Subject area must be selected');
+    if (!config.name?.trim()) errors.push(t('validation.experimentNameRequired'));
+    if (!config.description?.trim()) errors.push(t('validation.descriptionRequired'));
+    if (!config.gradeLevel) errors.push(t('validation.gradeLevelRequired'));
+    if (!config.duration) errors.push(t('validation.durationRequired'));
+    if (!config.subject) errors.push(t('validation.subjectRequired'));
     
     return { isValid: errors.length === 0, errors };
   };
@@ -304,8 +306,8 @@ const ExperimentWizard = ({
       const customId = `custom_${Date.now()}`;
       const customSection = {
         id: customId,
-        name: 'Custom Section',
-        description: 'Custom section created by user',
+        name: t('wizard.customSection'),
+        description: t('wizard.customSectionDesc'),
         icon: '✏️',
         required: false,
         isCustom: true,
@@ -317,13 +319,13 @@ const ExperimentWizard = ({
     const isSelected = (sectionId) => selectedSections.some(s => s.id === sectionId);
     
     return (
-      <FormSection title="Build Your Educational Experiment">
+      <FormSection title={t('wizard.buildExperiment')}>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Select the sections you want to include in your experiment. These are designed specifically for educational purposes and classroom use.
+          {t('wizard.selectSectionsInfo')}
         </Typography>
 
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-          Standard Sections
+          {t('wizard.standardSections')}
         </Typography>
         <Grid container spacing={2} sx={{ mb: 4 }}>
           {availableSections.map((section) => (
@@ -354,7 +356,7 @@ const ExperimentWizard = ({
                         {section.name}
                       </Typography>
                       {section.required && (
-                        <Chip label="Required" size="small" color="error" sx={{ height: 16, fontSize: '0.65rem' }} />
+                        <Chip label={t('common.required')} size="small" color="error" sx={{ height: 16, fontSize: '0.65rem' }} />
                       )}
                       {isSelected(section.id) && (
                         <Chip label="✓" size="small" color="primary" sx={{ height: 16, fontSize: '0.65rem' }} />
@@ -372,14 +374,14 @@ const ExperimentWizard = ({
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Custom Sections
+            {t('wizard.customSections')}
           </Typography>
           <SecondaryButton 
             onClick={addCustomSection}
             startIcon={<EditIcon />}
             size="small"
           >
-            Add Custom Section
+            {t('wizard.addCustomSection')}
           </SecondaryButton>
         </Box>
 
@@ -410,7 +412,7 @@ const ExperimentWizard = ({
                         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                           {section.name}
                         </Typography>
-                        <Chip label="Custom" size="small" color="secondary" sx={{ height: 16, fontSize: '0.65rem' }} />
+                        <Chip label={t('wizard.custom')} size="small" color="secondary" sx={{ height: 16, fontSize: '0.65rem' }} />
                         {isSelected(section.id) && (
                           <Chip label="✓" size="small" color="primary" sx={{ height: 16, fontSize: '0.65rem' }} />
                         )}
@@ -433,7 +435,7 @@ const ExperimentWizard = ({
             mb: 3
           }}>
             <Typography variant="body2" color="text.secondary">
-              No custom sections added yet. Click "Add Custom Section" to create your own sections.
+              {t('wizard.noCustomSections')}
             </Typography>
           </Box>
         )}
@@ -441,7 +443,7 @@ const ExperimentWizard = ({
         {selectedSections.length > 0 && (
           <Box sx={{ mt: 3, p: 3, backgroundColor: 'success.50', borderRadius: 2, border: '1px solid', borderColor: 'success.200' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: 'success.main' }}>
-              Selected Sections ({selectedSections.length})
+              {t('wizard.selectedSections', { count: selectedSections.length })}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {selectedSections.map((section) => (
@@ -465,24 +467,24 @@ const ExperimentWizard = ({
     const config = stepData[1] || {};
     
     return (
-      <FormSection title="Experiment Details">
+      <FormSection title={t('wizard.experimentDetails')}>
         <FormGroup columns={1}>
           <TextInput
-            label="Experiment Name"
+            label={t('fields.experimentName')}
             value={config.name || ''}
             onChange={(e) => updateExperimentConfig('name', e.target.value)}
             required
-            placeholder="e.g., Investigating Plant Growth, Chemical Reactions Lab"
+            placeholder={t('wizard.placeholders.experimentNameExample')}
           />
           
           <TextInput
-            label="Description & Learning Goals"
+            label={t('fields.descriptionLearningGoals')}
             value={config.description || ''}
             onChange={(e) => updateExperimentConfig('description', e.target.value)}
             required
             multiline
             rows={4}
-            placeholder="Describe what students will learn and the educational objectives of this experiment"
+            placeholder={t('wizard.placeholders.descriptionExample')}
           />
         </FormGroup>
         
@@ -490,27 +492,27 @@ const ExperimentWizard = ({
         
         <FormGroup columns={2}>
           <SelectInput
-            label="Grade Level"
+            label={t('fields.gradeLevel')}
             value={config.gradeLevel || ''}
             onChange={(e) => updateExperimentConfig('gradeLevel', e.target.value)}
             options={[
-              { value: 'elementary', label: 'Elementary (K-5)' },
-              { value: 'middle', label: 'Middle School (6-8)' },
-              { value: 'high', label: 'High School (9-12)' },
-              { value: 'college', label: 'College/University' }
+              { value: 'elementary', label: t('fields.gradeLevels.elementary') },
+              { value: 'middle', label: t('fields.gradeLevels.middle') },
+              { value: 'high', label: t('fields.gradeLevels.high') },
+              { value: 'college', label: t('fields.gradeLevels.college') }
             ]}
           />
           
           <SelectInput
-            label="Estimated Duration"
+            label={t('fields.estimatedDuration')}
             value={config.duration || ''}
             onChange={(e) => updateExperimentConfig('duration', e.target.value)}
             options={[
-              { value: '30-min', label: '30 minutes' },
-              { value: '1-hour', label: '1 hour' },
-              { value: '90-min', label: '90 minutes' },
-              { value: '2-hours', label: '2 hours' },
-              { value: 'multi-day', label: 'Multiple days' }
+              { value: '30-min', label: t('fields.durations.30min') },
+              { value: '1-hour', label: t('fields.durations.1hour') },
+              { value: '90-min', label: t('fields.durations.90min') },
+              { value: '2-hours', label: t('fields.durations.2hours') },
+              { value: 'multi-day', label: t('fields.durations.multiDay') }
             ]}
           />
         </FormGroup>
@@ -519,27 +521,27 @@ const ExperimentWizard = ({
         
         <FormGroup columns={2}>
           <SelectInput
-            label="Subject Area"
+            label={t('fields.subjectArea')}
             value={config.subject || ''}
             onChange={(e) => updateExperimentConfig('subject', e.target.value)}
             options={[
-              { value: 'biology', label: 'Biology' },
-              { value: 'chemistry', label: 'Chemistry' },
-              { value: 'physics', label: 'Physics' },
-              { value: 'earth-science', label: 'Earth Science' },
-              { value: 'general-science', label: 'General Science' },
-              { value: 'environmental', label: 'Environmental Science' }
+              { value: 'biology', label: t('fields.subjects.biology') },
+              { value: 'chemistry', label: t('fields.subjects.chemistry') },
+              { value: 'physics', label: t('fields.subjects.physics') },
+              { value: 'earth-science', label: t('fields.subjects.earthScience') },
+              { value: 'general-science', label: t('fields.subjects.generalScience') },
+              { value: 'environmental', label: t('fields.subjects.environmental') }
             ]}
           />
           
           <SelectInput
-            label="Complexity Level"
+            label={t('fields.complexityLevel')}
             value={config.complexity || ''}
             onChange={(e) => updateExperimentConfig('complexity', e.target.value)}
             options={[
-              { value: 'beginner', label: 'Beginner' },
-              { value: 'intermediate', label: 'Intermediate' },
-              { value: 'advanced', label: 'Advanced' }
+              { value: 'beginner', label: t('fields.complexity.beginner') },
+              { value: 'intermediate', label: t('fields.complexity.intermediate') },
+              { value: 'advanced', label: t('fields.complexity.advanced') }
             ]}
           />
         </FormGroup>
@@ -577,9 +579,9 @@ const ExperimentWizard = ({
     };
 
     return (
-      <FormSection title="Customize Your Sections">
+      <FormSection title={t('wizard.customizeYourSections')}>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Customize the content and settings for each selected section.
+          {t('wizard.customizeInfo')}
         </Typography>
 
         {selectedSections.length === 0 ? (
@@ -592,10 +594,10 @@ const ExperimentWizard = ({
             borderColor: 'warning.200'
           }}>
             <Typography variant="h6" color="warning.main" sx={{ mb: 1 }}>
-              No Sections Selected
+              {t('wizard.noSectionsSelected')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Go back to the previous step to select sections for your experiment.
+              {t('wizard.goBackToSelectSections')}
             </Typography>
           </Box>
         ) : (
@@ -634,7 +636,7 @@ const ExperimentWizard = ({
                     )}
                   </Box>
                   <Chip 
-                    label={section.isCustom ? 'Custom' : 'Standard'} 
+                    label={section.isCustom ? t('wizard.custom') : t('wizard.standard')} 
                     size="small" 
                     color={section.isCustom ? 'secondary' : 'primary'}
                     variant="outlined"
@@ -646,32 +648,32 @@ const ExperimentWizard = ({
                 {section.id === 'title' && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                      Title & Objectives Configuration
+                      {t('wizard.titleObjectivesConfig')}
                     </Typography>
                     <FormGroup columns={1}>
                       <TextInput
-                        label="Default Title Template"
+                        label={t('wizard.defaultTitleTemplate')}
                         value={section.content?.title || ''}
                         onChange={(e) => updateSectionContent(section.id, { title: e.target.value })}
-                        placeholder="e.g., [Your Experiment Name Here]"
+                        placeholder={t('wizard.placeholders.titleTemplate')}
                         fullWidth
                       />
                       <TextInput
-                        label="Objective Template"
+                        label={t('wizard.objectiveTemplate')}
                         value={section.content?.objective || ''}
                         onChange={(e) => updateSectionContent(section.id, { objective: e.target.value })}
-                        placeholder="Students will learn to..."
+                        placeholder={t('wizard.placeholders.objectiveTemplate')}
                         multiline
                         rows={2}
                         fullWidth
                       />
                       <TextInput
-                        label="Learning Goals (comma-separated)"
+                        label={t('wizard.learningGoalsCommaSeparated')}
                         value={section.content?.learningGoals?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           learningGoals: e.target.value.split(',').map(goal => goal.trim()).filter(Boolean)
                         })}
-                        placeholder="observation skills, hypothesis formation, data analysis"
+                        placeholder={t('wizard.placeholders.learningGoals')}
                         fullWidth
                       />
                     </FormGroup>
@@ -681,34 +683,34 @@ const ExperimentWizard = ({
                 {section.id === 'background' && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                      Background Theory Configuration
+                      {t('wizard.backgroundTheoryConfig')}
                     </Typography>
                     <FormGroup columns={1}>
                       <TextInput
-                        label="Theory Template"
+                        label={t('wizard.theoryTemplate')}
                         value={section.content?.theory || ''}
                         onChange={(e) => updateSectionContent(section.id, { theory: e.target.value })}
-                        placeholder="Explain the scientific concepts behind this experiment..."
+                        placeholder={t('wizard.placeholders.theory')}
                         multiline
                         rows={3}
                         fullWidth
                       />
                       <TextInput
-                        label="Key Concepts (comma-separated)"
+                        label={t('wizard.keyConceptsCommaSeparated')}
                         value={section.content?.concepts?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           concepts: e.target.value.split(',').map(concept => concept.trim()).filter(Boolean)
                         })}
-                        placeholder="photosynthesis, chemical reactions, gravity"
+                        placeholder={t('wizard.placeholders.concepts')}
                         fullWidth
                       />
                       <TextInput
-                        label="Vocabulary Terms (comma-separated)"
+                        label={t('wizard.vocabularyTermsCommaSeparated')}
                         value={section.content?.vocabulary?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           vocabulary: e.target.value.split(',').map(term => term.trim()).filter(Boolean)
                         })}
-                        placeholder="hypothesis, variable, control group"
+                        placeholder={t('wizard.placeholders.vocabulary')}
                         fullWidth
                       />
                     </FormGroup>
@@ -718,38 +720,38 @@ const ExperimentWizard = ({
                 {section.id === 'materials' && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                      Materials & Equipment Configuration
+                      {t('wizard.materialsEquipmentConfig')}
                     </Typography>
                     <FormGroup columns={1}>
                       <TextInput
-                        label="Materials List (comma-separated)"
+                        label={t('wizard.materialsListCommaSeparated')}
                         value={section.content?.materials?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           materials: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
                         })}
-                        placeholder="beakers, test tubes, water, food coloring"
+                        placeholder={t('wizard.placeholders.materials')}
                         multiline
                         rows={2}
                         fullWidth
                       />
                       <TextInput
-                        label="Equipment Needed (comma-separated)"
+                        label={t('wizard.equipmentNeededCommaSeparated')}
                         value={section.content?.equipment?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           equipment: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
                         })}
-                        placeholder="microscope, scale, thermometer, ruler"
+                        placeholder={t('wizard.placeholders.equipment')}
                         multiline
                         rows={2}
                         fullWidth
                       />
                       <TextInput
-                        label="Safety Equipment (comma-separated)"
+                        label={t('wizard.safetyEquipmentCommaSeparated')}
                         value={section.content?.safetyEquipment?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           safetyEquipment: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
                         })}
-                        placeholder="safety goggles, gloves, apron"
+                        placeholder={t('wizard.placeholders.safetyEquipment')}
                         fullWidth
                       />
                     </FormGroup>
@@ -759,23 +761,23 @@ const ExperimentWizard = ({
                 {section.id === 'hypothesis' && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                      Hypothesis Configuration
+                      {t('wizard.hypothesisConfig')}
                     </Typography>
                     <FormGroup columns={1}>
                       <TextInput
-                        label="Prediction Template"
+                        label={t('wizard.predictionTemplate')}
                         value={section.content?.prediction || ''}
                         onChange={(e) => updateSectionContent(section.id, { prediction: e.target.value })}
-                        placeholder="I predict that... because..."
+                        placeholder={t('wizard.placeholders.prediction')}
                         multiline
                         rows={2}
                         fullWidth
                       />
                       <TextInput
-                        label="Reasoning Template"
+                        label={t('wizard.reasoningTemplate')}
                         value={section.content?.reasoning || ''}
                         onChange={(e) => updateSectionContent(section.id, { reasoning: e.target.value })}
-                        placeholder="Based on my knowledge of..., I expect..."
+                        placeholder={t('wizard.placeholders.reasoning')}
                         multiline
                         rows={2}
                         fullWidth
@@ -787,34 +789,34 @@ const ExperimentWizard = ({
                 {section.id === 'procedure' && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                      Procedure Configuration
+                      {t('wizard.procedureConfig')}
                     </Typography>
                     <FormGroup columns={1}>
                       <TextInput
-                        label="Default Steps Template"
+                        label={t('wizard.defaultStepsTemplate')}
                         value={section.content?.steps?.join('\n') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           steps: e.target.value.split('\n').filter(Boolean)
                         })}
-                        placeholder="1. First, prepare your materials&#10;2. Next, set up the experiment&#10;3. Then, begin the procedure"
+                        placeholder={t('wizard.placeholders.steps')}
                         multiline
                         rows={4}
                         fullWidth
                       />
                       <TextInput
-                        label="Teaching Tips (comma-separated)"
+                        label={t('wizard.teachingTipsCommaSeparated')}
                         value={section.content?.tips?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           tips: e.target.value.split(',').map(tip => tip.trim()).filter(Boolean)
                         })}
-                        placeholder="remind students about safety, check setup before starting"
+                        placeholder={t('wizard.placeholders.tips')}
                         fullWidth
                       />
                       <TextInput
-                        label="Estimated Time"
+                        label={t('wizard.estimatedTime')}
                         value={section.content?.estimatedTime || ''}
                         onChange={(e) => updateSectionContent(section.id, { estimatedTime: e.target.value })}
-                        placeholder="30-45 minutes"
+                        placeholder={t('wizard.placeholders.estimatedTime')}
                       />
                     </FormGroup>
                   </Box>
@@ -823,38 +825,38 @@ const ExperimentWizard = ({
                 {section.id === 'safety' && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                      Safety Guidelines Configuration
+                      {t('wizard.safetyGuidelinesConfig')}
                     </Typography>
                     <FormGroup columns={1}>
                       <TextInput
-                        label="Safety Precautions (comma-separated)"
+                        label={t('wizard.safetyPrecautionsCommaSeparated')}
                         value={section.content?.precautions?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           precautions: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
                         })}
-                        placeholder="wear safety goggles, handle chemicals carefully, wash hands after lab"
+                        placeholder={t('wizard.placeholders.precautions')}
                         multiline
                         rows={3}
                         fullWidth
                       />
                       <TextInput
-                        label="Emergency Procedures (comma-separated)"
+                        label={t('wizard.emergencyProceduresCommaSeparated')}
                         value={section.content?.emergencyProcedures?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           emergencyProcedures: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
                         })}
-                        placeholder="if spilled notify teacher, location of eyewash station, fire extinguisher location"
+                        placeholder={t('wizard.placeholders.emergencyProcedures')}
                         multiline
                         rows={2}
                         fullWidth
                       />
                       <TextInput
-                        label="Important Warnings (comma-separated)"
+                        label={t('wizard.importantWarningsCommaSeparated')}
                         value={section.content?.warnings?.join(', ') || ''}
                         onChange={(e) => updateSectionContent(section.id, { 
                           warnings: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
                         })}
-                        placeholder="do not eat or drink in lab, never leave experiment unattended"
+                        placeholder={t('wizard.placeholders.warnings')}
                         multiline
                         rows={2}
                         fullWidth
@@ -866,16 +868,16 @@ const ExperimentWizard = ({
                 {section.isCustom && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                      Custom Section Content
+                      {t('wizard.customSectionContent')}
                     </Typography>
                     <TextInput
-                      label="Default Content"
+                      label={t('wizard.defaultContent')}
                       value={section.content?.text || ''}
                       onChange={(e) => updateSectionContent(section.id, { text: e.target.value })}
                       multiline
                       rows={3}
                       fullWidth
-                      placeholder="Enter default content for this custom section..."
+                      placeholder={t('wizard.placeholders.customContent')}
                     />
                   </Box>
                 )}
@@ -910,17 +912,17 @@ const ExperimentWizard = ({
     };
 
     return (
-      <FormSection title="Review & Preview Experiment">
+      <FormSection title={t('wizard.reviewPreviewExperiment')}>
         <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="body1" color="text.secondary">
-            Review your experiment configuration below. You can make changes before creating.
+            {t('wizard.reviewInfo')}
           </Typography>
           <SecondaryButton
             startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
             onClick={handleEditToggle}
             variant={isEditing ? "contained" : "outlined"}
           >
-            {isEditing ? 'Save Changes' : 'Edit Configuration'}
+            {isEditing ? t('common.saveChanges') : t('wizard.editConfiguration')}
           </SecondaryButton>
         </Box>
 
@@ -929,17 +931,17 @@ const ExperimentWizard = ({
             <Paper sx={{ p: 3, height: 'fit-content' }}>
               <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
                 <TemplateIcon sx={{ mr: 1, color: 'primary.main' }} />
-                Experiment Structure
+                {t('wizard.experimentStructure')}
               </Typography>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                  Educational Experiment Template
+                  {t('wizard.educationalExperimentTemplate')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Custom experiment built from selected sections
+                  {t('wizard.customExperimentBuilt')}
                 </Typography>
                 <Chip 
-                  label={config.subject || 'General Science'} 
+                  label={config.subject || t('fields.subjects.generalScience')} 
                   size="small" 
                   color="primary" 
                   sx={{ mb: 2 }}
@@ -949,7 +951,7 @@ const ExperimentWizard = ({
               <Divider sx={{ my: 2 }} />
               
               <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                Selected Sections ({selectedSections.length})
+                {t('wizard.selectedSections', { count: selectedSections.length })}
               </Typography>
               {selectedSections.map((section, index) => (
                 <Box key={section.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -974,7 +976,7 @@ const ExperimentWizard = ({
               
               {selectedSections.length === 0 && (
                 <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                  No sections selected
+                  {t('wizard.noSectionsSelected')}
                 </Typography>
               )}
             </Paper>
@@ -984,13 +986,13 @@ const ExperimentWizard = ({
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
                 <ConfigIcon sx={{ mr: 1, color: 'primary.main' }} />
-                Experiment Configuration
+                {t('wizard.experimentConfiguration')}
               </Typography>
               
               {isEditing ? (
                 <FormGroup columns={1}>
                   <TextInput
-                    label="Experiment Name"
+                    label={t('fields.experimentName')}
                     value={editValues.name || ''}
                     onChange={(e) => handleEditChange('name', e.target.value)}
                     required
@@ -998,7 +1000,7 @@ const ExperimentWizard = ({
                   />
                   
                   <TextInput
-                    label="Description"
+                    label={t('fields.description')}
                     value={editValues.description || ''}
                     onChange={(e) => handleEditChange('description', e.target.value)}
                     required
@@ -1009,29 +1011,29 @@ const ExperimentWizard = ({
                   
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                     <SelectInput
-                      label="Grade Level"
+                      label={t('fields.gradeLevel')}
                       value={editValues.gradeLevel || ''}
                       onChange={(e) => handleEditChange('gradeLevel', e.target.value)}
                       options={[
-                        { value: 'elementary', label: 'Elementary (K-5)' },
-                        { value: 'middle', label: 'Middle School (6-8)' },
-                        { value: 'high', label: 'High School (9-12)' },
-                        { value: 'college', label: 'College/University' }
+                        { value: 'elementary', label: t('fields.gradeLevels.elementary') },
+                        { value: 'middle', label: t('fields.gradeLevels.middle') },
+                        { value: 'high', label: t('fields.gradeLevels.high') },
+                        { value: 'college', label: t('fields.gradeLevels.college') }
                       ]}
                       fullWidth
                     />
                     
                     <SelectInput
-                      label="Subject Area"
+                      label={t('fields.subjectArea')}
                       value={editValues.subject || ''}
                       onChange={(e) => handleEditChange('subject', e.target.value)}
                       options={[
-                        { value: 'biology', label: 'Biology' },
-                        { value: 'chemistry', label: 'Chemistry' },
-                        { value: 'physics', label: 'Physics' },
-                        { value: 'earth-science', label: 'Earth Science' },
-                        { value: 'general-science', label: 'General Science' },
-                        { value: 'environmental', label: 'Environmental Science' }
+                        { value: 'biology', label: t('fields.subjects.biology') },
+                        { value: 'chemistry', label: t('fields.subjects.chemistry') },
+                        { value: 'physics', label: t('fields.subjects.physics') },
+                        { value: 'earth-science', label: t('fields.subjects.earthScience') },
+                        { value: 'general-science', label: t('fields.subjects.generalScience') },
+                        { value: 'environmental', label: t('fields.subjects.environmental') }
                       ]}
                       fullWidth
                     />
@@ -1039,27 +1041,27 @@ const ExperimentWizard = ({
                   
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                     <SelectInput
-                      label="Duration"
+                      label={t('fields.duration')}
                       value={editValues.duration || ''}
                       onChange={(e) => handleEditChange('duration', e.target.value)}
                       options={[
-                        { value: '30-min', label: '30 minutes' },
-                        { value: '1-hour', label: '1 hour' },
-                        { value: '90-min', label: '90 minutes' },
-                        { value: '2-hours', label: '2 hours' },
-                        { value: 'multi-day', label: 'Multiple days' }
+                        { value: '30-min', label: t('fields.durations.30min') },
+                        { value: '1-hour', label: t('fields.durations.1hour') },
+                        { value: '90-min', label: t('fields.durations.90min') },
+                        { value: '2-hours', label: t('fields.durations.2hours') },
+                        { value: 'multi-day', label: t('fields.durations.multiDay') }
                       ]}
                       fullWidth
                     />
                     
                     <SelectInput
-                      label="Complexity"
+                      label={t('fields.complexity')}
                       value={editValues.complexity || ''}
                       onChange={(e) => handleEditChange('complexity', e.target.value)}
                       options={[
-                        { value: 'beginner', label: 'Beginner' },
-                        { value: 'intermediate', label: 'Intermediate' },
-                        { value: 'advanced', label: 'Advanced' }
+                        { value: 'beginner', label: t('fields.complexity.beginner') },
+                        { value: 'intermediate', label: t('fields.complexity.intermediate') },
+                        { value: 'advanced', label: t('fields.complexity.advanced') }
                       ]}
                       fullWidth
                     />
@@ -1069,10 +1071,10 @@ const ExperimentWizard = ({
                 <Box sx={{ display: 'grid', gap: 3 }}>
                   <Box>
                     <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, color: 'primary.main' }}>
-                      "{config.name || 'Untitled Experiment'}"
+                      "{config.name || t('wizard.untitledExperiment')}"
                     </Typography>
                     <Typography variant="body1" sx={{ mb: 2 }}>
-                      {config.description || 'No description provided'}
+                      {config.description || t('wizard.noDescriptionProvided')}
                     </Typography>
                   </Box>
                   
@@ -1089,10 +1091,10 @@ const ExperimentWizard = ({
                         <PersonIcon sx={{ color: 'text.secondary' }} />
                         <Box>
                           <Typography variant="caption" color="text.secondary">
-                            Grade Level
+                            {t('fields.gradeLevel')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {config.gradeLevel?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Not specified'}
+                            {config.gradeLevel?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || t('wizard.notSpecified')}
                           </Typography>
                         </Box>
                       </Box>
@@ -1110,10 +1112,10 @@ const ExperimentWizard = ({
                         <TimeIcon sx={{ color: 'text.secondary' }} />
                         <Box>
                           <Typography variant="caption" color="text.secondary">
-                            Expected Duration
+                            {t('wizard.expectedDuration')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {config.duration?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Not specified'}
+                            {config.duration?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || t('wizard.notSpecified')}
                           </Typography>
                         </Box>
                       </Box>
@@ -1127,29 +1129,29 @@ const ExperimentWizard = ({
               <Paper sx={{ p: 3, mt: 2, backgroundColor: 'primary.50', border: '1px solid', borderColor: 'primary.200' }}>
                 <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
                   <PreviewIcon sx={{ mr: 1 }} />
-                  Experiment Preview
+                  {t('wizard.experimentPreview')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  This experiment will be created with the following specifications:
+                  {t('wizard.experimentWillBeCreated')}
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   <Chip 
-                    label={`Educational Template`} 
+                    label={t('wizard.educationalTemplate')} 
                     variant="outlined" 
                     size="small" 
                   />
                   <Chip 
-                    label={`${selectedSections.length} sections`} 
+                    label={t('wizard.sectionsCount', { count: selectedSections.length })} 
                     variant="outlined" 
                     size="small" 
                   />
                   <Chip 
-                    label={config.gradeLevel?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Grade level not specified'} 
+                    label={config.gradeLevel?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || t('wizard.gradeLevelNotSpecified')} 
                     variant="outlined" 
                     size="small" 
                   />
                   <Chip 
-                    label={config.duration?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Duration not specified'} 
+                    label={config.duration?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || t('wizard.durationNotSpecified')} 
                     variant="outlined" 
                     size="small" 
                   />
@@ -1169,27 +1171,27 @@ const ExperimentWizard = ({
           <Box sx={{ py: 8 }}>
             <ExperimentIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
             <Typography variant="h5" sx={{ mb: 2 }}>
-              Creating Experiment...
+              {t('wizard.creatingExperiment')}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Please wait while we set up your experiment.
+              {t('wizard.pleaseWaitSetup')}
             </Typography>
           </Box>
         </LoadingOverlay>
       ) : createError ? (
         <AlertMessage 
           severity="error"
-          title="Creation Failed"
+          title={t('wizard.creationFailed')}
           message={createError}
         />
       ) : (
         <Box sx={{ py: 8 }}>
           <ExperimentIcon sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
           <Typography variant="h5" sx={{ mb: 2, color: 'success.main' }}>
-            Experiment Created Successfully!
+            {t('wizard.experimentCreatedSuccess')}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Your experiment has been created and is ready to use.
+            {t('wizard.experimentReady')}
           </Typography>
         </Box>
       )}
@@ -1203,12 +1205,12 @@ const ExperimentWizard = ({
       <ButtonGroup>
         {canGoBack() && (
           <SecondaryButton onClick={handlePrevious}>
-            Previous
+            {t('common.previous')}
           </SecondaryButton>
         )}
         
         <SecondaryButton onClick={onCancel}>
-          Cancel
+          {t('common.cancel')}
         </SecondaryButton>
         
         {currentStepId !== 'create' && (
@@ -1216,8 +1218,8 @@ const ExperimentWizard = ({
             onClick={handleNext}
             disabled={currentStepId === 'sections' && selectedSections.length === 0}
           >
-            {currentStep === wizardSteps.length - 2 ? 'Create Template' : 
-             currentStep === wizardSteps.length - 3 ? 'Review & Preview' : 'Next'}
+            {currentStep === wizardSteps.length - 2 ? t('wizard.createTemplate') : 
+             currentStep === wizardSteps.length - 3 ? t('wizard.reviewPreview') : t('common.next')}
           </PrimaryButton>
         )}
       </ButtonGroup>
@@ -1228,7 +1230,7 @@ const ExperimentWizard = ({
     <WizardContainer>
       <Box sx={{ p: 4, pb: 2 }}>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 700 }}>
-          Create Educational Experiment
+          {t('wizard.createEducationalExperiment')}
         </Typography>
         <WizardStepper 
           steps={wizardSteps}
