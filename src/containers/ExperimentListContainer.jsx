@@ -168,7 +168,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
       
       addNotification({
         type: 'success',
-        message: `"${experimentToDelete.title}" deleted successfully`
+        message: t('messages.experimentDeletedSuccess', { title: experimentToDelete.title })
       });
       
       setDeleteDialogOpen(false);
@@ -248,7 +248,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
               {t('nav.myExperiments')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {experiments.length} {experiments.length === 1 ? t('nav.experiments').toLowerCase() : t('nav.experiments').toLowerCase()} {t('dashboard.totalExperiments').toLowerCase()}
+              {t('experimentList.experimentsCount', { count: experiments.length })}
             </Typography>
           </Box>
           {onBackToDashboard && (
@@ -262,10 +262,10 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
           <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
             <ScienceIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
             <Typography variant="h6" sx={{ mb: 1 }}>
-              No Experiments Yet
+              {t('experimentList.noExperimentsYet')}
             </Typography>
             <Typography variant="body2">
-              Create your first experiment to get started.
+              {t('experimentList.createFirstExperiment')}
             </Typography>
           </Box>
         ) : (
@@ -310,7 +310,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
                         overflow: 'hidden'
                       }}
                     >
-                      {experiment.content?.config?.description || 'No description provided'}
+                      {experiment.content?.config?.description || t('wizard.noDescriptionProvided')}
                     </Typography>
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -325,7 +325,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <LayersIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
                           <Typography variant="caption" color="text.secondary">
-                            Version {experiment.version_number}
+                            {t('version.version')} {experiment.version_number}
                           </Typography>
                         </Box>
                       )}
@@ -386,11 +386,11 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
           open={deleteDialogOpen}
           onClose={handleDeleteCancel}
           onConfirm={handleDeleteConfirm}
-          title="Delete Experiment?"
-          itemName={experimentToDelete?.title || experimentToDelete?.name || 'this experiment'}
-          itemType="experiment"
+          title={t('experimentList.deleteExperimentTitle')}
+          itemName={experimentToDelete?.title || experimentToDelete?.name || t('experimentList.thisExperiment')}
+          itemType={t('experimentList.experiment')}
           loading={deleting}
-          additionalInfo="All versions and associated data will be permanently removed."
+          additionalInfo={t('version.confirmDeleteInfo')}
         />
 
         <Dialog
@@ -451,7 +451,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
           onExported={(type) => {
             addNotification({
               type: 'success',
-              message: `Experiment exported as ${type.toUpperCase()} successfully`
+              message: t('messages.experimentExportedSuccess', { type: type.toUpperCase() })
             });
           }}
         />

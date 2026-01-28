@@ -198,6 +198,15 @@
     "newValue": "New Value",
     "deletedValue": "Deleted Value"
   },
+  "experimentList": {
+    "experimentsCount": "{{count}} experiments available",
+    "experimentsCount_plural": "{{count}} experiments available",
+    "noExperimentsYet": "No Experiments Yet",
+    "createFirstExperiment": "Create your first experiment to get started.",
+    "deleteExperimentTitle": "Delete Experiment?",
+    "thisExperiment": "this experiment",
+    "experiment": "experiment"
+  },
   "fields": {
     "duration": "Duration",
     "estimatedDuration": "Duration",
@@ -558,6 +567,8 @@
     "videosNotAccepted": "Videos are not accepted",
     "maxFilesExceeded": "Maximum {{max}} files allowed",
     "uploadFailed": "Failed to upload files. Please try again.",
+    "experimentDeletedSuccess": "\"{{title}}\" deleted successfully",
+    "experimentExportedSuccess": "Experiment exported as {{type}} successfully",
     "error": {
       "addDescriptionFirst": "Please add a description first",
       "addMaterialsAndProceduresFirst": "Please add materials and procedures first"
