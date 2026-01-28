@@ -266,5 +266,33 @@
     "descriptionRequired": "Description is required",
     "minLength": "Minimum length is {{min}} characters",
     "maxLength": "Maximum length is {{max}} characters"
+  },
+  "safety": {
+    "gloves": "Safety Gloves",
+    "glovesDesc": "Wear protective gloves",
+    "goggles": "Safety Goggles",
+    "gogglesDesc": "Wear safety goggles",
+    "labCoat": "Lab Coat",
+    "labCoatDesc": "Wear lab coat",
+    "shoes": "Safety Shoes",
+    "shoesDesc": "Wear closed-toe safety shoes",
+    "faceShield": "Face Shield",
+    "faceShieldDesc": "Wear face shield protection",
+    "helmet": "Safety Helmet",
+    "helmetDesc": "Wear safety helmet",
+    "mask": "Respiratory Mask",
+    "maskDesc": "Wear respiratory protection mask",
+    "hearingProtection": "Hearing Protection",
+    "hearingProtectionDesc": "Wear hearing protection headset",
+    "highVisJacket": "High Visibility Jacket",
+    "highVisJacketDesc": "Wear high visibility jacket",
+    "addPPEIcons": "Add PPE Icons",
+    "ppeLibrary": "Personal Protective Equipment (PPE) Library",
+    "selectRequiredPPE": "Select required PPE icons for safety measures",
+    "ppeIconsInfo": "Select one or more PPE icons below. These indicate required personal protective equipment for the experiment.",
+    "iconsSelected": "{{count}} icon selected",
+    "iconsSelected_plural": "{{count}} icons selected",
+    "addSelected": "Add Selected ({{count}})"
   }
 }
+

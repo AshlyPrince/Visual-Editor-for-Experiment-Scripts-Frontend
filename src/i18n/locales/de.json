@@ -266,5 +266,33 @@
     "descriptionRequired": "Beschreibung ist erforderlich",
     "minLength": "Mindestlänge beträgt {{min}} Zeichen",
     "maxLength": "Maximale Länge beträgt {{max}} Zeichen"
+  },
+  "safety": {
+    "gloves": "Schutzhandschuhe",
+    "glovesDesc": "Schutzhandschuhe tragen",
+    "goggles": "Schutzbrille",
+    "gogglesDesc": "Schutzbrille tragen",
+    "labCoat": "Laborkittel",
+    "labCoatDesc": "Laborkittel tragen",
+    "shoes": "Sicherheitsschuhe",
+    "shoesDesc": "Geschlossene Sicherheitsschuhe tragen",
+    "faceShield": "Gesichtsschutz",
+    "faceShieldDesc": "Gesichtsschutz tragen",
+    "helmet": "Schutzhelm",
+    "helmetDesc": "Schutzhelm tragen",
+    "mask": "Atemschutzmaske",
+    "maskDesc": "Atemschutzmaske tragen",
+    "hearingProtection": "Gehörschutz",
+    "hearingProtectionDesc": "Gehörschutz tragen",
+    "highVisJacket": "Warnweste",
+    "highVisJacketDesc": "Warnweste tragen",
+    "addPPEIcons": "PSA-Symbole hinzufügen",
+    "ppeLibrary": "Persönliche Schutzausrüstung (PSA) Bibliothek",
+    "selectRequiredPPE": "Erforderliche PSA-Symbole für Sicherheitsmaßnahmen auswählen",
+    "ppeIconsInfo": "Wählen Sie ein oder mehrere PSA-Symbole unten aus. Diese zeigen die erforderliche persönliche Schutzausrüstung für das Experiment an.",
+    "iconsSelected": "{{count}} Symbol ausgewählt",
+    "iconsSelected_plural": "{{count}} Symbole ausgewählt",
+    "addSelected": "Ausgewählte hinzufügen ({{count}})"
   }
 }
+

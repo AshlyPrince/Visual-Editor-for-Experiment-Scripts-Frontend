@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
@@ -27,64 +28,65 @@ import mask from '../assets/icons/saftey/saftey-mask.png';
 import headset from '../assets/icons/saftey/saftey-headset.png';
 import highVisibilityJacket from '../assets/icons/saftey/saftey-highvisibilityjackets.png';
 
-const DEFAULT_SAFETY_ICONS = [
-  {
-    id: 'gloves',
-    name: 'Safety Gloves',
-    description: 'Wear protective gloves',
-    data: safetyGloves
-  },
-  {
-    id: 'goggles',
-    name: 'Safety Goggles',
-    description: 'Wear safety goggles',
-    data: safetyGoggles
-  },
-  {
-    id: 'lab-coat',
-    name: 'Lab Coat',
-    description: 'Wear lab coat',
-    data: labCoat
-  },
-  {
-    id: 'closed-shoes',
-    name: 'Safety Shoes',
-    description: 'Wear closed-toe safety shoes',
-    data: closedShoes
-  },
-  {
-    id: 'faceshield',
-    name: 'Face Shield',
-    description: 'Wear face shield protection',
-    data: faceshield
-  },
-  {
-    id: 'helmet',
-    name: 'Safety Helmet',
-    description: 'Wear safety helmet',
-    data: helmet
-  },
-  {
-    id: 'mask',
-    name: 'Respiratory Mask',
-    description: 'Wear respiratory protection mask',
-    data: mask
-  },
-  {
-    id: 'headset',
-    name: 'Hearing Protection',
-    description: 'Wear hearing protection headset',
-    data: headset
-  },
-  {
-    id: 'high-visibility',
-    name: 'High Visibility Jacket',
-    description: 'Wear high visibility jacket',
-    data: highVisibilityJacket
-  }
-];
-
 const SafetyIconLibrary = ({ onIconsSelected }) => {
+  const { t } = useTranslation();
+  
+  const DEFAULT_SAFETY_ICONS = [
+    {
+      id: 'gloves',
+      name: t('safety.gloves'),
+      description: t('safety.glovesDesc'),
+      data: safetyGloves
+    },
+    {
+      id: 'goggles',
+      name: t('safety.goggles'),
+      description: t('safety.gogglesDesc'),
+      data: safetyGoggles
+    },
+    {
+      id: 'lab-coat',
+      name: t('safety.labCoat'),
+      description: t('safety.labCoatDesc'),
+      data: labCoat
+    },
+    {
+      id: 'closed-shoes',
+      name: t('safety.shoes'),
+      description: t('safety.shoesDesc'),
+      data: closedShoes
+    },
+    {
+      id: 'faceshield',
+      name: t('safety.faceShield'),
+      description: t('safety.faceShieldDesc'),
+      data: faceshield
+    },
+    {
+      id: 'helmet',
+      name: t('safety.helmet'),
+      description: t('safety.helmetDesc'),
+      data: helmet
+    },
+    {
+      id: 'mask',
+      name: t('safety.mask'),
+      description: t('safety.maskDesc'),
+      data: mask
+    },
+    {
+      id: 'headset',
+      name: t('safety.hearingProtection'),
+      description: t('safety.hearingProtectionDesc'),
+      data: headset
+    },
+    {
+      id: 'high-visibility',
+      name: t('safety.highVisJacket'),
+      description: t('safety.highVisJacketDesc'),
+      data: highVisibilityJacket
+    }
+  ];
   const [open, setOpen] = useState(false);
   const [selectedIcons, setSelectedIcons] = useState([]);
 
@@ -125,7 +127,7 @@ const SafetyIconLibrary = ({ onIconsSelected }) => {
         onClick={() => setOpen(true)}
         sx={{ mb: 1 }}
       >
-        Add PPE Icons
+        {t('safety.addPPEIcons')}
       </Button>
 
       <Dialog 
@@ -135,15 +137,15 @@ const SafetyIconLibrary = ({ onIconsSelected }) => {
         fullWidth
       >
         <DialogTitle>
-          Personal Protective Equipment (PPE) Library
+          {t('safety.ppeLibrary')}
           <Typography variant="body2" color="text.secondary">
-            Select required PPE icons for safety measures
+            {t('safety.selectRequiredPPE')}
           </Typography>
         </DialogTitle>
         
         <DialogContent>
           <Alert severity="info" sx={{ mb: 2 }}>
-            Select one or more PPE icons below. These indicate required personal protective equipment for the experiment.
+            {t('safety.ppeIconsInfo')}
           </Alert>
 
           <Grid container spacing={2}>
@@ -201,18 +203,18 @@ const SafetyIconLibrary = ({ onIconsSelected }) => {
         <DialogActions>
           <Stack direction="row" spacing={2} width="100%" justifyContent="space-between" alignItems="center">
             <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>
-              {selectedIcons.length} icon{selectedIcons.length !== 1 ? 's' : ''} selected
+              {t('safety.iconsSelected', { count: selectedIcons.length })}
             </Typography>
             <Box>
               <Button onClick={() => setOpen(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button 
                 variant="contained" 
                 onClick={handleAddSelected}
                 disabled={selectedIcons.length === 0}
               >
-                Add Selected ({selectedIcons.length})
+                {t('safety.addSelected', { count: selectedIcons.length })}
               </Button>
             </Box>
           </Stack>
