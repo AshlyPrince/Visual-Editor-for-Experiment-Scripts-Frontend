@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, Typography, Box, Chip, Avatar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { createCardStyles } from '../../styles/components';
@@ -30,6 +31,8 @@ const TemplateCard = ({
   selected = false,
   ...props 
 }) => {
+  const { t } = useTranslation();
+  
   const getCategoryColor = (category) => {
     const categoryColors = {
       survey: colors.info.main,
@@ -106,7 +109,7 @@ const TemplateCard = ({
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="caption" color="text.secondary">
-            {template.sections?.length || 0} sections
+            {template.sections?.length || 0} {t('common.sections')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             v{template.version}
