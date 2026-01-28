@@ -17,7 +17,6 @@ import { Science } from '@mui/icons-material';
 import { Dashboard, ExperimentDashboard, ExperimentWizard, ExperimentListContainer } from './containers/exports.js';
 import DevelopmentModeIndicator from './components/ui/DevelopmentModeIndicator.jsx';
 import UserInfo from './components/UserInfo.jsx';
-import LanguageSwitcher from './components/LanguageSwitcher.jsx';
 import ModularExperimentWizard from './containers/ModularExperimentWizard.jsx';
 import ExperimentViewer from './components/ExperimentViewer.jsx';
 import { keycloakService } from './services/exports.js';
@@ -137,7 +136,6 @@ function Layout({ children }) {
           >
             Visual Editor Platform
           </Typography>
-          <LanguageSwitcher />
           <UserInfo onLogout={handleLogout} />
         </Toolbar>
       </AppBar>

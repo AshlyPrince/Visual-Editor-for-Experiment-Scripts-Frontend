@@ -14,17 +14,24 @@ import {
 import { 
   AccountCircle as AccountIcon,
   ExitToApp as LogoutIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Language as LanguageIcon,
+  Check as CheckIcon
 } from '@mui/icons-material';
 import keycloakService from '../services/keycloakService.js';
 
 const UserInfo = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   
   const userInfo = keycloakService.getUserInfo();
   const isAuthenticated = keycloakService.isAuthenticated();
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
+  ];
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,6 +39,10 @@ const UserInfo = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLanguageChange = (langCode) => {
+    i18n.changeLanguage(langCode);
   };
 
   const handleLogout = () => {
@@ -126,6 +137,24 @@ const UserInfo = () => {
             {userInfo.email}
           </Typography>
         </Box>
+        
+        <Divider />
+        
+        {languages.map((language) => (
+          <MenuItem 
+            key={language.code}
+            onClick={() => handleLanguageChange(language.code)}
+            selected={i18n.language === language.code}
+          >
+            <ListItemIcon sx={{ fontSize: '1.5rem', minWidth: 36 }}>
+              {language.flag}
+            </ListItemIcon>
+            <ListItemText>{language.name}</ListItemText>
+            {i18n.language === language.code && (
+              <CheckIcon fontSize="small" sx={{ ml: 2, color: 'primary.main' }} />
+            )}
+          </MenuItem>
+        ))}
         
         <Divider />
         
