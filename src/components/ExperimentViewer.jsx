@@ -190,7 +190,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     return (
       <Box sx={{ mb: 4 }} key={section.id}>
         <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
-          ☣️ Chemicals / Reagents
+          ☣️ {t('viewer.chemicalsReagents')}
         </Typography>
         <Grid container spacing={3}>
           {section.content?.chemicals_list && section.content.chemicals_list.length > 0 && (
@@ -198,7 +198,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                    Chemicals List
+                    {t('viewer.chemicalsList')}
                   </Typography>
                   <List dense>
                     {section.content.chemicals_list.map((item, index) => (
@@ -216,7 +216,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                    Concentrations
+                    {t('viewer.concentrations')}
                   </Typography>
                   <List dense>
                     {section.content.concentrations.map((item, index) => (
@@ -234,7 +234,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                    Kits / Primers
+                    {t('viewer.kitsPrimers')}
                   </Typography>
                   <List dense>
                     {section.content.kits.map((item, index) => (
@@ -252,7 +252,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           (section.content?.media && Array.isArray(section.content.media) && section.content.media.length > 0)) && (
           <Box sx={{ mt: 3 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-              Hazard Pictograms & Labels
+              {t('viewer.hazardPictogramsLabels')}
             </Typography>
             <Grid container spacing={2}>
               {(section.media || section.content?.media || []).map((mediaItem, index) => (
@@ -378,7 +378,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       <Box sx={{ mb: 4 }} key={section.id}>
         <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, display: 'flex', alignItems: 'center', gap: 1, color: 'primary.main' }}>
           <Box component="span" sx={{ fontSize: '1.5rem' }}>🚫</Box>
-          Potential Hazards
+          {t('viewer.potentialHazards')}
         </Typography>
         
         {hasMedia && (
@@ -402,7 +402,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                   <Box
                     component="img"
                     src={mediaItem.data || mediaItem.url}
-                    alt={mediaItem.name || `Hazard Icon ${mediaIndex + 1}`}
+                    alt={mediaItem.name || `${t('viewer.hazardIcon')} ${mediaIndex + 1}`}
                     sx={{
                       width: 60,
                       height: 60,
@@ -494,7 +494,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                           }}
                         >
                           <source src={mediaItem.url || mediaItem.data} type={mediaItem.type} />
-                          Your browser does not support the video tag.
+                          {t('viewer.browserNoVideoSupport')}
                         </Box>
                       ) : (
                         <Box
@@ -571,7 +571,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                         }}
                       >
                         <source src={mediaItem.url || mediaItem.data} type={mediaItem.type} />
-                        Your browser does not support the video tag.
+                        {t('viewer.browserNoVideoSupport')}
                       </Box>
                     ) : (
                       
@@ -605,7 +605,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                       }}
                     >
                       <Box component="span" sx={{ fontWeight: 600 }}>
-                        Figure {index + 1}:
+                        {t('viewer.figure', { number: index + 1 })}:
                       </Box>{' '}
                       {mediaItem.caption}
                     </Typography>
@@ -726,7 +726,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                       {value.map((item, i) => (
                         <Box key={i}>
                           <Typography variant="body1" sx={{ fontSize: '1.05rem', mb: 1 }}>
-                            • {item.name || '(Unnamed item)'}
+                            • {item.name || t('viewer.unnamedItem')}
                           </Typography>
                           {item.media && item.media.data && (
                             <Box
@@ -888,7 +888,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         const url = new URL(link.href);
         window.open(url.href, '_blank', 'noopener,noreferrer');
       } catch {
-        alert('This link appears to be invalid and cannot be opened.');
+        alert(t('viewer.invalidLinkError'));
       }
     }
   };
@@ -1048,7 +1048,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           })
         ) : (
           <Alert severity="info">
-            No sections available for this experiment.
+            {t('viewer.noSectionsAvailable')}
           </Alert>
         )}
 
@@ -1056,10 +1056,10 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           <Divider sx={{ my: 4 }} />
           <Box sx={{ textAlign: 'center', color: 'text.secondary' }}>
             <Typography variant="body2">
-              Experiment Version: {experiment.version_number || experiment.current_version_number || 1}
+              {t('viewer.experimentVersion', { version: experiment.version_number || experiment.current_version_number || 1 })}
             </Typography>
             <Typography variant="caption">
-              Last Updated: {new Date(experiment.updated_at).toLocaleDateString('en-US', {
+              {t('viewer.lastUpdated')}: {new Date(experiment.updated_at).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'

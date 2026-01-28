@@ -529,6 +529,22 @@
       "recommendations": "Empfehlungen:",
       "failedToCheck": "Konsistenz konnte nicht geprüft werden"
     }
+  },
+  "viewer": {
+    "chemicalsReagents": "Chemikalien / Reagenzien",
+    "chemicalsList": "Chemikalienliste",
+    "concentrations": "Konzentrationen",
+    "kitsPrimers": "Kits / Primer",
+    "hazardPictogramsLabels": "Gefahrenpiktogramme & Etiketten",
+    "potentialHazards": "Potenzielle Gefahren",
+    "hazardIcon": "Gefahrensymbol",
+    "unnamedItem": "(Unbenanntes Element)",
+    "figure": "Abbildung {{number}}:",
+    "invalidLinkError": "Dieser Link scheint ungültig zu sein und kann nicht geöffnet werden.",
+    "noSectionsAvailable": "Für dieses Experiment sind keine Abschnitte verfügbar.",
+    "experimentVersion": "Experimentversion: {{version}}",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "browserNoVideoSupport": "Ihr Browser unterstützt das Video-Tag nicht."
   }
 }
 
