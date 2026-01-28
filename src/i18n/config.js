@@ -1,11 +1,11 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en.json';
 import de from './locales/de.json';
 
+const savedLanguage = localStorage.getItem('i18nextLng') || 'en';
+
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
@@ -13,17 +13,17 @@ i18n
       de: { translation: de }
     },
     fallbackLng: 'en',
-    lng: 'en',
+    lng: savedLanguage,
     interpolation: {
       escapeValue: false
-    },
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
     },
     react: {
       useSuspense: false
     }
   });
+
+i18n.on('languageChanged', (lng) => {
+  localStorage.setItem('i18nextLng', lng);
+});
 
 export default i18n;
