@@ -3,7 +3,13 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import de from './locales/de.json';
 
-const savedLanguage = localStorage.getItem('i18nextLng') || 'en';
+const getInitialLanguage = () => {
+  try {
+    return localStorage.getItem('i18nextLng') || 'en';
+  } catch (e) {
+    return 'en';
+  }
+};
 
 i18n
   .use(initReactI18next)
@@ -13,7 +19,7 @@ i18n
       de: { translation: de }
     },
     fallbackLng: 'en',
-    lng: savedLanguage,
+    lng: getInitialLanguage(),
     interpolation: {
       escapeValue: false
     },
@@ -23,7 +29,11 @@ i18n
   });
 
 i18n.on('languageChanged', (lng) => {
-  localStorage.setItem('i18nextLng', lng);
+  try {
+    localStorage.setItem('i18nextLng', lng);
+  } catch (e) {
+    console.error('Failed to save language preference:', e);
+  }
 });
 
 export default i18n;
