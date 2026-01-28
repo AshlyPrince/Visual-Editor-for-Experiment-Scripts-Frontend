@@ -1922,13 +1922,13 @@ const ModularExperimentWizard = ({
             disabled={currentStep === 0}
             startIcon={<BackIcon />}
           >
-            Back
+            {t('wizard.navigation.back')}
           </SecondaryButton>
 
           <Box display="flex" gap={2}>
             {onCancel && (
               <SecondaryButton onClick={handleCancel}>
-                Cancel
+                {t('wizard.navigation.cancel')}
               </SecondaryButton>
             )}
             
@@ -1944,7 +1944,7 @@ const ModularExperimentWizard = ({
                     disabled={!validateStep(currentStep)}
                     endIcon={<NextIcon />}
                   >
-                    Next
+                    {t('wizard.navigation.next')}
                   </PrimaryButton>
                 </span>
               </Tooltip>
