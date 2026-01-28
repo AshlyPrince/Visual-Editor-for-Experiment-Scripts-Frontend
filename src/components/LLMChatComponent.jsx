@@ -18,6 +18,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import { useLLMChat } from '../../hooks/useLLMChat';
+import { useTranslation } from 'react-i18next';
 
 const LLMChatComponent = ({
   title = 'AI Assistant',
@@ -31,6 +32,8 @@ const LLMChatComponent = ({
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
   const { messages, loading, error, sendMessage, sendWithSystemPrompt, clearMessages, setConversation } = useLLMChat();
+  
+  const { t } = useTranslation();
 
   
   useEffect(() => {
@@ -85,7 +88,7 @@ const LLMChatComponent = ({
               <SmartToyIcon color="primary" />
               <Typography variant="h6">{title}</Typography>
             </Box>
-            <Tooltip title="Clear conversation">
+            <Tooltip title={t('llm.chat.clearConversation')}>
               <IconButton onClick={clearMessages} size="small" disabled={loading || messages.length === 0}>
                 <ClearIcon />
               </IconButton>
@@ -110,7 +113,7 @@ const LLMChatComponent = ({
           <Box sx={{ textAlign: 'center', py: 4 }}>
             <SmartToyIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
             <Typography variant="body2" color="text.secondary">
-              Start a conversation with the AI assistant
+              {t('llm.chat.placeholder')}
             </Typography>
           </Box>
         )}
@@ -182,7 +185,7 @@ const LLMChatComponent = ({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CircularProgress size={16} />
                 <Typography variant="body2" color="text.secondary">
-                  AI is thinking...
+                  {t('common.loading')}
                 </Typography>
               </Box>
             </Paper>

@@ -34,7 +34,8 @@
     "changes": "Änderungen",
     "added": "Hinzugefügt",
     "removed": "Entfernt",
-    "modified": "Geändert"
+    "modified": "Geändert",
+    "copy": "In Zwischenablage kopieren"
   },
   "auth": {
     "login": "Anmelden",
@@ -329,6 +330,61 @@
     "pictogramsSelected": "{{count}} Piktogramm ausgewählt",
     "pictogramsSelected_plural": "{{count}} Piktogramme ausgewählt",
     "addSelected": "Ausgewählte hinzufügen ({{count}})"
+  },
+  "llm": {
+    "tabs": {
+      "chat": "Chat",
+      "improve": "Verbessern",
+      "check": "Prüfen"
+    },
+    "chat": {
+      "title": "Experiment-Assistent",
+      "placeholder": "Fragen Sie zu Ihrem Experiment...",
+      "clearConversation": "Unterhaltung löschen",
+      "send": "Senden"
+    },
+    "polish": {
+      "title": "Text verbessern",
+      "polishContent": "Inhalt verbessern",
+      "polishField": "{{field}} verbessern",
+      "enterText": "Bitte geben Sie Text zum Verbessern ein",
+      "failedToPolish": "Text konnte nicht verbessert werden",
+      "failedToCopy": "Kopieren in Zwischenablage fehlgeschlagen",
+      "original": "Original",
+      "polished": "Verbessert",
+      "polish": "Verbessern",
+      "polishing": "Wird verbessert...",
+      "apply": "Anwenden",
+      "copied": "Kopiert!",
+      "reset": "Zurücksetzen",
+      "context": "Kontext: {{context}}"
+    },
+    "suggestions": {
+      "failedToGet": "Vorschläge konnten nicht abgerufen werden",
+      "getting": "Vorschläge werden abgerufen..."
+    },
+    "titles": {
+      "titleSuggestions": "Titelvorschläge",
+      "generate": "Titelideen generieren",
+      "generating": "Titel werden generiert..."
+    },
+    "safety": {
+      "safetyRecommendations": "Sicherheitsempfehlungen",
+      "generateGuide": "Sicherheitshinweise generieren",
+      "generating": "Sicherheitshinweise werden generiert...",
+      "failedToGenerate": "Sicherheitsempfehlungen konnten nicht generiert werden",
+      "recommendations": "Empfehlungen:",
+      "potentialHazards": "Potenzielle Gefahren:"
+    },
+    "consistency": {
+      "checkConsistency": "Konsistenz prüfen",
+      "checking": "Wird geprüft...",
+      "consistent": "Ihre Experimentabschnitte sind konsistent!",
+      "inconsistent": "Es wurden einige Inkonsistenzen gefunden, die Aufmerksamkeit erfordern",
+      "issuesFound": "Gefundene Probleme:",
+      "recommendations": "Empfehlungen:",
+      "failedToCheck": "Konsistenz konnte nicht geprüft werden"
+    }
   }
 }
 

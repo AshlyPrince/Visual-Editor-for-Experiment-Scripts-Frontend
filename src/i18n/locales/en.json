@@ -34,7 +34,8 @@
     "changes": "changes",
     "added": "Added",
     "removed": "Removed",
-    "modified": "Modified"
+    "modified": "Modified",
+    "copy": "Copy to clipboard"
   },
   "auth": {
     "login": "Login",
@@ -329,6 +330,61 @@
     "pictogramsSelected": "{{count}} pictogram selected",
     "pictogramsSelected_plural": "{{count}} pictograms selected",
     "addSelected": "Add Selected ({{count}})"
+  },
+  "llm": {
+    "tabs": {
+      "chat": "Chat",
+      "improve": "Improve",
+      "check": "Check"
+    },
+    "chat": {
+      "title": "Experiment Assistant",
+      "placeholder": "Ask about your experiment...",
+      "clearConversation": "Clear conversation",
+      "send": "Send"
+    },
+    "polish": {
+      "title": "Polish Text",
+      "polishContent": "Polish Content",
+      "polishField": "Polish {{field}}",
+      "enterText": "Please enter some text to polish",
+      "failedToPolish": "Failed to polish text",
+      "failedToCopy": "Failed to copy to clipboard",
+      "original": "Original",
+      "polished": "Polished",
+      "polish": "Polish",
+      "polishing": "Polishing...",
+      "apply": "Apply",
+      "copied": "Copied!",
+      "reset": "Reset",
+      "context": "Context: {{context}}"
+    },
+    "suggestions": {
+      "failedToGet": "Failed to get suggestions",
+      "getting": "Getting suggestions..."
+    },
+    "titles": {
+      "titleSuggestions": "Title Suggestions",
+      "generate": "Generate Title Ideas",
+      "generating": "Generating titles..."
+    },
+    "safety": {
+      "safetyRecommendations": "Safety Recommendations",
+      "generateGuide": "Generate Safety Guide",
+      "generating": "Generating safety guide...",
+      "failedToGenerate": "Failed to generate safety recommendations",
+      "recommendations": "Recommendations:",
+      "potentialHazards": "Potential Hazards:"
+    },
+    "consistency": {
+      "checkConsistency": "Check Consistency",
+      "checking": "Checking...",
+      "consistent": "Your experiment sections are consistent!",
+      "inconsistent": "Found some inconsistencies that need attention",
+      "issuesFound": "Issues Found:",
+      "recommendations": "Recommendations:",
+      "failedToCheck": "Failed to check consistency"
+    }
   }
 }
 

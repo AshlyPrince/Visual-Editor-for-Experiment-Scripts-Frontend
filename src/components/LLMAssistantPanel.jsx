@@ -30,6 +30,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import LLMChatComponent from './LLMChatComponent';
 import TextPolisher from './TextPolisher';
+import { useTranslation } from 'react-i18next';
 import {
   getSectionSuggestions,
   checkConsistency,
@@ -54,6 +55,8 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
   
   
   const [expandedSections, setExpandedSections] = useState({});
+  
+  const { t } = useTranslation();
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -89,7 +92,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
       const result = await getSectionSuggestions(sectionType, content, experimentData);
       setSuggestions({ type: sectionType, ...result });
     } catch (err) {
-      setError(err.message || 'Failed to get suggestions');
+      setError(err.message || t('llm.suggestions.failedToGet'));
     } finally {
       setLoading(false);
     }
@@ -126,7 +129,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
       const titles = await generateTitleSuggestions(experimentData.description);
       setTitleSuggestions(titles);
     } catch (err) {
-      setError(err.message || 'Failed to generate titles');
+      setError(err.message || t('llm.titles.generating'));
     } finally {
       setLoading(false);
     }
@@ -150,7 +153,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
       );
       setSafetyRecommendations(safety);
     } catch (err) {
-      setError(err.message || 'Failed to generate safety recommendations');
+      setError(err.message || t('llm.safety.failedToGenerate'));
     } finally {
       setLoading(false);
     }
@@ -166,9 +169,9 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
     <Paper elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth">
-          <Tab icon={<ChatIcon />} label="Chat" />
-          <Tab icon={<AutoFixHighIcon />} label="Improve" />
-          <Tab icon={<CheckCircleIcon />} label="Check" />
+          <Tab icon={<ChatIcon />} label={t('llm.tabs.chat')} />
+          <Tab icon={<AutoFixHighIcon />} label={t('llm.tabs.improve')} />
+          <Tab icon={<CheckCircleIcon />} label={t('llm.tabs.check')} />
         </Tabs>
       </Box>
 
@@ -181,8 +184,8 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
 
         {activeTab === 0 && (
           <LLMChatComponent
-            title="Experiment Assistant"
-            placeholder="Ask about your experiment..."
+            title={t('llm.chat.title')}
+            placeholder={t('llm.chat.placeholder')}
             systemPrompt="You are an AI assistant helping with scientific experiment design. Provide clear, practical advice."
             showHeader={false}
             maxHeight={600}
@@ -194,7 +197,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  Polish Content
+                  {t('llm.polish.polishContent')}
                 </Typography>
                 <IconButton size="small" onClick={() => toggleSection('polish')}>
                   {expandedSections.polish ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -207,7 +210,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
                       return (
                         <Chip
                           key={key}
-                          label={`Polish ${key}`}
+                          label={t('llm.polish.polishField', { field: key })}
                           icon={<AutoFixHighIcon />}
                           onClick={() => handleOpenPolish(key, value, key)}
                           clickable
@@ -227,7 +230,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  Title Suggestions
+                  {t('llm.titles.titleSuggestions')}
                 </Typography>
                 <IconButton size="small" onClick={() => toggleSection('titles')}>
                   {expandedSections.titles ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -242,7 +245,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
                   fullWidth
                   sx={{ mb: 2 }}
                 >
-                  Generate Title Ideas
+                  {t('llm.titles.generate')}
                 </Button>
                 {titleSuggestions.length > 0 && (
                   <List dense>
@@ -269,7 +272,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  Safety Recommendations
+                  {t('llm.safety.safetyRecommendations')}
                 </Typography>
                 <IconButton size="small" onClick={() => toggleSection('safety')}>
                   {expandedSections.safety ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -284,13 +287,13 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
                   fullWidth
                   sx={{ mb: 2 }}
                 >
-                  Generate Safety Guide
+                  {t('llm.safety.generateGuide')}
                 </Button>
                 {safetyRecommendations && (
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     {safetyRecommendations.recommendations?.length > 0 && (
                       <Box>
-                        <Typography variant="subtitle2" gutterBottom>Recommendations:</Typography>
+                        <Typography variant="subtitle2" gutterBottom>{t('llm.safety.recommendations')}</Typography>
                         <List dense>
                           {safetyRecommendations.recommendations.map((rec, idx) => (
                             <ListItem key={idx}>
@@ -303,7 +306,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
                     )}
                     {safetyRecommendations.hazards?.length > 0 && (
                       <Box>
-                        <Typography variant="subtitle2" gutterBottom>Potential Hazards:</Typography>
+                        <Typography variant="subtitle2" gutterBottom>{t('llm.safety.potentialHazards')}</Typography>
                         <List dense>
                           {safetyRecommendations.hazards.map((hazard, idx) => (
                             <ListItem key={idx}>
@@ -330,20 +333,20 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
               disabled={loading}
               fullWidth
             >
-              {loading ? 'Checking...' : 'Check Consistency'}
+              {loading ? t('llm.consistency.checking') : t('llm.consistency.checkConsistency')}
             </Button>
 
             {consistencyResults && (
               <Box>
                 <Alert severity={consistencyResults.consistent ? 'success' : 'warning'} sx={{ mb: 2 }}>
                   {consistencyResults.consistent
-                    ? 'Your experiment sections are consistent!'
-                    : 'Found some inconsistencies that need attention'}
+                    ? t('llm.consistency.consistent')
+                    : t('llm.consistency.inconsistent')}
                 </Alert>
 
                 {consistencyResults.issues?.length > 0 && (
                   <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" gutterBottom>Issues Found:</Typography>
+                    <Typography variant="subtitle2" gutterBottom>{t('llm.consistency.issuesFound')}</Typography>
                     <List>
                       {consistencyResults.issues.map((issue, idx) => (
                         <ListItem key={idx}>
@@ -357,7 +360,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
 
                 {consistencyResults.recommendations?.length > 0 && (
                   <Box>
-                    <Typography variant="subtitle2" gutterBottom>Recommendations:</Typography>
+                    <Typography variant="subtitle2" gutterBottom>{t('llm.consistency.recommendations')}</Typography>
                     <List>
                       {consistencyResults.recommendations.map((rec, idx) => (
                         <ListItem key={idx}>
@@ -380,7 +383,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
         onApply={handleApplyPolish}
         initialText={polishContext.text}
         context={polishContext.context}
-        title={`Polish ${polishContext.field}`}
+        title={t('llm.polish.polishField', { field: polishContext.field })}
       />
     </Paper>
   );

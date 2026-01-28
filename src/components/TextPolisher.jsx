@@ -23,6 +23,7 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import { polishText } from '../services/llmService';
+import { useTranslation } from 'react-i18next';
 
 const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', title = 'Polish Text' }) => {
   const [originalText, setOriginalText] = useState(initialText);
@@ -30,10 +31,12 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
+  
+  const { t } = useTranslation();
 
   const handlePolish = async () => {
     if (!originalText.trim()) {
-      setError('Please enter some text to polish');
+      setError(t('llm.polish.enterText'));
       return;
     }
 
@@ -44,7 +47,7 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
       const improved = await polishText(originalText, context);
       setPolishedText(improved);
     } catch (err) {
-      setError(err.message || 'Failed to polish text');
+      setError(err.message || t('llm.polish.failedToPolish'));
     } finally {
       setLoading(false);
     }
@@ -63,7 +66,7 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      setError('Failed to copy to clipboard');
+      setError(t('llm.polish.failedToCopy'));
     }
   };
 
@@ -86,7 +89,7 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
           {context && (
             <Chip 
-              label={`Context: ${context}`} 
+              label={t('llm.polish.context', { context })}
               size="small" 
               color="primary" 
               variant="outlined" 
@@ -101,7 +104,7 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
 
           <Box>
             <Typography variant="subtitle2" gutterBottom>
-              Original Text
+              {t('llm.polish.original')}
             </Typography>
             <TextField
               fullWidth
@@ -109,7 +112,7 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
               rows={6}
               value={originalText}
               onChange={(e) => setOriginalText(e.target.value)}
-              placeholder="Enter the text you want to improve..."
+              placeholder={t('llm.polish.enterText')}
               variant="outlined"
               disabled={loading}
             />
@@ -123,22 +126,22 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
               startIcon={loading ? <CircularProgress size={20} /> : <AutoFixHighIcon />}
               size="large"
             >
-              {loading ? 'Polishing...' : 'Polish with AI'}
+              {loading ? t('llm.polish.polishing') : t('llm.polish.polish')}
             </Button>
           </Box>
 
           {polishedText && (
             <>
               <Divider>
-                <Chip label="AI Improved Version" size="small" color="success" />
+                <Chip label={t('llm.polish.polished')} size="small" color="success" />
               </Divider>
               
               <Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="subtitle2">
-                    Polished Text
+                    {t('llm.polish.polished')}
                   </Typography>
-                  <Tooltip title={copied ? 'Copied!' : 'Copy to clipboard'}>
+                  <Tooltip title={copied ? t('llm.polish.copied') : t('common.copy')}>
                     <IconButton onClick={handleCopy} size="small">
                       {copied ? <CheckIcon color="success" /> : <ContentCopyIcon />}
                     </IconButton>
@@ -183,10 +186,10 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={handleReset} disabled={loading}>
-          Reset
+          {t('llm.polish.reset')}
         </Button>
         <Button onClick={onClose} disabled={loading}>
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={handleApply}
@@ -194,7 +197,7 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
           disabled={!polishedText || loading}
           startIcon={<CheckIcon />}
         >
-          Apply Changes
+          {t('llm.polish.apply')}
         </Button>
       </DialogActions>
     </Dialog>
