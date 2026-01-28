@@ -227,7 +227,27 @@
     "addAdditionalInfo": "Zusätzliche Informationen, Tabellen oder Notizen für diesen Schritt hinzufügen:",
     "notesPlaceholder": "Tabellen, formatierten Text, Links oder zusätzliche Anweisungen hinzufügen...",
     "attachImagesVideos": "Bilder oder Videos anhängen",
-    "addCaption": "Bildunterschrift hinzufügen..."
+    "addCaption": "Bildunterschrift hinzufügen...",
+    "table": {
+      "insertTable": "Tabelle einfügen",
+      "tableCaption": "Tabellenbeschriftung (optional)",
+      "tableCaptionPlaceholder": "z.B. PCR-Protokoll, das am Thermocycler einzustellen ist",
+      "tableCaptionHelper": "Beschreibende Beschriftung oder Überschrift für die Tabelle hinzufügen",
+      "numberOfRows": "Anzahl der Zeilen",
+      "numberOfColumns": "Anzahl der Spalten",
+      "includeHeaderRow": "Kopfzeile einfügen",
+      "cannotDeleteRow": "Zeile kann nicht gelöscht werden",
+      "cannotDeleteLastRow": "Die letzte Zeile in der Tabelle kann nicht gelöscht werden."
+    },
+    "link": {
+      "insertLink": "Link einfügen",
+      "linkUrl": "Link-URL",
+      "linkUrlPlaceholder": "https://beispiel.de",
+      "linkUrlHelper": "Geben Sie die Webadresse für den Link ein",
+      "linkText": "Link-Text (optional)",
+      "linkTextPlaceholder": "Hier klicken",
+      "linkTextHelper": "Leer lassen, um ausgewählten Text oder URL als Link-Text zu verwenden"
+    }
   },
   "buttons": {
     "backToDashboard": "Zurück zum Dashboard",

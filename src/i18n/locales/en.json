@@ -227,7 +227,27 @@
     "addAdditionalInfo": "Add additional information, tables, or notes for this step:",
     "notesPlaceholder": "Add tables, formatted text, links, or additional instructions...",
     "attachImagesVideos": "Attach Images or Videos",
-    "addCaption": "Add caption..."
+    "addCaption": "Add caption...",
+    "table": {
+      "insertTable": "Insert Table",
+      "tableCaption": "Table Caption (optional)",
+      "tableCaptionPlaceholder": "e.g., PCR-Protokoll, das am Thermocycler einzustellen ist",
+      "tableCaptionHelper": "Add a descriptive caption or heading for the table",
+      "numberOfRows": "Number of Rows",
+      "numberOfColumns": "Number of Columns",
+      "includeHeaderRow": "Include header row",
+      "cannotDeleteRow": "Cannot Delete Row",
+      "cannotDeleteLastRow": "Cannot delete the last row in the table."
+    },
+    "link": {
+      "insertLink": "Insert Link",
+      "linkUrl": "Link URL",
+      "linkUrlPlaceholder": "https://example.com",
+      "linkUrlHelper": "Enter the web address to link to",
+      "linkText": "Link Text (optional)",
+      "linkTextPlaceholder": "Click here",
+      "linkTextHelper": "Leave empty to use selected text or URL as link text"
+    }
   },
   "buttons": {
     "backToDashboard": "Back to Dashboard",

@@ -38,6 +38,7 @@ import {
   RemoveCircleOutline,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' }) => {
   const editorRef = useRef(null);
@@ -57,6 +58,8 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
   const [currentTable, setCurrentTable] = useState(null);
   const [currentCell, setCurrentCell] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', onConfirm: null });
+  
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (editorRef.current && value && !editorRef.current.innerHTML) {
@@ -269,8 +272,8 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
     if (tbody.querySelectorAll('tr').length <= 1) {
       setConfirmDialog({
         open: true,
-        title: 'Cannot Delete Row',
-        message: 'Cannot delete the last row in the table.',
+        title: t('editor.table.cannotDeleteRow'),
+        message: t('editor.table.cannotDeleteLastRow'),
         onConfirm: () => setConfirmDialog({ open: false, title: '', message: '', onConfirm: null })
       });
       return;
@@ -420,19 +423,19 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
       </Dialog>
 
       <Dialog open={tableDialogOpen} onClose={() => setTableDialogOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Insert Table</DialogTitle>
+        <DialogTitle>{t('editor.table.insertTable')}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
             <TextField
-              label="Table Caption (optional)"
+              label={t('editor.table.tableCaption')}
               value={tableCaption}
               onChange={(e) => setTableCaption(e.target.value)}
-              placeholder="e.g., PCR-Protokoll, das am Thermocycler einzustellen ist"
+              placeholder={t('editor.table.tableCaptionPlaceholder')}
               fullWidth
-              helperText="Add a descriptive caption or heading for the table"
+              helperText={t('editor.table.tableCaptionHelper')}
             />
             <TextField
-              label="Number of Rows"
+              label={t('editor.table.numberOfRows')}
               type="number"
               value={tableRows}
               onChange={(e) => setTableRows(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))}
@@ -440,7 +443,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
               fullWidth
             />
             <TextField
-              label="Number of Columns"
+              label={t('editor.table.numberOfColumns')}
               type="number"
               value={tableCols}
               onChange={(e) => setTableCols(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
@@ -454,13 +457,13 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Enter text...' })
                   onChange={(e) => setHasHeader(e.target.checked)}
                 />
               }
-              label="Include header row"
+              label={t('editor.table.includeHeaderRow')}
             />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setTableDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleInsertTable} variant="contained">Insert Table</Button>
+          <Button onClick={() => setTableDialogOpen(false)}>{t('common.cancel')}</Button>
+          <Button onClick={handleInsertTable} variant="contained">{t('editor.table.insertTable')}</Button>
         </DialogActions>
       </Dialog>
 
