@@ -176,7 +176,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
     } catch {
       addNotification({
         type: 'error',
-        message: 'Failed to delete experiment'
+        message: t('messages.deleteExperimentFailed')
       });
     }
   };
@@ -217,8 +217,8 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
     return (
       <AlertMessage
         severity="error"
-        title="Loading Error"
-        message="Failed to load experiments. Please try again."
+        title={t('messages.loadingError')}
+        message={t('messages.loadExperimentsError')}
       />
     );
   }
