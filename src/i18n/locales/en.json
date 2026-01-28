@@ -205,7 +205,17 @@
     "addMedia": "Add Media",
     "noMedia": "No media files",
     "image": "Image",
-    "video": "Video"
+    "video": "Video",
+    "addStep": "Add Step",
+    "noStepsYet": "No steps added yet. Click \"Add Step\" to begin.",
+    "stepPlaceholder": "Add procedure step {{number}}...",
+    "hideNotes": "Hide Notes",
+    "addNotesTableLinks": "Add Notes / Table / Links",
+    "hideMedia": "Hide Media",
+    "addImagesVideos": "Add Images / Videos",
+    "attachMediaToStep": "📷 Attach images or videos to this step:",
+    "addAdditionalInfo": "Add additional information, tables, or notes for this step:",
+    "notesPlaceholder": "Add tables, formatted text, links, or additional instructions..."
   },
   "buttons": {
     "backToDashboard": "Back to Dashboard",

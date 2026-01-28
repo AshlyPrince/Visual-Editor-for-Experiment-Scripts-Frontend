@@ -205,7 +205,17 @@
     "addMedia": "Medien hinzufügen",
     "noMedia": "Keine Mediendateien",
     "image": "Bild",
-    "video": "Video"
+    "video": "Video",
+    "addStep": "Schritt hinzufügen",
+    "noStepsYet": "Noch keine Schritte hinzugefügt. Klicken Sie auf \"Schritt hinzufügen\", um zu beginnen.",
+    "stepPlaceholder": "Verfahrensschritt {{number}} hinzufügen...",
+    "hideNotes": "Notizen ausblenden",
+    "addNotesTableLinks": "Notizen / Tabelle / Links hinzufügen",
+    "hideMedia": "Medien ausblenden",
+    "addImagesVideos": "Bilder / Videos hinzufügen",
+    "attachMediaToStep": "📷 Bilder oder Videos zu diesem Schritt hinzufügen:",
+    "addAdditionalInfo": "Zusätzliche Informationen, Tabellen oder Notizen für diesen Schritt hinzufügen:",
+    "notesPlaceholder": "Tabellen, formatierten Text, Links oder zusätzliche Anweisungen hinzufügen..."
   },
   "buttons": {
     "backToDashboard": "Zurück zum Dashboard",

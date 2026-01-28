@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   TextField,
@@ -21,6 +22,7 @@ import RichTextEditor from './RichTextEditor';
 import MediaUploader from './MediaUploader';
 
 const ProcedureStepsEditor = ({ steps = [], onChange }) => {
+  const { t } = useTranslation();
   const [expandedSteps, setExpandedSteps] = useState({});
   const [expandedMedia, setExpandedMedia] = useState({});
 
@@ -89,7 +91,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-          Procedure Steps
+          {t('wizard.procedureSteps')}
         </Typography>
         <Button
           size="small"
@@ -98,7 +100,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
           onClick={handleAddStep}
           sx={{ textTransform: 'none' }}
         >
-          Add Step
+          {t('editor.addStep')}
         </Button>
       </Box>
 
@@ -114,7 +116,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
             }}
           >
             <Typography color="text.secondary">
-              No steps added yet. Click "Add Step" to begin.
+              {t('editor.noStepsYet')}
             </Typography>
           </Paper>
         ) : (
@@ -145,7 +147,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
                     rows={2}
                     value={step.text}
                     onChange={(e) => handleUpdateStepText(index, e.target.value)}
-                    placeholder={`Add procedure step ${index + 1}...`}
+                    placeholder={t('editor.stepPlaceholder', { number: index + 1 })}
                     variant="outlined"
                     sx={{ mb: 1 }}
                   />
@@ -157,7 +159,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
                       onClick={() => toggleExpanded(index)}
                       sx={{ textTransform: 'none', color: 'text.secondary' }}
                     >
-                      {expandedSteps[index] ? 'Hide Notes' : 'Add Notes / Table / Links'}
+                      {expandedSteps[index] ? t('editor.hideNotes') : t('editor.addNotesTableLinks')}
                     </Button>
                     <Button
                       size="small"
@@ -165,7 +167,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
                       onClick={() => toggleMediaExpanded(index)}
                       sx={{ textTransform: 'none', color: 'text.secondary' }}
                     >
-                      {expandedMedia[index] ? 'Hide Media' : 'Add Images / Videos'}
+                      {expandedMedia[index] ? t('editor.hideMedia') : t('editor.addImagesVideos')}
                       {step.media && step.media.length > 0 && ` (${step.media.length})`}
                     </Button>
                   </Box>
@@ -174,7 +176,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
                     <Box sx={{ mt: 2 }}>
                       <Divider sx={{ mb: 2 }} />
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                        📷 Attach images or videos to this step:
+                        {t('editor.attachMediaToStep')}
                       </Typography>
                       <MediaUploader
                         media={step.media || []}
@@ -191,12 +193,12 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
                     <Box sx={{ mt: 2 }}>
                       <Divider sx={{ mb: 2 }} />
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                        Add additional information, tables, or notes for this step:
+                        {t('editor.addAdditionalInfo')}
                       </Typography>
                       <RichTextEditor
                         value={step.notes || ''}
                         onChange={(notes) => handleUpdateStepNotes(index, notes)}
-                        placeholder="Add tables, formatted text, links, or additional instructions..."
+                        placeholder={t('editor.notesPlaceholder')}
                       />
                     </Box>
                   </Collapse>
@@ -218,7 +220,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
       {steps.length > 0 && (
         <Box sx={{ mt: 2, textAlign: 'center' }}>
           <Typography variant="caption" color="text.secondary">
-            {steps.length} / 50 items
+            {t('messages.itemsCount', { count: steps.length, max: 50 })}
           </Typography>
         </Box>
       )}
