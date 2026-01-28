@@ -544,6 +544,11 @@
       "cancel": "Abbrechen",
       "next": "Weiter"
     },
+    "validation": {
+      "titleRequired": "Bitte geben Sie einen Experimenttitel ein, um fortzufahren",
+      "sectionRequired": "Bitte wählen Sie mindestens einen Abschnitt aus, um fortzufahren",
+      "contentRequired": "Bitte fügen Sie Inhalt zu mindestens einem Abschnitt hinzu, um fortzufahren"
+    },
     "draft": {
       "restored": "Entwurf wiederhergestellt!",
       "restoredInfo": "Ihre vorherige Arbeit wurde geladen. Zuletzt gespeichert: {{timestamp}}",

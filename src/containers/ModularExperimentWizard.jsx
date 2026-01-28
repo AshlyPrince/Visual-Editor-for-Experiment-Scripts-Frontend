@@ -590,13 +590,13 @@ const ModularExperimentWizard = ({
     switch (step) {
       case 0: 
         if (!basicInfo.title.trim()) {
-          return 'Please enter an experiment title to continue';
+          return t('wizard.validation.titleRequired');
         }
         return '';
       
       case 1: 
         if (selectedSections.length === 0) {
-          return 'Please select at least one section to continue';
+          return t('wizard.validation.sectionRequired');
         }
         return '';
       
@@ -606,14 +606,14 @@ const ModularExperimentWizard = ({
           return hasContent(content);
         });
         if (!hasAnyContent) {
-          return 'Please add content to at least one section to continue';
+          return t('wizard.validation.contentRequired');
         }
         return '';
       
       default:
         return '';
     }
-  }, [basicInfo, selectedSections, sectionContent, hasContent]);
+  }, [basicInfo, selectedSections, sectionContent, hasContent, t]);
 
   
   
@@ -713,10 +713,10 @@ const ModularExperimentWizard = ({
   const renderBasicInfoStep = () => (
     <Box>
       <Typography variant="h5" gutterBottom>
-        📋 Basic Information
+        {t('wizard.steps.basicInfo')}
       </Typography>
       <Typography variant="body2" color="text.secondary" paragraph>
-        Enter the fundamental details about your lab experiment.
+        {t('wizard.steps.basicInfoDesc')}
       </Typography>
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
@@ -724,12 +724,12 @@ const ModularExperimentWizard = ({
           <TextField
             fullWidth
             required
-            label="Experiment Title"
+            label={t('wizard.basicInfo.experimentTitle')}
             value={basicInfo.title}
             onChange={(e) => updateBasicInfo('title', e.target.value)}
             error={touched.title && !basicInfo.title.trim()}
-            helperText={touched.title && !basicInfo.title.trim() ? 'Title is required' : ''}
-            placeholder="e.g., DNA Extraction from Strawberries"
+            helperText={touched.title && !basicInfo.title.trim() ? t('wizard.basicInfo.titleRequired') : ''}
+            placeholder={t('wizard.basicInfo.titlePlaceholder')}
           />
         </Grid>
 
@@ -753,16 +753,16 @@ const ModularExperimentWizard = ({
                 letterSpacing: 0.5
               }}
             >
-              Additional Details
+              {t('wizard.basicInfo.additionalDetails')}
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Duration"
+                  label={t('wizard.basicInfo.duration')}
                   value={basicInfo.duration}
                   onChange={(e) => updateBasicInfo('duration', e.target.value)}
-                  placeholder="e.g., 90 minutes"
+                  placeholder={t('wizard.basicInfo.durationPlaceholder')}
                   size="small"
                 />
               </Grid>
@@ -770,10 +770,10 @@ const ModularExperimentWizard = ({
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Course"
+                  label={t('wizard.basicInfo.course')}
                   value={basicInfo.course}
                   onChange={(e) => updateBasicInfo('course', e.target.value)}
-                  placeholder="e.g., Modul 13 – Biology"
+                  placeholder={t('wizard.basicInfo.coursePlaceholder')}
                   size="small"
                 />
               </Grid>
@@ -781,10 +781,10 @@ const ModularExperimentWizard = ({
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Program"
+                  label={t('wizard.basicInfo.program')}
                   value={basicInfo.program}
                   onChange={(e) => updateBasicInfo('program', e.target.value)}
-                  placeholder="e.g., Sommersemester 2025"
+                  placeholder={t('wizard.basicInfo.programPlaceholder')}
                   size="small"
                 />
               </Grid>
@@ -795,7 +795,7 @@ const ModularExperimentWizard = ({
 
       <Alert severity="info" sx={{ mt: 3 }}>
         <Typography variant="body2">
-          <strong>Tip:</strong> This information will appear in the header of your experiment document.
+          <strong>{t('wizard.basicInfo.tip')}</strong> {t('wizard.basicInfo.tipMessage')}
         </Typography>
       </Alert>
     </Box>
@@ -804,15 +804,15 @@ const ModularExperimentWizard = ({
   const renderSectionsStep = () => (
     <Box>
       <Typography variant="h5" gutterBottom>
-        📚 Select Sections
+        {t('wizard.steps.selectSections')}
       </Typography>
       <Typography variant="body2" color="text.secondary" paragraph>
-        Choose which sections to include in your experiment. You can select any combination of sections that fit your needs, or create custom ones.
+        {t('wizard.steps.selectSectionsDesc')}
       </Typography>
 
       <Box sx={{ mb: 4 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          Available Sections
+          {t('wizard.sections.availableSections')}
         </Typography>
         <Grid container spacing={2}>
           {availableSections
@@ -852,11 +852,11 @@ const ModularExperimentWizard = ({
       {selectedSections.length > 0 && (
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            📋 Selected Sections (Drag to Reorder)
+            {t('wizard.sections.selectedSectionsDrag')}
           </Typography>
           <Alert severity="info" sx={{ mb: 2 }}>
             <Typography variant="body2">
-              Drag sections to reorder them. This order will be used in the final experiment.
+              {t('wizard.sections.dragInfo')}
             </Typography>
           </Alert>
           <Stack spacing={1}>
@@ -921,14 +921,14 @@ const ModularExperimentWizard = ({
       <Box>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h6">
-            ✨ Custom Sections
+            {t('wizard.sections.customSections')}
           </Typography>
           <Button
             variant="outlined"
             startIcon={<AddIcon />}
             onClick={() => setCustomSectionDialog(true)}
           >
-            Add Custom Section
+            {t('wizard.sections.addCustomSection')}
           </Button>
         </Box>
 
@@ -943,7 +943,7 @@ const ModularExperimentWizard = ({
                       <Box flex={1}>
                         <Typography variant="h6">{section.name}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {section.description || 'Custom section'}
+                          {section.description || t('wizard.sections.customSectionDefault')}
                         </Typography>
                       </Box>
                       <IconButton
@@ -961,14 +961,14 @@ const ModularExperimentWizard = ({
           </Grid>
         ) : (
           <Alert severity="info">
-            No custom sections added yet. Click "Add Custom Section" to create one.
+            {t('wizard.sections.noCustomSections')}
           </Alert>
         )}
       </Box>
 
       <Alert severity="success" sx={{ mt: 3 }}>
         <Typography variant="body2">
-          <strong>{selectedSections.length} sections</strong> selected for your experiment.
+          {t('wizard.sections.sectionsSelectedCount', { count: selectedSections.length })}
         </Typography>
       </Alert>
     </Box>
@@ -977,10 +977,10 @@ const ModularExperimentWizard = ({
   const renderContentStep = () => (
     <Box>
       <Typography variant="h5" gutterBottom>
-        ✍️ Fill in Content
+        {t('wizard.steps.fillContent')}
       </Typography>
       <Typography variant="body2" color="text.secondary" paragraph>
-        Complete the content for each section. Required fields are marked with *.
+        {t('wizard.steps.fillContentDesc')}
       </Typography>
 
       <Stack spacing={4} sx={{ mt: 3 }}>
@@ -991,7 +991,7 @@ const ModularExperimentWizard = ({
               <Typography variant="h6">{section.name}</Typography>
               {section.id === 'title_header' && (
                 <Chip 
-                  label="Auto-filled from Step 1" 
+                  label={t('wizard.content.autoFilled')}
                   size="small" 
                   color="success" 
                   variant="outlined"
@@ -1006,7 +1006,7 @@ const ModularExperimentWizard = ({
 
             {section.id === 'title_header' && (
               <Alert severity="info" sx={{ mb: 2 }}>
-                These fields are automatically filled from your Basic Information. You can edit them if needed.
+                {t('wizard.content.autoFilledInfo')}
               </Alert>
             )}
 
@@ -1097,7 +1097,7 @@ const ModularExperimentWizard = ({
                       </Typography>
                       <Alert severity="info" sx={{ mb: 2 }}>
                         <Typography variant="body2">
-                          List all materials students need. You can optionally add a photo to help with recognition.
+                          {t('wizard.content.materialInfo')}
                         </Typography>
                       </Alert>
                       
@@ -1106,15 +1106,15 @@ const ModularExperimentWizard = ({
                           <Card key={index} variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                               <Typography variant="subtitle2" color="text.secondary">
-                                Material {index + 1}
+                                {t('wizard.content.materialNumber', { number: index + 1 })}
                               </Typography>
                             </Box>
                             
                             <Stack spacing={2}>
                               <TextField
                                 fullWidth
-                                label="Material name"
-                                placeholder="e.g., Beaker (250ml), Safety goggles, pH meter"
+                                label={t('wizard.content.materialName')}
+                                placeholder={t('wizard.content.materialPlaceholder')}
                                 value={item.name || ''}
                                 onChange={(e) => {
                                   const items = [...(sectionContent[section.id]?.[field.id] || [])];
@@ -1127,7 +1127,7 @@ const ModularExperimentWizard = ({
                               {item.media && item.media.data ? (
                                 <Box>
                                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                                    Reference photo
+                                    {t('wizard.content.referencePhoto')}
                                   </Typography>
                                   <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                                     <Box
@@ -1149,7 +1149,7 @@ const ModularExperimentWizard = ({
                                         variant="outlined"
                                         component="label"
                                       >
-                                        Replace photo
+                                        {t('wizard.content.replacePhoto')}
                                         <input
                                           type="file"
                                           hidden
@@ -1186,7 +1186,7 @@ const ModularExperimentWizard = ({
                                           updateSectionContent(section.id, field.id, items);
                                         }}
                                       >
-                                        Remove photo
+                                        {t('wizard.content.removePhoto')}
                                       </Button>
                                     </Stack>
                                   </Box>
@@ -1198,7 +1198,7 @@ const ModularExperimentWizard = ({
                                   component="label"
                                   sx={{ alignSelf: 'flex-start' }}
                                 >
-                                  + Add reference photo (optional)
+                                  {t('wizard.content.addPhoto')}
                                   <input
                                     type="file"
                                     hidden
@@ -1237,7 +1237,7 @@ const ModularExperimentWizard = ({
                                   }}
                                   sx={{ textTransform: 'none' }}
                                 >
-                                  Remove material
+                                  {t('wizard.content.removeMaterial')}
                                 </Button>
                               </Box>
                             </Stack>
@@ -1252,7 +1252,7 @@ const ModularExperimentWizard = ({
                             updateSectionContent(section.id, field.id, items);
                           }}
                         >
-                          Add Material
+                          {t('wizard.content.addMaterial')}
                         </Button>
                       </Stack>
                     </Box>
@@ -1269,10 +1269,10 @@ const ModularExperimentWizard = ({
   const renderAIPolishStep = () => (
     <Box>
       <Typography variant="h5" gutterBottom>
-        🤖 AI Polish & Review
+        {t('wizard.steps.aiPolish')}
       </Typography>
       <Typography variant="body2" color="text.secondary" paragraph>
-        Use AI to review, improve, and ensure consistency across all sections.
+        {t('wizard.steps.aiPolishDesc')}
       </Typography>
 
       <LLMPolishCheck
@@ -1329,19 +1329,19 @@ const ModularExperimentWizard = ({
     return (
       <Box>
         <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          👁️ Preview & Create
+          {t('wizard.steps.preview')}
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          This is how students will see your experiment. Review carefully before creating.
+          {t('wizard.steps.previewDesc')}
         </Typography>
 
         {!keycloakService.isAuthenticated() && (
           <Alert severity="warning" sx={{ mb: 3 }}>
             <Typography variant="body2" gutterBottom>
-              <strong>⚠️ You are not logged in</strong>
+              <strong>{t('wizard.preview.notLoggedIn')}</strong>
             </Typography>
             <Typography variant="body2" gutterBottom>
-              You need to log in with your Keycloak account to create experiments.
+              {t('wizard.preview.needLogin')}
             </Typography>
             <Button 
               variant="contained" 
@@ -1349,7 +1349,7 @@ const ModularExperimentWizard = ({
               onClick={() => keycloakService.login()}
               sx={{ mt: 1 }}
             >
-              Login Now
+              {t('wizard.preview.loginNow')}
             </Button>
           </Alert>
         )}
@@ -1366,22 +1366,22 @@ const ModularExperimentWizard = ({
           }}
         >
           <Typography variant="overline" color="primary" sx={{ fontWeight: 600 }}>
-            📖 STUDENT VIEW PREVIEW
+            {t('wizard.preview.studentViewPreview')}
           </Typography>
           
           <Box sx={{ mt: 2, mb: 4, textAlign: 'center' }}>
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-              {previewData.title || 'Untitled Experiment'}
+              {previewData.title || t('wizard.preview.untitledExperiment')}
             </Typography>
             <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', mt: 2, justifyContent: 'center' }}>
               {previewData.duration && (
-                <Chip label={`Duration: ${previewData.duration}`} variant="outlined" />
+                <Chip label={t('wizard.preview.durationLabel', { duration: previewData.duration })} variant="outlined" />
               )}
               {previewData.course && (
-                <Chip label={`Course: ${previewData.course}`} variant="outlined" />
+                <Chip label={t('wizard.preview.courseLabel', { course: previewData.course })} variant="outlined" />
               )}
               {previewData.program && (
-                <Chip label={`Program: ${previewData.program}`} variant="outlined" />
+                <Chip label={t('wizard.preview.programLabel', { program: previewData.program })} variant="outlined" />
               )}
             </Box>
           </Box>
@@ -1390,7 +1390,7 @@ const ModularExperimentWizard = ({
 
           {previewData.sections.length === 0 ? (
             <Alert severity="info">
-              No sections added yet. Go back to select and fill sections.
+              {t('wizard.preview.noSections')}
             </Alert>
           ) : (
             <Stack spacing={4}>
@@ -1834,7 +1834,7 @@ const ModularExperimentWizard = ({
                     size="small" 
                     onClick={() => keycloakService.login()}
                   >
-                    Login
+                    {t('wizard.preview.loginNow')}
                   </Button>
                 )
               }
@@ -1842,7 +1842,7 @@ const ModularExperimentWizard = ({
               {creationError}
               {creationError.includes('not authenticated') && (
                 <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                  Please log in with your Keycloak account to create experiments.
+                  {t('wizard.preview.needLogin')}
                 </Typography>
               )}
             </Alert>
@@ -1851,7 +1851,7 @@ const ModularExperimentWizard = ({
         {createdExperiment ? (
           <Alert severity="success">
             <Typography variant="body2">
-              ✅ Experiment created successfully! ID: {createdExperiment.id}
+              {t('wizard.preview.experimentCreatedId', { id: createdExperiment.id })}
             </Typography>
           </Alert>
         ) : (
@@ -1863,8 +1863,8 @@ const ModularExperimentWizard = ({
             startIcon={isCreating ? <CircularProgress size={20} /> : <SaveIcon />}
           >
             {isCreating 
-              ? (existingExperiment ? 'Updating Experiment...' : 'Creating Experiment...') 
-              : (existingExperiment ? 'Update Experiment' : 'Create Experiment')
+              ? (existingExperiment ? t('wizard.preview.updatingExperiment') : t('wizard.preview.creatingExperiment')) 
+              : (existingExperiment ? t('wizard.preview.updateExperiment') : t('wizard.preview.createExperiment'))
             }
           </PrimaryButton>
         )}
@@ -1959,23 +1959,23 @@ const ModularExperimentWizard = ({
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Add Custom Section</DialogTitle>
+        <DialogTitle>{t('wizard.sections.addCustomDialog.title')}</DialogTitle>
         <DialogContent>
           <Stack spacing={3} sx={{ mt: 1 }}>
             <TextField
               fullWidth
               required
-              label="Section Name"
+              label={t('wizard.sections.addCustomDialog.sectionName')}
               value={newCustomSectionName}
               onChange={(e) => setNewCustomSectionName(e.target.value)}
-              placeholder="e.g., Risk Assessment"
+              placeholder={t('wizard.sections.addCustomDialog.namePlaceholder')}
             />
             <TextField
               fullWidth
-              label="Description"
+              label={t('wizard.sections.addCustomDialog.description')}
               value={newCustomSectionDescription}
               onChange={(e) => setNewCustomSectionDescription(e.target.value)}
-              placeholder="Brief description of this section"
+              placeholder={t('wizard.sections.addCustomDialog.descriptionPlaceholder')}
               multiline
               rows={2}
             />
@@ -1983,14 +1983,14 @@ const ModularExperimentWizard = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setCustomSectionDialog(false)}>
-            Cancel
+            {t('wizard.sections.addCustomDialog.cancel')}
           </Button>
           <Button
             variant="contained"
             onClick={handleAddCustomSection}
             disabled={!newCustomSectionName.trim()}
           >
-            Add Section
+            {t('wizard.sections.addCustomDialog.add')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -2018,16 +2018,16 @@ const ModularExperimentWizard = ({
           </Box>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
-              Discard Draft?
+              {t('wizard.draft.discardTitle')}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              This action cannot be undone
+              {t('wizard.draft.discardSubtitle')}
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-            You have unsaved changes in your draft. What would you like to do?
+            {t('wizard.draft.unsavedChanges')}
           </Typography>
           <Box sx={{ 
             p: 2, 
@@ -2038,11 +2038,11 @@ const ModularExperimentWizard = ({
           }}>
             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Box component="span" sx={{ color: 'success.main', fontWeight: 600 }}>✓</Box>
-              Keep Draft: Save your progress and return later
+              {t('wizard.draft.keepDraft')}
             </Typography>
             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box component="span" sx={{ color: 'error.main', fontWeight: 600 }}>✕</Box>
-              Discard: Permanently delete all unsaved changes
+              {t('wizard.draft.discardDraft')}
             </Typography>
           </Box>
         </DialogContent>
@@ -2053,7 +2053,7 @@ const ModularExperimentWizard = ({
             size="large"
             sx={{ minWidth: 120 }}
           >
-            Keep Draft
+            {t('wizard.draft.keepButton')}
           </Button>
           <Button 
             onClick={handleDiscardConfirm} 
@@ -2063,7 +2063,7 @@ const ModularExperimentWizard = ({
             startIcon={<DeleteOutline />}
             sx={{ minWidth: 120 }}
           >
-            Discard
+            {t('wizard.draft.discardButton')}
           </Button>
         </DialogActions>
       </Dialog>

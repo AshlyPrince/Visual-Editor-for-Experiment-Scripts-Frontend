@@ -544,6 +544,11 @@
       "cancel": "Cancel",
       "next": "Next"
     },
+    "validation": {
+      "titleRequired": "Please enter an experiment title to continue",
+      "sectionRequired": "Please select at least one section to continue",
+      "contentRequired": "Please add content to at least one section to continue"
+    },
     "draft": {
       "restored": "Draft restored!",
       "restoredInfo": "Your previous work has been loaded. Last saved: {{timestamp}}",
