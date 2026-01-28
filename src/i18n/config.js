@@ -1,19 +1,25 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import en from './locales/en.json';
-import de from './locales/de.json';
 
+// Import translations dynamically to avoid circular dependencies
+const loadTranslations = async () => {
+  const en = await import('./locales/en.json');
+  const de = await import('./locales/de.json');
+  return { en: en.default, de: de.default };
+};
+
+// Initialize i18n synchronously with empty resources first
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
-      en: { translation: en },
-      de: { translation: de }
+      en: { translation: {} },
+      de: { translation: {} }
     },
     fallbackLng: 'en',
-    lng: 'en', // Set default language to English
+    lng: 'en',
     interpolation: {
       escapeValue: false
     },
@@ -22,5 +28,11 @@ i18n
       caches: ['localStorage']
     }
   });
+
+// Load translations asynchronously
+loadTranslations().then(({ en, de }) => {
+  i18n.addResourceBundle('en', 'translation', en, true, true);
+  i18n.addResourceBundle('de', 'translation', de, true, true);
+});
 
 export default i18n;
