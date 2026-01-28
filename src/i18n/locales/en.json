@@ -27,7 +27,14 @@
     "remove": "Remove",
     "item": "Item",
     "items": "Items",
-    "compare": "Compare"
+    "compare": "Compare",
+    "retry": "Retry",
+    "locale": "en-US",
+    "change": "change",
+    "changes": "changes",
+    "added": "Added",
+    "removed": "Removed",
+    "modified": "Modified"
   },
   "auth": {
     "login": "Login",
@@ -128,7 +135,18 @@
     "conflictDetails": "Conflict Details",
     "yourVersion": "Your Base Version",
     "latestVersion": "Latest Version",
-    "lastModified": "Last Modified"
+    "lastModified": "Last Modified",
+    "versionsNotFound": "One or both versions not found",
+    "compareVersionsError": "Failed to compare versions",
+    "noComparisonData": "No comparison data available",
+    "older": "Older",
+    "newer": "Newer",
+    "noChangesDetected": "These versions are identical - no changes detected.",
+    "whatChanged": "What Changed",
+    "before": "Before",
+    "after": "After",
+    "newValue": "New Value",
+    "deletedValue": "Deleted Value"
   },
   "export": {
     "exportExperiment": "Export Experiment",

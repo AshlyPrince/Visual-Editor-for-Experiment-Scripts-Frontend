@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -37,6 +38,7 @@ import {
 } from '../utils/versionComparison.js';
 
 const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) => {
+  const { t } = useTranslation();
   const [comparison, setComparison] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,14 +62,14 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
       const version2 = versions.find((v) => v.id === parseInt(version2Id));
 
       if (!version1 || !version2) {
-        throw new Error('One or both versions not found');
+        throw new Error(t('version.versionsNotFound'));
       }
 
       
       const comparisonResult = compareVersions(version1, version2);
       setComparison(comparisonResult);
     } catch (err) {
-      setError(err.message || 'Failed to compare versions');
+      setError(err.message || t('version.compareVersionsError'));
     } finally {
       setLoading(false);
     }
@@ -75,7 +77,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString('en-US', {
+    return date.toLocaleString(t('common.locale'), {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -136,7 +138,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
       <Box p={3}>
         <Alert severity="error">{error}</Alert>
         <Button onClick={loadComparison} sx={{ mt: 2 }}>
-          Retry
+          {t('common.retry')}
         </Button>
       </Box>
     );
@@ -145,7 +147,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
   if (!comparison) {
     return (
       <Box p={3}>
-        <Alert severity="warning">No comparison data available</Alert>
+        <Alert severity="warning">{t('version.noComparisonData')}</Alert>
       </Box>
     );
   }
@@ -160,8 +162,8 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
           <Card elevation={2} sx={{ height: '100%', borderLeft: 4, borderColor: 'info.main' }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <Chip label={`Version ${version1.version_number}`} color="info" size="small" />
-                <Chip label="Older" variant="outlined" size="small" />
+                <Chip label={`${t('version.version')} ${version1.version_number}`} color="info" size="small" />
+                <Chip label={t('version.older')} variant="outlined" size="small" />
               </Box>
               <Typography variant="h6" gutterBottom>{version1.title}</Typography>
               {version1.commit_message && version1.commit_message.trim() && (
@@ -180,8 +182,8 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
           <Card elevation={2} sx={{ height: '100%', borderLeft: 4, borderColor: 'success.main' }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <Chip label={`Version ${version2.version_number}`} color="success" size="small" />
-                <Chip label="Newer" variant="outlined" size="small" />
+                <Chip label={`${t('version.version')} ${version2.version_number}`} color="success" size="small" />
+                <Chip label={t('version.newer')} variant="outlined" size="small" />
               </Box>
               <Typography variant="h6" gutterBottom>{version2.title}</Typography>
               {version2.commit_message && version2.commit_message.trim() && (
@@ -201,13 +203,13 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
 
       {!hasChanges ? (
         <Alert severity="info" icon={<Check />}>
-          These versions are identical - no changes detected.
+          {t('version.noChangesDetected')}
         </Alert>
       ) : (
         <>
           <Box display="flex" alignItems="center" gap={2} mb={3}>
-            <Typography variant="h6" color="primary.main">What Changed</Typography>
-            <Chip label={`${differences.length} ${differences.length === 1 ? 'change' : 'changes'}`} color="primary" />
+            <Typography variant="h6" color="primary.main">{t('version.whatChanged')}</Typography>
+            <Chip label={`${differences.length} ${differences.length === 1 ? t('common.change') : t('common.changes')}`} color="primary" />
           </Box>
 
           <Stack spacing={2}>
@@ -222,7 +224,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
                       {formatFieldName(section)}
                     </Typography>
                     <Chip 
-                      label={`${sectionDiffs.length} ${sectionDiffs.length === 1 ? 'change' : 'changes'}`} 
+                      label={`${sectionDiffs.length} ${sectionDiffs.length === 1 ? t('common.change') : t('common.changes')}`} 
                       size="small" 
                       color="primary"
                       variant="outlined"
@@ -249,8 +251,8 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
                             <Box display="flex" alignItems="center" gap={1} mb={1.5}>
                               <Chip
                                 label={
-                                  change.kind === 'N' ? 'Added' :
-                                  change.kind === 'D' ? 'Removed' : 'Modified'
+                                  change.kind === 'N' ? t('common.added') :
+                                  change.kind === 'D' ? t('common.removed') : t('common.modified')
                                 }
                                 size="small"
                                 color={
@@ -268,7 +270,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
                                 <Grid item xs={12} sm={6}>
                                   <Box sx={{ p: 1.5, bgcolor: 'error.50', borderRadius: 1 }}>
                                     <Typography variant="caption" fontWeight={600} color="error.main" display="block" mb={0.5}>
-                                      Before
+                                      {t('version.before')}
                                     </Typography>
                                     <Typography variant="body2">
                                       {formatValue(change.lhs)}
@@ -278,7 +280,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
                                 <Grid item xs={12} sm={6}>
                                   <Box sx={{ p: 1.5, bgcolor: 'success.50', borderRadius: 1 }}>
                                     <Typography variant="caption" fontWeight={600} color="success.main" display="block" mb={0.5}>
-                                      After
+                                      {t('version.after')}
                                     </Typography>
                                     <Typography variant="body2">
                                       {formatValue(change.rhs)}
@@ -291,7 +293,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
                             {change.kind === 'N' && (
                               <Box sx={{ p: 1.5, bgcolor: 'success.50', borderRadius: 1 }}>
                                 <Typography variant="caption" fontWeight={600} color="success.main" display="block" mb={0.5}>
-                                  New Value
+                                  {t('version.newValue')}
                                 </Typography>
                                 <Typography variant="body2">
                                   {formatValue(change.rhs)}
@@ -302,7 +304,7 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
                             {change.kind === 'D' && (
                               <Box sx={{ p: 1.5, bgcolor: 'error.50', borderRadius: 1 }}>
                                 <Typography variant="caption" fontWeight={600} color="error.main" display="block" mb={0.5}>
-                                  Deleted Value
+                                  {t('version.deletedValue')}
                                 </Typography>
                                 <Typography variant="body2">
                                   {formatValue(change.lhs)}

@@ -27,7 +27,14 @@
     "remove": "Entfernen",
     "item": "Element",
     "items": "Elemente",
-    "compare": "Vergleichen"
+    "compare": "Vergleichen",
+    "retry": "Erneut versuchen",
+    "locale": "de-DE",
+    "change": "Änderung",
+    "changes": "Änderungen",
+    "added": "Hinzugefügt",
+    "removed": "Entfernt",
+    "modified": "Geändert"
   },
   "auth": {
     "login": "Anmelden",
@@ -128,7 +135,18 @@
     "conflictDetails": "Konfliktdetails",
     "yourVersion": "Ihre Basisversion",
     "latestVersion": "Neueste Version",
-    "lastModified": "Zuletzt geändert"
+    "lastModified": "Zuletzt geändert",
+    "versionsNotFound": "Eine oder beide Versionen wurden nicht gefunden",
+    "compareVersionsError": "Versionsvergleich fehlgeschlagen",
+    "noComparisonData": "Keine Vergleichsdaten verfügbar",
+    "older": "Älter",
+    "newer": "Neuer",
+    "noChangesDetected": "Diese Versionen sind identisch - keine Änderungen erkannt.",
+    "whatChanged": "Was wurde geändert",
+    "before": "Vorher",
+    "after": "Nachher",
+    "newValue": "Neuer Wert",
+    "deletedValue": "Gelöschter Wert"
   },
   "export": {
     "exportExperiment": "Experiment exportieren",
