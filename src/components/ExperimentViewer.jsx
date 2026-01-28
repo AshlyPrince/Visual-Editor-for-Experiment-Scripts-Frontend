@@ -893,15 +893,28 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: { xs: 'flex-start', sm: 'space-between' },
+        alignItems: { xs: 'stretch', sm: 'center' },
+        gap: { xs: 1.5, sm: 0 },
+        mb: 3 
+      }}>
         <Button
           variant="outlined"
           startIcon={<ArrowBack />}
           onClick={onClose}
+          sx={{ order: { xs: 1, sm: 0 } }}
         >
           Back to Dashboard
         </Button>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 1,
+          order: { xs: 0, sm: 1 }
+        }}>
           <Button
             variant="outlined"
             startIcon={<HistoryIcon />}
