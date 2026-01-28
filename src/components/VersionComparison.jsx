@@ -101,28 +101,26 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
 
   
   const formatFieldName = (fieldName) => {
-    const fieldMap = {
-      'estimated_duration': 'Duration',
-      'duration': 'Duration',
-      'course': 'Course',
-      'program': 'Program',
-      'title': 'Title',
-      'description': 'Description',
-      'sections': 'Sections',
-      'media': 'Media',
-      'tables': 'Tables',
-      'links': 'Links',
-      'subject': 'Subject',
-      'gradeLevel': 'Grade Level',
-    };
-    
     
     if (fieldName.includes('.')) {
       const firstPart = fieldName.split('.')[0];
-      return fieldMap[firstPart] || firstPart.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
+      const translationKey = `fields.${firstPart}`;
+      if (t(translationKey) !== translationKey) {
+        return t(translationKey);
+      }
+      
+      return firstPart.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     }
     
-    return fieldMap[fieldName] || fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    
+    const translationKey = `fields.${fieldName}`;
+    if (t(translationKey) !== translationKey) {
+      return t(translationKey);
+    }
+    
+    
+    return fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
   if (loading) {

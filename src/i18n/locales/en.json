@@ -149,6 +149,21 @@
     "newValue": "New Value",
     "deletedValue": "Deleted Value"
   },
+  "fields": {
+    "duration": "Duration",
+    "estimatedDuration": "Duration",
+    "estimated_duration": "Duration",
+    "course": "Course",
+    "program": "Program",
+    "title": "Title",
+    "description": "Description",
+    "sections": "Sections",
+    "media": "Media",
+    "tables": "Tables",
+    "links": "Links",
+    "subject": "Subject",
+    "gradeLevel": "Grade Level"
+  },
   "versionHistory": {
     "unableToLoad": "Unable to load version history. Please try again.",
     "unableToRestore": "Unable to restore version.",

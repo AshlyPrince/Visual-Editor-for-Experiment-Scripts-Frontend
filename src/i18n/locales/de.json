@@ -149,6 +149,21 @@
     "newValue": "Neuer Wert",
     "deletedValue": "Gelöschter Wert"
   },
+  "fields": {
+    "duration": "Dauer",
+    "estimatedDuration": "Dauer",
+    "estimated_duration": "Dauer",
+    "course": "Kurs",
+    "program": "Programm",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "sections": "Abschnitte",
+    "media": "Medien",
+    "tables": "Tabellen",
+    "links": "Links",
+    "subject": "Fach",
+    "gradeLevel": "Klassenstufe"
+  },
   "versionHistory": {
     "unableToLoad": "Versionsverlauf konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
     "unableToRestore": "Version konnte nicht wiederhergestellt werden.",
