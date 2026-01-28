@@ -108,7 +108,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
       const result = await checkConsistency(experimentData);
       setConsistencyResults(result);
     } catch (err) {
-      setError(err.message || 'Failed to check consistency');
+      setError(err.message || t('llm.consistency.failedToCheck'));
     } finally {
       setLoading(false);
     }
@@ -117,7 +117,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
   
   const handleGenerateTitles = async () => {
     if (!experimentData.description) {
-      setError('Please add a description first');
+      setError(t('messages.error.addDescriptionFirst'));
       return;
     }
 
@@ -138,7 +138,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
   
   const handleGenerateSafety = async () => {
     if (!experimentData.materials && !experimentData.procedures) {
-      setError('Please add materials and procedures first');
+      setError(t('messages.error.addMaterialsAndProceduresFirst'));
       return;
     }
 
@@ -186,7 +186,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
           <LLMChatComponent
             title={t('llm.chat.title')}
             placeholder={t('llm.chat.placeholder')}
-            systemPrompt="You are an AI assistant helping with scientific experiment design. Provide clear, practical advice."
+            systemPrompt={t('llm.chat.systemPrompt')}
             showHeader={false}
             maxHeight={600}
           />

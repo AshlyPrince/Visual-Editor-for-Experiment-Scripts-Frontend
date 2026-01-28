@@ -336,7 +336,11 @@
     "imagesNotAccepted": "Bilder werden nicht akzeptiert",
     "videosNotAccepted": "Videos werden nicht akzeptiert",
     "maxFilesExceeded": "Maximal {{max}} Dateien erlaubt",
-    "uploadFailed": "Fehler beim Hochladen der Dateien. Bitte versuchen Sie es erneut."
+    "uploadFailed": "Fehler beim Hochladen der Dateien. Bitte versuchen Sie es erneut.",
+    "error": {
+      "addDescriptionFirst": "Bitte fügen Sie zuerst eine Beschreibung hinzu",
+      "addMaterialsAndProceduresFirst": "Bitte fügen Sie zuerst Materialien und Verfahren hinzu"
+    }
   },
   "validation": {
     "required": "Dieses Feld ist erforderlich",
@@ -408,6 +412,7 @@
     "chat": {
       "title": "Experiment-Assistent",
       "placeholder": "Fragen Sie zu Ihrem Experiment...",
+      "systemPrompt": "Sie sind ein KI-Assistent, der bei der Gestaltung wissenschaftlicher Experimente hilft. Geben Sie klare, praktische Ratschläge.",
       "clearConversation": "Unterhaltung löschen",
       "send": "Senden"
     },

@@ -336,7 +336,11 @@
     "imagesNotAccepted": "Images are not accepted",
     "videosNotAccepted": "Videos are not accepted",
     "maxFilesExceeded": "Maximum {{max}} files allowed",
-    "uploadFailed": "Failed to upload files. Please try again."
+    "uploadFailed": "Failed to upload files. Please try again.",
+    "error": {
+      "addDescriptionFirst": "Please add a description first",
+      "addMaterialsAndProceduresFirst": "Please add materials and procedures first"
+    }
   },
   "validation": {
     "required": "This field is required",
@@ -408,6 +412,7 @@
     "chat": {
       "title": "Experiment Assistant",
       "placeholder": "Ask about your experiment...",
+      "systemPrompt": "You are an AI assistant helping with scientific experiment design. Provide clear, practical advice.",
       "clearConversation": "Clear conversation",
       "send": "Send"
     },
