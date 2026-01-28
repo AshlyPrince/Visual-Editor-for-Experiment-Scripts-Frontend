@@ -406,7 +406,9 @@
       "apply": "Anwenden",
       "copied": "Kopiert!",
       "reset": "Zurücksetzen",
-      "context": "Kontext: {{context}}"
+      "context": "Kontext: {{context}}",
+      "originalChars": "Original: {{count}} Zeichen",
+      "polishedChars": "Verbessert: {{count}} Zeichen"
     },
     "suggestions": {
       "failedToGet": "Vorschläge konnten nicht abgerufen werden",

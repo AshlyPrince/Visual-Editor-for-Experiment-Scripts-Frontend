@@ -406,7 +406,9 @@
       "apply": "Apply",
       "copied": "Copied!",
       "reset": "Reset",
-      "context": "Context: {{context}}"
+      "context": "Context: {{context}}",
+      "originalChars": "Original: {{count}} chars",
+      "polishedChars": "Polished: {{count}} chars"
     },
     "suggestions": {
       "failedToGet": "Failed to get suggestions",

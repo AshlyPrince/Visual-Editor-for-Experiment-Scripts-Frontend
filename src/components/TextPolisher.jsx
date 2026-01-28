@@ -167,13 +167,13 @@ const TextPolisher = ({ open, onClose, onApply, initialText = '', context = '', 
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
                 <Chip 
                   icon={<CompareArrowsIcon />}
-                  label={`Original: ${originalText.length} chars`} 
+                  label={t('llm.polish.originalChars', { count: originalText.length })}
                   size="small" 
                   variant="outlined"
                 />
                 <Chip 
                   icon={<CompareArrowsIcon />}
-                  label={`Polished: ${polishedText.length} chars`} 
+                  label={t('llm.polish.polishedChars', { count: polishedText.length })}
                   size="small" 
                   variant="outlined"
                   color="success"
