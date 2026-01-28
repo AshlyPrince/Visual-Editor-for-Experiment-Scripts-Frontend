@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { 
   Box, 
   Container, 
@@ -53,6 +54,7 @@ function ExperimentViewerRoute({ onClose, onEdit }) {
 
 function AppContent() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [reload, setReload] = useState(0);
   
   
@@ -171,10 +173,10 @@ function AppContent() {
           animation: 'pulse 2s infinite'
         }} />
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {authenticated ? 'Loading Dashboard...' : 'Initializing Authentication...'}
+          {authenticated ? t('app.loadingDashboard') : t('app.initializingAuth')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Connecting to Keycloak
+          {t('app.connectingToKeycloak')}
         </Typography>
       </Box>
     );
@@ -213,7 +215,7 @@ function AppContent() {
                 {authError.details}
               </Typography>
               <Typography variant="caption" color="text.disabled">
-                Error occurred at: {new Date(authError.timestamp).toLocaleString()}
+                {t('app.errors.errorOccurredAt', { timestamp: new Date(authError.timestamp).toLocaleString() })}
               </Typography>
               <Box sx={{ mt: 3 }}>
                 <Button 
@@ -225,7 +227,7 @@ function AppContent() {
                     window.location.reload();
                   }}
                 >
-                  Retry Authentication
+                  {t('app.retryAuthentication')}
                 </Button>
               </Box>
             </Paper>
@@ -251,7 +253,7 @@ function AppContent() {
                   fontSize: { xs: '1.75rem', md: '2.125rem' }
                 }}
               >
-                Visual Editor Platform
+                {t('app.landing.title')}
               </Typography>
               <Typography 
                 variant="body1" 
@@ -262,7 +264,7 @@ function AppContent() {
                   lineHeight: 1.6
                 }}
               >
-                Create, manage, and share interactive educational experiments
+                {t('app.landing.subtitle')}
               </Typography>
             </Box>
 
@@ -289,10 +291,10 @@ function AppContent() {
                   <Typography variant="h5">🧪</Typography>
                 </Box>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                  Build Experiments
+                  {t('app.landing.feature1Title')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
-                  Design step-by-step educational experiments
+                  {t('app.landing.feature1Desc')}
                 </Typography>
               </Box>
 
@@ -311,10 +313,10 @@ function AppContent() {
                   <Typography variant="h5">📚</Typography>
                 </Box>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                  Version Control
+                  {t('app.landing.feature2Title')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
-                  Track changes and manage versions
+                  {t('app.landing.feature2Desc')}
                 </Typography>
               </Box>
 
@@ -333,10 +335,10 @@ function AppContent() {
                   <Typography variant="h5">✨</Typography>
                 </Box>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                  LLM Polishing
+                  {t('app.landing.feature3Title')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
-                  AI-powered content refinement
+                  {t('app.landing.feature3Desc')}
                 </Typography>
               </Box>
             </Box>
@@ -365,11 +367,11 @@ function AppContent() {
                 }
               }}
             >
-              Login
+              {t('auth.login')}
             </Button>
 
             <Typography variant="caption" color="text.secondary" sx={{ mt: 3, display: 'block' }}>
-              Secure authentication powered by Keycloak
+              {t('app.secureAuth')}
             </Typography>
           </Paper>
         </Container>
@@ -402,7 +404,7 @@ function AppContent() {
                 color: theme.palette.primary.main,
                 letterSpacing: '0.5px'
               }}>
-                Visual Editor Platform
+                {t('app.title')}
               </Typography>
             </Box>
             
@@ -430,10 +432,10 @@ function AppContent() {
               {!authenticated && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h3" component="h1" sx={{ fontWeight: 700, mb: 1, color: 'white' }}>
-                    Experiment Wizard
+                    {t('wizard.title')}
                   </Typography>
                   <Typography variant="h6" sx={{ opacity: 0.95, fontWeight: 400, color: 'white' }}>
-                    Scientific Protocol Builder for Education
+                    {t('app.tagline')}
                   </Typography>
                 </Box>
               )}
@@ -441,7 +443,7 @@ function AppContent() {
           
               
               <Typography variant="body1" sx={{ opacity: 0.95, maxWidth: 600, color: 'white' }}>
-                Create and manage experiment scripts for your classes.
+                {t('app.welcomeMessage')}
               </Typography>
             </Box>
 

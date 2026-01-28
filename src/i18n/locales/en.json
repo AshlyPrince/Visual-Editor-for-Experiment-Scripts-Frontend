@@ -45,6 +45,30 @@
     "unexpectedError": "An unexpected error occurred. Please try refreshing the page.",
     "sections": "sections"
   },
+  "app": {
+    "title": "Visual Editor Platform",
+    "tagline": "Scientific Protocol Builder for Education",
+    "welcomeMessage": "Create and manage experiment scripts for your classes.",
+    "loadingDashboard": "Loading Dashboard...",
+    "initializingAuth": "Initializing Authentication...",
+    "connectingToKeycloak": "Connecting to Keycloak",
+    "secureAuth": "Secure authentication powered by Keycloak",
+    "retryAuthentication": "Retry Authentication",
+    "landing": {
+      "title": "Visual Editor Platform",
+      "subtitle": "Create, manage, and share interactive educational experiments",
+      "feature1Title": "Build Experiments",
+      "feature1Desc": "Design step-by-step educational experiments",
+      "feature2Title": "Version Control",
+      "feature2Desc": "Track changes and manage versions",
+      "feature3Title": "LLM Polishing",
+      "feature3Desc": "AI-powered content refinement"
+    },
+    "errors": {
+      "authenticationFailed": "Authentication failed",
+      "errorOccurredAt": "Error occurred at: {{timestamp}}"
+    }
+  },
   "auth": {
     "login": "Login",
     "logout": "Logout",

@@ -45,6 +45,30 @@
     "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte laden Sie die Seite neu.",
     "sections": "Abschnitte"
   },
+  "app": {
+    "title": "Visual Editor Plattform",
+    "tagline": "Wissenschaftliches Protokoll-Builder für Bildung",
+    "welcomeMessage": "Erstellen und verwalten Sie Experimentskripte für Ihre Klassen.",
+    "loadingDashboard": "Dashboard wird geladen...",
+    "initializingAuth": "Authentifizierung wird initialisiert...",
+    "connectingToKeycloak": "Verbindung zu Keycloak wird hergestellt",
+    "secureAuth": "Sichere Authentifizierung powered by Keycloak",
+    "retryAuthentication": "Authentifizierung erneut versuchen",
+    "landing": {
+      "title": "Visual Editor Plattform",
+      "subtitle": "Erstellen, verwalten und teilen Sie interaktive Bildungsexperimente",
+      "feature1Title": "Experimente erstellen",
+      "feature1Desc": "Schritt-für-Schritt-Bildungsexperimente entwerfen",
+      "feature2Title": "Versionskontrolle",
+      "feature2Desc": "Änderungen verfolgen und Versionen verwalten",
+      "feature3Title": "KI-Polierung",
+      "feature3Desc": "KI-gestützte Inhaltsverfeinerung"
+    },
+    "errors": {
+      "authenticationFailed": "Authentifizierung fehlgeschlagen",
+      "errorOccurredAt": "Fehler aufgetreten am: {{timestamp}}"
+    }
+  },
   "auth": {
     "login": "Anmelden",
     "logout": "Abmelden",
