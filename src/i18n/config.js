@@ -10,7 +10,8 @@ const getInitialLanguage = () => {
   }
 };
 
-i18n
+// Don't initialize immediately - export a promise
+export const i18nInitPromise = i18n
   .use(HttpBackend)
   .use(initReactI18next)
   .init({
@@ -30,11 +31,12 @@ i18n
     },
     
     react: {
-      useSuspense: true  // Changed to true - proper loading with Suspense
-    },
-    
-    // Load translations synchronously on init
-    initImmediate: false
+      useSuspense: false  // Back to false, we'll handle loading manually
+    }
+  })
+  .then(() => {
+    console.log('i18n initialized successfully');
+    return i18n;
   });
 
 i18n.on('languageChanged', (lng) => {

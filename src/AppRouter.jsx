@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -11,8 +11,7 @@ import {
   AppBar,
   Toolbar,
   ThemeProvider,
-  CssBaseline,
-  CircularProgress
+  CssBaseline
 } from '@mui/material';
 import { Science } from '@mui/icons-material';
 import { Dashboard, ExperimentDashboard, ExperimentWizard, ExperimentListContainer } from './containers/exports.js';
@@ -23,16 +22,6 @@ import ExperimentViewer from './components/ExperimentViewer.jsx';
 import { keycloakService } from './services/exports.js';
 import { professionalTheme } from './styles/theme.js';
 import experimentService from './services/experimentService.js';
-
-// Loading fallback for Suspense
-function LoadingFallback() {
-  return (
-    <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px" gap={2}>
-      <CircularProgress />
-      <Typography>Loading...</Typography>
-    </Box>
-  );
-}
 
 function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -173,12 +162,10 @@ function CreateExperimentRoute() {
   const navigate = useNavigate();
 
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <ExperimentWizard
-        onComplete={() => navigate('/dashboard')}
-        onCancel={() => navigate('/dashboard')}
-      />
-    </Suspense>
+    <ExperimentWizard
+      onComplete={() => navigate('/dashboard')}
+      onCancel={() => navigate('/dashboard')}
+    />
   );
 }
 
@@ -240,13 +227,11 @@ function ExperimentEditRoute() {
   }
 
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <ModularExperimentWizard
-        existingExperiment={experiment}
-        onComplete={() => navigate('/dashboard')}
-        onCancel={() => navigate('/dashboard')}
-      />
-    </Suspense>
+    <ModularExperimentWizard
+      existingExperiment={experiment}
+      onComplete={() => navigate('/dashboard')}
+      onCancel={() => navigate('/dashboard')}
+    />
   );
 }
 
