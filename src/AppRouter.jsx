@@ -11,7 +11,8 @@ import {
   AppBar,
   Toolbar,
   ThemeProvider,
-  CssBaseline
+  CssBaseline,
+  CircularProgress
 } from '@mui/material';
 import { Science } from '@mui/icons-material';
 import { Dashboard, ExperimentDashboard, ExperimentWizard, ExperimentListContainer } from './containers/exports.js';
@@ -22,6 +23,29 @@ import ExperimentViewer from './components/ExperimentViewer.jsx';
 import { keycloakService } from './services/exports.js';
 import { professionalTheme } from './styles/theme.js';
 import experimentService from './services/experimentService.js';
+import { translationsLoaded } from './i18n/config.js';
+
+function WizardWithTranslations({ children }) {
+  const [loaded, setLoaded] = useState(false);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    translationsLoaded.then(() => {
+      setLoaded(true);
+    });
+  }, []);
+
+  if (!loaded) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px" gap={2}>
+        <CircularProgress />
+        <Typography>Loading translations...</Typography>
+      </Box>
+    );
+  }
+
+  return children;
+}
 
 function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -162,10 +186,12 @@ function CreateExperimentRoute() {
   const navigate = useNavigate();
 
   return (
-    <ExperimentWizard
-      onComplete={() => navigate('/dashboard')}
-      onCancel={() => navigate('/dashboard')}
-    />
+    <WizardWithTranslations>
+      <ExperimentWizard
+        onComplete={() => navigate('/dashboard')}
+        onCancel={() => navigate('/dashboard')}
+      />
+    </WizardWithTranslations>
   );
 }
 
@@ -227,11 +253,13 @@ function ExperimentEditRoute() {
   }
 
   return (
-    <ModularExperimentWizard
-      existingExperiment={experiment}
-      onComplete={() => navigate('/dashboard')}
-      onCancel={() => navigate('/dashboard')}
-    />
+    <WizardWithTranslations>
+      <ModularExperimentWizard
+        existingExperiment={experiment}
+        onComplete={() => navigate('/dashboard')}
+        onCancel={() => navigate('/dashboard')}
+      />
+    </WizardWithTranslations>
   );
 }
 

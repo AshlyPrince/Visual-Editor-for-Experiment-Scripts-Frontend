@@ -26,14 +26,16 @@ i18n
     }
   });
 
-Promise.all([
+export const translationsLoaded = Promise.all([
   fetch('/locales/en.json').then(r => r.json()),
   fetch('/locales/de.json').then(r => r.json())
 ]).then(([en, de]) => {
   i18n.addResourceBundle('en', 'translation', en, true, true);
   i18n.addResourceBundle('de', 'translation', de, true, true);
+  return true;
 }).catch(error => {
   console.error('Failed to load translations from public folder:', error);
+  return false;
 });
 
 i18n.on('languageChanged', (lng) => {
