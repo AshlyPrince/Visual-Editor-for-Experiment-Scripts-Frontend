@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import i18n from '../i18n/config.js';
 import { 
   Box, 
   Typography, 
@@ -101,13 +102,16 @@ const ModularExperimentWizard = ({
   onComplete, 
   onCancel 
 }) => {
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
   
-  
-  
-  
-  
-  
+  if (!ready || !i18n.isInitialized) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   const loadSavedState = () => {
     try {
       const saved = localStorage.getItem('wizardState');
@@ -121,22 +125,18 @@ const ModularExperimentWizard = ({
 
   const savedState = loadSavedState();
 
-  
-  
-  
-  
-  const wizardSteps = [
+  const wizardSteps = React.useMemo(() => [
     { id: 'basic_info', label: t('wizard.basicInformation'), description: t('wizard.basicInformationDesc') },
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
     { id: 'content', label: t('wizard.fillContent'), description: t('wizard.fillContentDesc') },
     { id: 'ai_polish', label: t('wizard.aiPolish'), description: t('wizard.aiPolishDesc') },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
-  ];
+  ], []);
 
   const [currentStep, setCurrentStep] = useState(savedState?.currentStep || 0);
   const [completedSteps, setCompletedSteps] = useState(new Set(savedState?.completedSteps || []));
 
-  const availableSections = [
+  const availableSections = React.useMemo(() => [
     
     { 
       id: 'objectives', 
@@ -291,7 +291,7 @@ const ModularExperimentWizard = ({
         media: []
       }
     }
-  ];
+  ], []);
 
   const [basicInfo, setBasicInfo] = useState(savedState?.basicInfo || {
     title: '',
