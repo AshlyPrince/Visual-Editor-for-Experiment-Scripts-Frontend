@@ -10,7 +10,6 @@ const getInitialLanguage = () => {
   }
 };
 
-// Create a promise that resolves only when translations are actually loaded
 export const i18nInitPromise = new Promise((resolve) => {
   i18n
     .use(HttpBackend)
@@ -38,7 +37,6 @@ export const i18nInitPromise = new Promise((resolve) => {
       if (err) {
         console.error('i18n initialization error:', err);
       }
-      // This callback is called when init is done AND resources are loaded
       console.log('i18n initialized and translations loaded');
       resolve(i18n);
     });
