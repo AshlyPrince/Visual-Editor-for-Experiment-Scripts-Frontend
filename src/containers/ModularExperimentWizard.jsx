@@ -136,12 +136,7 @@ const ModularExperimentWizard = ({
   const [currentStep, setCurrentStep] = useState(savedState?.currentStep || 0);
   const [completedSteps, setCompletedSteps] = useState(new Set(savedState?.completedSteps || []));
 
-  
-  
-  
-  
-  
-  const availableSections = React.useMemo(() => [
+  const availableSections = [
     
     { 
       id: 'objectives', 
@@ -296,11 +291,7 @@ const ModularExperimentWizard = ({
         media: []
       }
     }
-  ], [t]); 
-
-  
-  
-  
+  ];
 
   const [basicInfo, setBasicInfo] = useState(savedState?.basicInfo || {
     title: '',
