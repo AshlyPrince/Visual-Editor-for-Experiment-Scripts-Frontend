@@ -27,11 +27,19 @@ i18n
   });
 
 Promise.all([
-  import('./locales/en.json'),
-  import('./locales/de.json')
+  fetch('/src/i18n/locales/en.json').then(r => r.json()),
+  fetch('/src/i18n/locales/de.json').then(r => r.json())
 ]).then(([en, de]) => {
-  i18n.addResourceBundle('en', 'translation', en.default, true, true);
-  i18n.addResourceBundle('de', 'translation', de.default, true, true);
+  i18n.addResourceBundle('en', 'translation', en, true, true);
+  i18n.addResourceBundle('de', 'translation', de, true, true);
+}).catch(error => {
+  console.error('Failed to load translations:', error);
+  import('./locales/en.json').then(en => {
+    import('./locales/de.json').then(de => {
+      i18n.addResourceBundle('en', 'translation', en.default, true, true);
+      i18n.addResourceBundle('de', 'translation', de.default, true, true);
+    });
+  });
 });
 
 i18n.on('languageChanged', (lng) => {
