@@ -323,24 +323,23 @@ const ModularExperimentWizard = ({
     return [];
   });
 
-  // Compute actual sections from IDs so translations update dynamically
-  const selectedSections = React.useMemo(() => {
-    return selectedSectionIds
-      .map(id => {
-        // First check availableSections
-        const available = availableSections.find(s => s.id === id);
-        if (available) return available;
-        
-        // Then check customSections
-        const custom = customSections.find(s => s.id === id);
-        if (custom) return custom;
-        
-        return null;
-      })
-      .filter(Boolean);
-  }, [selectedSectionIds, availableSections, customSections]);
-
   const [customSections, setCustomSections] = useState(savedState?.customSections || []);
+
+  // Compute actual sections from IDs so translations update dynamically
+  // Note: Not memoized to avoid circular dependency with availableSections
+  const selectedSections = selectedSectionIds
+    .map(id => {
+      // First check availableSections
+      const available = availableSections.find(s => s.id === id);
+      if (available) return available;
+      
+      // Then check customSections
+      const custom = customSections.find(s => s.id === id);
+      if (custom) return custom;
+      
+      return null;
+    })
+    .filter(Boolean);
   const [sectionContent, setSectionContent] = useState(savedState?.sectionContent || {});
   const [touched, setTouched] = useState({});
   
