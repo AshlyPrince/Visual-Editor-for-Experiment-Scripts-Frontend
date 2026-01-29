@@ -125,18 +125,18 @@ const ModularExperimentWizard = ({
 
   const savedState = loadSavedState();
 
-  const wizardSteps = React.useMemo(() => [
+  const wizardSteps = [
     { id: 'basic_info', label: t('wizard.basicInformation'), description: t('wizard.basicInformationDesc') },
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
     { id: 'content', label: t('wizard.fillContent'), description: t('wizard.fillContentDesc') },
     { id: 'ai_polish', label: t('wizard.aiPolish'), description: t('wizard.aiPolishDesc') },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
-  ], []);
+  ];
 
   const [currentStep, setCurrentStep] = useState(savedState?.currentStep || 0);
   const [completedSteps, setCompletedSteps] = useState(new Set(savedState?.completedSteps || []));
 
-  const availableSections = React.useMemo(() => [
+  const availableSections = [
     
     { 
       id: 'objectives', 
@@ -291,7 +291,7 @@ const ModularExperimentWizard = ({
         media: []
       }
     }
-  ], []);
+  ];
 
   const [basicInfo, setBasicInfo] = useState(savedState?.basicInfo || {
     title: '',
