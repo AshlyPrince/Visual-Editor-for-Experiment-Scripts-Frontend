@@ -10,34 +10,39 @@ const getInitialLanguage = () => {
   }
 };
 
-// Don't initialize immediately - export a promise
-export const i18nInitPromise = i18n
-  .use(HttpBackend)
-  .use(initReactI18next)
-  .init({
-    fallbackLng: 'en',
-    lng: getInitialLanguage(),
-    supportedLngs: ['en', 'de'],
-    
-    backend: {
-      loadPath: '/locales/{{lng}}.json',
-      requestOptions: {
-        cache: 'default'
+// Create a promise that resolves only when translations are actually loaded
+export const i18nInitPromise = new Promise((resolve) => {
+  i18n
+    .use(HttpBackend)
+    .use(initReactI18next)
+    .init({
+      fallbackLng: 'en',
+      lng: getInitialLanguage(),
+      supportedLngs: ['en', 'de'],
+      
+      backend: {
+        loadPath: '/locales/{{lng}}.json',
+        requestOptions: {
+          cache: 'default'
+        }
+      },
+      
+      interpolation: {
+        escapeValue: false
+      },
+      
+      react: {
+        useSuspense: false
       }
-    },
-    
-    interpolation: {
-      escapeValue: false
-    },
-    
-    react: {
-      useSuspense: false  // Back to false, we'll handle loading manually
-    }
-  })
-  .then(() => {
-    console.log('i18n initialized successfully');
-    return i18n;
-  });
+    }, (err) => {
+      if (err) {
+        console.error('i18n initialization error:', err);
+      }
+      // This callback is called when init is done AND resources are loaded
+      console.log('i18n initialized and translations loaded');
+      resolve(i18n);
+    });
+});
 
 i18n.on('languageChanged', (lng) => {
   try {
