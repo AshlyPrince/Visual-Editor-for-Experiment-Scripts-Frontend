@@ -102,15 +102,21 @@ const ModularExperimentWizard = ({
   onComplete, 
   onCancel 
 }) => {
+  console.log('[ModularExperimentWizard] Component starting to render');
+  
   const { t, ready } = useTranslation();
+  console.log('[ModularExperimentWizard] useTranslation called - ready:', ready, 'i18n.isInitialized:', i18n.isInitialized);
   
   if (!ready || !i18n.isInitialized) {
+    console.log('[ModularExperimentWizard] Translations not ready, showing loading spinner');
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
       </Box>
     );
   }
+
+  console.log('[ModularExperimentWizard] Translations ready, continuing render');
 
   const loadSavedState = () => {
     try {
@@ -125,6 +131,7 @@ const ModularExperimentWizard = ({
 
   const savedState = loadSavedState();
 
+  console.log('[ModularExperimentWizard] Creating wizardSteps array');
   const wizardSteps = [
     { id: 'basic_info', label: t('wizard.basicInformation'), description: t('wizard.basicInformationDesc') },
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
@@ -132,10 +139,12 @@ const ModularExperimentWizard = ({
     { id: 'ai_polish', label: t('wizard.aiPolish'), description: t('wizard.aiPolishDesc') },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
   ];
+  console.log('[ModularExperimentWizard] wizardSteps created successfully');
 
   const [currentStep, setCurrentStep] = useState(savedState?.currentStep || 0);
   const [completedSteps, setCompletedSteps] = useState(new Set(savedState?.completedSteps || []));
 
+  console.log('[ModularExperimentWizard] Creating availableSections array');
   const availableSections = [
     
     { 
@@ -292,6 +301,7 @@ const ModularExperimentWizard = ({
       }
     }
   ];
+  console.log('[ModularExperimentWizard] availableSections created successfully, count:', availableSections.length);
 
   const [basicInfo, setBasicInfo] = useState(savedState?.basicInfo || {
     title: '',
