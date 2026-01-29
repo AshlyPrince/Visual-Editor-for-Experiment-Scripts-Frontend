@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import HttpBackend from 'i18next-http-backend';
 
 const getInitialLanguage = () => {
   try {
@@ -10,33 +11,31 @@ const getInitialLanguage = () => {
 };
 
 i18n
+  .use(HttpBackend)
   .use(initReactI18next)
   .init({
-    resources: {
-      en: { translation: {} },
-      de: { translation: {} }
-    },
     fallbackLng: 'en',
     lng: getInitialLanguage(),
+    supportedLngs: ['en', 'de'],
+    
+    backend: {
+      loadPath: '/locales/{{lng}}.json',
+      requestOptions: {
+        cache: 'default'
+      }
+    },
+    
     interpolation: {
       escapeValue: false
     },
+    
     react: {
-      useSuspense: false
-    }
+      useSuspense: true  // Changed to true - proper loading with Suspense
+    },
+    
+    // Load translations synchronously on init
+    initImmediate: false
   });
-
-export const translationsLoaded = Promise.all([
-  fetch('/locales/en.json').then(r => r.json()),
-  fetch('/locales/de.json').then(r => r.json())
-]).then(([en, de]) => {
-  i18n.addResourceBundle('en', 'translation', en, true, true);
-  i18n.addResourceBundle('de', 'translation', de, true, true);
-  return true;
-}).catch(error => {
-  console.error('Failed to load translations from public folder:', error);
-  return false;
-});
 
 i18n.on('languageChanged', (lng) => {
   try {

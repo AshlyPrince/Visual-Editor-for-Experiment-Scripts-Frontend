@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -23,28 +23,15 @@ import ExperimentViewer from './components/ExperimentViewer.jsx';
 import { keycloakService } from './services/exports.js';
 import { professionalTheme } from './styles/theme.js';
 import experimentService from './services/experimentService.js';
-import { translationsLoaded } from './i18n/config.js';
 
-function WizardWithTranslations({ children }) {
-  const [loaded, setLoaded] = useState(false);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    translationsLoaded.then(() => {
-      setLoaded(true);
-    });
-  }, []);
-
-  if (!loaded) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px" gap={2}>
-        <CircularProgress />
-        <Typography>Loading translations...</Typography>
-      </Box>
-    );
-  }
-
-  return children;
+// Loading fallback for Suspense
+function LoadingFallback() {
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px" gap={2}>
+      <CircularProgress />
+      <Typography>Loading...</Typography>
+    </Box>
+  );
 }
 
 function ProtectedRoute({ children }) {
@@ -186,12 +173,12 @@ function CreateExperimentRoute() {
   const navigate = useNavigate();
 
   return (
-    <WizardWithTranslations>
+    <Suspense fallback={<LoadingFallback />}>
       <ExperimentWizard
         onComplete={() => navigate('/dashboard')}
         onCancel={() => navigate('/dashboard')}
       />
-    </WizardWithTranslations>
+    </Suspense>
   );
 }
 
@@ -253,13 +240,13 @@ function ExperimentEditRoute() {
   }
 
   return (
-    <WizardWithTranslations>
+    <Suspense fallback={<LoadingFallback />}>
       <ModularExperimentWizard
         existingExperiment={experiment}
         onComplete={() => navigate('/dashboard')}
         onCancel={() => navigate('/dashboard')}
       />
-    </WizardWithTranslations>
+    </Suspense>
   );
 }
 
