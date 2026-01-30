@@ -869,9 +869,12 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                   justifyContent: 'flex-start',
                   textAlign: 'left',
                   '&:hover': {
-                    bgcolor: 'primary.light',
+                    bgcolor: 'primary.main',
                     color: 'white',
-                    borderColor: 'primary.main'
+                    borderColor: 'primary.main',
+                    '& .MuiTypography-root': {
+                      color: 'white'
+                    }
                   }
                 }}
               >
@@ -899,9 +902,12 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                   justifyContent: 'flex-start',
                   textAlign: 'left',
                   '&:hover': {
-                    bgcolor: 'error.light',
+                    bgcolor: 'error.main',
                     color: 'white',
-                    borderColor: 'error.main'
+                    borderColor: 'error.main',
+                    '& .MuiTypography-root': {
+                      color: 'white'
+                    }
                   }
                 }}
               >
