@@ -276,7 +276,13 @@ function AppContent() {
               mb: 4,
               mt: 4
             }}>
-              <Box sx={{ p: 2 }}>
+              <Box sx={{ 
+                p: 2.5,
+                minHeight: { xs: 'auto', sm: '180px' },
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}>
                 <Box sx={{ 
                   width: 48, 
                   height: 48, 
@@ -285,20 +291,48 @@ function AppContent() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  mx: 'auto',
-                  mb: 2
+                  mb: 2,
+                  flexShrink: 0
                 }}>
                   <Typography variant="h5">🧪</Typography>
                 </Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <Typography 
+                  variant="subtitle2" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 1,
+                    textAlign: 'center',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                    hyphens: 'auto',
+                    lineHeight: 1.3
+                  }}
+                >
                   {t('app.landing.feature1Title')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  sx={{ 
+                    fontSize: '0.875rem',
+                    textAlign: 'center',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                    hyphens: 'auto',
+                    lineHeight: 1.5
+                  }}
+                >
                   {t('app.landing.feature1Desc')}
                 </Typography>
               </Box>
 
-              <Box sx={{ p: 2 }}>
+              <Box sx={{ 
+                p: 2.5,
+                minHeight: { xs: 'auto', sm: '180px' },
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}>
                 <Box sx={{ 
                   width: 48, 
                   height: 48, 
@@ -307,20 +341,48 @@ function AppContent() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  mx: 'auto',
-                  mb: 2
+                  mb: 2,
+                  flexShrink: 0
                 }}>
                   <Typography variant="h5">📚</Typography>
                 </Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <Typography 
+                  variant="subtitle2" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 1,
+                    textAlign: 'center',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                    hyphens: 'auto',
+                    lineHeight: 1.3
+                  }}
+                >
                   {t('app.landing.feature2Title')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  sx={{ 
+                    fontSize: '0.875rem',
+                    textAlign: 'center',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                    hyphens: 'auto',
+                    lineHeight: 1.5
+                  }}
+                >
                   {t('app.landing.feature2Desc')}
                 </Typography>
               </Box>
 
-              <Box sx={{ p: 2 }}>
+              <Box sx={{ 
+                p: 2.5,
+                minHeight: { xs: 'auto', sm: '180px' },
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}>
                 <Box sx={{ 
                   width: 48, 
                   height: 48, 
@@ -329,15 +391,37 @@ function AppContent() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  mx: 'auto',
-                  mb: 2
+                  mb: 2,
+                  flexShrink: 0
                 }}>
                   <Typography variant="h5">✨</Typography>
                 </Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <Typography 
+                  variant="subtitle2" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 1,
+                    textAlign: 'center',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                    hyphens: 'auto',
+                    lineHeight: 1.3
+                  }}
+                >
                   {t('app.landing.feature3Title')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  sx={{ 
+                    fontSize: '0.875rem',
+                    textAlign: 'center',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                    hyphens: 'auto',
+                    lineHeight: 1.5
+                  }}
+                >
                   {t('app.landing.feature3Desc')}
                 </Typography>
               </Box>
