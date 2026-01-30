@@ -144,6 +144,39 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         
         .materials-list {
             list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .materials-list li {
+            margin-bottom: 5px;
+        }
+        
+        .procedure-steps {
+            list-style-type: decimal;
+            margin-left: 20px;
+            margin-bottom: 10px;
+            counter-reset: step-counter;
+        }
+        
+        .procedure-steps li {
+            margin-bottom: 15px;
+            padding-left: 5px;
+        }
+        
+        .procedure-steps li strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #1976d2;
+        }
+        
+        .step-notes {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: #f5f5f5;
+            border-left: 3px solid #1976d2;
+            font-size: 10pt;
+            line-height: 1.4;
         }
         
         .procedure-list {
@@ -340,10 +373,53 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           const keyLabel = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
           
           if (Array.isArray(value)) {
+            // Check if this is an array of procedure steps (objects with 'text' property)
+            const isProcedureSteps = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'text' in value[0];
             
-            const textItems = value.filter(item => typeof item === 'string' || typeof item === 'number');
-            if (textItems.length > 0) {
+            // Check if this is an array of materials (objects with 'name' property)
+            const isMaterialsList = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'name' in value[0];
+            
+            if (isProcedureSteps) {
+              // Render procedure steps with numbering
               htmlContent += `
+            <div class="subsection">
+                <div class="subsection-title">${keyLabel}</div>
+                <ol class="procedure-steps">
+                    ${value.map((step, index) => {
+                      let stepHtml = `<li><strong>${step.text || ''}</strong>`;
+                      if (step.notes) {
+                        stepHtml += `<div class="step-notes">${step.notes}</div>`;
+                      }
+                      stepHtml += `</li>`;
+                      return stepHtml;
+                    }).join('\n')}
+                </ol>
+            </div>
+`;
+            } else if (isMaterialsList) {
+              // Render materials list with name and quantity
+              htmlContent += `
+            <div class="subsection">
+                <div class="subsection-title">${keyLabel}</div>
+                <ul class="materials-list">
+                    ${value.map(item => {
+                      let itemText = item.name || '';
+                      if (item.quantity) {
+                        itemText += ` (${item.quantity})`;
+                      }
+                      if (item.notes) {
+                        itemText += ` - ${item.notes}`;
+                      }
+                      return `<li>${itemText}</li>`;
+                    }).join('\n')}
+                </ul>
+            </div>
+`;
+            } else {
+              // Filter for simple text items (strings/numbers)
+              const textItems = value.filter(item => typeof item === 'string' || typeof item === 'number');
+              if (textItems.length > 0) {
+                htmlContent += `
             <div class="subsection">
                 <div class="subsection-title">${keyLabel}</div>
                 <ul class="materials-list">
@@ -351,6 +427,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                 </ul>
             </div>
 `;
+              }
             }
           } else {
             htmlContent += `
