@@ -348,14 +348,52 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
       
       if (Array.isArray(sectionContent)) {
+        // Check if this is an array of procedure steps (objects with 'text' property)
+        const isProcedureSteps = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && 'text' in sectionContent[0];
         
-        const textItems = sectionContent.filter(item => typeof item === 'string' || typeof item === 'number');
-        if (textItems.length > 0) {
+        // Check if this is an array of materials (objects with 'name' property)
+        const isMaterialsList = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && 'name' in sectionContent[0];
+        
+        if (isProcedureSteps) {
+          // Render procedure steps with numbering
           htmlContent += `
+            <ol class="procedure-steps">
+                ${sectionContent.map((step, index) => {
+                  let stepHtml = `<li><strong>${step.text || ''}</strong>`;
+                  if (step.notes) {
+                    stepHtml += `<div class="step-notes">${step.notes}</div>`;
+                  }
+                  stepHtml += `</li>`;
+                  return stepHtml;
+                }).join('\n')}
+            </ol>
+`;
+        } else if (isMaterialsList) {
+          // Render materials list with name and quantity
+          htmlContent += `
+            <ul class="materials-list">
+                ${sectionContent.map(item => {
+                  let itemText = item.name || '';
+                  if (item.quantity) {
+                    itemText += ` (${item.quantity})`;
+                  }
+                  if (item.notes) {
+                    itemText += ` - ${item.notes}`;
+                  }
+                  return `<li>${itemText}</li>`;
+                }).join('\n')}
+            </ul>
+`;
+        } else {
+          // Filter for simple text items (strings/numbers)
+          const textItems = sectionContent.filter(item => typeof item === 'string' || typeof item === 'number');
+          if (textItems.length > 0) {
+            htmlContent += `
             <ul class="materials-list">
                 ${textItems.map(item => `<li>${item}</li>`).join('\n')}
             </ul>
 `;
+          }
         }
       } else if (typeof sectionContent === 'string') {
         if (sectionContent.startsWith('<')) {
