@@ -192,18 +192,24 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     try {
       setLoading(true);
       
+      console.log('[Dashboard] Refreshing dashboard data...');
+      
       const response = await experimentService.getExperiments({ 
         page: 1,
         limit: 1000 
       });
       
+      console.log('[Dashboard Refresh] Raw response:', response);
+      
       let allExperimentData = [];
       
       if (Array.isArray(response)) {
         allExperimentData = response;
-      } else {
-        allExperimentData = response.data || response.experiments || [];
+      } else if (response && typeof response === 'object') {
+        allExperimentData = response.data || response.experiments || response.results || [];
       }
+      
+      console.log('[Dashboard Refresh] Extracted experiments:', allExperimentData.length);
       
       // Add tags to experiments
       allExperimentData = allExperimentData.map(exp => ({
@@ -226,9 +232,16 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         totalExperiments: allExperimentData.length
       });
 
+      console.log('[Dashboard Refresh] Refresh complete. Total experiments:', allExperimentData.length);
       setError(null);
     } catch (err) {
-      console.error('Error refreshing dashboard:', err);
+      console.error('[Dashboard Refresh] Error refreshing dashboard:', err);
+      console.error('[Dashboard Refresh] Error details:', {
+        message: err.message,
+        response: err.response,
+        status: err.response?.status,
+        data: err.response?.data
+      });
       setError(t('messages.unableToLoadExperiments'));
       addNotification({
         type: 'error',
@@ -244,10 +257,12 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     const loadDashboardData = async () => {
       try {
         setLoading(true);
+        setError(null); // Clear any previous errors
         
-        
+        console.log('[Dashboard] Starting to load experiments...');
         
         const userInfo = keycloakService.getUserInfo();
+        console.log('[Dashboard] User info:', userInfo);
         
         
         const response = await experimentService.getExperiments({ 
@@ -255,15 +270,22 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           limit: 1000 
         });
         
+        console.log('[Dashboard] Raw API response:', response);
+        console.log('[Dashboard] Response type:', typeof response);
+        console.log('[Dashboard] Is array?', Array.isArray(response));
         
         
         let allExperimentData = [];
         
         if (Array.isArray(response)) {
           allExperimentData = response;
-        } else {
-          allExperimentData = response.data || response.experiments || [];
+        } else if (response && typeof response === 'object') {
+          // Try multiple possible response structures
+          allExperimentData = response.data || response.experiments || response.results || [];
         }
+        
+        console.log('[Dashboard] Extracted experiments:', allExperimentData);
+        console.log('[Dashboard] Number of experiments:', allExperimentData.length);
         
         
         
@@ -271,6 +293,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           ...exp,
           autoTags: extractTagsFromExperiment(exp)
         }));
+        
+        console.log('[Dashboard] Experiments with tags:', allExperimentData.length);
         
         
         setAllExperiments(allExperimentData);
@@ -282,18 +306,22 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         const endIndex = startIndex + rowsPerPage;
         const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
         
+        console.log('[Dashboard] Paginated experiments for display:', paginatedExperiments.length);
+        
         setExperiments(paginatedExperiments);
         setStats({
           totalExperiments: allExperimentData.length
         });
 
+        console.log('[Dashboard] State updated successfully. Total experiments:', allExperimentData.length);
         setError(null);
       } catch (err) {
-        console.error('Error loading dashboard data:', err);
-        console.error('Error details:', {
+        console.error('[Dashboard] Error loading dashboard data:', err);
+        console.error('[Dashboard] Error details:', {
           message: err.message,
           response: err.response,
-          status: err.response?.status
+          status: err.response?.status,
+          data: err.response?.data
         });
         setError(t('messages.unableToLoadExperiments'));
         setExperiments([]);
@@ -306,6 +334,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           message: t('messages.loadExperimentsFailed')
         });
       } finally {
+        console.log('[Dashboard] Loading complete, setting loading to false');
         setLoading(false);
       }
     };
