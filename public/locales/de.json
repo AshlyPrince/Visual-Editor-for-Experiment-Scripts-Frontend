@@ -61,8 +61,8 @@
       "feature1Desc": "Schritt-für-Schritt-Bildungsexperimente entwerfen",
       "feature2Title": "Versionskontrolle",
       "feature2Desc": "Änderungen verfolgen und Versionen verwalten",
-      "feature3Title": "KI-Polierung",
-      "feature3Desc": "KI-gestützte Inhaltsverfeinerung"
+      "feature3Title": "Inhaltsverbesserung",
+      "feature3Desc": "Intelligente Inhaltsverfeinerung"
     },
     "errors": {
       "authenticationFailed": "Authentifizierung fehlgeschlagen",
@@ -123,8 +123,8 @@
     "buildExperimentsDesc": "Gestalten Sie schrittweise pädagogische Experimente",
     "versionControl": "Versionsverwaltung",
     "versionControlDesc": "Verfolgen Sie Änderungen und verwalten Sie Experimentversionen",
-    "aiAssistant": "KI-Assistent",
-    "aiAssistantDesc": "Erhalten Sie Hilfe bei Experimentinhalten und -struktur",
+    "contentAssistant": "Inhaltsassistent",
+    "contentAssistantDesc": "Erhalten Sie Hilfe bei Experimentinhalten und -struktur",
     "quickDuration": "Schnell (<30 Min.)",
     "mediumDuration": "Mittel (30-60 Min.)",
     "longDuration": "Lang (60-90 Min.)",
@@ -348,8 +348,8 @@
     "selectSectionsDesc": "Wählen Sie aus, welche Abschnitte enthalten sein sollen",
     "fillContent": "Inhalt einfügen",
     "fillContentDesc": "Fügen Sie Inhalt zu jedem Abschnitt hinzu",
-    "aiPolish": "KI-Verbesserung",
-    "aiPolishDesc": "Mit KI überprüfen und verbessern",
+    "contentReview": "Inhaltsüberprüfung",
+    "contentReviewDesc": "Inhaltsqualität überprüfen und verbessern",
     "previewCreate": "Vorschau & Erstellen",
     "previewCreateDesc": "Abschließende Überprüfung und Erstellung",
     "chooseComponents": "Wählen Sie die Komponenten für Ihr Experiment",
@@ -466,8 +466,8 @@
       "selectSectionsDesc": "Wählen Sie aus, welche Abschnitte in Ihrem Experiment enthalten sein sollen. Sie können jede Kombination von Abschnitten auswählen oder eigene erstellen.",
       "fillContent": "✍️ Inhalt ausfüllen",
       "fillContentDesc": "Vervollständigen Sie den Inhalt für jeden Abschnitt. Pflichtfelder sind mit * markiert.",
-      "aiPolish": "🤖 KI-Polierung & Überprüfung",
-      "aiPolishDesc": "Verwenden Sie KI, um zu überprüfen, zu verbessern und Konsistenz über alle Abschnitte hinweg sicherzustellen.",
+      "contentReview": "✅ Inhaltsüberprüfung & Verbesserung",
+      "contentReviewDesc": "Überprüfen, verbessern und Konsistenz über alle Abschnitte hinweg sicherstellen.",
       "preview": "👁️ Vorschau & Erstellen",
       "previewDesc": "So werden die Studierenden Ihr Experiment sehen. Überprüfen Sie es sorgfältig vor der Erstellung."
     },
@@ -992,13 +992,13 @@
     "chat": {
       "title": "Experiment-Assistent",
       "placeholder": "Fragen Sie zu Ihrem Experiment...",
-      "systemPrompt": "Sie sind ein KI-Assistent, der bei der Gestaltung wissenschaftlicher Experimente hilft. Geben Sie klare, praktische Ratschläge.",
+      "systemPrompt": "Sie sind ein hilfreicher Assistent für die Gestaltung wissenschaftlicher Experimente. Geben Sie klare, praktische Ratschläge.",
       "clearConversation": "Unterhaltung löschen",
       "send": "Senden"
     },
     "polish": {
-      "title": "KI-Verbesserung & Validierung",
-      "description": "Verwenden Sie KI, um Ihren Text zu verbessern, die Konsistenz zu prüfen und Ihr Experiment vor der Fertigstellung zu validieren.",
+      "title": "Inhaltsverbesserung & Validierung",
+      "description": "Verbessern Sie Ihren Text, prüfen Sie die Konsistenz und validieren Sie Ihr Experiment vor der Fertigstellung.",
       "polishContent": "Inhalt verbessern",
       "polishField": "{{field}} verbessern",
       "enterText": "Bitte geben Sie Text zum Verbessern ein",

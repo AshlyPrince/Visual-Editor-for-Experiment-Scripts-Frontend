@@ -20,7 +20,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useLLMChat } from '../../hooks/useLLMChat';
 import { useTranslation } from 'react-i18next';
 
-const LLMChatComponent = ({
+const ChatAssistant = ({
   title,
   placeholder,
   systemPrompt = null,
@@ -235,4 +235,4 @@ const LLMChatComponent = ({
   );
 };
 
-export default LLMChatComponent;
+export default ChatAssistant;

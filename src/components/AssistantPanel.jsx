@@ -28,7 +28,7 @@ import SecurityIcon from '@mui/icons-material/Security';
 import TitleIcon from '@mui/icons-material/Title';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import LLMChatComponent from './LLMChatComponent';
+import ChatAssistant from './ChatAssistant';
 import TextPolisher from './TextPolisher';
 import { useTranslation } from 'react-i18next';
 import {
@@ -38,7 +38,7 @@ import {
   generateSafetyRecommendations
 } from '../services/llmService';
 
-const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
+const AssistantPanel = ({ experimentData, onUpdate }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -183,7 +183,7 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
         )}
 
         {activeTab === 0 && (
-          <LLMChatComponent
+          <ChatAssistant
             title={t('llm.chat.title')}
             placeholder={t('llm.chat.placeholder')}
             systemPrompt={t('llm.chat.systemPrompt')}
@@ -389,4 +389,4 @@ const LLMAssistantPanel = ({ experimentData, onUpdate }) => {
   );
 };
 
-export default LLMAssistantPanel;
+export default AssistantPanel;

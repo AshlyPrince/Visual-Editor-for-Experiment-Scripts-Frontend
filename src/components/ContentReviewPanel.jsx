@@ -36,7 +36,7 @@ import {
 } from '@mui/icons-material';
 import { polishText, checkConsistency } from '../services/llmService';
 
-const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection = true }) => {
+const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSection = true }) => {
   const { t } = useTranslation();
   const [polishing, setPolishing] = useState(false);
   const [checking, setChecking] = useState(false);
@@ -1006,4 +1006,4 @@ const LLMPolishCheck = ({ experimentData, onUpdate, onApprove, showPolishSection
   );
 };
 
-export default LLMPolishCheck;
+export default ContentReviewPanel;

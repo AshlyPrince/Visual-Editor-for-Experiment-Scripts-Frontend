@@ -60,7 +60,7 @@ import RichTextEditor from '../components/RichTextEditor';
 import ListInput from '../components/ListInput';
 import ProcedureStepsEditor from '../components/ProcedureStepsEditor';
 import MediaUploader from '../components/MediaUploader';
-import LLMPolishCheck from '../components/LLMPolishCheck';
+import ContentReviewPanel from '../components/ContentReviewPanel';
 import { experimentService } from '../services/exports.js';
 import keycloakService from '../services/keycloakService.js';
 import { toCanonical, toWizardState, fromWizardState } from '../utils/experimentCanonical.js';
@@ -129,7 +129,7 @@ const ModularExperimentWizard = ({
     { id: 'basic_info', label: t('wizard.basicInformation'), description: t('wizard.basicInformationDesc') },
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
     { id: 'content', label: t('wizard.fillContent'), description: t('wizard.fillContentDesc') },
-    { id: 'ai_polish', label: t('wizard.aiPolish'), description: t('wizard.aiPolishDesc') },
+    { id: 'content_review', label: t('wizard.contentReview'), description: t('wizard.contentReviewDesc') },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
   ];
 
@@ -1199,16 +1199,16 @@ const ModularExperimentWizard = ({
     </Box>
   );
 
-  const renderAIPolishStep = () => (
+  const renderContentReviewStep = () => (
     <Box>
       <Typography variant="h5" gutterBottom>
-        {t('wizard.steps.aiPolish')}
+        {t('wizard.steps.contentReview')}
       </Typography>
       <Typography variant="body2" color="text.secondary" paragraph>
-        {t('wizard.steps.aiPolishDesc')}
+        {t('wizard.steps.contentReviewDesc')}
       </Typography>
 
-      <LLMPolishCheck
+      <ContentReviewPanel
         experimentData={{
           title: basicInfo.title,
           duration: basicInfo.duration,
@@ -1811,7 +1811,7 @@ const ModularExperimentWizard = ({
       case 0: return renderBasicInfoStep();
       case 1: return renderSectionsStep();
       case 2: return renderContentStep();
-      case 3: return renderAIPolishStep();
+      case 3: return renderContentReviewStep();
       case 4: return renderPreviewStep();
       default: return null;
     }
