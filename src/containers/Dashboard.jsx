@@ -734,46 +734,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                       </IconButton>
                     </Box>
 
-                    <Box sx={{ mt: 2, mb: 2, minHeight: '60px' }}>
-                      {experiment.autoTags && experiment.autoTags.length > 0 && (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {experiment.autoTags.slice(0, 6).map((tag, index) => (
-                            <Chip
-                              key={index}
-                              label={tag}
-                              size="small"
-                              sx={{
-                                height: '22px',
-                                fontSize: '0.7rem',
-                                bgcolor: 'primary.50',
-                                color: 'primary.700',
-                                border: '1px solid',
-                                borderColor: 'primary.200',
-                                '& .MuiChip-label': {
-                                  px: 1
-                                }
-                              }}
-                            />
-                          ))}
-                          {experiment.autoTags.length > 6 && (
-                            <Chip
-                              label={`+${experiment.autoTags.length - 6}`}
-                              size="small"
-                              sx={{
-                                height: '22px',
-                                fontSize: '0.7rem',
-                                bgcolor: 'grey.100',
-                                color: 'text.secondary',
-                                '& .MuiChip-label': {
-                                  px: 1
-                                }
-                              }}
-                            />
-                          )}
-                        </Box>
-                      )}
-                    </Box>
-
                     <Box sx={{ mt: 'auto' }}>
                       <Typography variant="body2" color="text.secondary">
                         {t('dashboard.lastUpdated')}: {formatDate(experiment.updated_at)}
