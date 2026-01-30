@@ -476,6 +476,12 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     const sectionContent = section.content || {};
     console.log('[ExperimentViewer] sectionContent:', sectionContent);
     console.log('[ExperimentViewer] sectionContent keys:', Object.keys(sectionContent));
+    console.log('[ExperimentViewer] sectionContent values:', Object.values(sectionContent));
+    
+    // Log each key-value pair
+    Object.entries(sectionContent).forEach(([key, value]) => {
+      console.log(`[ExperimentViewer] Key "${key}":`, value, 'Type:', Array.isArray(value) ? 'Array' : typeof value);
+    });
     
     
     if (typeof sectionContent === 'string') {
