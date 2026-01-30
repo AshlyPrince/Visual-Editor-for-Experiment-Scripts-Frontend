@@ -346,6 +346,42 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         <div class="section-content">
 `;
 
+      // Render media first (at the top) if present
+      if (sectionMedia && sectionMedia.length > 0) {
+        htmlContent += `
+            <div class="media-gallery">
+                ${sectionMedia.map(mediaItem => {
+                      if (mediaItem.type && mediaItem.type.startsWith('image')) {
+                        let imageSrc = mediaItem.data;
+                        if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
+                          imageSrc = new URL(imageSrc, window.location.origin).href;
+                        }
+                        return `
+                        <div class="media-item">
+                            <img src="${imageSrc}" alt="${mediaItem.caption || mediaItem.name || 'Image'}" />
+                            ${mediaItem.caption ? `<div class="media-caption">${mediaItem.caption}</div>` : ''}
+                        </div>
+                        `;
+                      } else if (mediaItem.type && mediaItem.type.startsWith('video')) {
+                        return `
+                        <div class="media-item">
+                            <video controls poster="">
+                                <source src="${mediaItem.data}" type="${mediaItem.type || 'video/mp4'}" />
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="media-caption">
+                                ${mediaItem.caption || mediaItem.name || 'Video'}
+                                <br><small style="color: #999;">Note: Videos are not included in PDF exports</small>
+                            </div>
+                        </div>
+                        `;
+                      }
+                      return '';
+                    }).join('\n')}
+                </div>
+`;
+      }
+
       
       if (Array.isArray(sectionContent)) {
         // Check if this is an array of procedure steps (objects with 'text' property)
@@ -476,42 +512,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 `;
           }
         });
-      }
-      
-      
-      if (sectionMedia && sectionMedia.length > 0) {
-        htmlContent += `
-            <div class="media-gallery">
-                ${sectionMedia.map(mediaItem => {
-                      if (mediaItem.type && mediaItem.type.startsWith('image')) {
-                        let imageSrc = mediaItem.data;
-                        if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
-                          imageSrc = new URL(imageSrc, window.location.origin).href;
-                        }
-                        return `
-                        <div class="media-item">
-                            <img src="${imageSrc}" alt="${mediaItem.caption || mediaItem.name || 'Image'}" />
-                            ${mediaItem.caption ? `<div class="media-caption">${mediaItem.caption}</div>` : ''}
-                        </div>
-                        `;
-                      } else if (mediaItem.type && mediaItem.type.startsWith('video')) {
-                        return `
-                        <div class="media-item">
-                            <video controls poster="">
-                                <source src="${mediaItem.data}" type="${mediaItem.type || 'video/mp4'}" />
-                                Your browser does not support the video tag.
-                            </video>
-                            <div class="media-caption">
-                                ${mediaItem.caption || mediaItem.name || 'Video'}
-                                <br><small style="color: #999;">Note: Videos are not included in PDF exports</small>
-                            </div>
-                        </div>
-                        `;
-                      }
-                      return '';
-                    }).join('\n')}
-                </div>
-`;
       }
       
       htmlContent += `
