@@ -102,21 +102,15 @@ const ModularExperimentWizard = ({
   onComplete, 
   onCancel 
 }) => {
-  console.log('[ModularExperimentWizard] Component starting to render');
-  
   const { t, ready } = useTranslation();
-  console.log('[ModularExperimentWizard] useTranslation called - ready:', ready, 'i18n.isInitialized:', i18n.isInitialized);
   
   if (!ready || !i18n.isInitialized) {
-    console.log('[ModularExperimentWizard] Translations not ready, showing loading spinner');
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
       </Box>
     );
   }
-
-  console.log('[ModularExperimentWizard] Translations ready, continuing render');
 
   const loadSavedState = () => {
     try {
@@ -131,7 +125,6 @@ const ModularExperimentWizard = ({
 
   const savedState = loadSavedState();
 
-  console.log('[ModularExperimentWizard] Creating wizardSteps array');
   const wizardSteps = [
     { id: 'basic_info', label: t('wizard.basicInformation'), description: t('wizard.basicInformationDesc') },
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
@@ -139,12 +132,9 @@ const ModularExperimentWizard = ({
     { id: 'ai_polish', label: t('wizard.aiPolish'), description: t('wizard.aiPolishDesc') },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
   ];
-  console.log('[ModularExperimentWizard] wizardSteps created successfully');
 
   const [currentStep, setCurrentStep] = useState(savedState?.currentStep || 0);
   const [completedSteps, setCompletedSteps] = useState(new Set(savedState?.completedSteps || []));
-
-  console.log('[ModularExperimentWizard] Creating availableSections array');
   const availableSections = [
     
     { 
@@ -301,7 +291,6 @@ const ModularExperimentWizard = ({
       }
     }
   ];
-  console.log('[ModularExperimentWizard] availableSections created successfully, count:', availableSections.length);
 
   const [basicInfo, setBasicInfo] = useState(savedState?.basicInfo || {
     title: '',
@@ -315,7 +304,6 @@ const ModularExperimentWizard = ({
       return savedState.selectedSectionIds;
     }
     
-    // For backward compatibility with old savedState
     if (savedState?.selectedSections) {
       return savedState.selectedSections.map(s => s.id);
     }
@@ -325,15 +313,11 @@ const ModularExperimentWizard = ({
 
   const [customSections, setCustomSections] = useState(savedState?.customSections || []);
 
-  // Compute actual sections from IDs so translations update dynamically
-  // Note: Not memoized to avoid circular dependency with availableSections
   const selectedSections = selectedSectionIds
     .map(id => {
-      // First check availableSections
       const available = availableSections.find(s => s.id === id);
       if (available) return available;
       
-      // Then check customSections
       const custom = customSections.find(s => s.id === id);
       if (custom) return custom;
       
@@ -343,27 +327,24 @@ const ModularExperimentWizard = ({
   const [sectionContent, setSectionContent] = useState(savedState?.sectionContent || {});
   const [touched, setTouched] = useState({});
   
-  
   const [isCreating, setIsCreating] = useState(false);
   const [creationError, setCreationError] = useState(null);
   const [createdExperiment, setCreatedExperiment] = useState(null);
 
-  
   const [customSectionDialog, setCustomSectionDialog] = useState(false);
   const [newCustomSectionName, setNewCustomSectionName] = useState('');
   const [newCustomSectionDescription, setNewCustomSectionDescription] = useState('');
   const [discardDialog, setDiscardDialog] = useState(false);
 
-  
   useEffect(() => {
     if (!existingExperiment && (basicInfo.title || selectedSectionIds.length > 0)) {
       const stateToSave = {
         basicInfo,
-        selectedSectionIds, // Store IDs only for proper translation on reload
+        selectedSectionIds,
         customSections,
         sectionContent,
         currentStep,
-        completedSteps: Array.from(completedSteps), 
+        completedSteps: Array.from(completedSteps),
         timestamp: Date.now()
       };
       try {
@@ -373,7 +354,6 @@ const ModularExperimentWizard = ({
     }
   }, [basicInfo, selectedSectionIds, customSections, sectionContent, currentStep, completedSteps, existingExperiment]);
 
-  
   const clearSavedState = () => {
     try {
       localStorage.removeItem('wizardState');
@@ -381,15 +361,9 @@ const ModularExperimentWizard = ({
     }
   };
 
-  
-  
-  
-  
   useEffect(() => {
     if (existingExperiment) {
-      
       const canonical = toCanonical(existingExperiment);
-      
       
       setBasicInfo({
         title: canonical.title || '',
@@ -398,24 +372,20 @@ const ModularExperimentWizard = ({
         program: canonical.content?.config?.gradeLevel || ''
       });
 
-      
       const wizardState = toWizardState(canonical.content.sections);
       setSectionContent(wizardState);
       
-      
-      // Store only IDs so translations work properly
       const sectionIds = canonical.content.sections.map(section => section.id);
       setSelectedSectionIds(sectionIds);
       
-      // Also update customSections for any custom sections
       const customSecs = canonical.content.sections
         .filter(section => {
           const isStandard = availableSections.find(s => s.id === section.id);
           return !isStandard;
         })
         .map(section => ({
-          id: section.id, 
-          name: section.name, 
+          id: section.id,
+          name: section.name,
           isCustom: true,
           emoji: '📝',
           category: 'custom',
@@ -433,12 +403,8 @@ const ModularExperimentWizard = ({
     }
   }, [existingExperiment, availableSections]);
 
-  
-  
-  
-  
   const toggleSection = useCallback((section) => {
-    if (section.locked) return; 
+    if (section.locked) return;
     
     setSelectedSectionIds(prev => {
       const exists = prev.includes(section.id);
@@ -470,8 +436,7 @@ const ModularExperimentWizard = ({
     };
     
     setCustomSections(prev => [...prev, customSection]);
-    setSelectedSectionIds(prev => [...prev, customId]); // Add ID only
-    
+    setSelectedSectionIds(prev => [...prev, customId]);
     
     setNewCustomSectionName('');
     setNewCustomSectionDescription('');
@@ -488,10 +453,6 @@ const ModularExperimentWizard = ({
     });
   }, []);
 
-  
-  
-  
-  
   const updateSectionContent = useCallback((sectionId, fieldId, value) => {
     setSectionContent(prev => ({
       ...prev,
@@ -507,9 +468,8 @@ const ModularExperimentWizard = ({
     setTouched(prev => ({ ...prev, [field]: true }));
   }, []);
 
-  
   useEffect(() => {
-    if (currentStep === 2) { 
+    if (currentStep === 2) {
       setSectionContent(prev => ({
         ...prev,
         title_header: {
@@ -523,13 +483,7 @@ const ModularExperimentWizard = ({
     }
   }, [currentStep, basicInfo]);
 
-  
-  
-  
-  
-  
   const hasContent = useCallback((content) => {
-    
     if (typeof content === 'string') {
       return content.trim().length > 0;
     }
@@ -585,22 +539,21 @@ const ModularExperimentWizard = ({
     }
   }, [basicInfo, selectedSections, sectionContent, hasContent]);
 
-  
   const getValidationMessage = useCallback((step) => {
     switch (step) {
-      case 0: 
+      case 0:
         if (!basicInfo.title.trim()) {
           return t('wizard.validation.titleRequired');
         }
         return '';
       
-      case 1: 
+      case 1:
         if (selectedSections.length === 0) {
           return t('wizard.validation.sectionRequired');
         }
         return '';
       
-      case 2: 
+      case 2:
         const hasAnyContent = selectedSections.some(section => {
           const content = sectionContent[section.id] || section.defaultContent;
           return hasContent(content);
@@ -615,10 +568,6 @@ const ModularExperimentWizard = ({
     }
   }, [basicInfo, selectedSections, sectionContent, hasContent, t]);
 
-  
-  
-  
-  
   const handleNext = useCallback(() => {
     if (validateStep(currentStep)) {
       if (!completedSteps.has(currentStep)) {
@@ -632,41 +581,31 @@ const ModularExperimentWizard = ({
     setCurrentStep(prev => Math.max(prev - 1, 0));
   }, []);
 
-  
-  
-  
-  
   const handleCreateExperiment = useCallback(async () => {
     try {
       setIsCreating(true);
       setCreationError(null);
 
-      
       const canonicalSections = fromWizardState(sectionContent, selectedSections);
 
-      
       const experimentData = {
         name: basicInfo.title.trim(),
         description: basicInfo.description?.trim() || '',
         duration: basicInfo.duration.trim() || '',
         subject: basicInfo.course.trim() || '',
         gradeLevel: basicInfo.program.trim() || '',
-        sections: canonicalSections  
+        sections: canonicalSections
       };
 
       let result;
       if (existingExperiment) {
-        
         result = await experimentService.updateFromWizard(existingExperiment.id, experimentData);
       } else {
-        
         result = await experimentService.createFromWizard(experimentData);
       }
       
-      
       setCreatedExperiment(result);
       setIsCreating(false);
-      
       
       clearSavedState();
       
@@ -679,9 +618,7 @@ const ModularExperimentWizard = ({
     }
   }, [basicInfo, selectedSections, sectionContent, existingExperiment, onComplete]);
 
-  
   const handleCancel = useCallback(() => {
-    
     if (basicInfo.title || selectedSectionIds.length > 0) {
       setDiscardDialog(true);
     } else {
@@ -706,10 +643,6 @@ const ModularExperimentWizard = ({
     }
   };
 
-  
-  
-  
-  
   const renderBasicInfoStep = () => (
     <Box>
       <Typography variant="h5" gutterBottom>
