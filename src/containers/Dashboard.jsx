@@ -106,21 +106,29 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const extractTagsFromExperiment = (experiment) => {
     const tags = [];
     
-    
-    if (experiment.course) {
-      const courseWords = experiment.course.split(/\s+/).filter(word => word.length > 2);
-      tags.push(...courseWords);
+    if (experiment.title && experiment.title !== 'Untitled Experiment') {
+      const commonWords = ['the', 'a', 'an', 'of', 'and', 'or', 'in', 'on', 'at', 'to', 'for', 'with', 'lab', 'experiment', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being'];
+      const titleWords = experiment.title
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(word => word.length > 3 && !commonWords.includes(word))
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1));
+      tags.push(...titleWords);
     }
     
-    
-    if (experiment.program) {
-      const programWords = experiment.program.split(/\s+/).filter(word => word.length > 2);
-      tags.push(...programWords);
+    if (experiment.course || experiment.content?.config?.subject) {
+      const course = experiment.course || experiment.content?.config?.subject;
+      tags.push(course);
     }
     
+    if (experiment.program || experiment.content?.config?.gradeLevel) {
+      const program = experiment.program || experiment.content?.config?.gradeLevel;
+      tags.push(program);
+    }
     
-    if (experiment.estimated_duration) {
-      const durationMatch = experiment.estimated_duration.match(/\d+/);
+    if (experiment.estimated_duration || experiment.content?.config?.duration) {
+      const duration = experiment.estimated_duration || experiment.content?.config?.duration;
+      const durationMatch = duration.match(/\d+/);
       if (durationMatch) {
         const minutes = parseInt(durationMatch[0]);
         if (minutes <= 30) tags.push(t('dashboard.quickDuration'));
@@ -130,18 +138,51 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       }
     }
     
-    
-    if (experiment.title) {
-      const commonWords = ['the', 'a', 'an', 'of', 'and', 'or', 'in', 'on', 'at', 'to', 'for', 'with', 'lab', 'experiment'];
-      const titleWords = experiment.title
-        .toLowerCase()
-        .split(/\s+/)
-        .filter(word => word.length > 3 && !commonWords.includes(word))
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1));
-      tags.push(...titleWords.slice(0, 3)); 
+    if (experiment.content?.sections && Array.isArray(experiment.content.sections)) {
+      const commonWords = ['the', 'a', 'an', 'of', 'and', 'or', 'in', 'on', 'at', 'to', 'for', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'this', 'that', 'these', 'those', 'will', 'would', 'should', 'could', 'can', 'may', 'might', 'must', 'shall'];
+      
+      experiment.content.sections.forEach(section => {
+        const extractWordsFromText = (text) => {
+          if (!text || typeof text !== 'string') return [];
+          
+          const cleanText = text
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/[^\w\s]/g, ' ')
+            .toLowerCase();
+          
+          return cleanText
+            .split(/\s+/)
+            .filter(word => word.length > 4 && !commonWords.includes(word))
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1));
+        };
+        
+        const processField = (value) => {
+          if (typeof value === 'string') {
+            return extractWordsFromText(value);
+          } else if (Array.isArray(value)) {
+            return value.flatMap(item => {
+              if (typeof item === 'string') {
+                return extractWordsFromText(item);
+              } else if (typeof item === 'object' && item !== null) {
+                return Object.values(item).flatMap(processField);
+              }
+              return [];
+            });
+          } else if (typeof value === 'object' && value !== null) {
+            return Object.values(value).flatMap(processField);
+          }
+          return [];
+        };
+        
+        if (section.content && typeof section.content === 'object') {
+          const words = Object.values(section.content).flatMap(processField);
+          tags.push(...words.slice(0, 5));
+        }
+      });
     }
     
-    return [...new Set(tags)]; 
+    const uniqueTags = [...new Set(tags)].filter(tag => tag && tag.trim().length > 0);
+    return uniqueTags.slice(0, 15);
   };
 
   
@@ -215,16 +256,13 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   
   useEffect(() => {
     if (!searchQuery.trim()) {
-      
       setFilteredExperiments(allExperiments);
       setTotalExperiments(allExperiments.length);
     } else {
-      
       const query = searchQuery.toLowerCase();
       const filtered = allExperiments.filter(exp => {
         const title = (exp.title || '').toLowerCase();
         const description = (exp.description || '').toLowerCase();
-        
         
         const subject = (exp.content?.config?.subject || exp.course || '').toLowerCase();
         const gradeLevel = (exp.content?.config?.gradeLevel || exp.program || '').toLowerCase();
@@ -232,10 +270,30 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         
         const id = (exp.id || '').toString();
         
-        
         const tagsMatch = exp.autoTags && exp.autoTags.some(tag => 
           tag.toLowerCase().includes(query)
         );
+        
+        let sectionsMatch = false;
+        if (exp.content?.sections && Array.isArray(exp.content.sections)) {
+          sectionsMatch = exp.content.sections.some(section => {
+            if (!section.content || typeof section.content !== 'object') return false;
+            
+            const searchInValue = (value) => {
+              if (typeof value === 'string') {
+                const cleanText = value.replace(/<[^>]*>/g, ' ').toLowerCase();
+                return cleanText.includes(query);
+              } else if (Array.isArray(value)) {
+                return value.some(item => searchInValue(item));
+              } else if (typeof value === 'object' && value !== null) {
+                return Object.values(value).some(val => searchInValue(val));
+              }
+              return false;
+            };
+            
+            return Object.values(section.content).some(val => searchInValue(val));
+          });
+        }
         
         return title.includes(query) || 
                description.includes(query) || 
@@ -243,7 +301,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                gradeLevel.includes(query) ||
                duration.includes(query) ||
                id.includes(query) ||
-               tagsMatch;
+               tagsMatch ||
+               sectionsMatch;
       });
       
       setFilteredExperiments(filtered);
@@ -546,6 +605,46 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                       >
                         <MoreVertIcon />
                       </IconButton>
+                    </Box>
+
+                    <Box sx={{ mt: 2, mb: 2, minHeight: '60px' }}>
+                      {experiment.autoTags && experiment.autoTags.length > 0 && (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {experiment.autoTags.slice(0, 6).map((tag, index) => (
+                            <Chip
+                              key={index}
+                              label={tag}
+                              size="small"
+                              sx={{
+                                height: '22px',
+                                fontSize: '0.7rem',
+                                bgcolor: 'primary.50',
+                                color: 'primary.700',
+                                border: '1px solid',
+                                borderColor: 'primary.200',
+                                '& .MuiChip-label': {
+                                  px: 1
+                                }
+                              }}
+                            />
+                          ))}
+                          {experiment.autoTags.length > 6 && (
+                            <Chip
+                              label={`+${experiment.autoTags.length - 6}`}
+                              size="small"
+                              sx={{
+                                height: '22px',
+                                fontSize: '0.7rem',
+                                bgcolor: 'grey.100',
+                                color: 'text.secondary',
+                                '& .MuiChip-label': {
+                                  px: 1
+                                }
+                              }}
+                            />
+                          )}
+                        </Box>
+                      )}
                     </Box>
 
                     <Box sx={{ mt: 'auto' }}>
