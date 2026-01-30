@@ -34,7 +34,8 @@ import {
   GetApp as ExportIcon,
   Science as ScienceIcon,
   Search as SearchIcon,
-  Clear as ClearIcon
+  Clear as ClearIcon,
+  Refresh as RefreshIcon
 } from '@mui/icons-material';
 import { useAsyncOperation, useNotifications } from '../hooks/exports';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog.jsx';
@@ -186,6 +187,59 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   };
 
   
+  // Function to refresh dashboard data - can be called after operations
+  const refreshDashboard = async () => {
+    try {
+      setLoading(true);
+      
+      const response = await experimentService.getExperiments({ 
+        page: 1,
+        limit: 1000 
+      });
+      
+      let allExperimentData = [];
+      
+      if (Array.isArray(response)) {
+        allExperimentData = response;
+      } else {
+        allExperimentData = response.data || response.experiments || [];
+      }
+      
+      // Add tags to experiments
+      allExperimentData = allExperimentData.map(exp => ({
+        ...exp,
+        autoTags: extractTagsFromExperiment(exp)
+      }));
+      
+      // Update all states
+      setAllExperiments(allExperimentData);
+      setFilteredExperiments(allExperimentData);
+      setTotalExperiments(allExperimentData.length);
+      
+      // Update paginated view
+      const startIndex = page * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+      const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
+      
+      setExperiments(paginatedExperiments);
+      setStats({
+        totalExperiments: allExperimentData.length
+      });
+
+      setError(null);
+    } catch (err) {
+      console.error('Error refreshing dashboard:', err);
+      setError(t('messages.unableToLoadExperiments'));
+      addNotification({
+        type: 'error',
+        message: t('messages.loadExperimentsFailed')
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
@@ -235,6 +289,12 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
         setError(null);
       } catch (err) {
+        console.error('Error loading dashboard data:', err);
+        console.error('Error details:', {
+          message: err.message,
+          response: err.response,
+          status: err.response?.status
+        });
         setError(t('messages.unableToLoadExperiments'));
         setExperiments([]);
         setAllExperiments([]);
@@ -379,17 +439,41 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         () => experimentService.deleteExperiment(experimentToDelete.id)
       );
 
-      
+      // Reload all experiments to keep data consistent
       const response = await experimentService.getExperiments({ 
-        page: page + 1,
-        limit: rowsPerPage 
+        page: 1,
+        limit: 1000 
       });
-      const experimentData = Array.isArray(response) ? response : (response.data || []);
-      const total = response.total || experimentData.length;
       
-      setExperiments(experimentData);
-      setTotalExperiments(total);
-      setStats({ totalExperiments: total });
+      let allExperimentData = [];
+      if (Array.isArray(response)) {
+        allExperimentData = response;
+      } else {
+        allExperimentData = response.data || response.experiments || [];
+      }
+      
+      // Add tags to experiments
+      allExperimentData = allExperimentData.map(exp => ({
+        ...exp,
+        autoTags: extractTagsFromExperiment(exp)
+      }));
+      
+      // Update all experiment states
+      setAllExperiments(allExperimentData);
+      setFilteredExperiments(allExperimentData);
+      setTotalExperiments(allExperimentData.length);
+      setStats({ totalExperiments: allExperimentData.length });
+      
+      // Update paginated view
+      const startIndex = page * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+      const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
+      setExperiments(paginatedExperiments);
+      
+      // If current page is now empty, go to previous page
+      if (paginatedExperiments.length === 0 && page > 0) {
+        setPage(page - 1);
+      }
       
       addNotification({
         type: 'success',
@@ -398,7 +482,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       
       setDeleteDialogOpen(false);
       setExperimentToDelete(null);
-    } catch {
+    } catch (err) {
+      console.error('Error deleting experiment:', err);
       addNotification({
         type: 'error',
         message: t('messages.errorDeletingExperiment')
@@ -455,24 +540,37 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           </Typography>
         </Box>
 
-        {!loading && allExperiments.length > 0 && (
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
-            startIcon={<AddIcon />}
-            onClick={onCreateExperiment}
-            sx={{ 
-              fontWeight: 600,
-              px: 3,
-              py: 1.25,
-              borderRadius: 2,
-              textTransform: 'none',
-              fontSize: '0.95rem'
-            }}
+            startIcon={<RefreshIcon />}
+            onClick={refreshDashboard}
+            disabled={loading}
+            sx={{ fontWeight: 600 }}
           >
-            {t('experiment.createNew')}
+            {t('common.refresh') || 'Refresh'}
           </Button>
-        )}
+          
+          {!loading && allExperiments.length > 0 && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={onCreateExperiment}
+              sx={{ 
+                fontWeight: 600,
+                px: 3,
+                py: 1.25,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontSize: '0.95rem'
+              }}
+            >
+              {t('experiment.createNew')}
+            </Button>
+          )}
+        </Box>
       </Box>
       
       {!loading && allExperiments.length > 0 && (
