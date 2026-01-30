@@ -851,7 +851,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         open={deleteDialogOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
-        experimentName={experimentToDelete?.title || ''}
+        itemName={experimentToDelete?.title || ''}
+        itemType="experiment"
         loading={deleting}
       />
 
