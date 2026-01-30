@@ -26,7 +26,7 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
     const response = await api.post('/api/llm/chat', requestBody);
     
     return response.data;
-  } catch {
+  } catch (error) {
     const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
     if (error.response?.status === 500) {
@@ -67,7 +67,7 @@ export const sendChatConversation = async (messages, options = {}, t = null) => 
     const response = await api.post('/api/llm/chat', requestBody);
     
     return response.data;
-  } catch {
+  } catch (error) {
     const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
     if (error.response?.status === 500) {
@@ -230,7 +230,7 @@ ${p.instruction}`;
     }
     
     return improved;
-  } catch {
+  } catch (error) {
     const errorMessage = errorMsg('llm.feedback.polishFailed', `Failed to polish text: ${error.message}`);
     throw new Error(errorMessage);
   }
@@ -266,7 +266,7 @@ ${p.format}`;
 
   try {
     return JSON.parse(response.choices[0].message.content);
-  } catch {
+  } catch (error) {
     
     return {
       improved: response.choices[0].message.content,
@@ -339,7 +339,7 @@ ${p.instruction}`;
       issues: Array.isArray(parsed.issues) ? parsed.issues : [],
       recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : []
     };
-  } catch {
+  } catch (error) {
     
     const content = response.choices[0].message.content.trim();
     return {
@@ -372,7 +372,7 @@ ${p.format}`;
 
   try {
     return JSON.parse(response.choices[0].message.content);
-  } catch {
+  } catch (error) {
     
     const content = response.choices[0].message.content;
     const lines = content.split('\n').filter(line => line.trim());
@@ -413,7 +413,7 @@ ${p.format}`;
 
   try {
     return JSON.parse(response.choices[0].message.content);
-  } catch {
+  } catch (error) {
     return {
       recommendations: [response.choices[0].message.content],
       hazards: [],

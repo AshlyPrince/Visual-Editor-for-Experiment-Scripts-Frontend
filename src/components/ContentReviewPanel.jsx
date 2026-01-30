@@ -140,7 +140,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         }
       }
       
-      const improved = await polishText(currentValue, promptContext);
+      const improved = await polishText(currentValue, promptContext, t);
       
       
       
@@ -219,7 +219,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
             promptContext = t('llm.polish.improveContentPrompt', { context: field.context });
           }
           
-          const improved = await polishText(field.value, promptContext);
+          const improved = await polishText(field.value, promptContext, t);
           
           
           
@@ -305,7 +305,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         return;
       }
 
-      const results = await checkConsistency(sectionsToCheck);
+      const results = await checkConsistency(sectionsToCheck, t);
       setConsistencyResults(results);
     } catch (err) {
       setError(t('llm.polish.unableToCheckConsistency', { error: err.message }));
