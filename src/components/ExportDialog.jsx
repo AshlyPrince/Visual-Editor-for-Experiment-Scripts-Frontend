@@ -216,10 +216,12 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         }
         
         .media-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
             margin: 20px 0;
+            max-width: 100%;
         }
         
         .media-item {
@@ -229,6 +231,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             page-break-inside: avoid;
             background-color: #ffffff;
             text-align: center;
+            width: 100%;
+            max-width: 700px;
         }
         
         .media-item img,
@@ -236,18 +240,19 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             width: 100%;
             height: auto;
             display: block;
-            max-width: 80px;
-            max-height: 80px;
-            margin: 10px auto;
+            margin: 0 auto;
             object-fit: contain;
             background-color: #fafafa;
         }
         
         .media-caption {
-            padding: 8px;
+            padding: 12px;
             background-color: #f5f5f5;
-            font-size: 8pt;
+            font-size: 10pt;
             color: #666;
+            text-align: center;
+            font-style: italic;
+        }
             font-style: italic;
             text-align: center;
         }
