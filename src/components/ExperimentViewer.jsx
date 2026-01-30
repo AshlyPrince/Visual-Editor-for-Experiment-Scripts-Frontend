@@ -58,6 +58,17 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       setError(null);
       
       const rawData = await experimentService.getExperiment(experimentId);
+      console.log('[ExperimentViewer] Raw data from backend:', rawData);
+      console.log('[ExperimentViewer] Raw data sections:', rawData.sections);
+      console.log('[ExperimentViewer] Raw data content:', rawData.content);
+      
+      // Log procedure section specifically
+      const procedureSection = (rawData.sections || rawData.content?.sections || []).find(s => s.id === 'procedure');
+      console.log('[ExperimentViewer] Raw procedure section from backend:', procedureSection);
+      if (procedureSection) {
+        console.log('[ExperimentViewer] Raw procedure section content:', procedureSection.content);
+        console.log('[ExperimentViewer] Raw procedure section content type:', typeof procedureSection.content);
+      }
       
       
       let actualVersionNumber = rawData.current_version_number || rawData.version_number || 1;
@@ -79,6 +90,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       
       
       const canonical = toCanonical(rawData);
+      console.log('[ExperimentViewer] After toCanonical transformation:', canonical);
+      console.log('[ExperimentViewer] Canonical sections:', canonical.content?.sections);
+      
+      // Log procedure section after transformation
+      const canonicalProcedureSection = (canonical.content?.sections || []).find(s => s.id === 'procedure');
+      console.log('[ExperimentViewer] Canonical procedure section:', canonicalProcedureSection);
+      if (canonicalProcedureSection) {
+        console.log('[ExperimentViewer] Canonical procedure section content:', canonicalProcedureSection.content);
+      }
       
       
       canonical.version_number = actualVersionNumber;
@@ -90,6 +110,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       canonical.course = canonical.content.config.subject;
       canonical.program = canonical.content.config.gradeLevel;
       
+      console.log('[ExperimentViewer] Final experiment object being set:', canonical);
       setExperiment(canonical);
     } catch (err) {
       setError(err.message || t('messages.loadError'));

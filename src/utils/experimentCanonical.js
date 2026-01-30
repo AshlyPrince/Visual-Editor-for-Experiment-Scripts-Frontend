@@ -163,12 +163,13 @@ const normalizeStepsContent = (content) => {
     return {
       steps: content.steps.map((step, index) => {
         if (typeof step === 'string') {
-          return { step };
+          return { text: step };
         }
         return {
-          step: step.step || step.instruction || step.text || `Step ${index + 1}`,
+          text: step.text || step.step || step.instruction || `Step ${index + 1}`,
           ...(step.duration && { duration: step.duration }),
-          ...(step.notes && { notes: step.notes })
+          ...(step.notes && { notes: step.notes }),
+          ...(step.media && { media: step.media })
         };
       })
     };
@@ -178,7 +179,7 @@ const normalizeStepsContent = (content) => {
   if (Array.isArray(content)) {
     return {
       steps: content.map(step => ({
-        step: typeof step === 'string' ? step : (step.step || step.instruction || step.text || '')
+        text: typeof step === 'string' ? step : (step.text || step.step || step.instruction || '')
       }))
     };
   }
