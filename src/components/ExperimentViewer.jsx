@@ -438,6 +438,21 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   
   const renderProcedureSection = (section) => {
+    console.log('[ExperimentViewer] Rendering procedure section:', section);
+    console.log('[ExperimentViewer] Section content:', section.content);
+    console.log('[ExperimentViewer] Section content type:', typeof section.content);
+    
+    // Log the steps specifically
+    if (section.content && section.content.steps) {
+      console.log('[ExperimentViewer] Procedure steps found:', section.content.steps);
+      console.log('[ExperimentViewer] Steps type:', typeof section.content.steps);
+      console.log('[ExperimentViewer] Is array?', Array.isArray(section.content.steps));
+      if (Array.isArray(section.content.steps) && section.content.steps.length > 0) {
+        console.log('[ExperimentViewer] First step:', section.content.steps[0]);
+      }
+    } else {
+      console.log('[ExperimentViewer] No steps found in section.content');
+    }
     
     return renderSectionContent(section);
   };
@@ -456,8 +471,11 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   
   const renderSectionContent = (section) => {
+    console.log('[ExperimentViewer] renderSectionContent called for section:', section.id, section.name);
     
     const sectionContent = section.content || {};
+    console.log('[ExperimentViewer] sectionContent:', sectionContent);
+    console.log('[ExperimentViewer] sectionContent keys:', Object.keys(sectionContent));
     
     
     if (typeof sectionContent === 'string') {
