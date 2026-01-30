@@ -245,6 +245,41 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             background-color: #fafafa;
         }
         
+        /* Smaller styling for safety and hazard icons */
+        .safety-icons-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            max-width: 600px;
+            justify-items: center;
+        }
+        
+        .safety-icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        
+        .safety-icon-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .safety-icon-caption {
+            margin-top: 8px;
+            font-size: 8pt;
+            color: #666;
+            text-align: center;
+            max-width: 80px;
+            word-wrap: break-word;
+            line-height: 1.2;
+        }
+        
         .media-caption {
             padding: 12px;
             background-color: #f5f5f5;
@@ -353,7 +388,33 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
       // Render media first (at the top) if present
       if (sectionMedia && sectionMedia.length > 0) {
-        htmlContent += `
+        // Check if this is a safety or hazards section for different styling
+        const isSafetySection = section.id === 'safety' || section.id === 'hazards';
+        
+        if (isSafetySection) {
+          // Use grid layout for safety icons
+          htmlContent += `
+            <div class="safety-icons-gallery">
+                ${sectionMedia.map(mediaItem => {
+                      if (mediaItem.type && mediaItem.type.startsWith('image')) {
+                        let imageSrc = mediaItem.data;
+                        if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
+                          imageSrc = new URL(imageSrc, window.location.origin).href;
+                        }
+                        return `
+                        <div class="safety-icon-item">
+                            <img src="${imageSrc}" alt="${mediaItem.caption || mediaItem.name || 'Safety Icon'}" />
+                            ${mediaItem.caption || mediaItem.name ? `<div class="safety-icon-caption">${mediaItem.caption || mediaItem.name}</div>` : ''}
+                        </div>
+                        `;
+                      }
+                      return '';
+                    }).join('\n')}
+                </div>
+`;
+        } else {
+          // Use standard layout for regular images
+          htmlContent += `
             <div class="media-gallery">
                 ${sectionMedia.map(mediaItem => {
                       if (mediaItem.type && mediaItem.type.startsWith('image')) {
@@ -385,6 +446,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     }).join('\n')}
                 </div>
 `;
+        }
       }
 
       
