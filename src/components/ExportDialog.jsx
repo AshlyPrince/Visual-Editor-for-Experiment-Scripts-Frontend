@@ -28,16 +28,22 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
   const [exportSuccess, setExportSuccess] = useState(false);
 
   const generateHTML = () => {
+    console.log('=== [EXPORT] generateHTML CALLED ===');
     if (!experiment) return '';
+
+    console.log('[EXPORT] Experiment data:', experiment);
 
     const content = typeof experiment.content === 'string' 
       ? JSON.parse(experiment.content) 
       : experiment.content;
     
+    console.log('[EXPORT] Parsed content:', content);
     
     const actualContent = content?.content || content;
     const config = actualContent?.config || {};
     const sections = actualContent?.sections || [];
+    
+    console.log('[EXPORT] Sections to process:', sections.length);
     
     let htmlContent = `
 <!DOCTYPE html>
