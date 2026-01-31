@@ -522,13 +522,14 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                   // Handle different item structures
                   if (typeof item === 'string' || typeof item === 'number') {
                     console.log(`[Export] Item ${idx} is string/number:`, item);
-                    return `<li>${item}</li>`;
+                    const text = String(item).trim();
+                    return text ? `<li>${text}</li>` : '';
                   } else if (typeof item === 'object' && item !== null) {
                     console.log(`[Export] Item ${idx} is object, keys:`, Object.keys(item));
                     console.log(`[Export] Item ${idx} values:`, Object.values(item));
                     
-                    // Try to extract meaningful text from object
-                    let itemText = item.name || item.text || item.title || item.item || '';
+                    // Try to extract meaningful text from object - try multiple property names
+                    let itemText = (item.name || item.text || item.title || item.item || '').trim();
                     console.log(`[Export] Extracted itemText for ${idx}:`, itemText);
                     
                     // Add quantity if present
@@ -546,7 +547,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                       console.log(`[Export] No itemText found, trying to extract from values`);
                       const keys = Object.keys(item);
                       if (keys.length > 0) {
-                        itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').join(' ');
+                        itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').map(v => String(v).trim()).filter(v => v).join(' ');
                         console.log(`[Export] Extracted from values:`, itemText);
                       }
                     }
@@ -624,13 +625,14 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                       // Handle different item structures
                       if (typeof item === 'string' || typeof item === 'number') {
                         console.log(`[Export] [Subsection] Item ${idx} is string/number:`, item);
-                        return `<li>${item}</li>`;
+                        const text = String(item).trim();
+                        return text ? `<li>${text}</li>` : '';
                       } else if (typeof item === 'object' && item !== null) {
                         console.log(`[Export] [Subsection] Item ${idx} is object, keys:`, Object.keys(item));
                         console.log(`[Export] [Subsection] Item ${idx} values:`, Object.values(item));
                         
-                        // Try to extract meaningful text from object
-                        let itemText = item.name || item.text || item.title || item.item || '';
+                        // Try to extract meaningful text from object - try multiple property names
+                        let itemText = (item.name || item.text || item.title || item.item || '').trim();
                         console.log(`[Export] [Subsection] Extracted itemText for ${idx}:`, itemText);
                         
                         // Add quantity if present
@@ -648,7 +650,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                           console.log(`[Export] [Subsection] No itemText found for ${idx}, trying to extract from values`);
                           const keys = Object.keys(item);
                           if (keys.length > 0) {
-                            itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').join(' ');
+                            itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').map(v => String(v).trim()).filter(v => v).join(' ');
                             console.log(`[Export] [Subsection] Extracted from values for ${idx}:`, itemText);
                           }
                         }
