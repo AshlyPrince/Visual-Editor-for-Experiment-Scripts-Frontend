@@ -879,7 +879,37 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       sections.forEach(section => {
         if (!section) return;
         
-        const sectionContent = section.content;
+        // Extract and process section content - same logic as HTML export
+        let sectionContent = section.content;
+        
+        // Parse content if it's a JSON string
+        if (typeof sectionContent === 'string') {
+          try {
+            sectionContent = JSON.parse(sectionContent);
+          } catch (e) {
+            // Keep as string if not JSON
+          }
+        }
+        
+        // Extract nested arrays (items, steps)
+        if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
+          if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
+            sectionContent = sectionContent.steps;
+          } else if (sectionContent.items && Array.isArray(sectionContent.items)) {
+            sectionContent = sectionContent.items;
+          } else if (sectionContent.content) {
+            sectionContent = sectionContent.content;
+            // Check again for nested items/steps
+            if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
+              if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
+                sectionContent = sectionContent.steps;
+              } else if (sectionContent.items && Array.isArray(sectionContent.items)) {
+                sectionContent = sectionContent.items;
+              }
+            }
+          }
+        }
+        
         const sectionMedia = section.media || []; 
         const icon = section.emoji || getSectionIcon(section.id);
         const sectionTitle = section.name || section.title || section.id || 'Section';
@@ -926,12 +956,94 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         }
 
         if (Array.isArray(sectionContent)) {
+          // Check if this is procedure steps (objects with 'text' property)
+          const isProcedureSteps = sectionContent.length > 0 && 
+                                   typeof sectionContent[0] === 'object' && 
+                                   sectionContent[0] !== null && 
+                                   'text' in sectionContent[0];
           
-          container.innerHTML += `
-            <ul style="margin: 0; padding-left: 20px;">
-              ${sectionContent.map(item => `<li style="margin-bottom: 8px;">${item}</li>`).join('')}
-            </ul>
-          `;
+          if (isProcedureSteps) {
+            // Render as ordered list for procedure steps
+            container.innerHTML += `
+              <ol style="margin: 0; padding-left: 20px;">
+                ${sectionContent.map(step => {
+                  let stepHtml = `<li style="margin-bottom: 8px;"><strong>${step.text || ''}</strong>`;
+                  if (step.notes) {
+                    stepHtml += `<div style="margin-top: 4px; font-size: 12px; color: #666;">${step.notes}</div>`;
+                  }
+                  stepHtml += `</li>`;
+                  return stepHtml;
+                }).join('')}
+              </ol>
+            `;
+          } else {
+            // Render as unordered list for materials/items
+            const itemsHtml = sectionContent.map(item => {
+              // Handle strings/numbers
+              if (typeof item === 'string' || typeof item === 'number') {
+                const text = String(item).trim();
+                return text ? `<li style="margin-bottom: 8px;">${text}</li>` : '';
+              }
+              // Handle objects
+              else if (typeof item === 'object' && item !== null) {
+                // Special case: nested array in item.item
+                if (item.item && Array.isArray(item.item)) {
+                  return item.item.map(nestedItem => {
+                    if (typeof nestedItem === 'string' || typeof nestedItem === 'number') {
+                      const text = String(nestedItem).trim();
+                      return text ? `<li style="margin-bottom: 8px;">${text}</li>` : '';
+                    } else if (typeof nestedItem === 'object' && nestedItem !== null) {
+                      const text = (nestedItem.name || nestedItem.text || nestedItem.title || nestedItem.item || '').trim();
+                      return text ? `<li style="margin-bottom: 8px;">${text}</li>` : '';
+                    }
+                    return '';
+                  }).filter(html => html).join('');
+                }
+                
+                // Extract text from object properties
+                let itemText = '';
+                if (item.item && typeof item.item === 'string') {
+                  itemText = item.item.trim();
+                } else if (item.name && typeof item.name === 'string') {
+                  itemText = item.name.trim();
+                } else if (item.text && typeof item.text === 'string') {
+                  itemText = item.text.trim();
+                } else if (item.title && typeof item.title === 'string') {
+                  itemText = item.title.trim();
+                }
+                
+                // Add quantity if present
+                if (item.quantity) {
+                  itemText += ` (${item.quantity})`;
+                }
+                
+                // Add notes if present
+                if (item.notes) {
+                  itemText += ` - ${item.notes}`;
+                }
+                
+                // Fallback: extract from values
+                if (!itemText) {
+                  itemText = Object.values(item)
+                    .filter(v => typeof v === 'string' || typeof v === 'number')
+                    .map(v => String(v).trim())
+                    .filter(v => v)
+                    .join(' ');
+                }
+                
+                return itemText ? `<li style="margin-bottom: 8px;">${itemText}</li>` : '';
+              }
+              return '';
+            }).filter(html => html).join('');
+            
+            if (itemsHtml) {
+              container.innerHTML += `
+                <ul style="margin: 0; padding-left: 20px;">
+                  ${itemsHtml}
+                </ul>
+              `;
+            }
+          }
         } else if (typeof sectionContent === 'string') {
           if (sectionContent.startsWith('<')) {
             
