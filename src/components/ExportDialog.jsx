@@ -368,7 +368,28 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
     sections.forEach(section => {
       if (!section) return;
       
-      const sectionContent = section.content;
+      console.log(`[Export] Processing section: ${section.id}`, section);
+      
+      // Extract section content - handle both direct content and nested content.steps
+      let sectionContent = section.content;
+      
+      console.log(`[Export] Initial section content for ${section.id}:`, sectionContent);
+      console.log(`[Export] Content type:`, typeof sectionContent, 'Is array:', Array.isArray(sectionContent));
+      
+      // For procedure sections with content.steps, extract the steps array
+      if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
+        if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
+          // This is a procedure section with steps
+          console.log(`[Export] Extracting steps array for ${section.id}:`, sectionContent.steps);
+          sectionContent = sectionContent.steps;
+        } else if (sectionContent.items && Array.isArray(sectionContent.items)) {
+          // This is a list/materials section with items
+          console.log(`[Export] Extracting items array for ${section.id}:`, sectionContent.items);
+          sectionContent = sectionContent.items;
+        }
+      }
+      
+      console.log(`[Export] Final section content for ${section.id}:`, sectionContent);
       
       let sectionMedia = section.media || [];
       if ((!sectionMedia || sectionMedia.length === 0) && section.content && typeof section.content === 'object' && section.content.media) {
@@ -451,11 +472,18 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
       
       if (Array.isArray(sectionContent)) {
+        console.log(`[Export] Section content is array for ${section.id}, length:`, sectionContent.length);
+        if (sectionContent.length > 0) {
+          console.log(`[Export] First item in array:`, sectionContent[0]);
+        }
+        
         // Check if this is an array of procedure steps (objects with 'text' property)
         const isProcedureSteps = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && 'text' in sectionContent[0];
         
-        // Check if this is an array of materials (objects with 'name' property)
-        const isMaterialsList = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && 'name' in sectionContent[0];
+        // Check if this is an array of materials/items (objects with properties)
+        const isMaterialsList = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null;
+        
+        console.log(`[Export] isProcedureSteps:`, isProcedureSteps, 'isMaterialsList:', isMaterialsList);
         
         if (isProcedureSteps) {
           // Render procedure steps with numbering
@@ -472,23 +500,43 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </ol>
 `;
         } else if (isMaterialsList) {
-          // Render materials list with name and quantity
+          // Render materials/items list - handle various object structures
           htmlContent += `
             <ul class="materials-list">
                 ${sectionContent.map(item => {
-                  let itemText = item.name || '';
-                  if (item.quantity) {
-                    itemText += ` (${item.quantity})`;
+                  // Handle different item structures
+                  if (typeof item === 'string' || typeof item === 'number') {
+                    return `<li>${item}</li>`;
+                  } else if (typeof item === 'object' && item !== null) {
+                    // Try to extract meaningful text from object
+                    let itemText = item.name || item.text || item.title || item.item || '';
+                    
+                    // Add quantity if present
+                    if (item.quantity) {
+                      itemText += ` (${item.quantity})`;
+                    }
+                    
+                    // Add notes if present
+                    if (item.notes) {
+                      itemText += ` - ${item.notes}`;
+                    }
+                    
+                    // If we couldn't extract any text, try to stringify key properties
+                    if (!itemText) {
+                      const keys = Object.keys(item);
+                      if (keys.length > 0) {
+                        itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').join(' ');
+                      }
+                    }
+                    
+                    return itemText ? `<li>${itemText}</li>` : '';
                   }
-                  if (item.notes) {
-                    itemText += ` - ${item.notes}`;
-                  }
-                  return `<li>${itemText}</li>`;
-                }).join('\n')}
+                  return '';
+                }).filter(html => html).join('\n')}
             </ul>
 `;
         } else {
-          // Filter for simple text items (strings/numbers)
+          // Fallback: Filter for simple text items (strings/numbers)
           const textItems = sectionContent.filter(item => typeof item === 'string' || typeof item === 'number');
           if (textItems.length > 0) {
             htmlContent += `
@@ -514,11 +562,13 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           const keyLabel = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
           
           if (Array.isArray(value)) {
+            console.log(`[Export] Processing array value for key "${key}":`, value);
+            
             // Check if this is an array of procedure steps (objects with 'text' property)
             const isProcedureSteps = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'text' in value[0];
             
-            // Check if this is an array of materials (objects with 'name' property)
-            const isMaterialsList = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'name' in value[0];
+            // Check if this is an array of objects (materials, items, etc.)
+            const isObjectList = value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
             
             if (isProcedureSteps) {
               // Render procedure steps with numbering
@@ -537,27 +587,47 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                 </ol>
             </div>
 `;
-            } else if (isMaterialsList) {
-              // Render materials list with name and quantity
+            } else if (isObjectList) {
+              // Render list of objects (materials, items, etc.)
               htmlContent += `
             <div class="subsection">
                 <div class="subsection-title">${keyLabel}</div>
                 <ul class="materials-list">
                     ${value.map(item => {
-                      let itemText = item.name || '';
-                      if (item.quantity) {
-                        itemText += ` (${item.quantity})`;
+                      // Handle different item structures
+                      if (typeof item === 'string' || typeof item === 'number') {
+                        return `<li>${item}</li>`;
+                      } else if (typeof item === 'object' && item !== null) {
+                        // Try to extract meaningful text from object
+                        let itemText = item.name || item.text || item.title || item.item || '';
+                        
+                        // Add quantity if present
+                        if (item.quantity) {
+                          itemText += ` (${item.quantity})`;
+                        }
+                        
+                        // Add notes if present
+                        if (item.notes) {
+                          itemText += ` - ${item.notes}`;
+                        }
+                        
+                        // If we couldn't extract any text, try to stringify key properties
+                        if (!itemText) {
+                          const keys = Object.keys(item);
+                          if (keys.length > 0) {
+                            itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').join(' ');
+                          }
+                        }
+                        
+                        return itemText ? `<li>${itemText}</li>` : '';
                       }
-                      if (item.notes) {
-                        itemText += ` - ${item.notes}`;
-                      }
-                      return `<li>${itemText}</li>`;
-                    }).join('\n')}
+                      return '';
+                    }).filter(html => html).join('\n')}
                 </ul>
             </div>
 `;
             } else {
-              // Filter for simple text items (strings/numbers)
+              // Fallback: Filter for simple text items (strings/numbers)
               const textItems = value.filter(item => typeof item === 'string' || typeof item === 'number');
               if (textItems.length > 0) {
                 htmlContent += `
@@ -570,6 +640,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 `;
               }
             }
+          } else if (typeof value === 'string') {
+            htmlContent += `
+            <div class="subsection">
+                <div class="subsection-title">${keyLabel}</div>
+                <p>${value}</p>
+            </div>
+`;
+          } else if (typeof value === 'object' && value !== null) {
+            // Skip objects that couldn't be handled - don't render [object Object]
+            console.warn(`[Export] Skipping unhandled object value for key "${key}":`, value);
           } else {
             htmlContent += `
             <div class="subsection">
