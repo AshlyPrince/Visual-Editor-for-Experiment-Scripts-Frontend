@@ -31,7 +31,8 @@ export const useLLMChat = (initialOptions = {}) => {
       
       const response = await sendChatConversation(
         updatedMessages,
-        { ...defaultOptions, ...options }
+        { ...defaultOptions, ...options },
+        t
       );
       
       
@@ -45,7 +46,7 @@ export const useLLMChat = (initialOptions = {}) => {
       
       return assistantMessage;
     } catch (err) {
-      const errorMessage = err.message || t('llm.failedToSendMessage');
+      const errorMessage = err.message || t('llm.chat.error', 'Failed to get response. Please try again.');
       setError(errorMessage);
       
       
@@ -55,7 +56,7 @@ export const useLLMChat = (initialOptions = {}) => {
     } finally {
       setLoading(false);
     }
-  }, [messages, defaultOptions]);
+  }, [messages, defaultOptions, t]);
 
   
   const sendWithSystemPrompt = useCallback(async (systemPrompt, userContent, options = {}) => {
@@ -70,7 +71,8 @@ export const useLLMChat = (initialOptions = {}) => {
     try {
       const response = await sendChatConversation(
         conversationMessages,
-        { ...defaultOptions, ...options }
+        { ...defaultOptions, ...options },
+        t
       );
       
       const assistantMessage = {
@@ -86,13 +88,13 @@ export const useLLMChat = (initialOptions = {}) => {
       
       return assistantMessage;
     } catch (err) {
-      const errorMessage = err.message || t('llm.failedToSendMessage');
+      const errorMessage = err.message || t('llm.chat.error', 'Failed to get response. Please try again.');
       setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
     }
-  }, [defaultOptions]);
+  }, [defaultOptions, t]);
 
   
   const clearMessages = useCallback(() => {
