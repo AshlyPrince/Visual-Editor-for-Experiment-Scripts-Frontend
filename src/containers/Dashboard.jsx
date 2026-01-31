@@ -32,15 +32,16 @@ import {
   Delete as DeleteIcon,
   History as HistoryIcon,
   GetApp as ExportIcon,
-  Science as ScienceIcon,
+  ScienceIcon,
   Search as SearchIcon,
   Clear as ClearIcon,
-  Refresh as RefreshIcon
+  Help as HelpIcon
 } from '@mui/icons-material';
 import { useAsyncOperation, useNotifications } from '../hooks/exports';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog.jsx';
 import ExportDialog from '../components/ExportDialog.jsx';
 import VersionHistory from '../components/VersionHistory.jsx';
+import HelpGuide from '../components/HelpGuide.jsx';
 
 const DashboardContainer = styled(Box)(({ theme }) => ({
   paddingLeft: theme.spacing(4),
@@ -96,6 +97,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const [exportingExperiment, setExportingExperiment] = useState(null);
   const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
   const [versionHistoryExperiment, setVersionHistoryExperiment] = useState(null);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const { addNotification } = useNotifications();
   const {
@@ -579,12 +581,11 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           <Button
             variant="outlined"
             color="primary"
-            startIcon={<RefreshIcon />}
-            onClick={refreshDashboard}
-            disabled={loading}
+            startIcon={<HelpIcon />}
+            onClick={() => setHelpOpen(true)}
             sx={{ fontWeight: 600 }}
           >
-            {t('common.refresh') || 'Refresh'}
+            {t('help.helpGuide', 'Help')}
           </Button>
           
           {!loading && allExperiments.length > 0 && (
@@ -853,6 +854,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           </DialogActions>
         </Dialog>
       )}
+
+      <HelpGuide open={helpOpen} onClose={() => setHelpOpen(false)} />
     </DashboardContainer>
   );
 };
