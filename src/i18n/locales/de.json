@@ -1208,6 +1208,68 @@
     "q8": "Kann ich die Sprache wechseln?",
     "a8": "Ja! Verwenden Sie den Sprachumschalter in der oberen Navigationsleiste, um zwischen Englisch und Deutsch zu wechseln. Ihr Experimentinhalt bleibt unverändert, aber die Schnittstellenbeschriftungen ändern sich.",
     "close": "Schließen"
+  },
+  "onboarding": {
+    "tourTitle": "Schnellstart-Tour",
+    "skip": "Tour überspringen",
+    "finish": "Los geht's!",
+    "stepCounter": "Schritt {{current}} von {{total}}",
+    "welcome": {
+      "title": "Willkommen beim Visual Editor!",
+      "content": "Lassen Sie uns eine kurze Tour machen, um Ihnen den Einstieg in die Erstellung von Experiment-Skripten zu erleichtern.",
+      "detail1": "Erstellen Sie professionelle Experiment-Skripte",
+      "detail2": "Fügen Sie Bilder, Videos und Sicherheitsinformationen hinzu",
+      "detail3": "Exportieren Sie als PDF oder HTML zum Teilen",
+      "detail4": "Verfolgen Sie Versionen und Änderungen im Laufe der Zeit"
+    },
+    "create": {
+      "title": "Ihr erstes Experiment erstellen",
+      "content": "Klicken Sie auf die Schaltfläche \"Neues Experiment erstellen\", um mit der Erstellung Ihres Experiment-Skripts zu beginnen.",
+      "detail1": "Wählen Sie aus Vorlagen oder beginnen Sie von Grund auf",
+      "detail2": "Geben Sie einen beschreibenden Titel und eine Zusammenfassung ein",
+      "detail3": "Wählen Sie relevante Abschnitte aus (Materialien, Verfahren usw.)",
+      "detail4": "Fügen Sie benutzerdefinierte Abschnitte für spezifische Bedürfnisse hinzu"
+    },
+    "sections": {
+      "title": "Arbeiten mit Abschnitten",
+      "content": "Jedes Experiment ist in Abschnitte wie Materialien, Verfahren, Sicherheitsmaßnahmen und mehr organisiert.",
+      "detail1": "Materialien & Ausrüstung: Listen Sie erforderliche Gegenstände auf",
+      "detail2": "Verfahren: Fügen Sie Schritt-für-Schritt-Anweisungen hinzu",
+      "detail3": "Sicherheit: Fügen Sie Warnungen und Schutzausrüstung hinzu",
+      "detail4": "Medien: Laden Sie Bilder und Videos hoch"
+    },
+    "editing": {
+      "title": "Inhalte bearbeiten",
+      "content": "Verwenden Sie den Rich-Text-Editor, um Ihre Inhalte zu formatieren und Mediendateien hinzuzufügen.",
+      "detail1": "Formatieren Sie Text mit Fett, Kursiv, Listen",
+      "detail2": "Laden Sie Bilder von Ihrem Computer hoch",
+      "detail3": "Fügen Sie Verfahrensschritte mit Notizen hinzu",
+      "detail4": "Wählen Sie Sicherheitssymbole aus der Bibliothek aus"
+    },
+    "saving": {
+      "title": "Ihre Arbeit speichern",
+      "content": "Speichern Sie Ihre Arbeit immer regelmäßig. Das System erstellt automatische Versionen.",
+      "detail1": "Klicken Sie nach dem Vornehmen von Änderungen auf die Schaltfläche Speichern",
+      "detail2": "Jedes Speichern erstellt eine neue Version",
+      "detail3": "Zeigen Sie jederzeit die Versionshistorie an",
+      "detail4": "Vergleichen oder stellen Sie frühere Versionen wieder her"
+    },
+    "export": {
+      "title": "Exportieren & Teilen",
+      "content": "Exportieren Sie Ihr fertiggestelltes Experiment als PDF oder HTML, um es mit Studierenden zu teilen.",
+      "detail1": "PDF: Perfekt zum Drucken und für die Offline-Nutzung",
+      "detail2": "HTML: Interaktives webfreundliches Format",
+      "detail3": "Alle Mediendateien sind enthalten",
+      "detail4": "Professionelle Formatierung angewendet"
+    },
+    "help": {
+      "title": "Hilfe erhalten",
+      "content": "Greifen Sie jederzeit auf das Hilfehandbuch zu, wenn Sie Unterstützung benötigen oder Funktionen überprüfen möchten.",
+      "detail1": "Klicken Sie auf die Schaltfläche Hilfe im Dashboard",
+      "detail2": "Durchsuchen Sie Erste Schritte, Funktionen und Tipps",
+      "detail3": "Überprüfen Sie die FAQ für häufige Fragen",
+      "detail4": "Verfügbar in Englisch und Deutsch"
+    }
   }
 }
 

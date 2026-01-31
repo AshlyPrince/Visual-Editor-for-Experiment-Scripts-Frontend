@@ -42,6 +42,7 @@ import DeleteConfirmDialog from '../components/DeleteConfirmDialog.jsx';
 import ExportDialog from '../components/ExportDialog.jsx';
 import VersionHistory from '../components/VersionHistory.jsx';
 import HelpGuide from '../components/HelpGuide.jsx';
+import OnboardingTour from '../components/OnboardingTour.jsx';
 
 const DashboardContainer = styled(Box)(({ theme }) => ({
   paddingLeft: theme.spacing(4),
@@ -98,6 +99,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
   const [versionHistoryExperiment, setVersionHistoryExperiment] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
 
   const { addNotification } = useNotifications();
   const {
@@ -348,7 +350,16 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     };
 
     loadDashboardData();
-  }, [i18nReady]); // Wait for i18n to be ready before loading data 
+  }, [i18nReady]);
+  
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    if (!hasSeenOnboarding && !loading && i18nReady) {
+      setTimeout(() => {
+        setOnboardingOpen(true);
+      }, 1000);
+    }
+  }, [loading, i18nReady]);
   
   
   useEffect(() => {
@@ -458,6 +469,11 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   
   const handleClearSearch = () => {
     setSearchQuery('');
+  };
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('hasSeenOnboarding', 'true');
+    setOnboardingOpen(false);
   };
 
   const handleDeleteClick = () => {
@@ -856,6 +872,12 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       )}
 
       <HelpGuide open={helpOpen} onClose={() => setHelpOpen(false)} />
+      
+      <OnboardingTour 
+        open={onboardingOpen} 
+        onClose={() => setOnboardingOpen(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </DashboardContainer>
   );
 };

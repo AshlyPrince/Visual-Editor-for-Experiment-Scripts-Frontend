@@ -1208,6 +1208,68 @@
     "q8": "Can I switch languages?",
     "a8": "Yes! Use the language switcher in the top navigation bar to toggle between English and German. Your experiment content remains unchanged, but the interface labels will change.",
     "close": "Close"
+  },
+  "onboarding": {
+    "tourTitle": "Quick Start Tour",
+    "skip": "Skip Tour",
+    "finish": "Get Started!",
+    "stepCounter": "Step {{current}} of {{total}}",
+    "welcome": {
+      "title": "Welcome to Visual Editor!",
+      "content": "Let's take a quick tour to help you get started with creating experiment scripts.",
+      "detail1": "Create professional experiment scripts",
+      "detail2": "Add images, videos, and safety information",
+      "detail3": "Export as PDF or HTML for sharing",
+      "detail4": "Track versions and changes over time"
+    },
+    "create": {
+      "title": "Creating Your First Experiment",
+      "content": "Click the \"Create New Experiment\" button to start building your experiment script.",
+      "detail1": "Choose from templates or start from scratch",
+      "detail2": "Enter a descriptive title and summary",
+      "detail3": "Select relevant sections (materials, procedure, etc.)",
+      "detail4": "Add custom sections for specific needs"
+    },
+    "sections": {
+      "title": "Working with Sections",
+      "content": "Each experiment is organized into sections like materials, procedure, safety measures, and more.",
+      "detail1": "Materials & Equipment: List required items",
+      "detail2": "Procedure: Add step-by-step instructions",
+      "detail3": "Safety: Include warnings and protective gear",
+      "detail4": "Media: Upload images and videos"
+    },
+    "editing": {
+      "title": "Editing Content",
+      "content": "Use the rich text editor to format your content and add media files.",
+      "detail1": "Format text with bold, italic, lists",
+      "detail2": "Upload images from your computer",
+      "detail3": "Add procedure steps with notes",
+      "detail4": "Select safety icons from the library"
+    },
+    "saving": {
+      "title": "Saving Your Work",
+      "content": "Always save your work regularly. The system creates automatic versions.",
+      "detail1": "Click Save button after making changes",
+      "detail2": "Each save creates a new version",
+      "detail3": "View version history anytime",
+      "detail4": "Compare or restore previous versions"
+    },
+    "export": {
+      "title": "Exporting & Sharing",
+      "content": "Export your completed experiment as PDF or HTML to share with students.",
+      "detail1": "PDF: Perfect for printing and offline use",
+      "detail2": "HTML: Interactive web-friendly format",
+      "detail3": "All media files are included",
+      "detail4": "Professional formatting applied"
+    },
+    "help": {
+      "title": "Getting Help",
+      "content": "Access the Help Guide anytime you need assistance or want to review features.",
+      "detail1": "Click the Help button on the dashboard",
+      "detail2": "Browse Getting Started, Features, and Tips",
+      "detail3": "Check FAQ for common questions",
+      "detail4": "Available in English and German"
+    }
   }
 }
 
