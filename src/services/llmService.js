@@ -1,5 +1,3 @@
- 
-
 import api from '../lib/api';
 
 export const sendChatMessage = async (message, options = {}, t = null) => {
@@ -29,8 +27,15 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
   } catch (error) {
     const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
-    if (error.response?.status === 500) {
-      throw new Error(errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.'));
+    // Extract backend error message if available
+    const backendError = error.response?.data?.error || error.response?.data?.details;
+    
+    if (error.response?.status === 503) {
+      const defaultMsg = errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.');
+      throw new Error(backendError || defaultMsg);
+    } else if (error.response?.status === 500) {
+      const defaultMsg = errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.');
+      throw new Error(backendError || defaultMsg);
     } else if (error.response?.status === 404) {
       throw new Error(errorMsg('llm.errors.serviceNotAvailable', 'AI service is not available. Please contact support.'));
     } else if (error.response?.status === 401 || error.response?.status === 403) {
@@ -41,7 +46,7 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
       throw new Error(errorMsg('llm.errors.connectionFailed', 'Unable to connect to AI service. Please check your internet connection.'));
     }
     
-    throw new Error(errorMsg('llm.errors.generalError', 'AI assistance is temporarily unavailable. Please try again.'));
+    throw new Error(backendError || errorMsg('llm.errors.generalError', 'AI assistance is temporarily unavailable. Please try again.'));
   }
 };
 
@@ -70,8 +75,15 @@ export const sendChatConversation = async (messages, options = {}, t = null) => 
   } catch (error) {
     const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
-    if (error.response?.status === 500) {
-      throw new Error(errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.'));
+    // Extract backend error message if available
+    const backendError = error.response?.data?.error || error.response?.data?.details;
+    
+    if (error.response?.status === 503) {
+      const defaultMsg = errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.');
+      throw new Error(backendError || defaultMsg);
+    } else if (error.response?.status === 500) {
+      const defaultMsg = errorMsg('llm.errors.serviceUnavailable', 'AI service is temporarily unavailable. Please try again in a moment.');
+      throw new Error(backendError || defaultMsg);
     } else if (error.response?.status === 404) {
       throw new Error(errorMsg('llm.errors.serviceNotAvailable', 'AI service is not available. Please contact support.'));
     } else if (error.response?.status === 401 || error.response?.status === 403) {
@@ -82,7 +94,7 @@ export const sendChatConversation = async (messages, options = {}, t = null) => 
       throw new Error(errorMsg('llm.errors.connectionFailed', 'Unable to connect to AI service. Please check your internet connection.'));
     }
     
-    throw new Error(errorMsg('llm.errors.generalError', 'AI assistance is temporarily unavailable. Please try again.'));
+    throw new Error(backendError || errorMsg('llm.errors.generalError', 'AI assistance is temporarily unavailable. Please try again.'));
   }
 };
 

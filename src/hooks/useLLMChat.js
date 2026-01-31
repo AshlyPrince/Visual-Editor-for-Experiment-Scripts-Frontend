@@ -11,7 +11,7 @@ export const useLLMChat = (initialOptions = {}) => {
   const [error, setError] = useState(null);
 
   const defaultOptions = {
-    model: 'meta-llama-3.3-70b-instruct',
+    // Model not specified - backend will use its default (same as Polish & Consistency Check)
     temperature: 0.7,
     max_tokens: 512,
     ...initialOptions
