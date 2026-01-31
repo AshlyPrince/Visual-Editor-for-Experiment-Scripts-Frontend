@@ -409,6 +409,28 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       
       console.log(`[Export] Final section content for ${section.id}:`, sectionContent);
       
+      // Additional check: if it's still an object with nested content, unwrap it
+      if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
+        // Check if there's a nested content property
+        if (sectionContent.content) {
+          console.log(`[Export] Found nested content.content for ${section.id}:`, sectionContent.content);
+          sectionContent = sectionContent.content;
+          
+          // If the nested content also has items or steps, extract those
+          if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
+            if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
+              console.log(`[Export] Extracting nested steps for ${section.id}:`, sectionContent.steps);
+              sectionContent = sectionContent.steps;
+            } else if (sectionContent.items && Array.isArray(sectionContent.items)) {
+              console.log(`[Export] Extracting nested items for ${section.id}:`, sectionContent.items);
+              sectionContent = sectionContent.items;
+            }
+          }
+        }
+      }
+      
+      console.log(`[Export] After unwrapping, section content for ${section.id}:`, sectionContent);
+      
       let sectionMedia = section.media || [];
       if ((!sectionMedia || sectionMedia.length === 0) && section.content && typeof section.content === 'object' && section.content.media) {
         sectionMedia = section.content.media;
@@ -534,8 +556,36 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     console.log(`[Export] Item ${idx} is object, keys:`, Object.keys(item));
                     console.log(`[Export] Item ${idx} values:`, Object.values(item));
                     
+                    // Special case: if item.item is an array, we need to process each element
+                    if (item.item && Array.isArray(item.item)) {
+                      console.log(`[Export] Item ${idx} has nested array in .item property:`, item.item);
+                      return item.item.map((nestedItem, nestedIdx) => {
+                        console.log(`[Export] Processing nested item ${nestedIdx}:`, nestedItem);
+                        if (typeof nestedItem === 'string' || typeof nestedItem === 'number') {
+                          const text = String(nestedItem).trim();
+                          return text ? `<li>${text}</li>` : '';
+                        } else if (typeof nestedItem === 'object' && nestedItem !== null) {
+                          const text = (nestedItem.name || nestedItem.text || nestedItem.title || nestedItem.item || '').trim();
+                          return text ? `<li>${text}</li>` : '';
+                        }
+                        return '';
+                      }).filter(html => html).join('\n');
+                    }
+                    
                     // Try to extract meaningful text from object - try multiple property names
-                    let itemText = (item.name || item.text || item.title || item.item || '').trim();
+                    let itemText = '';
+                    
+                    // Check if item.item exists and is a string
+                    if (item.item && typeof item.item === 'string') {
+                      itemText = item.item.trim();
+                    } else if (item.name && typeof item.name === 'string') {
+                      itemText = item.name.trim();
+                    } else if (item.text && typeof item.text === 'string') {
+                      itemText = item.text.trim();
+                    } else if (item.title && typeof item.title === 'string') {
+                      itemText = item.title.trim();
+                    }
+                    
                     console.log(`[Export] Extracted itemText for ${idx}:`, itemText);
                     
                     // Add quantity if present
