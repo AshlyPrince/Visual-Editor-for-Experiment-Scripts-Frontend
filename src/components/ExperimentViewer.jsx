@@ -504,6 +504,35 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       console.log(`[ExperimentViewer] Key "${key}":`, value, 'Type:', Array.isArray(value) ? 'Array' : typeof value);
     });
     
+    // Check if section has any actual content
+    const hasContent = () => {
+      if (typeof sectionContent === 'string' && sectionContent.trim()) {
+        return true;
+      }
+      if (typeof sectionContent === 'object') {
+        // Check for non-empty fields (excluding media)
+        const hasNonEmptyFields = Object.entries(sectionContent).some(([key, value]) => {
+          if (key === 'media') return false;
+          if (Array.isArray(value) && value.length > 0) return true;
+          if (typeof value === 'string' && value.trim()) return true;
+          if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) return true;
+          return false;
+        });
+        if (hasNonEmptyFields) return true;
+        
+        // Check if there's media
+        if (section.media && Array.isArray(section.media) && section.media.length > 0) return true;
+        if (sectionContent.media && Array.isArray(sectionContent.media) && sectionContent.media.length > 0) return true;
+      }
+      return false;
+    };
+    
+    // Don't render section if it has no content
+    if (!hasContent()) {
+      console.log(`[ExperimentViewer] Section "${section.name}" has no content, skipping render`);
+      return null;
+    }
+    
     
     if (typeof sectionContent === 'string') {
       return (
