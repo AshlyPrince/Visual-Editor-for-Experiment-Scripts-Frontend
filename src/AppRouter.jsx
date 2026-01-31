@@ -11,12 +11,15 @@ import {
   AppBar,
   Toolbar,
   ThemeProvider,
-  CssBaseline
+  CssBaseline,
+  IconButton,
+  Tooltip
 } from '@mui/material';
-import { Science } from '@mui/icons-material';
+import { Science, Help as HelpIcon } from '@mui/icons-material';
 import { Dashboard, ExperimentDashboard, ExperimentWizard, ExperimentListContainer } from './containers/exports.js';
 import DevelopmentModeIndicator from './components/ui/DevelopmentModeIndicator.jsx';
 import UserInfo from './components/UserInfo.jsx';
+import HelpGuide from './components/HelpGuide.jsx';
 import ModularExperimentWizard from './containers/ModularExperimentWizard.jsx';
 import ExperimentViewer from './components/ExperimentViewer.jsx';
 import { keycloakService } from './services/exports.js';
@@ -112,10 +115,19 @@ function LoginPage() {
 function Layout({ children }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const handleLogout = async () => {
     await keycloakService.logout();
     navigate('/login');
+  };
+
+  const handleHelpOpen = () => {
+    setHelpOpen(true);
+  };
+
+  const handleHelpClose = () => {
+    setHelpOpen(false);
   };
 
   return (
@@ -136,12 +148,22 @@ function Layout({ children }) {
           >
             Visual Editor Platform
           </Typography>
+          <Tooltip title={t('help.helpGuide', 'Help & User Guide')}>
+            <IconButton
+              color="inherit"
+              onClick={handleHelpOpen}
+              sx={{ mr: 2 }}
+            >
+              <HelpIcon />
+            </IconButton>
+          </Tooltip>
           <UserInfo onLogout={handleLogout} />
         </Toolbar>
       </AppBar>
       <Container maxWidth="xl" sx={{ py: 4 }}>
         {children}
       </Container>
+      <HelpGuide open={helpOpen} onClose={handleHelpClose} />
     </Box>
   );
 }
