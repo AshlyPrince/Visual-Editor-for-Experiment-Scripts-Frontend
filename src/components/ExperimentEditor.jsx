@@ -29,6 +29,8 @@ import {
   FormControl,
   InputLabel,
   Autocomplete,
+  Fab,
+  Tooltip,
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -39,6 +41,7 @@ import {
   Edit as EditIcon,
   DragIndicator,
   GetApp as ExportIcon,
+  Chat as ChatIcon,
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
 import RichTextEditor from './RichTextEditor.jsx';
@@ -49,6 +52,7 @@ import VersionHistory from './VersionHistory.jsx';
 import ExportDialog from './ExportDialog.jsx';
 import VersionConflictDialog from './VersionConflictDialog.jsx';
 import MediaUploader from './MediaUploader.jsx';
+import ChatAssistant from './ChatAssistant.jsx';
 import { normalizeExperiment, denormalizeExperiment, denormalizeSection, getContentSummary } from '../utils/experimentDataNormalizer.js';
 
 const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
@@ -80,6 +84,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const [newSectionType, setNewSectionType] = useState('');
   const [conflictDialogOpen, setConflictDialogOpen] = useState(false);
   const [conflictDetails, setConflictDetails] = useState(null);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     if (experimentId) {
@@ -800,6 +805,56 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           window.open(`/experiments/${experimentId}/edit?restore=true`, '_blank');
         }}
       />
+
+      {/* Floating AI Chat Assistant Button */}
+      <Tooltip title={t('llm.chat.openAssistant', 'Open AI Assistant')} placement="left">
+        <Fab
+          color="secondary"
+          aria-label="ai assistant"
+          onClick={() => setChatOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            zIndex: 1000,
+          }}
+        >
+          <ChatIcon />
+        </Fab>
+      </Tooltip>
+
+      {/* AI Chat Assistant Dialog */}
+      <Dialog
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            height: '80vh',
+            maxHeight: '700px',
+          }
+        }}
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ChatIcon color="secondary" />
+            <Typography variant="h6">{t('llm.chat.title', 'AI Assistant')}</Typography>
+          </Box>
+          <IconButton onClick={() => setChatOpen(false)} size="small">
+            <ArrowBack />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 0, display: 'flex', flexDirection: 'column' }}>
+          <ChatAssistant
+            title=""
+            placeholder={t('llm.chat.placeholder', 'Ask me anything about your experiment...')}
+            systemPrompt={t('llm.chat.systemPrompt', 'You are an AI assistant helping with scientific experiment design. Provide clear, practical advice about procedures, safety, materials, and best practices.')}
+            showHeader={false}
+            maxHeight="100%"
+          />
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 };

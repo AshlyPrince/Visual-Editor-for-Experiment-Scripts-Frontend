@@ -30,7 +30,8 @@ import {
   Tooltip,
   Stack,
   CircularProgress,
-  Autocomplete
+  Autocomplete,
+  Fab
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { 
@@ -47,7 +48,9 @@ import {
   Preview as PreviewIcon,
   NavigateBefore as BackIcon,
   NavigateNext as NextIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
+  Chat as ChatIcon,
+  Close as CloseIcon
 } from '@mui/icons-material';
 import WizardStepper from '../components/ui/WizardStepper.jsx';
 import { 
@@ -61,6 +64,7 @@ import ListInput from '../components/ListInput';
 import ProcedureStepsEditor from '../components/ProcedureStepsEditor';
 import MediaUploader from '../components/MediaUploader';
 import ContentReviewPanel from '../components/ContentReviewPanel';
+import ChatAssistant from '../components/ChatAssistant';
 import { experimentService } from '../services/exports.js';
 import keycloakService from '../services/keycloakService.js';
 import { toCanonical, toWizardState, fromWizardState } from '../utils/experimentCanonical.js';
@@ -335,6 +339,7 @@ const ModularExperimentWizard = ({
   const [newCustomSectionName, setNewCustomSectionName] = useState('');
   const [newCustomSectionDescription, setNewCustomSectionDescription] = useState('');
   const [discardDialog, setDiscardDialog] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     if (!existingExperiment && (basicInfo.title || selectedSectionIds.length > 0)) {
@@ -2009,6 +2014,56 @@ const ModularExperimentWizard = ({
             {t('wizard.draft.discardButton')}
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Floating AI Chat Assistant Button */}
+      <Tooltip title={t('llm.chat.openAssistant', 'Open AI Assistant')} placement="left">
+        <Fab
+          color="secondary"
+          aria-label="ai assistant"
+          onClick={() => setChatOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            zIndex: 1000,
+          }}
+        >
+          <ChatIcon />
+        </Fab>
+      </Tooltip>
+
+      {/* AI Chat Assistant Dialog */}
+      <Dialog
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            height: '80vh',
+            maxHeight: '700px',
+          }
+        }}
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ChatIcon color="secondary" />
+            <Typography variant="h6">{t('llm.chat.title', 'AI Assistant')}</Typography>
+          </Box>
+          <IconButton onClick={() => setChatOpen(false)} size="small">
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 0, display: 'flex', flexDirection: 'column' }}>
+          <ChatAssistant
+            title=""
+            placeholder={t('llm.chat.placeholder', 'Ask me anything about your experiment...')}
+            systemPrompt={t('llm.chat.systemPrompt', 'You are an AI assistant helping with scientific experiment design. Provide clear, practical advice about procedures, safety, materials, and best practices.')}
+            showHeader={false}
+            maxHeight="100%"
+          />
+        </DialogContent>
       </Dialog>
     </>
   );

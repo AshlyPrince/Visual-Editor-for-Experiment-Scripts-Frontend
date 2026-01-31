@@ -992,6 +992,7 @@
     "chat": {
       "title": "Experiment Assistant",
       "placeholder": "Ask about your experiment...",
+      "openAssistant": "Open AI Assistant",
       "systemPrompt": "You are an AI assistant helping with scientific experiment design. Provide clear, practical advice.",
       "clearConversation": "Clear conversation",
       "send": "Send"
