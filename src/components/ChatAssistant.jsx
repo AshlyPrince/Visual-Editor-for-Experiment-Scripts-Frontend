@@ -17,7 +17,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
-import { useLLMChat } from '../../hooks/useLLMChat';
+import { useLLMChat } from '../hooks/useLLMChat';
 import { useTranslation } from 'react-i18next';
 
 const ChatAssistant = ({
