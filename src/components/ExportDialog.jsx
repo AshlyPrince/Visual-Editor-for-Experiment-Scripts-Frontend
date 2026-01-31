@@ -373,6 +373,18 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       // Extract section content - handle both direct content and nested content.steps
       let sectionContent = section.content;
       
+      // Parse content if it's a JSON string
+      if (typeof sectionContent === 'string') {
+        try {
+          const parsed = JSON.parse(sectionContent);
+          console.log(`[Export] Parsed JSON string content for ${section.id}:`, parsed);
+          sectionContent = parsed;
+        } catch (e) {
+          // If parsing fails, it's probably HTML or plain text, keep as is
+          console.log(`[Export] Content for ${section.id} is string (not JSON):`, sectionContent.substring(0, 100));
+        }
+      }
+      
       console.log(`[Export] Initial section content for ${section.id}:`, sectionContent);
       console.log(`[Export] Content type:`, typeof sectionContent, 'Is array:', Array.isArray(sectionContent));
       
