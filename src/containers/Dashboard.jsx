@@ -32,7 +32,7 @@ import {
   Delete as DeleteIcon,
   History as HistoryIcon,
   GetApp as ExportIcon,
-  ScienceIcon,
+  Science as ScienceIcon,
   Search as SearchIcon,
   Clear as ClearIcon,
   Help as HelpIcon
