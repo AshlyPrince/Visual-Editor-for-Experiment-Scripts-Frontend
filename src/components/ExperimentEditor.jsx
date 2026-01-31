@@ -849,7 +849,30 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           <ChatAssistant
             title=""
             placeholder={t('llm.chat.placeholder', 'Ask me anything about your experiment...')}
-            systemPrompt={t('llm.chat.systemPrompt', 'You are an AI assistant helping with scientific experiment design. Provide clear, practical advice about procedures, safety, materials, and best practices.')}
+            systemPrompt={`You are an AI assistant helping with scientific experiment design. You have access to the current experiment context and should provide specific, relevant advice.
+
+CURRENT EXPERIMENT CONTEXT:
+Title: ${title || '(not set yet)'}
+Duration: ${duration || '(not set yet)'}
+Course: ${course || '(not set yet)'}
+Program: ${program || '(not set yet)'}
+
+Sections:
+${sections.map(section => {
+  const sectionName = section.title || section.type;
+  const contentSummary = getContentSummary(section);
+  return `- ${sectionName}: ${contentSummary}`;
+}).join('\n')}
+
+INSTRUCTIONS:
+1. Reference the specific experiment details above when answering questions
+2. Provide practical, actionable advice tailored to this experiment
+3. Suggest improvements based on what's already there or missing
+4. Point out inconsistencies or gaps in the current sections
+5. Recommend safety precautions based on mentioned materials/chemicals
+6. Help with scientific writing, methodology, and best practices
+
+Be specific to THIS experiment - don't give generic advice. If sections are incomplete, guide the user on what to add.`}
             showHeader={false}
             maxHeight="100%"
           />

@@ -2059,7 +2059,49 @@ const ModularExperimentWizard = ({
           <ChatAssistant
             title=""
             placeholder={t('llm.chat.placeholder', 'Ask me anything about your experiment...')}
-            systemPrompt={t('llm.chat.systemPrompt', 'You are an AI assistant helping with scientific experiment design. Provide clear, practical advice about procedures, safety, materials, and best practices.')}
+            systemPrompt={`You are an AI assistant helping with scientific experiment design. You have access to the current experiment draft and should provide specific, relevant advice.
+
+CURRENT EXPERIMENT DRAFT:
+Title: ${basicInfo.title || '(not set yet)'}
+Duration: ${basicInfo.duration || '(not set yet)'}
+Course: ${basicInfo.course || '(not set yet)'}
+Program: ${basicInfo.program || '(not set yet)'}
+
+Selected Sections: ${selectedSectionIds.length > 0 ? selectedSectionIds.join(', ') : '(none selected yet)'}
+
+Section Content:
+${selectedSectionIds.map(sectionId => {
+  const section = availableSections.find(s => s.id === sectionId) || customSections.find(s => s.id === sectionId);
+  const sectionName = section?.name || sectionId;
+  const content = sectionContent[sectionId];
+  
+  let summary = '(empty)';
+  if (content) {
+    if (typeof content === 'string') {
+      summary = content.substring(0, 150) + (content.length > 150 ? '...' : '');
+    } else if (Array.isArray(content)) {
+      summary = `${content.length} items: ${content.slice(0, 3).join(', ')}${content.length > 3 ? '...' : ''}`;
+    } else if (typeof content === 'object') {
+      const keys = Object.keys(content);
+      summary = `${keys.length} fields: ${keys.join(', ')}`;
+    }
+  }
+  
+  return `- ${sectionName}: ${summary}`;
+}).join('\n')}
+
+Current Step: ${currentStep + 1} of 3
+
+INSTRUCTIONS:
+1. Reference the specific experiment details above when answering questions
+2. Provide practical, actionable advice tailored to this experiment
+3. Suggest what sections to add based on the experiment type
+4. Help fill out incomplete sections with relevant content
+5. Point out inconsistencies or missing information
+6. Recommend safety precautions based on mentioned materials
+7. Guide through best practices for scientific experiments
+
+Be specific to THIS experiment - help the user build it step by step. If they're stuck, suggest what to add next.`}
             showHeader={false}
             maxHeight="100%"
           />
