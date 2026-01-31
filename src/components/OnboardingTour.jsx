@@ -85,25 +85,15 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
       ]
     },
     {
-      title: t('onboarding.textPolishing.title', 'AI-Powered Text Polishing'),
-      content: t('onboarding.textPolishing.content', 'Our intelligent text polisher helps you write clear, professional experiment descriptions:'),
-      icon: <PolishIcon sx={{ fontSize: 60, color: '#e91e63' }} />,
+      title: t('onboarding.aiAssistant.title', 'Context-Aware AI Assistant'),
+      content: t('onboarding.aiAssistant.content', 'Your intelligent co-pilot for creating better experiments:'),
+      icon: <ChatIcon sx={{ fontSize: 60, color: '#2196f3' }} />,
       details: [
-        t('onboarding.textPolishing.detail1', '✨ Automatically improves grammar, style, and clarity of your text'),
-        t('onboarding.textPolishing.detail2', '🎯 Maintains scientific accuracy while making content more readable'),
-        t('onboarding.textPolishing.detail3', '🔄 Click the \'Polish Text\' button in any rich text editor'),
-        t('onboarding.textPolishing.detail4', '💡 Great for refining methodology, results, and conclusion sections')
-      ]
-    },
-    {
-      title: t('onboarding.aiAssistant.title', 'Interactive AI Assistant'),
-      content: t('onboarding.aiAssistant.content', 'Get real-time help from our AI assistant while creating your experiments:'),
-      icon: <ChatIcon sx={{ fontSize: 60, color: '#673ab7' }} />,
-      details: [
-        t('onboarding.aiAssistant.detail1', '💬 Ask questions about experimental procedures, safety, or best practices'),
-        t('onboarding.aiAssistant.detail2', '🤖 Get suggestions for improving your experiment structure'),
-        t('onboarding.aiAssistant.detail3', '📚 Receive guidance on scientific writing and documentation standards'),
-        t('onboarding.aiAssistant.detail4', '🎓 Perfect for students and researchers needing quick expert advice')
+        t('onboarding.aiAssistant.detail1', '� Click the chat button (bottom-right) to open the AI Assistant'),
+        t('onboarding.aiAssistant.detail2', '🎯 Get personalized suggestions based on YOUR experiment'),
+        t('onboarding.aiAssistant.detail3', '✨ Ask for help improving text, adding sections, or fixing issues'),
+        t('onboarding.aiAssistant.detail4', '🔍 The AI knows your experiment context and gives specific advice'),
+        t('onboarding.aiAssistant.detail5', '💡 Try: "What\'s missing?", "Improve my objectives", "Is this safe?"')
       ]
     },
     {

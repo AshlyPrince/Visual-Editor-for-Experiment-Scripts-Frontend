@@ -1234,6 +1234,7 @@ const ModularExperimentWizard = ({
             content: sectionContent[section.id] || section.defaultContent
           }))
         }}
+        showPolishSection={false}
         onUpdate={(updates) => {
           
           if (updates.title !== undefined) {
