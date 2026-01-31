@@ -43,6 +43,7 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
     } else if (error.response?.status === 429) {
       throw new Error(errorMsg('llm.errors.tooManyRequests', 'Too many requests. Please wait a moment before trying again.'));
     } else if (!error.response) {
+      console.log('No response from server:', error);
       throw new Error(errorMsg('llm.errors.connectionFailed', 'Unable to connect to AI service. Please check your internet connection.'));
     }
     
