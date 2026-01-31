@@ -75,7 +75,7 @@ const ExperimentCard = styled(Card)(({ theme }) => ({
 }));
 
 const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, onEditExperiment }) => {
-  const { t } = useTranslation();
+  const { t, ready: i18nReady } = useTranslation();
   const [stats, setStats] = useState({
     totalExperiments: 0
   });
@@ -254,12 +254,18 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   
   
   useEffect(() => {
+    // Don't load data until i18n is ready
+    if (!i18nReady) {
+      console.log('[Dashboard] Waiting for i18n initialization...');
+      return;
+    }
+
     const loadDashboardData = async () => {
       try {
         setLoading(true);
         setError(null); // Clear any previous errors
         
-        console.log('[Dashboard] Starting to load experiments...');
+        console.log('[Dashboard] i18n ready, starting to load experiments...');
         
         const userInfo = keycloakService.getUserInfo();
         console.log('[Dashboard] User info:', userInfo);
@@ -340,7 +346,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     };
 
     loadDashboardData();
-  }, []); 
+  }, [i18nReady]); // Wait for i18n to be ready before loading data 
   
   
   useEffect(() => {

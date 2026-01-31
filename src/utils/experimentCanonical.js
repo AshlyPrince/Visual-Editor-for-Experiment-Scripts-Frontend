@@ -92,6 +92,7 @@ export const normalizeSection = (section) => {
       break;
       
     case 'steps':
+    case 'procedure-steps':
       
       normalized.content = normalizeStepsContent(section.content);
       break;
@@ -237,6 +238,7 @@ export const toWizardState = (sections) => {
         
       case 'materials_with_media':
       case 'steps':
+      case 'procedure-steps':
       case 'list':
         
         wizardState[section.id] = section.content || {};
@@ -262,9 +264,16 @@ export const toWizardState = (sections) => {
 export const fromWizardState = (wizardState, selectedSections) => {
   if (!wizardState || !selectedSections) return [];
   
+  console.log('[fromWizardState] Input wizardState:', wizardState);
+  console.log('[fromWizardState] Input selectedSections:', selectedSections);
+  
   return selectedSections.map(sectionDef => {
     const fieldValues = wizardState[sectionDef.id] || {};
     const schemaDef = getSectionDefinition(sectionDef.id);
+    
+    console.log(`[fromWizardState] Processing section: ${sectionDef.id}`);
+    console.log(`[fromWizardState] Field values for ${sectionDef.id}:`, fieldValues);
+    console.log(`[fromWizardState] Schema definition for ${sectionDef.id}:`, schemaDef);
     
     if (!schemaDef) {
       return {
@@ -304,7 +313,9 @@ export const fromWizardState = (wizardState, selectedSections) => {
         break;
         
       case 'steps':
+      case 'procedure-steps':
         
+        console.log(`[fromWizardState] Processing procedure-steps for ${sectionDef.id}, steps:`, fieldValues.steps);
         canonical.content = {
           steps: fieldValues.steps || []
         };
@@ -330,6 +341,7 @@ export const fromWizardState = (wizardState, selectedSections) => {
         }
     }
     
+    console.log(`[fromWizardState] Canonical output for ${sectionDef.id}:`, canonical);
     return canonical;
   }).filter(section => section !== null);
 };

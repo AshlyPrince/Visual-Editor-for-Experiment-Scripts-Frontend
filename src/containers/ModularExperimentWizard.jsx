@@ -586,7 +586,12 @@ const ModularExperimentWizard = ({
       setIsCreating(true);
       setCreationError(null);
 
+      console.log('[Wizard] Section content before conversion:', sectionContent);
+      console.log('[Wizard] Selected sections:', selectedSections);
+
       const canonicalSections = fromWizardState(sectionContent, selectedSections);
+
+      console.log('[Wizard] Canonical sections after conversion:', canonicalSections);
 
       const experimentData = {
         name: basicInfo.title.trim(),
@@ -597,12 +602,16 @@ const ModularExperimentWizard = ({
         sections: canonicalSections
       };
 
+      console.log('[Wizard] Final experiment data being sent:', experimentData);
+
       let result;
       if (existingExperiment) {
         result = await experimentService.updateFromWizard(existingExperiment.id, experimentData);
       } else {
         result = await experimentService.createFromWizard(experimentData);
       }
+      
+      console.log('[Wizard] Server response:', result);
       
       setCreatedExperiment(result);
       setIsCreating(false);
@@ -613,6 +622,7 @@ const ModularExperimentWizard = ({
         onComplete(result);
       }
     } catch (error) {
+      console.error('[Wizard] Error creating/updating experiment:', error);
       setCreationError(error.message || `Failed to ${existingExperiment ? 'update' : 'create'} experiment`);
       setIsCreating(false);
     }
