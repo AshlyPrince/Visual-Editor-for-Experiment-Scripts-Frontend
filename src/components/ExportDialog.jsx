@@ -251,7 +251,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             background-color: #fafafa;
         }
         
-        /* Smaller styling for safety and hazard icons */
         .safety-icons-gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -328,18 +327,15 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                 print-color-adjust: exact;
             }
             
-            /* Hide videos in print/PDF as they don't work anyway */
             .media-item video {
                 display: none;
             }
             
-            /* Add a placeholder for videos */
             .media-item video + .media-caption::before {
                 content: "🎥 Video: ";
                 font-weight: bold;
             }
             
-            /* Force color printing */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -376,17 +372,14 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       
       console.log(`[Export] Processing section: ${section.id}`, section);
       
-      // Extract section content - handle both direct content and nested content.steps
       let sectionContent = section.content;
       
-      // Parse content if it's a JSON string
       if (typeof sectionContent === 'string') {
         try {
           const parsed = JSON.parse(sectionContent);
           console.log(`[Export] Parsed JSON string content for ${section.id}:`, parsed);
           sectionContent = parsed;
         } catch (e) {
-          // If parsing fails, it's probably HTML or plain text, keep as is
           console.log(`[Export] Content for ${section.id} is string (not JSON):`, sectionContent.substring(0, 100));
         }
       }
@@ -394,14 +387,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       console.log(`[Export] Initial section content for ${section.id}:`, sectionContent);
       console.log(`[Export] Content type:`, typeof sectionContent, 'Is array:', Array.isArray(sectionContent));
       
-      // For procedure sections with content.steps, extract the steps array
       if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
         if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
-          // This is a procedure section with steps
           console.log(`[Export] Extracting steps array for ${section.id}:`, sectionContent.steps);
           sectionContent = sectionContent.steps;
         } else if (sectionContent.items && Array.isArray(sectionContent.items)) {
-          // This is a list/materials section with items
           console.log(`[Export] Extracting items array for ${section.id}:`, sectionContent.items);
           sectionContent = sectionContent.items;
         }
@@ -409,14 +399,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       
       console.log(`[Export] Final section content for ${section.id}:`, sectionContent);
       
-      // Additional check: if it's still an object with nested content, unwrap it
       if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
-        // Check if there's a nested content property
         if (sectionContent.content) {
           console.log(`[Export] Found nested content.content for ${section.id}:`, sectionContent.content);
           sectionContent = sectionContent.content;
           
-          // If the nested content also has items or steps, extract those
           if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
             if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
               console.log(`[Export] Extracting nested steps for ${section.id}:`, sectionContent.steps);
@@ -447,13 +434,10 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         <div class="section-content">
 `;
 
-      // Render media first (at the top) if present
       if (sectionMedia && sectionMedia.length > 0) {
-        // Check if this is a safety or hazards section for different styling
         const isSafetySection = section.id === 'safety' || section.id === 'hazards';
         
         if (isSafetySection) {
-          // Use grid layout for safety icons
           htmlContent += `
             <div class="safety-icons-gallery">
                 ${sectionMedia.map(mediaItem => {
@@ -474,7 +458,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                 </div>
 `;
         } else {
-          // Use standard layout for regular images
           htmlContent += `
             <div class="media-gallery">
                 ${sectionMedia.map(mediaItem => {
@@ -517,16 +500,13 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           console.log(`[Export] First item in array:`, sectionContent[0]);
         }
         
-        // Check if this is an array of procedure steps (objects with 'text' property)
         const isProcedureSteps = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && 'text' in sectionContent[0];
         
-        // Check if this is an array of materials/items (objects with properties)
         const isMaterialsList = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null;
         
         console.log(`[Export] isProcedureSteps:`, isProcedureSteps, 'isMaterialsList:', isMaterialsList);
         
         if (isProcedureSteps) {
-          // Render procedure steps with numbering
           htmlContent += `
             <ol class="procedure-steps">
                 ${sectionContent.map((step, index) => {
@@ -540,14 +520,12 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </ol>
 `;
         } else if (isMaterialsList) {
-          // Render materials/items list - handle various object structures
           console.log(`[Export] Rendering materials list for ${section.id}, items:`, sectionContent);
           htmlContent += `
             <ul class="materials-list">
                 ${sectionContent.map((item, idx) => {
                   console.log(`[Export] Processing item ${idx}:`, item, 'Type:', typeof item);
                   
-                  // Handle different item structures
                   if (typeof item === 'string' || typeof item === 'number') {
                     console.log(`[Export] Item ${idx} is string/number:`, item);
                     const text = String(item).trim();
@@ -556,7 +534,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     console.log(`[Export] Item ${idx} is object, keys:`, Object.keys(item));
                     console.log(`[Export] Item ${idx} values:`, Object.values(item));
                     
-                    // Special case: if item.item is an array, we need to process each element
                     if (item.item && Array.isArray(item.item)) {
                       console.log(`[Export] Item ${idx} has nested array in .item property:`, item.item);
                       return item.item.map((nestedItem, nestedIdx) => {
@@ -572,10 +549,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                       }).filter(html => html).join('\n');
                     }
                     
-                    // Try to extract meaningful text from object - try multiple property names
                     let itemText = '';
                     
-                    // Check if item.item exists and is a string
                     if (item.item && typeof item.item === 'string') {
                       itemText = item.item.trim();
                     } else if (item.name && typeof item.name === 'string') {
@@ -588,17 +563,14 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     
                     console.log(`[Export] Extracted itemText for ${idx}:`, itemText);
                     
-                    // Add quantity if present
                     if (item.quantity) {
                       itemText += ` (${item.quantity})`;
                     }
                     
-                    // Add notes if present
                     if (item.notes) {
                       itemText += ` - ${item.notes}`;
                     }
                     
-                    // If we couldn't extract any text, try to stringify key properties
                     if (!itemText) {
                       console.log(`[Export] No itemText found, trying to extract from values`);
                       const keys = Object.keys(item);
@@ -617,7 +589,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </ul>
 `;
         } else {
-          // Fallback: Filter for simple text items (strings/numbers)
           const textItems = sectionContent.filter(item => typeof item === 'string' || typeof item === 'number');
           if (textItems.length > 0) {
             htmlContent += `
@@ -645,14 +616,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           if (Array.isArray(value)) {
             console.log(`[Export] Processing array value for key "${key}":`, value);
             
-            // Check if this is an array of procedure steps (objects with 'text' property)
             const isProcedureSteps = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'text' in value[0];
             
-            // Check if this is an array of objects (materials, items, etc.)
             const isObjectList = value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
             
             if (isProcedureSteps) {
-              // Render procedure steps with numbering
               htmlContent += `
             <div class="subsection">
                 <div class="subsection-title">${keyLabel}</div>
@@ -669,7 +637,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </div>
 `;
             } else if (isObjectList) {
-              // Render list of objects (materials, items, etc.)
               console.log(`[Export] Rendering object list for key "${key}":`, value);
               htmlContent += `
             <div class="subsection">
@@ -678,7 +645,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     ${value.map((item, idx) => {
                       console.log(`[Export] [Subsection] Processing item ${idx} for key "${key}":`, item, 'Type:', typeof item);
                       
-                      // Handle different item structures
                       if (typeof item === 'string' || typeof item === 'number') {
                         console.log(`[Export] [Subsection] Item ${idx} is string/number:`, item);
                         const text = String(item).trim();
@@ -687,21 +653,17 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                         console.log(`[Export] [Subsection] Item ${idx} is object, keys:`, Object.keys(item));
                         console.log(`[Export] [Subsection] Item ${idx} values:`, Object.values(item));
                         
-                        // Try to extract meaningful text from object - try multiple property names
                         let itemText = (item.name || item.text || item.title || item.item || '').trim();
                         console.log(`[Export] [Subsection] Extracted itemText for ${idx}:`, itemText);
                         
-                        // Add quantity if present
                         if (item.quantity) {
                           itemText += ` (${item.quantity})`;
                         }
                         
-                        // Add notes if present
                         if (item.notes) {
                           itemText += ` - ${item.notes}`;
                         }
                         
-                        // If we couldn't extract any text, try to stringify key properties
                         if (!itemText) {
                           console.log(`[Export] [Subsection] No itemText found for ${idx}, trying to extract from values`);
                           const keys = Object.keys(item);
@@ -721,7 +683,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </div>
 `;
             } else {
-              // Fallback: Filter for simple text items (strings/numbers)
               const textItems = value.filter(item => typeof item === 'string' || typeof item === 'number');
               if (textItems.length > 0) {
                 htmlContent += `
@@ -742,7 +703,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </div>
 `;
           } else if (typeof value === 'object' && value !== null) {
-            // Skip objects that couldn't be handled - don't render [object Object]
             console.warn(`[Export] Skipping unhandled object value for key "${key}":`, value);
           } else {
             htmlContent += `
@@ -833,7 +793,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
       
-      // Generate HTML using the same function as HTML export
       const htmlContent = generateHTML();
       
       
@@ -851,7 +810,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       container.style.lineHeight = '1.6';
       container.style.boxSizing = 'border-box';
       
-      // Insert the generated HTML
       container.innerHTML = htmlContent;
       
       document.body.appendChild(container);
