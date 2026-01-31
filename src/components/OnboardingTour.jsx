@@ -29,7 +29,10 @@ import {
   Edit as EditIcon,
   Save as SaveIcon,
   GetApp as ExportIcon,
-  Help as HelpIcon
+  Help as HelpIcon,
+  AutoFixHigh as PolishIcon,
+  Chat as ChatIcon,
+  VerifiedUser as ConsistencyIcon
 } from '@mui/icons-material';
 
 const OnboardingTour = ({ open, onClose, onComplete }) => {
@@ -79,6 +82,39 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
         t('onboarding.editing.detail2', 'Upload images from your computer'),
         t('onboarding.editing.detail3', 'Add procedure steps with notes'),
         t('onboarding.editing.detail4', 'Select safety icons from the library')
+      ]
+    },
+    {
+      title: t('onboarding.textPolishing.title', 'AI-Powered Text Polishing'),
+      content: t('onboarding.textPolishing.content', 'Our intelligent text polisher helps you write clear, professional experiment descriptions:'),
+      icon: <PolishIcon sx={{ fontSize: 60, color: '#e91e63' }} />,
+      details: [
+        t('onboarding.textPolishing.detail1', '✨ Automatically improves grammar, style, and clarity of your text'),
+        t('onboarding.textPolishing.detail2', '🎯 Maintains scientific accuracy while making content more readable'),
+        t('onboarding.textPolishing.detail3', '🔄 Click the \'Polish Text\' button in any rich text editor'),
+        t('onboarding.textPolishing.detail4', '💡 Great for refining methodology, results, and conclusion sections')
+      ]
+    },
+    {
+      title: t('onboarding.aiAssistant.title', 'Interactive AI Assistant'),
+      content: t('onboarding.aiAssistant.content', 'Get real-time help from our AI assistant while creating your experiments:'),
+      icon: <ChatIcon sx={{ fontSize: 60, color: '#673ab7' }} />,
+      details: [
+        t('onboarding.aiAssistant.detail1', '💬 Ask questions about experimental procedures, safety, or best practices'),
+        t('onboarding.aiAssistant.detail2', '🤖 Get suggestions for improving your experiment structure'),
+        t('onboarding.aiAssistant.detail3', '📚 Receive guidance on scientific writing and documentation standards'),
+        t('onboarding.aiAssistant.detail4', '🎓 Perfect for students and researchers needing quick expert advice')
+      ]
+    },
+    {
+      title: t('onboarding.consistency.title', 'Content Review & Consistency Checks'),
+      content: t('onboarding.consistency.content', 'Ensure your experiment is complete and professional before exporting:'),
+      icon: <ConsistencyIcon sx={{ fontSize: 60, color: '#4caf50' }} />,
+      details: [
+        t('onboarding.consistency.detail1', '✅ Automatic checks for missing required fields (title, sections, procedure)'),
+        t('onboarding.consistency.detail2', '🔍 Validates safety information and hazard warnings are complete'),
+        t('onboarding.consistency.detail3', '📊 Reviews structure consistency across all sections'),
+        t('onboarding.consistency.detail4', '⚡ Click \'Review Content\' button to get a detailed report with suggestions')
       ]
     },
     {

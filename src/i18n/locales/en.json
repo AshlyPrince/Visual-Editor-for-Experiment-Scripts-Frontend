@@ -1246,6 +1246,30 @@
       "detail3": "Add procedure steps with notes",
       "detail4": "Select safety icons from the library"
     },
+    "textPolishing": {
+      "title": "AI-Powered Text Polishing",
+      "content": "Our intelligent text polisher helps you write clear, professional experiment descriptions:",
+      "detail1": "✨ Automatically improves grammar, style, and clarity of your text",
+      "detail2": "🎯 Maintains scientific accuracy while making content more readable",
+      "detail3": "🔄 Click the 'Polish Text' button in any rich text editor",
+      "detail4": "💡 Great for refining methodology, results, and conclusion sections"
+    },
+    "aiAssistant": {
+      "title": "Interactive AI Assistant",
+      "content": "Get real-time help from our AI assistant while creating your experiments:",
+      "detail1": "💬 Ask questions about experimental procedures, safety, or best practices",
+      "detail2": "🤖 Get suggestions for improving your experiment structure",
+      "detail3": "📚 Receive guidance on scientific writing and documentation standards",
+      "detail4": "🎓 Perfect for students and researchers needing quick expert advice"
+    },
+    "consistency": {
+      "title": "Content Review & Consistency Checks",
+      "content": "Ensure your experiment is complete and professional before exporting:",
+      "detail1": "✅ Automatic checks for missing required fields (title, sections, procedure)",
+      "detail2": "🔍 Validates safety information and hazard warnings are complete",
+      "detail3": "📊 Reviews structure consistency across all sections",
+      "detail4": "⚡ Click 'Review Content' button to get a detailed report with suggestions"
+    },
     "saving": {
       "title": "Saving Your Work",
       "content": "Always save your work regularly. The system creates automatic versions.",

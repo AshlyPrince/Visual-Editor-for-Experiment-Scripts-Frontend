@@ -1246,6 +1246,30 @@
       "detail3": "Fügen Sie Verfahrensschritte mit Notizen hinzu",
       "detail4": "Wählen Sie Sicherheitssymbole aus der Bibliothek aus"
     },
+    "textPolishing": {
+      "title": "KI-gestützte Textverbesserung",
+      "content": "Unser intelligenter Text-Polierer hilft Ihnen, klare, professionelle Experimentbeschreibungen zu schreiben:",
+      "detail1": "✨ Verbessert automatisch Grammatik, Stil und Klarheit Ihres Textes",
+      "detail2": "🎯 Bewahrt wissenschaftliche Genauigkeit und macht Inhalte lesbarer",
+      "detail3": "🔄 Klicken Sie auf die Schaltfläche 'Text polieren' in jedem Rich-Text-Editor",
+      "detail4": "💡 Ideal zum Verfeinern von Methodik-, Ergebnis- und Schlussfolgerungsabschnitten"
+    },
+    "aiAssistant": {
+      "title": "Interaktiver KI-Assistent",
+      "content": "Erhalten Sie Echtzeithilfe von unserem KI-Assistenten beim Erstellen Ihrer Experimente:",
+      "detail1": "💬 Stellen Sie Fragen zu experimentellen Verfahren, Sicherheit oder Best Practices",
+      "detail2": "🤖 Erhalten Sie Vorschläge zur Verbesserung Ihrer Experimentstruktur",
+      "detail3": "📚 Erhalten Sie Anleitungen zu wissenschaftlichen Schreib- und Dokumentationsstandards",
+      "detail4": "🎓 Perfekt für Studenten und Forscher, die schnelle Expertenberatung benötigen"
+    },
+    "consistency": {
+      "title": "Inhaltsüberprüfung & Konsistenzprüfungen",
+      "content": "Stellen Sie sicher, dass Ihr Experiment vollständig und professionell ist, bevor Sie es exportieren:",
+      "detail1": "✅ Automatische Prüfungen auf fehlende Pflichtfelder (Titel, Abschnitte, Verfahren)",
+      "detail2": "🔍 Validiert Sicherheitsinformationen und Gefahrenhinweise auf Vollständigkeit",
+      "detail3": "📊 Überprüft die Strukturkonsistenz über alle Abschnitte hinweg",
+      "detail4": "⚡ Klicken Sie auf 'Inhalt überprüfen', um einen detaillierten Bericht mit Vorschlägen zu erhalten"
+    },
     "saving": {
       "title": "Ihre Arbeit speichern",
       "content": "Speichern Sie Ihre Arbeit immer regelmäßig. Das System erstellt automatische Versionen.",
