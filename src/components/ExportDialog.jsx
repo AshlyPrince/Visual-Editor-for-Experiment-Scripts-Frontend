@@ -501,15 +501,23 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 `;
         } else if (isMaterialsList) {
           // Render materials/items list - handle various object structures
+          console.log(`[Export] Rendering materials list for ${section.id}, items:`, sectionContent);
           htmlContent += `
             <ul class="materials-list">
-                ${sectionContent.map(item => {
+                ${sectionContent.map((item, idx) => {
+                  console.log(`[Export] Processing item ${idx}:`, item, 'Type:', typeof item);
+                  
                   // Handle different item structures
                   if (typeof item === 'string' || typeof item === 'number') {
+                    console.log(`[Export] Item ${idx} is string/number:`, item);
                     return `<li>${item}</li>`;
                   } else if (typeof item === 'object' && item !== null) {
+                    console.log(`[Export] Item ${idx} is object, keys:`, Object.keys(item));
+                    console.log(`[Export] Item ${idx} values:`, Object.values(item));
+                    
                     // Try to extract meaningful text from object
                     let itemText = item.name || item.text || item.title || item.item || '';
+                    console.log(`[Export] Extracted itemText for ${idx}:`, itemText);
                     
                     // Add quantity if present
                     if (item.quantity) {
@@ -523,13 +531,17 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     
                     // If we couldn't extract any text, try to stringify key properties
                     if (!itemText) {
+                      console.log(`[Export] No itemText found, trying to extract from values`);
                       const keys = Object.keys(item);
                       if (keys.length > 0) {
                         itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').join(' ');
+                        console.log(`[Export] Extracted from values:`, itemText);
                       }
                     }
                     
-                    return itemText ? `<li>${itemText}</li>` : '';
+                    const result = itemText ? `<li>${itemText}</li>` : '';
+                    console.log(`[Export] Final HTML for item ${idx}:`, result);
+                    return result;
                   }
                   return '';
                 }).filter(html => html).join('\n')}
@@ -589,17 +601,25 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 `;
             } else if (isObjectList) {
               // Render list of objects (materials, items, etc.)
+              console.log(`[Export] Rendering object list for key "${key}":`, value);
               htmlContent += `
             <div class="subsection">
                 <div class="subsection-title">${keyLabel}</div>
                 <ul class="materials-list">
-                    ${value.map(item => {
+                    ${value.map((item, idx) => {
+                      console.log(`[Export] [Subsection] Processing item ${idx} for key "${key}":`, item, 'Type:', typeof item);
+                      
                       // Handle different item structures
                       if (typeof item === 'string' || typeof item === 'number') {
+                        console.log(`[Export] [Subsection] Item ${idx} is string/number:`, item);
                         return `<li>${item}</li>`;
                       } else if (typeof item === 'object' && item !== null) {
+                        console.log(`[Export] [Subsection] Item ${idx} is object, keys:`, Object.keys(item));
+                        console.log(`[Export] [Subsection] Item ${idx} values:`, Object.values(item));
+                        
                         // Try to extract meaningful text from object
                         let itemText = item.name || item.text || item.title || item.item || '';
+                        console.log(`[Export] [Subsection] Extracted itemText for ${idx}:`, itemText);
                         
                         // Add quantity if present
                         if (item.quantity) {
@@ -613,13 +633,17 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                         
                         // If we couldn't extract any text, try to stringify key properties
                         if (!itemText) {
+                          console.log(`[Export] [Subsection] No itemText found for ${idx}, trying to extract from values`);
                           const keys = Object.keys(item);
                           if (keys.length > 0) {
                             itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').join(' ');
+                            console.log(`[Export] [Subsection] Extracted from values for ${idx}:`, itemText);
                           }
                         }
                         
-                        return itemText ? `<li>${itemText}</li>` : '';
+                        const result = itemText ? `<li>${itemText}</li>` : '';
+                        console.log(`[Export] [Subsection] Final HTML for item ${idx}:`, result);
+                        return result;
                       }
                       return '';
                     }).filter(html => html).join('\n')}
