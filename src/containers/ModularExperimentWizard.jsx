@@ -138,7 +138,7 @@ const ModularExperimentWizard = ({
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
     { id: 'content', label: t('wizard.fillContent'), description: t('wizard.fillContentDesc') },
     { id: 'content_review', label: t('wizard.contentReview'), description: t('wizard.contentReviewDesc') },
-    { id: 'permissions', label: t('wizard.setPermissions') || 'Set Permissions', description: t('wizard.setPermissionsDesc') || 'Configure access and permissions' },
+    { id: 'permissions', label: 'Sharing & Access', description: 'Set who can view and edit your experiment' },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
   ];
 
@@ -1304,107 +1304,92 @@ const ModularExperimentWizard = ({
     const userInfo = keycloakService.getUserInfo();
     const currentPermissions = permissions || getDefaultPermissions(userInfo);
     
+    // Simple summary of current settings
+    const visibilityLabel = currentPermissions.visibility === 'private' 
+      ? 'Private - Only you have access'
+      : currentPermissions.visibility === 'public' 
+        ? 'Public - Everyone can view' 
+        : 'Restricted - Limited access';
+    
+    const visibilityColor = currentPermissions.visibility === 'public' ? 'success' : 
+                           currentPermissions.visibility === 'restricted' ? 'warning' : 'default';
+    
     return (
-      <Box>
-        <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <LockIcon sx={{ mr: 1 }} />
-          {t('wizard.steps.permissions') || 'Set Permissions & Access'}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
-          {t('wizard.steps.permissionsDesc') || 'Configure who can access and edit your experiment. You can always change these settings later.'}
+      <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+        <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+          <LockOpenIcon color="primary" />
+          Sharing & Access
         </Typography>
 
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            p: 4, 
+            mb: 3, 
+            border: '1px solid', 
+            borderColor: 'divider',
+            borderRadius: 2 
+          }}
+        >
+          <Stack spacing={3}>
+            {/* Simple visibility display */}
             <Box>
-              <Typography variant="h6" gutterBottom>
-                {t('wizard.permissions.currentSettings') || 'Current Permission Settings'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('wizard.permissions.clickConfigure') || 'Click "Configure Permissions" to set up access control'}
-              </Typography>
-            </Box>
-            <Button
-              variant="contained"
-              startIcon={<LockIcon />}
-              onClick={() => setPermissionsDialogOpen(true)}
-            >
-              {t('wizard.permissions.configure') || 'Configure Permissions'}
-            </Button>
-          </Box>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Stack spacing={2}>
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                {t('wizard.permissions.visibility') || 'Visibility'}
-              </Typography>
-              <Chip 
-                label={currentPermissions.visibility === 'private' 
-                  ? (t('permissions.private') || 'Private')
-                  : currentPermissions.visibility === 'public' 
-                    ? (t('permissions.public') || 'Public') 
-                    : (t('permissions.restricted') || 'Restricted')
-                }
-                color={currentPermissions.visibility === 'public' ? 'success' : 'default'}
-                icon={currentPermissions.visibility === 'private' ? <LockIcon /> : <LockOpenIcon />}
-              />
-            </Box>
-
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                {t('wizard.permissions.usersWithAccess') || 'Users with Access'}
-              </Typography>
-              <Typography variant="body1">
-                {currentPermissions.userPermissions?.length || 0} {t('wizard.permissions.users') || 'user(s)'}
-              </Typography>
+              <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
+                <Box flex={1}>
+                  <Typography variant="h6" gutterBottom>
+                    Who can access your experiment?
+                  </Typography>
+                  <Chip 
+                    label={visibilityLabel}
+                    color={visibilityColor}
+                    size="medium"
+                    icon={currentPermissions.visibility === 'private' ? <LockIcon /> : <LockOpenIcon />}
+                    sx={{ fontSize: '0.9rem', py: 2.5 }}
+                  />
+                </Box>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => setPermissionsDialogOpen(true)}
+                  sx={{ minWidth: 140 }}
+                >
+                  Change Settings
+                </Button>
+              </Stack>
             </Box>
 
+            <Divider />
+
+            {/* Simple feature summary */}
             <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                {t('wizard.permissions.settings') || 'Settings'}
+              <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mb: 2 }}>
+                Current features:
               </Typography>
-              <Stack direction="row" spacing={1} flexWrap="wrap">
-                {currentPermissions.allowDuplication && (
-                  <Chip 
-                    size="small" 
-                    label={t('permissions.allowDuplication') || 'Duplication Allowed'} 
-                    variant="outlined"
-                  />
-                )}
-                {currentPermissions.requireApprovalForAccess && (
-                  <Chip 
-                    size="small" 
-                    label={t('permissions.requireApproval') || 'Requires Approval'} 
-                    variant="outlined"
-                  />
-                )}
-                {currentPermissions.allowLinkSharing && (
-                  <Chip 
-                    size="small" 
-                    label={t('permissions.linkSharingEnabled') || 'Link Sharing Enabled'} 
-                    variant="outlined"
-                    color="primary"
-                  />
-                )}
+              <Stack spacing={1.5}>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <CheckIcon fontSize="small" color={currentPermissions.allowDuplication ? 'success' : 'disabled'} />
+                  <Typography variant="body2" color={currentPermissions.allowDuplication ? 'text.primary' : 'text.secondary'}>
+                    Others can duplicate this experiment
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <CheckIcon fontSize="small" color={currentPermissions.allowLinkSharing ? 'success' : 'disabled'} />
+                  <Typography variant="body2" color={currentPermissions.allowLinkSharing ? 'text.primary' : 'text.secondary'}>
+                    Share via link enabled
+                  </Typography>
+                </Box>
               </Stack>
             </Box>
           </Stack>
         </Paper>
 
-        <Alert severity="info" sx={{ mb: 2 }}>
-          <Typography variant="body2">
-            {t('wizard.permissions.info') || 'You can skip this step and use default settings (Private experiment, only you have access). You can always modify permissions after creating the experiment.'}
-          </Typography>
-        </Alert>
-
-        <Alert severity="success">
-          <Typography variant="body2" fontWeight="bold" gutterBottom>
-            {t('wizard.permissions.protection') || 'Your experiment is protected'}
-          </Typography>
-          <Typography variant="body2">
-            {t('wizard.permissions.protectionDesc') || 'With the permission system, other users cannot delete or modify your experiment without proper access. You maintain full control over who can view, edit, or manage your work.'}
+        <Alert severity="info" icon={false} sx={{ borderRadius: 2 }}>
+          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+            <span>💡</span>
+            <span>
+              <strong>Default settings applied.</strong> You can skip this step or click "Change Settings" to customize access control. 
+              You can always modify these settings later after creating the experiment.
+            </span>
           </Typography>
         </Alert>
       </Box>
