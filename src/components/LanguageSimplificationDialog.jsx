@@ -73,7 +73,6 @@ const LanguageSimplificationDialog = ({
     try {
       const simplified = await simplifyLanguage(experimentData, targetLevel, t);
       setSimplifiedData(simplified);
-      // Directly trigger export instead of showing preview
       if (onExport) {
         onExport(simplified, null, targetLevel);
       }

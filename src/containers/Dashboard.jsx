@@ -194,7 +194,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   };
 
   
-  // Function to refresh dashboard data - can be called after operations
   const refreshDashboard = async () => {
     try {
       setLoading(true);
@@ -218,18 +217,15 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       
       console.log('[Dashboard Refresh] Extracted experiments:', allExperimentData.length);
       
-      // Add tags to experiments
       allExperimentData = allExperimentData.map(exp => ({
         ...exp,
         autoTags: extractTagsFromExperiment(exp)
       }));
       
-      // Update all states
       setAllExperiments(allExperimentData);
       setFilteredExperiments(allExperimentData);
       setTotalExperiments(allExperimentData.length);
       
-      // Update paginated view
       const startIndex = page * rowsPerPage;
       const endIndex = startIndex + rowsPerPage;
       const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
@@ -261,7 +257,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   
   
   useEffect(() => {
-    // Don't load data until i18n is ready
     if (!i18nReady) {
       console.log('[Dashboard] Waiting for i18n initialization...');
       return;
@@ -270,7 +265,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     const loadDashboardData = async () => {
       try {
         setLoading(true);
-        setError(null); // Clear any previous errors
+        setError(null);
         
         console.log('[Dashboard] i18n ready, starting to load experiments...');
         
@@ -292,8 +287,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         
         if (Array.isArray(response)) {
           allExperimentData = response;
+          allExperimentData = response;
         } else if (response && typeof response === 'object') {
-          // Try multiple possible response structures
           allExperimentData = response.data || response.experiments || response.results || [];
         }
         
@@ -311,7 +306,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         
         
         setAllExperiments(allExperimentData);
-        setFilteredExperiments(allExperimentData); 
+        setFilteredExperiments(allExperimentData);
         setTotalExperiments(allExperimentData.length);
         
         
@@ -560,7 +555,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         () => experimentService.deleteExperiment(experimentToDelete.id)
       );
 
-      // Reload all experiments to keep data consistent
       const response = await experimentService.getExperiments({ 
         page: 1,
         limit: 1000 
@@ -573,25 +567,21 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         allExperimentData = response.data || response.experiments || [];
       }
       
-      // Add tags to experiments
       allExperimentData = allExperimentData.map(exp => ({
         ...exp,
         autoTags: extractTagsFromExperiment(exp)
       }));
       
-      // Update all experiment states
       setAllExperiments(allExperimentData);
       setFilteredExperiments(allExperimentData);
       setTotalExperiments(allExperimentData.length);
       setStats({ totalExperiments: allExperimentData.length });
       
-      // Update paginated view
       const startIndex = page * rowsPerPage;
       const endIndex = startIndex + rowsPerPage;
       const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
       setExperiments(paginatedExperiments);
       
-      // If current page is now empty, go to previous page
       if (paginatedExperiments.length === 0 && page > 0) {
         setPage(page - 1);
       }

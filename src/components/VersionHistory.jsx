@@ -592,25 +592,20 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
               const sectionContent = sectionData.content || '';
               const sectionMedia = sectionData.media || [];
 
-              // Check if section has any actual content
               const hasContent = () => {
-                // Check for media
                 if (sectionMedia.length > 0) return true;
                 
-                // Check for text content
                 if (typeof sectionContent === 'string' && sectionContent.trim()) {
                   return true;
                 }
                 
-                // Check for array content
                 if (Array.isArray(sectionContent) && sectionContent.length > 0) {
                   return true;
                 }
                 
-                // Check for object content
                 if (typeof sectionContent === 'object' && sectionContent !== null) {
                   const hasNonEmptyFields = Object.entries(sectionContent).some(([key, value]) => {
-                    if (key === 'media') return false; // Media already checked above
+                    if (key === 'media') return false;
                     if (Array.isArray(value) && value.length > 0) return true;
                     if (typeof value === 'string' && value.trim()) return true;
                     if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) return true;
@@ -622,7 +617,6 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                 return false;
               };
 
-              // Skip rendering if section has no content
               if (!hasContent()) {
                 return null;
               }
@@ -637,7 +631,6 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
 
                     <Divider sx={{ my: 2 }} />
 
-                    {/* Render media first, like in ExperimentViewer */}
                     {sectionMedia.length > 0 && (
                       <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
                         {sectionMedia.map((mediaItem, index) => (
@@ -738,7 +731,6 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                                       {JSON.stringify(value, null, 2)}
                                     </Typography>
                                   ) : (
-                                    // String value with proper paragraph handling
                                     <Box sx={{ ml: 2 }}>
                                       {String(value).split(/\n\n+/).map((para, pIdx) => {
                                         const cleanedPara = para.trim().replace(/\n/g, ' ');
@@ -755,7 +747,6 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                             })}
                           </Stack>
                         ) : typeof sectionContent === 'string' && (sectionContent.startsWith('<') || sectionContent.includes('<p>') || sectionContent.includes('<div>') || sectionContent.includes('<font') || sectionContent.includes('<b>') || sectionContent.includes('<i>')) ? (
-                          // HTML content - render with proper styling
                           <Box
                             sx={{
                               '& p': { mb: 1.5, lineHeight: 1.7 },
@@ -770,7 +761,6 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                             dangerouslySetInnerHTML={{ __html: sectionContent }}
                           />
                         ) : typeof sectionContent === 'string' ? (
-                          // Plain text with proper paragraph formatting
                           <Box>
                             {sectionContent.split(/\n\n+/).map((paragraph, pIdx) => {
                               const cleanedPara = paragraph.trim().replace(/\n/g, ' ');

@@ -10,7 +10,6 @@ window.keycloak = null;
 
 console.log('[index.jsx] Waiting for i18n initialization...');
 
-// Wait for i18n to initialize before rendering
 i18nInitPromise.then(() => {
   console.log('[index.jsx] i18n ready, rendering React app');
   

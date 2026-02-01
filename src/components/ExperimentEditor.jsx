@@ -92,11 +92,9 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
 
-  // Load chat history from localStorage when experiment loads
   useEffect(() => {
     if (experimentId) {
       loadExperiment();
-      // Load chat history for this specific experiment
       const savedHistory = localStorage.getItem(`chat_history_${experimentId}`);
       if (savedHistory) {
         try {
@@ -109,13 +107,11 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     }
   }, [experimentId]);
 
-  // Save chat history to localStorage whenever it changes
   useEffect(() => {
     if (experimentId) {
       if (chatHistory.length > 0) {
         localStorage.setItem(`chat_history_${experimentId}`, JSON.stringify(chatHistory));
       } else {
-        // Clear from localStorage when chat is cleared
         localStorage.removeItem(`chat_history_${experimentId}`);
       }
     }
@@ -163,7 +159,6 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const handleAddSection = () => {
     if (!newSectionType) return;
     
-    // If custom section is selected, open dialog to get name and description
     if (newSectionType === 'custom') {
       setAddSectionOpen(false);
       setCustomSectionDialogOpen(true);
@@ -779,7 +774,6 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Custom Section Dialog */}
       <Dialog open={customSectionDialogOpen} onClose={() => {
         setCustomSectionDialogOpen(false);
         setCustomSectionName('');
@@ -913,7 +907,6 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         }}
       />
 
-      {/* Floating AI Chat Assistant Button */}
       <Tooltip title={t('llm.chat.openAssistant', 'Open AI Assistant')} placement="left">
         <Fab
           color="secondary"
@@ -930,7 +923,6 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
         </Fab>
       </Tooltip>
 
-      {/* AI Chat Assistant Dialog */}
       <Dialog
         open={chatOpen}
         onClose={() => setChatOpen(false)}

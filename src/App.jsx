@@ -198,7 +198,6 @@ function AppContent() {
         p: 3
       }}>
         <Container maxWidth="sm">
-          {/* Show authentication error if it exists */}
           {authError && (
             <Paper 
               elevation={3}

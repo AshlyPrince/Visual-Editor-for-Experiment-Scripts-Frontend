@@ -27,7 +27,6 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
   } catch (error) {
     const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
-    // Extract backend error message if available
     const backendError = error.response?.data?.error || error.response?.data?.details;
     
     if (error.response?.status === 503) {
@@ -43,7 +42,6 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
     } else if (error.response?.status === 429) {
       throw new Error(errorMsg('llm.errors.tooManyRequests', 'Too many requests. Please wait a moment before trying again.'));
     } else if (!error.response) {
-      console.log('No response from server:', error);
       throw new Error(errorMsg('llm.errors.connectionFailed', 'Unable to connect to AI service. Please check your internet connection.'));
     }
     
@@ -53,7 +51,7 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
 
 export const sendChatConversation = async (messages, options = {}, t = null) => {
   const {
-    model,  
+    model,
     temperature = 0.7,
     max_tokens = 512
   } = options;
@@ -76,7 +74,6 @@ export const sendChatConversation = async (messages, options = {}, t = null) => 
   } catch (error) {
     const errorMsg = (key, fallback) => t ? t(key) : fallback;
     
-    // Extract backend error message if available
     const backendError = error.response?.data?.error || error.response?.data?.details;
     
     if (error.response?.status === 503) {
@@ -438,10 +435,6 @@ ${p.format}`;
 export const simplifyLanguage = async (experimentData, targetLevel = 'intermediate', t = null) => {
   const errorMsg = (key, fallback) => t ? t(key) : fallback;
   
-  console.log('[SIMPLIFY] Starting simplification with level:', targetLevel);
-  console.log('[SIMPLIFY] Experiment data:', experimentData);
-  
-  // Parse the experiment content
   const content = typeof experimentData.content === 'string' 
     ? JSON.parse(experimentData.content) 
     : experimentData.content;
@@ -449,50 +442,35 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   const actualContent = content?.content || content;
   const sections = actualContent?.sections || [];
 
-  console.log('[SIMPLIFY] Found sections:', sections.length);
-
-  // Process each section independently - simpler and more reliable
   const simplifiedSections = [];
   
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
-    console.log(`[SIMPLIFY] Processing section ${i}:`, section.id, 'type:', section.type);
-    console.log(`[SIMPLIFY] Section has content:`, !!section.content, 'items:', !!section.items, 'steps:', !!section.steps);
     
     const simplifiedSection = { ...section };
     
     try {
-      // Detect section type by content if type is missing
       const hasTextContent = section.content && typeof section.content === 'string';
       const hasListItems = section.items && Array.isArray(section.items);
       const hasSteps = section.steps && Array.isArray(section.steps);
       
-      // Simplify text content (check both explicit type and presence of content)
       if ((section.type === 'text' || hasTextContent) && section.content) {
-        console.log(`[SIMPLIFY] Simplifying text content, length: ${section.content.length}`);
         simplifiedSection.content = await simplifyText(section.content, targetLevel, t);
-        console.log(`[SIMPLIFY] Simplified text length: ${simplifiedSection.content.length}`);
       } 
-      // Simplify list items
       else if ((section.type === 'list' || hasListItems) && section.items && Array.isArray(section.items)) {
-        console.log(`[SIMPLIFY] Simplifying list with ${section.items.length} items`);
         simplifiedSection.items = await Promise.all(
           section.items.map(async (item, idx) => {
             if (typeof item === 'string') {
-              console.log(`[SIMPLIFY] Simplifying list item ${idx}`);
               return await simplifyText(item, targetLevel, t);
             }
             return item;
           })
         );
       } 
-      // Simplify procedure steps
       else if ((section.type === 'steps' || hasSteps) && section.steps && Array.isArray(section.steps)) {
-        console.log(`[SIMPLIFY] Simplifying steps with ${section.steps.length} steps`);
         simplifiedSection.steps = await Promise.all(
           section.steps.map(async (step, idx) => {
             if (step.instruction) {
-              console.log(`[SIMPLIFY] Simplifying step ${idx} instruction`);
               return {
                 ...step,
                 instruction: await simplifyText(step.instruction, targetLevel, t)
@@ -501,18 +479,12 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
             return step;
           })
         );
-      } else {
-        console.log(`[SIMPLIFY] Skipping section - no recognizable content to simplify`);
       }
     } catch (error) {
-      console.error(`[SIMPLIFY] Failed to simplify section ${section.id}:`, error);
-      // Keep original content if simplification fails
     }
     
     simplifiedSections.push(simplifiedSection);
   }
-  
-  console.log('[SIMPLIFY] Simplification complete. Sections processed:', simplifiedSections.length);
   
   return {
     ...experimentData,
@@ -523,10 +495,10 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   };
 };
 
-// Helper function to simplify a single text string
 const simplifyText = async (text, targetLevel, t) => {
   if (!text || text.trim().length === 0) {
-    console.log('[SIMPLIFY TEXT] Empty text, returning as-is');
+const simplifyText = async (text, targetLevel, t) => {
+  if (!text || text.trim().length === 0) {
     return text;
   }
   
@@ -547,13 +519,6 @@ const simplifyText = async (text, targetLevel, t) => {
   
   const level = levelInstructions[targetLevel] || levelInstructions['intermediate'];
   
-  console.log('[SIMPLIFY TEXT] ========================================');
-  console.log('[SIMPLIFY TEXT] SENDING TO AI:');
-  console.log('[SIMPLIFY TEXT] Level:', targetLevel);
-  console.log('[SIMPLIFY TEXT] Original length:', text.length);
-  console.log('[SIMPLIFY TEXT] Original text (first 200 chars):\n', text.substring(0, 200));
-  console.log('[SIMPLIFY TEXT] ========================================');
-
   try {
     const response = await sendChatConversation(
       [
@@ -566,20 +531,14 @@ Original text:
 ${text}` }
       ],
       { 
-        temperature: 0.7,  // Higher temperature for more creative rephrasing
-        max_tokens: 1000   // More tokens for longer texts
+        temperature: 0.7,
+        max_tokens: 1000
       },
       t
     );
     
     let simplifiedText = response.choices[0].message.content.trim();
-    console.log('[SIMPLIFY TEXT] ========================================');
-    console.log('[SIMPLIFY TEXT] RECEIVED FROM AI:');
-    console.log('[SIMPLIFY TEXT] Simplified length:', simplifiedText.length);
-    console.log('[SIMPLIFY TEXT] Simplified text (first 200 chars):\n', simplifiedText.substring(0, 200));
-    console.log('[SIMPLIFY TEXT] ========================================');
     
-    // Remove common meta-commentary patterns
     const metaPatterns = [
       /^here is the rewritten version:?\s*/i,
       /^here is the simplified version:?\s*/i,
@@ -595,23 +554,17 @@ ${text}` }
     
     simplifiedText = simplifiedText.trim();
     
-    // Clean up formatting: replace multiple line breaks with proper paragraph spacing
-    // Convert newlines between sentences into spaces for flowing paragraph
     simplifiedText = simplifiedText
-      .replace(/\n\n+/g, '\n\n')  // Keep paragraph breaks (double newline)
-      .replace(/([.!?])\n(?=[A-Z])/g, '$1 ')  // Single newline after sentence -> space
-      .replace(/\n(?=[A-Z])/g, ' ');  // Other single newlines -> space
+      .replace(/\n\n+/g, '\n\n')
+      .replace(/([.!?])\n(?=[A-Z])/g, '$1 ')
+      .replace(/\n(?=[A-Z])/g, ' ');
     
-    // Safety check: if result is too short or empty, return original
     if (!simplifiedText || simplifiedText.length < 10) {
-      console.warn('[SIMPLIFY TEXT] Result too short, returning original');
       return text;
     }
-    
     return simplifiedText;
   } catch (error) {
-    console.error('[SIMPLIFY TEXT] Error simplifying text:', error);
-    return text; // Return original on error
+    return text;
   }
 };
 

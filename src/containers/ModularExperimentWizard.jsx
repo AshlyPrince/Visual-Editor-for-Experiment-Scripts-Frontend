@@ -343,7 +343,6 @@ const ModularExperimentWizard = ({
   const [chatOpen, setChatOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
 
-  // Load chat history for wizard session
   useEffect(() => {
     const wizardSessionId = `wizard_${Date.now()}`;
     const savedHistory = localStorage.getItem(`chat_history_${wizardSessionId}`);
@@ -357,13 +356,11 @@ const ModularExperimentWizard = ({
     }
   }, []);
 
-  // Save chat history for wizard
   useEffect(() => {
-    const wizardSessionId = 'wizard_current'; // Use a constant key for wizard sessions
+    const wizardSessionId = 'wizard_current';
     if (chatHistory.length > 0) {
       localStorage.setItem(`chat_history_${wizardSessionId}`, JSON.stringify(chatHistory));
     } else {
-      // Clear from localStorage when chat is cleared
       localStorage.removeItem(`chat_history_${wizardSessionId}`);
     }
   }, [chatHistory]);
@@ -2044,7 +2041,6 @@ const ModularExperimentWizard = ({
         </DialogActions>
       </Dialog>
 
-      {/* Floating AI Chat Assistant Button */}
       <Tooltip title={t('llm.chat.openAssistant', 'Open AI Assistant')} placement="left">
         <Fab
           color="secondary"
@@ -2061,7 +2057,6 @@ const ModularExperimentWizard = ({
         </Fab>
       </Tooltip>
 
-      {/* AI Chat Assistant Dialog */}
       <Dialog
         open={chatOpen}
         onClose={() => setChatOpen(false)}

@@ -62,7 +62,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       console.log('[ExperimentViewer] Raw data sections:', rawData.sections);
       console.log('[ExperimentViewer] Raw data content:', rawData.content);
       
-      // Log procedure section specifically
       const procedureSection = (rawData.sections || rawData.content?.sections || []).find(s => s.id === 'procedure');
       console.log('[ExperimentViewer] Raw procedure section from backend:', procedureSection);
       if (procedureSection) {
@@ -93,7 +92,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       console.log('[ExperimentViewer] After toCanonical transformation:', canonical);
       console.log('[ExperimentViewer] Canonical sections:', canonical.content?.sections);
       
-      // Log procedure section after transformation
       const canonicalProcedureSection = (canonical.content?.sections || []).find(s => s.id === 'procedure');
       console.log('[ExperimentViewer] Canonical procedure section:', canonicalProcedureSection);
       if (canonicalProcedureSection) {
@@ -479,7 +477,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     console.log('[ExperimentViewer] Section content:', section.content);
     console.log('[ExperimentViewer] Section content type:', typeof section.content);
     
-    // Log the steps specifically
     if (section.content && section.content.steps) {
       console.log('[ExperimentViewer] Procedure steps found:', section.content.steps);
       console.log('[ExperimentViewer] Steps type:', typeof section.content.steps);
@@ -515,18 +512,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     console.log('[ExperimentViewer] sectionContent keys:', Object.keys(sectionContent));
     console.log('[ExperimentViewer] sectionContent values:', Object.values(sectionContent));
     
-    // Log each key-value pair
     Object.entries(sectionContent).forEach(([key, value]) => {
       console.log(`[ExperimentViewer] Key "${key}":`, value, 'Type:', Array.isArray(value) ? 'Array' : typeof value);
     });
     
-    // Check if section has any actual content
     const hasContent = () => {
       if (typeof sectionContent === 'string' && sectionContent.trim()) {
         return true;
       }
       if (typeof sectionContent === 'object') {
-        // Check for non-empty fields (excluding media)
         const hasNonEmptyFields = Object.entries(sectionContent).some(([key, value]) => {
           if (key === 'media') return false;
           if (Array.isArray(value) && value.length > 0) return true;
@@ -536,14 +530,12 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         });
         if (hasNonEmptyFields) return true;
         
-        // Check if there's media
         if (section.media && Array.isArray(section.media) && section.media.length > 0) return true;
         if (sectionContent.media && Array.isArray(sectionContent.media) && sectionContent.media.length > 0) return true;
       }
       return false;
     };
     
-    // Don't render section if it has no content
     if (!hasContent()) {
       console.log(`[ExperimentViewer] Section "${section.name}" has no content, skipping render`);
       return null;

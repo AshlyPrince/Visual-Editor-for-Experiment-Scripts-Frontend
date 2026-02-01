@@ -11,7 +11,6 @@ export const useLLMChat = (initialOptions = {}) => {
   const [error, setError] = useState(null);
 
   const defaultOptions = {
-    // Model not specified - backend will use its default (same as Polish & Consistency Check)
     temperature: 0.7,
     max_tokens: 512,
     ...initialOptions
@@ -67,10 +66,9 @@ export const useLLMChat = (initialOptions = {}) => {
     const userMessage = { role: 'user', content: userContent };
     setMessages(prev => [...prev, userMessage]);
 
-    // Build conversation with system prompt at the beginning and include all previous messages
     const conversationMessages = [
       { role: 'system', content: systemPrompt },
-      ...messages, // Include all previous messages
+      ...messages,
       { role: 'user', content: userContent }
     ];
 
@@ -86,9 +84,7 @@ export const useLLMChat = (initialOptions = {}) => {
         content: response.choices[0].message.content
       };
       
-      // Add assistant response to messages
       setMessages(prev => [...prev, assistantMessage]);
-      
       return assistantMessage;
     } catch (err) {
       const errorMessage = err.message || t('llm.chat.error', 'Failed to get response. Please try again.');

@@ -37,7 +37,6 @@ const ChatAssistant = ({
   
   const { t } = useTranslation();
   
-  // Use translated defaults if not provided
   const displayTitle = title || t('llm.chat.title');
   const displayPlaceholder = placeholder || t('llm.chat.placeholder');
 
@@ -48,7 +47,6 @@ const ChatAssistant = ({
     }
   }, [initialMessages, setConversation]);
 
-  // Notify parent component when messages change
   useEffect(() => {
     if (onMessagesChange) {
       onMessagesChange(messages);
@@ -69,7 +67,6 @@ const ChatAssistant = ({
 
     try {
       let response;
-      // Always use system prompt if provided
       if (systemPrompt) {
         response = await sendWithSystemPrompt(systemPrompt, userInput);
       } else {

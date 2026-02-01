@@ -463,25 +463,20 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         sectionMedia = section.content.media;
       }
       
-      // Check if section has any actual content
       const hasContent = () => {
-        // Check for media
         if (sectionMedia && sectionMedia.length > 0) return true;
         
-        // Check for text content
         if (typeof sectionContent === 'string' && sectionContent.trim()) {
           return true;
         }
         
-        // Check for array content
         if (Array.isArray(sectionContent) && sectionContent.length > 0) {
           return true;
         }
         
-        // Check for object content
         if (typeof sectionContent === 'object' && sectionContent !== null) {
           const hasNonEmptyFields = Object.entries(sectionContent).some(([key, value]) => {
-            if (key === 'media') return false; // Media already checked above
+            if (key === 'media') return false;
             if (Array.isArray(value) && value.length > 0) return true;
             if (typeof value === 'string' && value.trim()) return true;
             if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) return true;
@@ -493,7 +488,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         return false;
       };
       
-      // Skip this section if it has no content
       if (!hasContent()) {
         console.log(`[Export] Section "${section.name || section.id}" has no content, skipping`);
         return;
@@ -593,7 +587,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     stepHtml += `<div class="step-notes">${step.notes}</div>`;
                   }
                   
-                  // Add media for this step if it exists
                   if (step.media && Array.isArray(step.media) && step.media.length > 0) {
                     stepHtml += `<div class="media-gallery">`;
                     step.media.forEach(mediaItem => {
@@ -712,13 +705,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         }
       } else if (typeof sectionContent === 'string') {
         if (sectionContent.startsWith('<')) {
-          // Already HTML formatted
           htmlContent += sectionContent;
         } else {
-          // Convert plain text to proper paragraphs
-          const paragraphs = sectionContent.split(/\n\n+/); // Split on double newlines (paragraphs)
+          const paragraphs = sectionContent.split(/\n\n+/);
           paragraphs.forEach(para => {
-            const cleanedPara = para.trim().replace(/\n/g, ' '); // Replace single newlines with spaces
+            const cleanedPara = para.trim().replace(/\n/g, ' ');
             if (cleanedPara) {
               htmlContent += `<p>${cleanedPara}</p>`;
             }
@@ -750,7 +741,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                         stepHtml += `<div class="step-notes">${step.notes}</div>`;
                       }
                       
-                      // Add media for this step if it exists
                       if (step.media && Array.isArray(step.media) && step.media.length > 0) {
                         stepHtml += `<div class="media-gallery">`;
                         step.media.forEach(mediaItem => {
@@ -849,7 +839,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
               }
             }
           } else if (typeof value === 'string') {
-            // Split into paragraphs for better formatting
+          } else if (typeof value === 'string') {
             const paragraphs = value.split(/\n\n+/);
             htmlContent += `
             <div class="subsection">
@@ -863,8 +853,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             });
             htmlContent += `
             </div>
-`;
-          } else if (typeof value === 'object' && value !== null) {
+`;        } else if (typeof value === 'object' && value !== null) {
             console.warn(`[Export] Skipping unhandled object value for key "${key}":`, value);
           } else {
             htmlContent += `
@@ -1024,27 +1013,23 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      const margin = 10; // Margin on all sides
+      const margin = 10;
       const imgWidth = pdfWidth - (2 * margin); 
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      const pageHeight = pdfHeight - (2 * margin); // Usable height per page
+      const pageHeight = pdfHeight - (2 * margin);
 
-      // Calculate how many pages we actually need
       const totalPages = Math.ceil(imgHeight / pageHeight);
 
-      // Add pages
       for (let page = 0; page < totalPages; page++) {
         if (page > 0) {
           pdf.addPage();
         }
         
-        // Calculate the y position for this page
         const yOffset = -(page * pageHeight);
         
         pdf.addImage(imgData, 'JPEG', margin, yOffset + margin, imgWidth, imgHeight);
       }
-
       
       const filename = `${experiment.title || 'experiment'}-v${experiment.version_number || 1}.pdf`;
       pdf.save(filename);
