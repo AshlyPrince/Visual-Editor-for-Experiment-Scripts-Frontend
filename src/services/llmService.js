@@ -505,49 +505,64 @@ const simplifyText = async (text, targetLevel, t) => {
   
   const levelInstructions = {
     'beginner': {
-      system: 'You are a science educator who simplifies scientific text for primary school children while preserving all original content structure.',
-      instruction: `Simplify ONLY the language of the following text for young children (ages 6-10):
+      system: 'You are a science educator who simplifies scientific text for primary school children while preserving all original content structure and language.',
+      instruction: `Simplify ONLY the language complexity of the following text for young children (ages 6-10):
 
-CRITICAL RULES:
-1. PRESERVE ALL original content - do not add or remove information
-2. Keep the SAME meaning and facts - only change how complex words are said
-3. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
-4. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-5. Use very simple words (maximum 8-10 words per sentence)
-6. Replace scientific terms with everyday words children know
+⚠️ CRITICAL RULES - MUST FOLLOW:
+1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
+2. PRESERVE ALL original content - do not add or remove information
+3. Keep the SAME meaning and facts - only make words simpler in the SAME language
+4. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
+6. Use very simple words in the SAME language (maximum 8-10 words per sentence)
+7. Replace complex scientific terms with everyday words that children know IN THE SAME LANGUAGE
 
-DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text.`
+DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text in its ORIGINAL LANGUAGE.`
     },
     'intermediate': {
-      system: 'You are a science educator who makes scientific text clearer and more accessible while preserving all original content.',
-      instruction: `Simplify ONLY the language of the following text to make it easier to understand:
+      system: 'You are a science educator who makes scientific text clearer and more accessible while preserving all original content and language.',
+      instruction: `Simplify ONLY the language complexity of the following text to make it easier to understand:
 
-CRITICAL RULES:
-1. PRESERVE ALL original content - do not add or remove information
-2. Keep the SAME meaning and facts - only make the language clearer
-3. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
-4. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-5. Use clear, everyday language (maximum 15-20 words per sentence)
-6. Explain technical terms briefly or replace with simpler words
+⚠️ CRITICAL RULES - MUST FOLLOW:
+1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
+2. PRESERVE ALL original content - do not add or remove information
+3. Keep the SAME meaning and facts - only make the language clearer in the SAME language
+4. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
+6. Use clear, everyday language in the SAME language (maximum 15-20 words per sentence)
+7. Explain or replace technical terms with simpler words IN THE SAME LANGUAGE
 
-DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text.`
+DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text in its ORIGINAL LANGUAGE.`
     },
     'advanced': {
-      system: 'You are a science educator who maintains academic rigor while ensuring clarity.',
+      system: 'You are a science educator who maintains academic rigor while ensuring clarity and preserving the original language.',
       instruction: `Keep the following text at its CURRENT academic level, only improving clarity if needed:
 
-CRITICAL RULES:
-1. PRESERVE ALL original content exactly - this is the original/advanced level
-2. Keep all scientific terminology and academic language
-3. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
-4. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-5. Only fix obvious grammar or clarity issues
+⚠️ CRITICAL RULES - MUST FOLLOW:
+1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
+2. PRESERVE ALL original content exactly - this is the original/advanced level
+3. Keep all scientific terminology and academic language in the SAME language
+4. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
+6. Only fix obvious grammar or clarity issues
 
-DO NOT simplify the language. DO NOT write new content. Return the text mostly unchanged.`
+DO NOT translate. DO NOT simplify the language. DO NOT write new content. Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
     }
   };
   
   const level = levelInstructions[targetLevel] || levelInstructions['intermediate'];
+  
+  // Detect language by checking for common words
+  const textLower = text.toLowerCase();
+  let detectedLanguage = 'English';
+  
+  // German detection - check for common German words and characters
+  if (textLower.includes('die ') || textLower.includes('der ') || textLower.includes('das ') || 
+      textLower.includes('und ') || textLower.includes('mit ') || textLower.includes('für ') ||
+      textLower.includes('sie ') || textLower.includes('wie ') || textLower.includes('ist ') ||
+      text.includes('ä') || text.includes('ö') || text.includes('ü') || text.includes('ß')) {
+    detectedLanguage = 'German (Deutsch)';
+  }
   
   try {
     const response = await sendChatConversation(
@@ -555,14 +570,19 @@ DO NOT simplify the language. DO NOT write new content. Return the text mostly u
         { role: 'system', content: level.system },
         { role: 'user', content: `${level.instruction}
 
+🌍 LANGUAGE DETECTION: This text appears to be in ${detectedLanguage}.
+⚠️ YOU MUST RESPOND IN THE SAME LANGUAGE: ${detectedLanguage}
+⚠️ DO NOT TRANSLATE TO ANY OTHER LANGUAGE!
+
 IMPORTANT: 
-- Return ONLY the simplified text
+- Return ONLY the simplified text in ${detectedLanguage}
 - Do NOT add phrases like "Here is the simplified version"
 - Do NOT add explanations or commentary
+- Do NOT translate to English or any other language
 - If the text has HTML tags, tables, or links, preserve them exactly
 ${containsHTML ? '\n⚠️ WARNING: This text contains HTML formatting. You MUST preserve all HTML tags exactly as they appear!' : ''}
 
-Original text:
+Original text (in ${detectedLanguage}):
 ${text}` }
       ],
       { 
