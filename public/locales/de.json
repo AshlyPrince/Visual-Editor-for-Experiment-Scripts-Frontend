@@ -995,7 +995,7 @@
     "chat": {
       "title": "Experiment-Assistent",
       "placeholder": "Fragen Sie zu Ihrem Experiment...",
-      "systemPrompt": "Sie sind ein hilfreicher Assistent für die Gestaltung wissenschaftlicher Experimente. Geben Sie klare, praktische Ratschläge.",
+      "systemPrompt": "Sie sind ein hilfreicher Assistent für die Gestaltung wissenschaftlicher Experimente. WICHTIG: Beantworten Sie NUR Fragen zu wissenschaftlichen Experimenten, Laborverfahren und Experimentdesign. Beantworten Sie KEINE Fragen zu Mathematik-Hausaufgaben, Allgemeinwissen, Programmierung oder anderen experimentfremden Themen. Wenn Sie nach nicht verwandten Themen gefragt werden, lehnen Sie höflich ab und sagen Sie: 'Ich bin speziell für die Unterstützung beim Experimentdesign und der Erstellung entwickelt. Ich kann nur Fragen zu Ihrem wissenschaftlichen Experiment beantworten. Wie kann ich Ihnen bei Ihrem Experiment helfen?' Geben Sie klare, praktische Ratschläge nur für experimentbezogene Fragen.",
       "clearConversation": "Unterhaltung löschen",
       "send": "Senden"
     },

@@ -877,6 +877,12 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             onMessagesChange={setChatHistory}
             systemPrompt={`You are an AI assistant helping with scientific experiment design. You have access to the current experiment context and should provide specific, relevant advice.
 
+IMPORTANT RESTRICTIONS:
+- ONLY answer questions related to scientific experiments, laboratory procedures, and experiment design
+- DO NOT answer questions about math, homework, general knowledge, programming, or any non-experiment topics
+- If asked about unrelated topics, politely decline and redirect to experiment creation help
+- Example refusal: "I'm specifically designed to help with experiment design and creation. I can only answer questions related to your scientific experiment. How can I help you with your experiment?"
+
 CURRENT EXPERIMENT CONTEXT:
 Title: ${title || '(not set yet)'}
 Duration: ${duration || '(not set yet)'}
@@ -897,8 +903,9 @@ INSTRUCTIONS:
 4. Point out inconsistencies or gaps in the current sections
 5. Recommend safety precautions based on mentioned materials/chemicals
 6. Help with scientific writing, methodology, and best practices
+7. STRICTLY stay within the scope of experiment design and laboratory procedures
 
-Be specific to THIS experiment - don't give generic advice. If sections are incomplete, guide the user on what to add.`}
+Be specific to THIS experiment - don't give generic advice. If sections are incomplete, guide the user on what to add. Remember: ONLY discuss experiment-related topics.`}
             showHeader={false}
             maxHeight="100%"
           />

@@ -65,9 +65,14 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             line-height: 1.5;
             color: #000000;
             background-color: #ffffff;
-            max-width: 100%;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 60px;
         }
         
         .header {
@@ -304,10 +309,27 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             font-style: italic;
         }
         
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 30px 30px;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 20px 20px;
+            }
+        }
+        
         @media print {
             body {
-                padding: 20px;
+                margin: 0;
+                padding: 0;
                 background-color: white;
+            }
+            
+            .container {
+                padding: 30px 40px;
             }
             
             .section {
@@ -361,6 +383,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
     </style>
 </head>
 <body>
+    <div class="container">
     <div class="header">
         <h1>${experiment.title || t('export.experimentProtocol')}</h1>
         <div class="meta-info">
@@ -439,6 +462,43 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       if ((!sectionMedia || sectionMedia.length === 0) && section.content && typeof section.content === 'object' && section.content.media) {
         sectionMedia = section.content.media;
       }
+      
+      // Check if section has any actual content
+      const hasContent = () => {
+        // Check for media
+        if (sectionMedia && sectionMedia.length > 0) return true;
+        
+        // Check for text content
+        if (typeof sectionContent === 'string' && sectionContent.trim()) {
+          return true;
+        }
+        
+        // Check for array content
+        if (Array.isArray(sectionContent) && sectionContent.length > 0) {
+          return true;
+        }
+        
+        // Check for object content
+        if (typeof sectionContent === 'object' && sectionContent !== null) {
+          const hasNonEmptyFields = Object.entries(sectionContent).some(([key, value]) => {
+            if (key === 'media') return false; // Media already checked above
+            if (Array.isArray(value) && value.length > 0) return true;
+            if (typeof value === 'string' && value.trim()) return true;
+            if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) return true;
+            return false;
+          });
+          return hasNonEmptyFields;
+        }
+        
+        return false;
+      };
+      
+      // Skip this section if it has no content
+      if (!hasContent()) {
+        console.log(`[Export] Section "${section.name || section.id}" has no content, skipping`);
+        return;
+      }
+      
       const icon = getSectionIcon(section.id);
       
       
@@ -828,6 +888,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         <p>${t('export.generatedFrom')}</p>
         <p>${new Date().toLocaleString()}</p>
     </div>
+    </div>
 </body>
 </html>
 `;
@@ -966,20 +1027,22 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       const margin = 10; // Margin on all sides
       const imgWidth = pdfWidth - (2 * margin); 
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      const pageHeight = pdfHeight - (2 * margin); // Usable height per page
 
-      let heightLeft = imgHeight;
-      let position = margin; 
+      // Calculate how many pages we actually need
+      const totalPages = Math.ceil(imgHeight / pageHeight);
 
-      // Add first page
-      pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
-      heightLeft -= (pdfHeight - (2 * margin)); // Account for both top and bottom margins
-
-      // Add remaining pages
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight + margin; // Maintain proper positioning
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
-        heightLeft -= (pdfHeight - (2 * margin)); // Account for margins on each page
+      // Add pages
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) {
+          pdf.addPage();
+        }
+        
+        // Calculate the y position for this page
+        const yOffset = -(page * pageHeight);
+        
+        pdf.addImage(imgData, 'JPEG', margin, yOffset + margin, imgWidth, imgHeight);
       }
 
       

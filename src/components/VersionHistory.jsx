@@ -19,7 +19,6 @@ import {
   CircularProgress,
   Stack,
   Divider,
-  Grid,
   Paper,
 } from '@mui/material';
 import {
@@ -30,7 +29,6 @@ import {
   History as HistoryIcon,
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
-import MediaViewer from './MediaViewer.jsx';
 import VersionComparison from './VersionComparison.jsx';
 
 const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
@@ -594,6 +592,41 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
               const sectionContent = sectionData.content || '';
               const sectionMedia = sectionData.media || [];
 
+              // Check if section has any actual content
+              const hasContent = () => {
+                // Check for media
+                if (sectionMedia.length > 0) return true;
+                
+                // Check for text content
+                if (typeof sectionContent === 'string' && sectionContent.trim()) {
+                  return true;
+                }
+                
+                // Check for array content
+                if (Array.isArray(sectionContent) && sectionContent.length > 0) {
+                  return true;
+                }
+                
+                // Check for object content
+                if (typeof sectionContent === 'object' && sectionContent !== null) {
+                  const hasNonEmptyFields = Object.entries(sectionContent).some(([key, value]) => {
+                    if (key === 'media') return false; // Media already checked above
+                    if (Array.isArray(value) && value.length > 0) return true;
+                    if (typeof value === 'string' && value.trim()) return true;
+                    if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) return true;
+                    return false;
+                  });
+                  return hasNonEmptyFields;
+                }
+                
+                return false;
+              };
+
+              // Skip rendering if section has no content
+              if (!hasContent()) {
+                return null;
+              }
+
               return (
                 <Card key={idx} variant="outlined" sx={{ overflow: 'visible' }}>
                   <CardContent sx={{ p: 3 }}>
@@ -606,14 +639,66 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
 
                     {/* Render media first, like in ExperimentViewer */}
                     {sectionMedia.length > 0 && (
-                      <Box sx={{ mb: 3 }}>
-                        <Grid container spacing={2}>
-                          {sectionMedia.map((media, mediaIdx) => (
-                            <Grid item xs={12} sm={6} md={4} key={mediaIdx}>
-                              <MediaViewer media={[media]} compact={true} />
-                            </Grid>
-                          ))}
-                        </Grid>
+                      <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
+                        {sectionMedia.map((mediaItem, index) => (
+                          <Box key={index} sx={{ textAlign: 'center', maxWidth: '700px', width: '100%' }}>
+                            <Box sx={{ 
+                              width: `${mediaItem.displaySize || 100}%`,
+                              mx: 'auto'
+                            }}>
+                              {mediaItem.type?.startsWith('video/') ? (
+                                <Box
+                                  component="video"
+                                  controls
+                                  sx={{
+                                    width: '100%',
+                                    height: 'auto',
+                                    borderRadius: 1,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    mb: 1.5
+                                  }}
+                                >
+                                  <source src={mediaItem.url || mediaItem.data} type={mediaItem.type} />
+                                  {t('viewer.browserNoVideoSupport', 'Your browser does not support the video tag.')}
+                                </Box>
+                              ) : (
+                                <Box
+                                  component="img"
+                                  src={mediaItem.url || mediaItem.data}
+                                  alt={mediaItem.caption || mediaItem.name || `Figure ${index + 1}`}
+                                  sx={{
+                                    width: '100%',
+                                    height: 'auto',
+                                    borderRadius: 1,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    mb: 1.5,
+                                    transition: 'all 0.3s ease'
+                                  }}
+                                />
+                              )}
+                            </Box>
+                            {mediaItem.caption && (
+                              <Typography 
+                                variant="body2"
+                                sx={{ 
+                                  color: 'text.primary',
+                                  fontSize: '0.95rem',
+                                  lineHeight: 1.6,
+                                  textAlign: 'center',
+                                  maxWidth: '600px',
+                                  mx: 'auto'
+                                }}
+                              >
+                                <Box component="span" sx={{ fontWeight: 600 }}>
+                                  {t('viewer.figure', { number: index + 1, defaultValue: `Figure ${index + 1}` })}:
+                                </Box>{' '}
+                                {mediaItem.caption}
+                              </Typography>
+                            )}
+                          </Box>
+                        ))}
                       </Box>
                     )}
 
@@ -711,7 +796,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                   </CardContent>
                 </Card>
               );
-            })}
+            }).filter(Boolean)}
           </Stack>
         ) : (
           <Alert severity="info">

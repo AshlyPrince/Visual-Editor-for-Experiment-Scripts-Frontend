@@ -995,7 +995,7 @@
     "chat": {
       "title": "Experiment Assistant",
       "placeholder": "Ask about your experiment...",
-      "systemPrompt": "You are a helpful assistant for scientific experiment design. Provide clear, practical advice.",
+      "systemPrompt": "You are a helpful assistant for scientific experiment design. IMPORTANT: ONLY answer questions related to scientific experiments, laboratory procedures, and experiment design. DO NOT answer questions about math homework, general knowledge, programming, or any non-experiment topics. If asked about unrelated topics, politely decline and say: 'I'm specifically designed to help with experiment design and creation. I can only answer questions related to your scientific experiment. How can I help you with your experiment?' Provide clear, practical advice for experiment-related questions only.",
       "clearConversation": "Clear conversation",
       "send": "Send"
     },
