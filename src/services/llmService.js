@@ -439,9 +439,9 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   const errorMsg = (key, fallback) => t ? t(key) : fallback;
   
   const levelDescriptions = {
-    'beginner': 'elementary school (ages 8-11): Use very simple words (like "mix" instead of "combine"), short sentences (max 15 words), avoid technical terms or explain them in simple language.',
-    'intermediate': 'middle school (ages 12-14): Use clear everyday language, introduce technical terms with brief explanations, use moderate sentence length.',
-    'advanced': 'high school (ages 15-18): Use proper scientific terminology with definitions when needed, standard academic language, maintain technical accuracy.'
+    'beginner': 'elementary school (ages 8-11): Use very simple words, short sentences (max 12 words). Example: "mix" not "combine", "split" not "separate"',
+    'intermediate': 'middle school (ages 12-14): Use clear everyday language with brief explanations for technical terms.',
+    'advanced': 'high school (ages 15-18): Use proper scientific terminology, standard academic language.'
   };
 
   const levelDescription = levelDescriptions[targetLevel] || levelDescriptions['intermediate'];
@@ -480,49 +480,60 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
     return sectionData;
   });
 
-  const prompt = `You are an educational content adapter. Your ONLY job is to rewrite the text to be appropriate for ${levelDescription}
+  const prompt = `You are a language simplifier. Your ONLY job is to rewrite text to match ${levelDescription}.
 
-CRITICAL RULES:
-1. You MUST respond with ONLY valid JSON - no explanations, no markdown, no extra text
-2. Keep EVERY piece of information from the original - just use simpler/different words
-3. Do NOT remove details, measurements, quantities, or steps
-4. Do NOT touch any "media", "duration", "id", "stepNumber" fields - copy them exactly
-5. ONLY simplify the language in "content", "items", and "instruction" fields
-6. Keep the same level of detail and completeness
-7. For safety information: keep ALL warnings, just make the language appropriate for the level
+ABSOLUTE RULES - DO NOT BREAK THESE:
+1. DO NOT change ANY section titles - copy them EXACTLY as they are
+2. DO NOT change ANY IDs, types, stepNumbers, durations, or media arrays - copy them EXACTLY
+3. DO NOT remove or add sections
+4. DO NOT translate anything - keep the same language
+5. ONLY rewrite the text in "content", "items", and "instruction" fields
+6. Keep ALL information - just use simpler/different words
+7. Keep ALL measurements, numbers, quantities EXACTLY the same
 
-EXAMPLE OF GOOD SIMPLIFICATION:
-Original (text): "The filtration process separates particulate matter from aqueous solutions"
-Beginner: "Filtration is a way to separate tiny pieces from water"
-Intermediate: "Filtration separates small particles from water solutions"
-Advanced: "Filtration separates solid particles from liquid solutions"
+WHAT TO CHANGE:
+- "content" field in text sections: Rewrite the text only
+- "items" array in list sections: Rewrite each item text only
+- "instruction" field in steps: Rewrite the instruction text only
 
-Original (step): "Carefully pipette 5mL of the supernatant into a clean test tube"
-Beginner: "Use a pipette to move 5mL of liquid to a clean tube. Be very careful."
-Intermediate: "Carefully use a pipette to transfer 5mL of the top liquid into a clean test tube"
-Advanced: "Carefully pipette 5mL of the supernatant into a clean test tube"
+WHAT TO NEVER CHANGE:
+- Section "id" - copy exact
+- Section "type" - copy exact  
+- Section "title" - copy exact (keep "Theoretischer Hintergrund", don't change to "Background")
+- Step "id" - copy exact
+- Step "stepNumber" - copy exact
+- Step "duration" - copy exact
+- Step "media" - copy exact array
 
-SECTIONS TO SIMPLIFY:
+EXAMPLE:
+Input:
+{
+  "id": "theoretischer_hintergrund",
+  "type": "text",
+  "title": "Theoretischer Hintergrund",
+  "content": "Die Filtration ist ein wichtiges Trennverfahren."
+}
+
+Beginner Output:
+{
+  "id": "theoretischer_hintergrund",
+  "type": "text",
+  "title": "Theoretischer Hintergrund",
+  "content": "Filtration is a way to separate things."
+}
+
+SECTIONS TO SIMPLIFY (ONLY THE TEXT):
 ${JSON.stringify(sectionsForAI, null, 2)}
 
-REQUIRED OUTPUT (valid JSON only, no markdown):
+OUTPUT FORMAT - Valid JSON only, no markdown:
 {
-  "sections": [
-    {
-      "id": "copy-exact-id",
-      "type": "copy-exact-type",
-      "title": "copy-exact-title",
-      "content": "simplified-text-keeping-all-details" (for text type),
-      "items": ["simplified-but-complete-item-1", "simplified-but-complete-item-2"] (for list type),
-      "steps": [{"id": "exact-id", "stepNumber": exact-number, "instruction": "simplified-but-complete-instruction", "duration": copy-exact-value, "media": copy-exact-array}] (for steps type)
-    }
-  ]
+  "sections": [exact structure as input, only text in content/items/instruction simplified]
 }`;
 
   try {
     const response = await sendChatConversation(
       [{ role: 'user', content: prompt }],
-      { temperature: 0.3, max_tokens: 4000 },
+      { temperature: 0.2, max_tokens: 4000 },
       t
     );
 
@@ -547,12 +558,37 @@ REQUIRED OUTPUT (valid JSON only, no markdown):
       throw new Error('Invalid response structure: missing sections array');
     }
     
-    console.log('[SIMPLIFY] Parsed sections count:', simplifiedResult.sections.length);
+    console.log('[SIMPLIFY] Original sections count:', sections.length);
+    console.log('[SIMPLIFY] Simplified sections count:', simplifiedResult.sections.length);
     
-    // Validate that we didn't lose sections
+    // Validate that structure is preserved
     if (simplifiedResult.sections.length !== sections.length) {
-      console.warn(`Section count mismatch: original ${sections.length}, simplified ${simplifiedResult.sections.length}`);
+      console.error('Section count mismatch!');
+      throw new Error('AI changed the number of sections');
     }
+    
+    // Additional validation: ensure titles weren't changed
+    for (let i = 0; i < sections.length; i++) {
+      const original = sections[i];
+      const simplified = simplifiedResult.sections[i];
+      
+      if (original.id !== simplified.id) {
+        console.error(`Section ${i} ID mismatch: "${original.id}" vs "${simplified.id}"`);
+        throw new Error('AI changed section IDs');
+      }
+      
+      if (original.title !== simplified.title) {
+        console.error(`Section ${i} title mismatch: "${original.title}" vs "${simplified.title}"`);
+        throw new Error('AI changed section titles');
+      }
+      
+      if (original.type !== simplified.type) {
+        console.error(`Section ${i} type mismatch: "${original.type}" vs "${simplified.type}"`);
+        throw new Error('AI changed section types');
+      }
+    }
+    
+    console.log('[SIMPLIFY] Validation passed - structure preserved');
     
     // Return the complete experiment data with simplified sections
     return {
@@ -569,8 +605,8 @@ REQUIRED OUTPUT (valid JSON only, no markdown):
     // Provide more specific error messages
     if (error instanceof SyntaxError) {
       throw new Error(errorMsg('llm.errors.simplificationFailed', 'The AI returned invalid data. Please try again.'));
-    } else if (error.message.includes('Invalid response structure')) {
-      throw new Error(errorMsg('llm.errors.simplificationFailed', 'The AI response was incomplete. Please try again.'));
+    } else if (error.message.includes('Invalid response structure') || error.message.includes('AI changed')) {
+      throw new Error(errorMsg('llm.errors.simplificationFailed', 'The AI modified the structure. Please try again.'));
     } else {
       throw new Error(errorMsg('llm.errors.simplificationFailed', 'Failed to simplify language. Please try again.'));
     }
