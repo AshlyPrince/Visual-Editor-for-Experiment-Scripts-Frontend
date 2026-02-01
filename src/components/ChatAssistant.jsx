@@ -170,11 +170,11 @@ const ChatAssistant = ({
               sx={{
                 width: 32,
                 height: 32,
-                borderRadius: '50%',
+                borderRadius: msg.role === 'user' ? '50%' : 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                bgcolor: msg.role === 'user' ? 'primary.main' : 'secondary.main',
+                bgcolor: msg.role === 'user' ? 'primary.main' : 'transparent',
                 color: 'white',
                 flexShrink: 0
               }}
@@ -186,7 +186,7 @@ const ChatAssistant = ({
                   component="img"
                   src={aiAssistantIcon}
                   alt="AI"
-                  sx={{ width: 20, height: 20, objectFit: 'contain' }}
+                  sx={{ width: 32, height: 32, objectFit: 'contain' }}
                 />
               )}
             </Box>
@@ -210,19 +210,16 @@ const ChatAssistant = ({
               sx={{
                 width: 32,
                 height: 32,
-                borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: 'secondary.main',
-                color: 'white'
+                justifyContent: 'center'
               }}
             >
               <Box
                 component="img"
                 src={aiAssistantIcon}
                 alt="AI"
-                sx={{ width: 20, height: 20, objectFit: 'contain' }}
+                sx={{ width: 32, height: 32, objectFit: 'contain' }}
               />
             </Box>
             <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>

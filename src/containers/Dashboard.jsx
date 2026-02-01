@@ -816,7 +816,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                     </Box>
 
                     <Box sx={{ mt: 'auto' }}>
-                      {(experiment.created_by || experiment.creator || experiment.user) && (
+                      {(experiment.created_by_name || experiment.creator_name || experiment.username) && (
                         <Typography 
                           variant="body2" 
                           color="text.secondary"
@@ -828,7 +828,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                           }}
                         >
                           <span style={{ fontWeight: 500 }}>{t('dashboard.createdBy', 'Created by')}:</span>
-                          {experiment.created_by || experiment.creator || experiment.user}
+                          {experiment.created_by_name || experiment.creator_name || experiment.username}
                         </Typography>
                       )}
                       <Typography variant="body2" color="text.secondary">

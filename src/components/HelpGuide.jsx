@@ -278,17 +278,6 @@ const HelpGuide = ({ open, onClose }) => {
 
           <Box sx={{ mb: 3 }}>
             <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-              💡 {t('help.tip2Title', 'Use Templates')}
-            </Typography>
-            <Typography variant="body2" paragraph>
-              {t('help.tip2Desc', 'Start with a template to save time. Templates include pre-configured sections for common experiment types.')}
-            </Typography>
-          </Box>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
               💡 {t('help.tip3Title', 'Add Safety Information First')}
             </Typography>
             <Typography variant="body2" paragraph>
