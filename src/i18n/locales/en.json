@@ -857,6 +857,8 @@
     "loadExperimentsError": "Failed to load experiments. Please try again.",
     "unableToLoadExperiments": "Unable to load experiments. Please refresh the page or contact support if the problem persists.",
     "loadExperimentsFailed": "Failed to load experiments",
+    "serverWakingUp": "Server is waking up... This may take up to a minute on first load. Please wait and the page will refresh automatically.",
+    "serverStarting": "The server is starting up. This usually takes 30-60 seconds on the first request after inactivity.",
     "confirmDelete": "Are you sure you want to delete \"{{itemName}}\"?",
     "deleteConfirm": "Delete Item?",
     "actionCannotBeUndone": "This action cannot be undone.",

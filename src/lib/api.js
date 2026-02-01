@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "https://visual-editor-backend.onrender.com",
-  timeout: 30000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -16,6 +16,36 @@ const getKeycloakService = async () => {
     keycloakService = ks;
   }
   return keycloakService;
+};
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const isNetworkError = (error) => {
+  return !error.response && (
+    error.code === 'ECONNABORTED' ||
+    error.code === 'ERR_NETWORK' ||
+    error.message.includes('Network Error') ||
+    error.message.includes('timeout')
+  );
+};
+
+const retryRequest = async (config, retries = 3, delay = 2000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`[API] Attempt ${i + 1}/${retries} for ${config.url}`);
+      return await api(config);
+    } catch (error) {
+      const isLastAttempt = i === retries - 1;
+      
+      if (isNetworkError(error) && !isLastAttempt) {
+        console.log(`[API] Retrying in ${delay}ms due to network error...`);
+        await sleep(delay);
+        delay *= 1.5;
+      } else {
+        throw error;
+      }
+    }
+  }
 };
 
 api.interceptors.request.use(
@@ -42,6 +72,12 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+    
+    if (isNetworkError(error) && !originalRequest._retried) {
+      originalRequest._retried = true;
+      console.log('[API] Network error detected, attempting retry with backoff...');
+      return retryRequest(originalRequest, 3, 2000);
+    }
     
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;

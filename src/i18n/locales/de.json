@@ -857,6 +857,8 @@
     "loadExperimentsError": "Fehler beim Laden der Experimente. Bitte versuchen Sie es erneut.",
     "unableToLoadExperiments": "Experimente konnten nicht geladen werden. Bitte aktualisieren Sie die Seite oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht.",
     "loadExperimentsFailed": "Fehler beim Laden der Experimente",
+    "serverWakingUp": "Server wird gestartet... Dies kann beim ersten Laden bis zu einer Minute dauern. Bitte warten Sie, die Seite wird automatisch aktualisiert.",
+    "serverStarting": "Der Server wird gestartet. Dies dauert normalerweise 30-60 Sekunden bei der ersten Anfrage nach Inaktivität.",
     "confirmDelete": "Möchten Sie \"{{itemName}}\" wirklich löschen?",
     "deleteConfirm": "Element löschen?",
     "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",

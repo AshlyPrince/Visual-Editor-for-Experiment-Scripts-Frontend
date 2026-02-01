@@ -13,19 +13,22 @@ import {
   Toolbar,
   ThemeProvider,
   CssBaseline,
-  CircularProgress
+  CircularProgress,
+  IconButton
 } from "@mui/material";
 import { 
   Science, 
   History, 
   AutoAwesome,
   TrendingUp,
-  ErrorOutline
+  ErrorOutline,
+  Help as HelpIcon
 } from "@mui/icons-material";
 import { Dashboard, ExperimentDashboard, ExperimentWizard, ExperimentListContainer } from "./containers/exports.js";
 import UserInfo from "./components/UserInfo.jsx";
 import ExperimentEditor from "./components/ExperimentEditor.jsx";
 import ExperimentViewer from "./components/ExperimentViewer.jsx";
+import HelpGuide from "./components/HelpGuide.jsx";
 import { keycloakService } from "./services/exports.js";
 import { professionalTheme } from "./styles/theme.js";
 
@@ -56,6 +59,7 @@ function AppContent() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [reload, setReload] = useState(0);
+  const [helpOpen, setHelpOpen] = useState(false);
   
   
   const hasExistingToken = keycloakService.isAuthenticated();
@@ -492,10 +496,23 @@ function AppContent() {
               </Typography>
             </Box>
             
-            <UserInfo />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <IconButton
+                color="primary"
+                onClick={() => setHelpOpen(true)}
+                sx={{ 
+                  '&:hover': { backgroundColor: alpha(theme.palette.primary.main, 0.1) }
+                }}
+              >
+                <HelpIcon />
+              </IconButton>
+              <UserInfo />
+            </Box>
           </Toolbar>
         </AppBar>
       )}
+
+      <HelpGuide open={helpOpen} onClose={() => setHelpOpen(false)} />
 
       { }
       <Box sx={{ 

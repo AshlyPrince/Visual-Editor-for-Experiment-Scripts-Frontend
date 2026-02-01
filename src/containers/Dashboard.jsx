@@ -35,14 +35,12 @@ import {
   Science as ScienceIcon,
   Search as SearchIcon,
   Clear as ClearIcon,
-  Help as HelpIcon,
   Psychology as PsychologyIcon
 } from '@mui/icons-material';
 import { useAsyncOperation, useNotifications } from '../hooks/exports';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog.jsx';
 import ExportDialog from '../components/ExportDialog.jsx';
 import VersionHistory from '../components/VersionHistory.jsx';
-import HelpGuide from '../components/HelpGuide.jsx';
 import OnboardingTour from '../components/OnboardingTour.jsx';
 import LanguageSimplificationDialog from '../components/LanguageSimplificationDialog.jsx';
 
@@ -100,7 +98,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const [exportingExperiment, setExportingExperiment] = useState(null);
   const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
   const [versionHistoryExperiment, setVersionHistoryExperiment] = useState(null);
-  const [helpOpen, setHelpOpen] = useState(false);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [simplifyDialogOpen, setSimplifyDialogOpen] = useState(false);
   const [simplifyingExperiment, setSimplifyingExperiment] = useState(null);
@@ -339,16 +336,32 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           status: err.response?.status,
           data: err.response?.data
         });
-        setError(t('messages.unableToLoadExperiments'));
+        
+        const isNetworkError = !err.response && (
+          err.code === 'ECONNABORTED' ||
+          err.code === 'ERR_NETWORK' ||
+          err.message.includes('Network Error') ||
+          err.message.includes('timeout')
+        );
+        
+        if (isNetworkError) {
+          setError(t('messages.serverWakingUp', 'Server is waking up... This may take up to a minute on first load. Please wait.'));
+          addNotification({
+            type: 'info',
+            message: t('messages.serverStarting', 'The server is starting up. This usually takes 30-60 seconds on the first request.')
+          });
+        } else {
+          setError(t('messages.unableToLoadExperiments'));
+          addNotification({
+            type: 'error',
+            message: t('messages.loadExperimentsFailed')
+          });
+        }
+        
         setExperiments([]);
         setAllExperiments([]);
         setFilteredExperiments([]);
         setTotalExperiments(0);
-        
-        addNotification({
-          type: 'error',
-          message: t('messages.loadExperimentsFailed')
-        });
       } finally {
         console.log('[Dashboard] Loading complete, setting loading to false');
         setLoading(false);
@@ -479,14 +492,12 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
   const handleSimplifiedExport = async (simplifiedData, format, targetLevel) => {
     try {
-      // The simplifiedData now has the full experiment structure with simplified text content
       const levelNames = {
         beginner: 'Very Simple (Primary School)',
         intermediate: 'Simple',
         advanced: 'Standard (Current)'
       };
 
-      // Extract the content
       const content = typeof simplifiedData.content === 'string' 
         ? JSON.parse(simplifiedData.content) 
         : simplifiedData.content;
@@ -495,31 +506,18 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       const config = actualContent?.config || {};
       const sections = actualContent?.sections || [];
 
-      // Create the experiment object for ExportDialog with a note about simplification
       const exportExperiment = {
         ...simplifiedData,
         title: simplifiedData.title,
         content: {
           config: {
             ...config,
-            // Add metadata about simplification
             simplifiedLevel: levelNames[targetLevel]
           },
-          sections: [
-            // Add a note section at the beginning
-            {
-              id: 'simplification-note',
-              type: 'text',
-              title: '📚 Language Simplified',
-              content: `This experiment has been simplified to ${levelNames[targetLevel]}. The content has been adapted to be more accessible while maintaining scientific accuracy and safety information.`
-            },
-            // Then include all the simplified sections
-            ...sections
-          ]
+          sections: sections
         }
       };
 
-      // Store the formatted data and open the export dialog
       setSimplifiedExportData(exportExperiment);
       setSimplifiedExportOpen(true);
       
@@ -664,16 +662,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<HelpIcon />}
-            onClick={() => setHelpOpen(true)}
-            sx={{ fontWeight: 600 }}
-          >
-            {t('help.helpGuide', 'Help')}
-          </Button>
-          
           {!loading && allExperiments.length > 0 && (
             <Button
               variant="contained"
@@ -946,8 +934,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           </DialogActions>
         </Dialog>
       )}
-
-      <HelpGuide open={helpOpen} onClose={() => setHelpOpen(false)} />
       
       <OnboardingTour 
         open={onboardingOpen} 
