@@ -29,6 +29,15 @@ export const KeycloakProvider = ({ children }) => {
           window.keycloak = keycloakService.keycloak;
         }
         
+        if (isAuthenticated) {
+          const savedRedirect = sessionStorage.getItem('keycloak_redirect_uri');
+          if (savedRedirect && savedRedirect !== '/login' && savedRedirect !== '/') {
+            console.log('[KeycloakContext] Restoring saved location:', savedRedirect);
+            sessionStorage.removeItem('keycloak_redirect_uri');
+            window.location.href = savedRedirect;
+          }
+        }
+        
         if (keycloakService.authError) {
           console.error('[KeycloakContext] Auth error:', keycloakService.authError);
           setError(keycloakService.authError.message);

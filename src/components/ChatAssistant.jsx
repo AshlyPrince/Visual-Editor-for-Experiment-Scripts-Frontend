@@ -19,6 +19,7 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import { useLLMChat } from '../hooks/useLLMChat';
 import { useTranslation } from 'react-i18next';
+import MarkdownText from './MarkdownText';
 
 const ChatAssistant = ({
   title,
@@ -179,15 +180,7 @@ const ChatAssistant = ({
                 borderRadius: 2
               }}
             >
-              <Typography
-                variant="body2"
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word'
-                }}
-              >
-                {msg.content}
-              </Typography>
+              <MarkdownText content={msg.content} />
             </Paper>
           </Box>
         ))}

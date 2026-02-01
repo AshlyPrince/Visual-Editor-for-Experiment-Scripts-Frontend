@@ -1,5 +1,7 @@
 import { Box, Container, Typography, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useKeycloak } from './KeycloakContext.jsx';
 import { LoginCard } from './AuthComponents.jsx';
 
@@ -10,7 +12,14 @@ export const ProtectedRoute = ({
   showLoginCard = true
 }) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const { authenticated, loading, hasAnyRole, userInfo } = useKeycloak();
+
+  useEffect(() => {
+    if (!loading && !authenticated && location.pathname !== '/login') {
+      sessionStorage.setItem('keycloak_redirect_uri', location.pathname + location.search);
+    }
+  }, [authenticated, loading, location]);
 
   
   if (loading) {

@@ -47,10 +47,11 @@ class KeycloakService {
       const initOptions = {
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-        checkLoginIframe: false,
+        checkLoginIframe: true,
+        checkLoginIframeInterval: 5,
         pkceMethod: 'S256',
         flow: 'standard',
-        enableLogging: false,
+        enableLogging: true,
         promiseType: 'native'
       };
 
@@ -142,14 +143,22 @@ class KeycloakService {
     this.isLoggingIn = true;
     
     try {
-      const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/';
-      const realm = import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm';
-      const clientId = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor';
+      sessionStorage.setItem('keycloak_redirect_uri', window.location.pathname + window.location.search);
       
-      const redirectUri = encodeURIComponent(window.location.origin);
-      const loginUrl = `${keycloakUrl}realms/${realm}/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
-      
-      window.location.href = loginUrl;
+      if (this.keycloak) {
+        await this.keycloak.login({
+          redirectUri: window.location.origin
+        });
+      } else {
+        const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || 'https://visual-editor-keycloak.onrender.com/';
+        const realm = import.meta.env.VITE_KEYCLOAK_REALM || 'myrealm';
+        const clientId = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'visual-editor';
+        
+        const redirectUri = encodeURIComponent(window.location.origin);
+        const loginUrl = `${keycloakUrl}realms/${realm}/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
+        
+        window.location.href = loginUrl;
+      }
     } catch (error) {
       console.error('Login failed:', error);
       this.isLoggingIn = false;
