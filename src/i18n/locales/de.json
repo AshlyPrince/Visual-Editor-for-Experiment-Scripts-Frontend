@@ -1194,7 +1194,7 @@
     "welcomeText": "Diese Plattform hilft Ihnen, detaillierte Experiment-Skripte für Bildungszwecke zu erstellen, zu bearbeiten und zu teilen.",
     "quickStart": "Schnellstart-Anleitung",
     "step1Title": "Neues Experiment erstellen",
-    "step1Desc": "Klicken Sie auf die Schaltfläche \"Neues Experiment erstellen\" im Dashboard. Wählen Sie eine Vorlage oder beginnen Sie von Grund auf.",
+    "step1Desc": "Klicken Sie auf die Schaltfläche \"Neues Experiment erstellen\" im Dashboard.",
     "step2Title": "Grundinformationen ausfüllen",
     "step2Desc": "Geben Sie den Experimenttitel und die Beschreibung ein und wählen Sie relevante Abschnitte aus (Materialien, Verfahren, Sicherheit usw.).",
     "step3Title": "Inhalte zu Abschnitten hinzufügen",

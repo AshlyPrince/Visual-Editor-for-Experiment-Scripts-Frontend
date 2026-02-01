@@ -1194,7 +1194,7 @@
     "welcomeText": "This platform helps you create, edit, and share detailed experiment scripts for educational purposes.",
     "quickStart": "Quick Start Guide",
     "step1Title": "Create a New Experiment",
-    "step1Desc": "Click \"Create New Experiment\" button on the dashboard. Choose a template or start from scratch.",
+    "step1Desc": "Click \"Create New Experiment\" button on the dashboard.",
     "step2Title": "Fill in Basic Information",
     "step2Desc": "Enter experiment title, description, and select relevant sections (materials, procedure, safety, etc.).",
     "step3Title": "Add Content to Sections",

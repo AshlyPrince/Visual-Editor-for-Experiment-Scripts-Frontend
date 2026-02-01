@@ -54,6 +54,7 @@ import VersionConflictDialog from './VersionConflictDialog.jsx';
 import MediaUploader from './MediaUploader.jsx';
 import ChatAssistant from './ChatAssistant.jsx';
 import { normalizeExperiment, denormalizeExperiment, denormalizeSection, getContentSummary } from '../utils/experimentDataNormalizer.js';
+import aiAssistantIcon from '../assets/icons/ai_assistant.png';
 
 const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const { t } = useTranslation();
@@ -843,7 +844,12 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             zIndex: 1000,
           }}
         >
-          <ChatIcon />
+          <Box
+            component="img"
+            src={aiAssistantIcon}
+            alt="AI Assistant"
+            sx={{ width: 32, height: 32, objectFit: 'contain' }}
+          />
         </Fab>
       </Tooltip>
 
@@ -862,7 +868,12 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <ChatIcon color="secondary" />
+            <Box
+              component="img"
+              src={aiAssistantIcon}
+              alt="AI Assistant"
+              sx={{ width: 28, height: 28, objectFit: 'contain' }}
+            />
             <Typography variant="h6">{t('llm.chat.title', 'AI Assistant')}</Typography>
           </Box>
           <IconButton onClick={() => setChatOpen(false)} size="small">

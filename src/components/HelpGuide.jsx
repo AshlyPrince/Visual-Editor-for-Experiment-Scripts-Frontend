@@ -105,7 +105,7 @@ const HelpGuide = ({ open, onClose }) => {
               </ListItemIcon>
               <ListItemText
                 primary={t('help.step1Title', 'Create a New Experiment')}
-                secondary={t('help.step1Desc', 'Click "Create New Experiment" button on the dashboard. Choose a template or start from scratch.')}
+                secondary={t('help.step1Desc', 'Click "Create New Experiment" button on the dashboard.')}
               />
             </ListItem>
 

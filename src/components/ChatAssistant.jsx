@@ -15,11 +15,11 @@ import {
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import { useLLMChat } from '../hooks/useLLMChat';
 import { useTranslation } from 'react-i18next';
 import MarkdownText from './MarkdownText';
+import aiAssistantIcon from '../assets/icons/ai_assistant.png';
 
 const ChatAssistant = ({
   title,
@@ -105,7 +105,12 @@ const ChatAssistant = ({
         <>
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <SmartToyIcon color="primary" />
+              <Box
+                component="img"
+                src={aiAssistantIcon}
+                alt="AI Assistant"
+                sx={{ width: 28, height: 28, objectFit: 'contain' }}
+              />
               <Typography variant="h6">{displayTitle}</Typography>
               {messages.length > 0 && (
                 <Chip 
@@ -139,7 +144,12 @@ const ChatAssistant = ({
       >
         {messages.length === 0 && (
           <Box sx={{ textAlign: 'center', py: 4 }}>
-            <SmartToyIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+            <Box
+              component="img"
+              src={aiAssistantIcon}
+              alt="AI Assistant"
+              sx={{ width: 64, height: 64, objectFit: 'contain', mb: 2, opacity: 0.5 }}
+            />
             <Typography variant="body2" color="text.secondary">
               {t('llm.chat.placeholder')}
             </Typography>
@@ -169,7 +179,16 @@ const ChatAssistant = ({
                 flexShrink: 0
               }}
             >
-              {msg.role === 'user' ? <PersonIcon fontSize="small" /> : <SmartToyIcon fontSize="small" />}
+              {msg.role === 'user' ? (
+                <PersonIcon fontSize="small" />
+              ) : (
+                <Box
+                  component="img"
+                  src={aiAssistantIcon}
+                  alt="AI"
+                  sx={{ width: 20, height: 20, objectFit: 'contain' }}
+                />
+              )}
             </Box>
             <Paper
               elevation={1}
@@ -199,7 +218,12 @@ const ChatAssistant = ({
                 color: 'white'
               }}
             >
-              <SmartToyIcon fontSize="small" />
+              <Box
+                component="img"
+                src={aiAssistantIcon}
+                alt="AI"
+                sx={{ width: 20, height: 20, objectFit: 'contain' }}
+              />
             </Box>
             <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
