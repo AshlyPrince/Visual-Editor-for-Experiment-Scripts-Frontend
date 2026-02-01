@@ -12,6 +12,35 @@ export const DATABASE_EXPERIMENT_SCHEMA = {
   updated_at: "timestamp",           
   created_by: "uuid",                
   
+  // Permissions and Access Control (stored in content.permissions)
+  permissions: {
+    visibility: "string",            // private, restricted, public
+    allowDuplication: "boolean",     // can others duplicate this experiment
+    requireApprovalForAccess: "boolean",  // require approval for access requests
+    userPermissions: [               // array of user-specific permissions
+      {
+        userId: "string",
+        email: "string",
+        name: "string",
+        role: "string",              // viewer, commenter, editor, admin
+        isOwner: "boolean",
+        addedAt: "timestamp"
+      }
+    ],
+    groupPermissions: [              // optional: group-based permissions
+      {
+        groupId: "string",
+        groupName: "string",
+        role: "string"
+      }
+    ],
+    allowLinkSharing: "boolean",     // enable shareable links
+    linkPermissionLevel: "string",   // permission level for link access
+    linkExpiryDays: "number",        // link expiry in days (0 = no expiry)
+    lastModified: "timestamp",
+    modifiedBy: "string"
+  },
+  
   
   sections: [
     {

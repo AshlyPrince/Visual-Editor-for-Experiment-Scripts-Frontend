@@ -65,9 +65,11 @@ import ProcedureStepsEditor from '../components/ProcedureStepsEditor';
 import MediaUploader from '../components/MediaUploader';
 import ContentReviewPanel from '../components/ContentReviewPanel';
 import ChatAssistant from '../components/ChatAssistant';
+import PermissionsManager from '../components/PermissionsManager';
 import { experimentService } from '../services/exports.js';
 import keycloakService from '../services/keycloakService.js';
 import { toCanonical, toWizardState, fromWizardState } from '../utils/experimentCanonical.js';
+import { getDefaultPermissions } from '../utils/permissions.js';
 import aiAssistantIcon from '../assets/icons/ai_assistant.png';
 
 const WizardContainer = styled(Paper)(({ theme }) => ({
@@ -135,6 +137,7 @@ const ModularExperimentWizard = ({
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
     { id: 'content', label: t('wizard.fillContent'), description: t('wizard.fillContentDesc') },
     { id: 'content_review', label: t('wizard.contentReview'), description: t('wizard.contentReviewDesc') },
+    { id: 'permissions', label: t('wizard.setPermissions') || 'Set Permissions', description: t('wizard.setPermissionsDesc') || 'Configure access and permissions' },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
   ];
 
@@ -332,6 +335,10 @@ const ModularExperimentWizard = ({
   const [sectionContent, setSectionContent] = useState(savedState?.sectionContent || {});
   const [touched, setTouched] = useState({});
   
+  // Permissions state
+  const [permissions, setPermissions] = useState(savedState?.permissions || null);
+  const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
+  
   const [isCreating, setIsCreating] = useState(false);
   const [creationError, setCreationError] = useState(null);
   const [createdExperiment, setCreatedExperiment] = useState(null);
@@ -372,6 +379,7 @@ const ModularExperimentWizard = ({
         selectedSectionIds,
         customSections,
         sectionContent,
+        permissions,
         currentStep,
         completedSteps: Array.from(completedSteps),
         timestamp: Date.now()
@@ -381,7 +389,7 @@ const ModularExperimentWizard = ({
       } catch (error) {
       }
     }
-  }, [basicInfo, selectedSectionIds, customSections, sectionContent, currentStep, completedSteps, existingExperiment]);
+  }, [basicInfo, selectedSectionIds, customSections, sectionContent, permissions, currentStep, completedSteps, existingExperiment]);
 
   const clearSavedState = () => {
     try {
@@ -624,13 +632,18 @@ const ModularExperimentWizard = ({
 
       console.log('[Wizard] Canonical sections after conversion:', canonicalSections);
 
+      // Get or create permissions
+      const userInfo = keycloakService.getUserInfo();
+      const experimentPermissions = permissions || getDefaultPermissions(userInfo);
+
       const experimentData = {
         name: basicInfo.title.trim(),
         description: basicInfo.description?.trim() || '',
         duration: basicInfo.duration.trim() || '',
         subject: basicInfo.course.trim() || '',
         gradeLevel: basicInfo.program.trim() || '',
-        sections: canonicalSections
+        sections: canonicalSections,
+        permissions: experimentPermissions
       };
 
       console.log('[Wizard] Final experiment data being sent:', experimentData);
@@ -657,7 +670,7 @@ const ModularExperimentWizard = ({
       setCreationError(error.message || `Failed to ${existingExperiment ? 'update' : 'create'} experiment`);
       setIsCreating(false);
     }
-  }, [basicInfo, selectedSections, sectionContent, existingExperiment, onComplete]);
+  }, [basicInfo, selectedSections, sectionContent, permissions, existingExperiment, onComplete]);
 
   const handleCancel = useCallback(() => {
     if (basicInfo.title || selectedSectionIds.length > 0) {
@@ -1286,6 +1299,117 @@ const ModularExperimentWizard = ({
     </Box>
   );
 
+  const renderPermissionsStep = () => {
+    const userInfo = keycloakService.getUserInfo();
+    const currentPermissions = permissions || getDefaultPermissions(userInfo);
+    
+    return (
+      <Box>
+        <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <LockIcon sx={{ mr: 1 }} />
+          {t('wizard.steps.permissions') || 'Set Permissions & Access'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          {t('wizard.steps.permissionsDesc') || 'Configure who can access and edit your experiment. You can always change these settings later.'}
+        </Typography>
+
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                {t('wizard.permissions.currentSettings') || 'Current Permission Settings'}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('wizard.permissions.clickConfigure') || 'Click "Configure Permissions" to set up access control'}
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              startIcon={<LockIcon />}
+              onClick={() => setPermissionsDialogOpen(true)}
+            >
+              {t('wizard.permissions.configure') || 'Configure Permissions'}
+            </Button>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Stack spacing={2}>
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                {t('wizard.permissions.visibility') || 'Visibility'}
+              </Typography>
+              <Chip 
+                label={currentPermissions.visibility === 'private' 
+                  ? (t('permissions.private') || 'Private')
+                  : currentPermissions.visibility === 'public' 
+                    ? (t('permissions.public') || 'Public') 
+                    : (t('permissions.restricted') || 'Restricted')
+                }
+                color={currentPermissions.visibility === 'public' ? 'success' : 'default'}
+                icon={currentPermissions.visibility === 'private' ? <LockIcon /> : <LockOpenIcon />}
+              />
+            </Box>
+
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                {t('wizard.permissions.usersWithAccess') || 'Users with Access'}
+              </Typography>
+              <Typography variant="body1">
+                {currentPermissions.userPermissions?.length || 0} {t('wizard.permissions.users') || 'user(s)'}
+              </Typography>
+            </Box>
+
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                {t('wizard.permissions.settings') || 'Settings'}
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                {currentPermissions.allowDuplication && (
+                  <Chip 
+                    size="small" 
+                    label={t('permissions.allowDuplication') || 'Duplication Allowed'} 
+                    variant="outlined"
+                  />
+                )}
+                {currentPermissions.requireApprovalForAccess && (
+                  <Chip 
+                    size="small" 
+                    label={t('permissions.requireApproval') || 'Requires Approval'} 
+                    variant="outlined"
+                  />
+                )}
+                {currentPermissions.allowLinkSharing && (
+                  <Chip 
+                    size="small" 
+                    label={t('permissions.linkSharingEnabled') || 'Link Sharing Enabled'} 
+                    variant="outlined"
+                    color="primary"
+                  />
+                )}
+              </Stack>
+            </Box>
+          </Stack>
+        </Paper>
+
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography variant="body2">
+            {t('wizard.permissions.info') || 'You can skip this step and use default settings (Private experiment, only you have access). You can always modify permissions after creating the experiment.'}
+          </Typography>
+        </Alert>
+
+        <Alert severity="success">
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            {t('wizard.permissions.protection') || 'Your experiment is protected'}
+          </Typography>
+          <Typography variant="body2">
+            {t('wizard.permissions.protectionDesc') || 'With the permission system, other users cannot delete or modify your experiment without proper access. You maintain full control over who can view, edit, or manage your work.'}
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  };
+
   const renderPreviewStep = () => {
     
     const previewData = {
@@ -1854,7 +1978,8 @@ const ModularExperimentWizard = ({
       case 1: return renderSectionsStep();
       case 2: return renderContentStep();
       case 3: return renderContentReviewStep();
-      case 4: return renderPreviewStep();
+      case 4: return renderPermissionsStep();
+      case 5: return renderPreviewStep();
       default: return null;
     }
   };
@@ -2146,6 +2271,18 @@ Be specific to THIS experiment - help the user build it step by step. If they're
           />
         </DialogContent>
       </Dialog>
+
+      <PermissionsManager
+        open={permissionsDialogOpen}
+        onClose={() => setPermissionsDialogOpen(false)}
+        experimentId={existingExperiment?.id || null}
+        currentPermissions={permissions}
+        isNewExperiment={!existingExperiment}
+        onSave={(permissionsData) => {
+          setPermissions(permissionsData);
+          setPermissionsDialogOpen(false);
+        }}
+      />
     </>
   );
 };

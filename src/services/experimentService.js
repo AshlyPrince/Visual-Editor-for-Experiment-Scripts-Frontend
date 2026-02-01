@@ -91,7 +91,7 @@ class ExperimentService {
   }
 
   async createFromWizard(wizardData, t = null) {
-    const { name, description, duration, subject, gradeLevel, sections } = wizardData;
+    const { name, description, duration, subject, gradeLevel, sections, permissions } = wizardData;
     
     const userInfo = keycloakService.getUserInfo();
     const isAuthenticated = keycloakService.isAuthenticated();
@@ -117,7 +117,8 @@ class ExperimentService {
           subject: subject || '',
           gradeLevel: gradeLevel || ''
         },
-        sections: sections  
+        sections: sections,
+        permissions: permissions  // Include permissions in content
       },
       html_content: this.generateHTMLFromSections(sections, { name, duration, subject, gradeLevel }, t),
       commit_message: commitMsg
@@ -276,6 +277,122 @@ class ExperimentService {
         description: legacyDescription
       }
     };
+  }
+
+  // ============= PERMISSIONS & ACCESS CONTROL =============
+  
+  /**
+   * Get permissions for an experiment
+   */
+  async getExperimentPermissions(experimentId) {
+    const response = await api.get(`/api/experiments/${experimentId}/permissions`);
+    return response.data;
+  }
+
+  /**
+   * Update experiment permissions
+   */
+  async updateExperimentPermissions(experimentId, permissionsData) {
+    const response = await api.put(`/api/experiments/${experimentId}/permissions`, permissionsData);
+    return response.data;
+  }
+
+  /**
+   * Check if current user has specific permission for an experiment
+   */
+  async checkUserPermission(experimentId, permission) {
+    try {
+      const response = await api.get(`/api/experiments/${experimentId}/permissions/check`, {
+        params: { permission }
+      });
+      return response.data.hasPermission;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Get current user's permission level for an experiment
+   */
+  async getUserPermissionLevel(experimentId) {
+    try {
+      const response = await api.get(`/api/experiments/${experimentId}/permissions/user`);
+      return response.data.permissionLevel;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // ============= ACCESS REQUESTS =============
+  
+  /**
+   * Submit an access request for an experiment
+   */
+  async submitAccessRequest(experimentId, requestData) {
+    const response = await api.post(`/api/experiments/${experimentId}/access-requests`, requestData);
+    return response.data;
+  }
+
+  /**
+   * Get all access requests for an experiment (owner only)
+   */
+  async getAccessRequests(experimentId, status = null) {
+    const params = status ? { status } : {};
+    const response = await api.get(`/api/experiments/${experimentId}/access-requests`, { params });
+    return response.data;
+  }
+
+  /**
+   * Get user's own access requests
+   */
+  async getUserAccessRequests(status = null) {
+    const params = status ? { status } : {};
+    const response = await api.get('/api/access-requests/my-requests', { params });
+    return response.data;
+  }
+
+  /**
+   * Approve an access request
+   */
+  async approveAccessRequest(experimentId, requestId, approvalData) {
+    const response = await api.post(
+      `/api/experiments/${experimentId}/access-requests/${requestId}/approve`, 
+      approvalData
+    );
+    return response.data;
+  }
+
+  /**
+   * Reject an access request
+   */
+  async rejectAccessRequest(experimentId, requestId, rejectionData) {
+    const response = await api.post(
+      `/api/experiments/${experimentId}/access-requests/${requestId}/reject`, 
+      rejectionData
+    );
+    return response.data;
+  }
+
+  /**
+   * Cancel user's own access request
+   */
+  async cancelAccessRequest(requestId) {
+    const response = await api.delete(`/api/access-requests/${requestId}`);
+    return response.data;
+  }
+
+  /**
+   * Get count of pending access requests for an experiment
+   */
+  async getPendingAccessRequestsCount(experimentId) {
+    try {
+      const response = await api.get(`/api/experiments/${experimentId}/access-requests/count`, {
+        params: { status: 'pending' }
+      });
+      return response.data.count || 0;
+    } catch (error) {
+      return 0;
+    }
   }
 }
 
