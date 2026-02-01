@@ -966,7 +966,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       setExportSuccess(false);
 
       
-      const html2pdf = (await import('html2pdf.js')).default;
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
       
       const htmlContent = generateHTML();
       
@@ -1007,43 +1008,71 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       await Promise.all(imageLoadPromises);
 
       
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const filename = `${experiment.title || 'experiment'}-v${experiment.version_number || 1}.pdf`;
-      
-      
-      const opt = {
-        margin: [15, 15, 15, 15],
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { 
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          scrollY: 0,
-          scrollX: 0
-        },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'a4', 
-          orientation: 'portrait',
-          compress: true
-        },
-        pagebreak: { 
-          mode: ['avoid-all', 'css', 'legacy'],
-          before: '.page-break-before',
-          after: '.page-break-after',
-          avoid: ['.section', '.media-item', '.procedure-steps li', 'h1', 'h2', 'h3']
-        }
-      };
+      await new Promise(resolve => setTimeout(resolve, 800));
 
       
-      await html2pdf().set(opt).from(container).save();
-      
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        windowWidth: container.scrollWidth,
+        windowHeight: container.scrollHeight,
+        width: container.scrollWidth,
+        height: container.scrollHeight
+      });
+
       
       document.body.removeChild(container);
+
+      
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const margin = 15;
+      const contentWidth = pdfWidth - (2 * margin);
+      const contentHeight = pdfHeight - (2 * margin);
+      
+      const imgWidth = contentWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      let yPosition = 0;
+      let pageCount = 0;
+
+      while (yPosition < imgHeight) {
+        if (pageCount > 0) {
+          pdf.addPage();
+        }
+        
+        const sourceY = yPosition * (canvas.width / imgWidth);
+        const sourceHeight = Math.min(contentHeight * (canvas.width / imgWidth), canvas.height - sourceY);
+        
+        pdf.addImage(
+          imgData, 
+          'JPEG', 
+          margin, 
+          margin, 
+          imgWidth, 
+          imgHeight,
+          undefined,
+          'FAST',
+          0,
+          -yPosition
+        );
+        
+        yPosition += contentHeight;
+        pageCount++;
+      }
+      
+      const filename = `${experiment.title || 'experiment'}-v${experiment.version_number || 1}.pdf`;
+      pdf.save(filename);
 
       setExportSuccess(true);
       

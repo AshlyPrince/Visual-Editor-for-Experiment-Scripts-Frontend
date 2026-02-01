@@ -500,18 +500,50 @@ const simplifyText = async (text, targetLevel, t) => {
     return text;
   }
   
+  // Check if text contains HTML (tables, links, etc.)
+  const containsHTML = /<[a-z][\s\S]*>/i.test(text);
+  
   const levelInstructions = {
     'beginner': {
-      system: 'You are a science educator who explains scientific concepts in very simple language suitable for primary school children.',
-      instruction: 'Rewrite the following text in VERY SIMPLE language:\n- Use only simple, basic words that young children understand\n- Keep sentences VERY SHORT (maximum 8-10 words each)\n- Replace ALL scientific/technical terms with everyday words\n- Break complex ideas into multiple very simple sentences\n- Keep all numbers, measurements, and safety information exactly as they are\n- Format as a flowing paragraph with proper spacing between sentences'
+      system: 'You are a science educator who simplifies scientific text for primary school children while preserving all original content structure.',
+      instruction: `Simplify ONLY the language of the following text for young children (ages 6-10):
+
+CRITICAL RULES:
+1. PRESERVE ALL original content - do not add or remove information
+2. Keep the SAME meaning and facts - only change how complex words are said
+3. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+4. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
+5. Use very simple words (maximum 8-10 words per sentence)
+6. Replace scientific terms with everyday words children know
+
+DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text.`
     },
     'intermediate': {
-      system: 'You are a science educator who explains scientific concepts in clear, accessible language.',
-      instruction: 'Rewrite the following text in SIMPLE, CLEAR language:\n- Use everyday words that are easy to understand\n- Keep sentences clear and not too long (15-20 words max)\n- Simplify technical terms or add brief explanations\n- Make the text accessible without losing important information\n- Keep all numbers, measurements, and safety information exactly as they are\n- Format as a flowing paragraph with proper spacing between sentences'
+      system: 'You are a science educator who makes scientific text clearer and more accessible while preserving all original content.',
+      instruction: `Simplify ONLY the language of the following text to make it easier to understand:
+
+CRITICAL RULES:
+1. PRESERVE ALL original content - do not add or remove information
+2. Keep the SAME meaning and facts - only make the language clearer
+3. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+4. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
+5. Use clear, everyday language (maximum 15-20 words per sentence)
+6. Explain technical terms briefly or replace with simpler words
+
+DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text.`
     },
     'advanced': {
-      system: 'You are a science educator who maintains standard academic language while ensuring clarity.',
-      instruction: 'Maintain the STANDARD ACADEMIC language of the following text:\n- Keep the current level of scientific terminology\n- Ensure the text is clear and well-structured\n- This level represents the original complexity\n- Keep all numbers, measurements, and safety information exactly as they are\n- Maintain proper paragraph formatting'
+      system: 'You are a science educator who maintains academic rigor while ensuring clarity.',
+      instruction: `Keep the following text at its CURRENT academic level, only improving clarity if needed:
+
+CRITICAL RULES:
+1. PRESERVE ALL original content exactly - this is the original/advanced level
+2. Keep all scientific terminology and academic language
+3. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+4. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
+5. Only fix obvious grammar or clarity issues
+
+DO NOT simplify the language. DO NOT write new content. Return the text mostly unchanged.`
     }
   };
   
@@ -523,27 +555,34 @@ const simplifyText = async (text, targetLevel, t) => {
         { role: 'system', content: level.system },
         { role: 'user', content: `${level.instruction}
 
-IMPORTANT: Return ONLY the rewritten text. Do NOT include phrases like "Here is the rewritten version" or any explanations.
+IMPORTANT: 
+- Return ONLY the simplified text
+- Do NOT add phrases like "Here is the simplified version"
+- Do NOT add explanations or commentary
+- If the text has HTML tags, tables, or links, preserve them exactly
+${containsHTML ? '\n⚠️ WARNING: This text contains HTML formatting. You MUST preserve all HTML tags exactly as they appear!' : ''}
 
 Original text:
 ${text}` }
       ],
       { 
-        temperature: 0.7,
-        max_tokens: 1000
+        temperature: 0.3,  // Lower temperature for more consistent output
+        max_tokens: 2000   // Increased for longer content
       },
       t
     );
     
     let simplifiedText = response.choices[0].message.content.trim();
     
+    // Remove meta-commentary
     const metaPatterns = [
-      /^here is the rewritten version:?\s*/i,
       /^here is the simplified version:?\s*/i,
+      /^here is the rewritten version:?\s*/i,
       /^here's the rewritten version:?\s*/i,
-      /^rewritten version:?\s*/i,
       /^simplified version:?\s*/i,
-      /^here is the text rewritten:?\s*/i
+      /^rewritten version:?\s*/i,
+      /^here is the text:?\s*/i,
+      /^the simplified text is:?\s*/i
     ];
     
     for (const pattern of metaPatterns) {
@@ -552,14 +591,19 @@ ${text}` }
     
     simplifiedText = simplifiedText.trim();
     
-    simplifiedText = simplifiedText
-      .replace(/\n\n+/g, '\n\n')
-      .replace(/([.!?])\n(?=[A-Z])/g, '$1 ')
-      .replace(/\n(?=[A-Z])/g, ' ');
+    // Only clean up spacing if NOT HTML
+    if (!containsHTML) {
+      simplifiedText = simplifiedText
+        .replace(/\n\n+/g, '\n\n')
+        .replace(/([.!?])\n(?=[A-Z])/g, '$1 ')
+        .replace(/\n(?=[A-Z])/g, ' ');
+    }
     
+    // If result is too short or doesn't make sense, return original
     if (!simplifiedText || simplifiedText.length < 10) {
       return text;
     }
+    
     return simplifiedText;
   } catch (error) {
     return text;

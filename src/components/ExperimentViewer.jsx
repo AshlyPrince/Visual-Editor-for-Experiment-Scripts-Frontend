@@ -335,8 +335,36 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     }
 
     const allMedia = section.media || section.content?.media || [];
-    const safetyIcons = allMedia.filter(m => m.isSafetyIcon || m.name?.includes('safety-') || m.name?.includes('saftey-'));
-    const regularMedia = allMedia.filter(m => !m.isSafetyIcon && !m.name?.includes('safety-') && !m.name?.includes('saftey-'));
+    const safetyIcons = allMedia.filter(m => {
+      const name = (m.name || '').toLowerCase();
+      const url = (m.url || m.data || '').toLowerCase();
+      return m.isSafetyIcon || 
+             name.includes('safety-') || 
+             name.includes('saftey-') ||
+             name.includes('ppe') ||
+             name.includes('goggles') ||
+             name.includes('gloves') ||
+             name.includes('helmet') ||
+             name.includes('faceshield') ||
+             name.includes('headset') ||
+             url.includes('/saftey/') ||
+             url.includes('/safety/');
+    });
+    const regularMedia = allMedia.filter(m => {
+      const name = (m.name || '').toLowerCase();
+      const url = (m.url || m.data || '').toLowerCase();
+      return !m.isSafetyIcon && 
+             !name.includes('safety-') && 
+             !name.includes('saftey-') &&
+             !name.includes('ppe') &&
+             !name.includes('goggles') &&
+             !name.includes('gloves') &&
+             !name.includes('helmet') &&
+             !name.includes('faceshield') &&
+             !name.includes('headset') &&
+             !url.includes('/saftey/') &&
+             !url.includes('/safety/');
+    });
     
     return (
       <Box sx={{ mb: 4 }} key={section.id}>
@@ -461,8 +489,40 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     }
 
     const allMedia = section.media || section.content?.media || [];
-    const hazardIcons = allMedia.filter(m => m.isHazardIcon || m.name?.includes('GHS') || m.name?.includes('hazard'));
-    const regularMedia = allMedia.filter(m => !m.isHazardIcon && !m.name?.includes('GHS') && !m.name?.includes('hazard'));
+    const hazardIcons = allMedia.filter(m => {
+      const name = (m.name || '').toLowerCase();
+      const url = (m.url || m.data || '').toLowerCase();
+      return m.isHazardIcon || 
+             name.includes('ghs') || 
+             name.includes('hazard') ||
+             name.includes('toxic') ||
+             name.includes('flammable') ||
+             name.includes('corrosive') ||
+             name.includes('explosive') ||
+             name.includes('oxidizing') ||
+             name.includes('irritant') ||
+             name.includes('compressed') ||
+             name.includes('environmental') ||
+             url.includes('/ghs/') ||
+             url.includes('/hazard/');
+    });
+    const regularMedia = allMedia.filter(m => {
+      const name = (m.name || '').toLowerCase();
+      const url = (m.url || m.data || '').toLowerCase();
+      return !m.isHazardIcon && 
+             !name.includes('ghs') && 
+             !name.includes('hazard') &&
+             !name.includes('toxic') &&
+             !name.includes('flammable') &&
+             !name.includes('corrosive') &&
+             !name.includes('explosive') &&
+             !name.includes('oxidizing') &&
+             !name.includes('irritant') &&
+             !name.includes('compressed') &&
+             !name.includes('environmental') &&
+             !url.includes('/ghs/') &&
+             !url.includes('/hazard/');
+    });
     
     return (
       <Box sx={{ mb: 4 }} key={section.id}>
