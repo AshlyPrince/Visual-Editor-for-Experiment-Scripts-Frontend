@@ -533,15 +533,15 @@ const simplifyText = async (text, targetLevel, t) => {
   const levelInstructions = {
     'beginner': {
       system: 'You are a science educator who explains scientific concepts in very simple language suitable for primary school children.',
-      instruction: 'Rewrite the following text in VERY SIMPLE language:\n- Use only simple, basic words that young children understand\n- Keep sentences VERY SHORT (maximum 8-10 words each)\n- Replace ALL scientific/technical terms with everyday words\n- Break complex ideas into multiple very simple sentences\n- Keep all numbers, measurements, and safety information exactly as they are'
+      instruction: 'Rewrite the following text in VERY SIMPLE language:\n- Use only simple, basic words that young children understand\n- Keep sentences VERY SHORT (maximum 8-10 words each)\n- Replace ALL scientific/technical terms with everyday words\n- Break complex ideas into multiple very simple sentences\n- Keep all numbers, measurements, and safety information exactly as they are\n- Format as a flowing paragraph with proper spacing between sentences'
     },
     'intermediate': {
       system: 'You are a science educator who explains scientific concepts in clear, accessible language.',
-      instruction: 'Rewrite the following text in SIMPLE, CLEAR language:\n- Use everyday words that are easy to understand\n- Keep sentences clear and not too long (15-20 words max)\n- Simplify technical terms or add brief explanations\n- Make the text accessible without losing important information\n- Keep all numbers, measurements, and safety information exactly as they are'
+      instruction: 'Rewrite the following text in SIMPLE, CLEAR language:\n- Use everyday words that are easy to understand\n- Keep sentences clear and not too long (15-20 words max)\n- Simplify technical terms or add brief explanations\n- Make the text accessible without losing important information\n- Keep all numbers, measurements, and safety information exactly as they are\n- Format as a flowing paragraph with proper spacing between sentences'
     },
     'advanced': {
       system: 'You are a science educator who maintains standard academic language while ensuring clarity.',
-      instruction: 'Maintain the STANDARD ACADEMIC language of the following text:\n- Keep the current level of scientific terminology\n- Ensure the text is clear and well-structured\n- This level represents the original complexity\n- Keep all numbers, measurements, and safety information exactly as they are'
+      instruction: 'Maintain the STANDARD ACADEMIC language of the following text:\n- Keep the current level of scientific terminology\n- Ensure the text is clear and well-structured\n- This level represents the original complexity\n- Keep all numbers, measurements, and safety information exactly as they are\n- Maintain proper paragraph formatting'
     }
   };
   
@@ -594,6 +594,13 @@ ${text}` }
     }
     
     simplifiedText = simplifiedText.trim();
+    
+    // Clean up formatting: replace multiple line breaks with proper paragraph spacing
+    // Convert newlines between sentences into spaces for flowing paragraph
+    simplifiedText = simplifiedText
+      .replace(/\n\n+/g, '\n\n')  // Keep paragraph breaks (double newline)
+      .replace(/([.!?])\n(?=[A-Z])/g, '$1 ')  // Single newline after sentence -> space
+      .replace(/\n(?=[A-Z])/g, ' ');  // Other single newlines -> space
     
     // Safety check: if result is too short or empty, return original
     if (!simplifiedText || simplifiedText.length < 10) {
