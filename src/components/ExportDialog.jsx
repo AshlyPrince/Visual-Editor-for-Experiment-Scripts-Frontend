@@ -187,14 +187,27 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         .procedure-steps li {
             margin-bottom: 15px;
             padding-left: 5px;
+            padding-right: 35px;
             page-break-inside: avoid;
             break-inside: avoid;
+            position: relative;
         }
         
         .procedure-steps li strong {
             display: block;
             margin-bottom: 5px;
             color: #1976d2;
+        }
+        
+        .step-checkbox {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #666;
+            border-radius: 3px;
+            background-color: white;
         }
         
         .step-notes {
@@ -627,7 +640,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     stepHtml += `</div>`;
                   }
                   
-                  stepHtml += `</li>`;
+                  stepHtml += `<div class="step-checkbox"></div></li>`;
                   return stepHtml;
                 }).join('\n')}
             </ol>
@@ -797,7 +810,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                         stepHtml += `</div>`;
                       }
                       
-                      stepHtml += `</li>`;
+                      stepHtml += `<div class="step-checkbox"></div></li>`;
                       return stepHtml;
                     }).join('\n')}
                 </ol>
@@ -1043,32 +1056,39 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       const imgWidth = contentWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      let yPosition = 0;
-      let pageCount = 0;
+      const totalPages = Math.ceil(imgHeight / contentHeight);
 
-      while (yPosition < imgHeight) {
-        if (pageCount > 0) {
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) {
           pdf.addPage();
         }
         
-        const sourceY = yPosition * (canvas.width / imgWidth);
-        const sourceHeight = Math.min(contentHeight * (canvas.width / imgWidth), canvas.height - sourceY);
+        // Calculate the y-offset for this page slice
+        const yOffset = page * contentHeight;
         
+        // Calculate how much of the image to show on this page
+        const remainingHeight = imgHeight - yOffset;
+        const pageContentHeight = Math.min(contentHeight, remainingHeight);
+        
+        // Add the image with proper positioning
+        // The key is to use negative margin offset to "slide" the visible portion
         pdf.addImage(
           imgData, 
           'JPEG', 
           margin, 
-          margin, 
+          margin - yOffset,  // Negative offset to show the right part
           imgWidth, 
           imgHeight,
           undefined,
-          'FAST',
-          0,
-          -yPosition
+          'FAST'
         );
         
-        yPosition += contentHeight;
-        pageCount++;
+        // Add a white rectangle to hide content that should be on other pages
+        if (page < totalPages - 1) {
+          // Hide content below the current page
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(0, margin + pageContentHeight, pdfWidth, pdfHeight - margin - pageContentHeight, 'F');
+        }
       }
       
       const filename = `${experiment.title || 'experiment'}-v${experiment.version_number || 1}.pdf`;

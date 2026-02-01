@@ -886,7 +886,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                     )}
                     <List>
                       {value.map((step, index) => (
-                        <ListItem key={index} alignItems="flex-start" sx={{ py: 2 }}>
+                        <ListItem key={index} alignItems="flex-start" sx={{ py: 2, display: 'flex', gap: 2 }}>
                           <Box
                             sx={{
                               minWidth: 40,
@@ -898,7 +898,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontWeight: 'bold',
-                              mr: 2,
                               flexShrink: 0
                             }}
                           >
@@ -953,6 +952,17 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                               </Box>
                             )}
                           </Box>
+                          <Box
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              border: '2px solid',
+                              borderColor: 'grey.400',
+                              borderRadius: '4px',
+                              flexShrink: 0,
+                              mt: 0.5
+                            }}
+                          />
                         </ListItem>
                       ))}
                     </List>
