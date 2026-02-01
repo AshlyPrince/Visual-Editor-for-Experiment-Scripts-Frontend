@@ -30,7 +30,6 @@ import {
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
 import VersionComparison from './VersionComparison.jsx';
-import MarkdownText from './MarkdownText.jsx';
 
 const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
   const { t } = useTranslation();
@@ -549,14 +548,14 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                 <Stack direction="row" spacing={2} sx={{ mt: 2, flexWrap: 'wrap', gap: 1 }}>
                   {subject && (
                     <Chip 
-                      label={subject} 
+                      label={`${t('experiment.course')}: ${subject}`} 
                       variant="outlined"
                       size="medium"
                     />
                   )}
                   {gradeLevel && (
                     <Chip 
-                      label={gradeLevel} 
+                      label={`${t('experiment.program')}: ${gradeLevel}`} 
                       variant="outlined"
                       size="medium"
                     />
@@ -755,9 +754,21 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                               );
                             })}
                           </Stack>
-                        ) : typeof sectionContent === 'string' && (sectionContent.startsWith('<') || sectionContent.includes('<p>') || sectionContent.includes('<div>')) ? (
-                          // HTML content - use MarkdownText component for proper rendering
-                          <MarkdownText content={sectionContent} />
+                        ) : typeof sectionContent === 'string' && (sectionContent.startsWith('<') || sectionContent.includes('<p>') || sectionContent.includes('<div>') || sectionContent.includes('<font') || sectionContent.includes('<b>') || sectionContent.includes('<i>')) ? (
+                          // HTML content - render with proper styling
+                          <Box
+                            sx={{
+                              '& p': { mb: 1.5, lineHeight: 1.7 },
+                              '& ul, & ol': { pl: 3, mb: 1.5 },
+                              '& li': { mb: 0.5, lineHeight: 1.6 },
+                              '& h1, & h2, & h3, & h4, & h5, & h6': { mt: 2, mb: 1, fontWeight: 600 },
+                              '& strong, & b': { fontWeight: 600 },
+                              '& em, & i': { fontStyle: 'italic' },
+                              '& font': { display: 'inline' },
+                              wordBreak: 'break-word'
+                            }}
+                            dangerouslySetInnerHTML={{ __html: sectionContent }}
+                          />
                         ) : typeof sectionContent === 'string' ? (
                           // Plain text with proper paragraph formatting
                           <Box>
