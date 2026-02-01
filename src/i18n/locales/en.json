@@ -349,6 +349,7 @@
     "exportAsHTML": "Export as HTML",
     "simplificationFailed": "Language simplification failed",
     "simplificationError": "Unable to simplify the experiment language. Please try again.",
+    "exportSuccess": "Simplified version exported successfully!",
     "exportFailed": "Export failed",
     "exportError": "Unable to export the simplified experiment.",
     "noChangesDetected": "The content is already at the selected complexity level.",

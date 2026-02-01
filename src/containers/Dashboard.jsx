@@ -477,16 +477,191 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
   const handleSimplifiedExport = async (simplifiedData, format, targetLevel) => {
     try {
-      const exportData = {
-        ...simplifiedData,
-        metadata: {
-          ...simplifiedData.metadata,
-          simplifiedFor: targetLevel,
-          originalExperimentId: simplifyingExperiment.id
-        }
+      // Create a simple HTML representation of the simplified experiment
+      const generateSimplifiedHTML = (data) => {
+        const levelNames = {
+          beginner: 'Elementary Level (Ages 8-11)',
+          intermediate: 'Middle School Level (Ages 12-14)',
+          advanced: 'High School Level (Ages 15-18)'
+        };
+
+        return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${data.title || 'Simplified Experiment'}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+    .header {
+      border-bottom: 3px solid #1976d2;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #1976d2;
+      margin-bottom: 10px;
+    }
+    .badge {
+      display: inline-block;
+      background: #1976d2;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .section h2 {
+      color: #1976d2;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    .materials-list, .objectives-list {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    ul {
+      margin: 10px 0;
+    }
+    li {
+      margin: 8px 0;
+    }
+    .footer {
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>${data.title || 'Experiment'}</h1>
+    <span class="badge">Simplified: ${levelNames[targetLevel] || targetLevel}</span>
+    ${data.duration ? `<p><strong>Duration:</strong> ${data.duration} minutes</p>` : ''}
+  </div>
+
+  ${data.description ? `
+  <div class="section">
+    <h2>Description</h2>
+    <p>${data.description}</p>
+  </div>
+  ` : ''}
+
+  ${data.objectives && data.objectives.length > 0 ? `
+  <div class="section">
+    <h2>Learning Objectives</h2>
+    <div class="objectives-list">
+      <ul>
+        ${data.objectives.map(obj => `<li>${obj}</li>`).join('')}
+      </ul>
+    </div>
+  </div>
+  ` : ''}
+
+  ${data.materials && data.materials.length > 0 ? `
+  <div class="section">
+    <h2>Materials Needed</h2>
+    <div class="materials-list">
+      <ul>
+        ${data.materials.map(mat => `<li>${mat}</li>`).join('')}
+      </ul>
+    </div>
+  </div>
+  ` : ''}
+
+  ${data.procedure && data.procedure.length > 0 ? `
+  <div class="section">
+    <h2>Procedure</h2>
+    <ol>
+      ${data.procedure.map(step => `<li>${step}</li>`).join('')}
+    </ol>
+  </div>
+  ` : ''}
+
+  ${data.safety && data.safety.length > 0 ? `
+  <div class="section">
+    <h2>Safety Guidelines</h2>
+    <ul>
+      ${data.safety.map(item => `<li>${item}</li>`).join('')}
+    </ul>
+  </div>
+  ` : ''}
+
+  <div class="footer">
+    <p>Generated from Visual Editor Platform - ${new Date().toLocaleDateString()}</p>
+    <p>Original Experiment ID: ${simplifyingExperiment.id}</p>
+  </div>
+</body>
+</html>
+        `;
       };
 
-      console.log('Exporting simplified version:', { format, targetLevel, data: exportData });
+      if (format === 'html') {
+        const html = generateSimplifiedHTML(simplifiedData);
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${simplifiedData.title || 'experiment'}-${targetLevel}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } else if (format === 'pdf') {
+        // Import libraries dynamically
+        const html2canvas = (await import('html2canvas')).default;
+        const { jsPDF } = await import('jspdf');
+        
+        const htmlContent = generateSimplifiedHTML(simplifiedData);
+        
+        // Create temporary container
+        const container = document.createElement('div');
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        container.style.width = '800px';
+        container.innerHTML = htmlContent;
+        document.body.appendChild(container);
+        
+        // Capture as canvas
+        const canvas = await html2canvas(container, {
+          scale: 2,
+          useCORS: true,
+          logging: false
+        });
+        
+        document.body.removeChild(container);
+        
+        // Create PDF
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+        
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(`${simplifiedData.title || 'experiment'}-${targetLevel}.pdf`);
+      }
       
       addNotification({
         type: 'success',
