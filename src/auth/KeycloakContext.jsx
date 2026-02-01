@@ -14,23 +14,27 @@ export const KeycloakProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Initialize Keycloak with session persistence
+        console.log('[KeycloakContext] Starting Keycloak initialization...');
         const isAuthenticated = await keycloakService.initialize();
+        
+        console.log('[KeycloakContext] Initialization complete. Authenticated:', isAuthenticated);
+        console.log('[KeycloakContext] User info:', keycloakService.userInfo);
+        console.log('[KeycloakContext] Has token:', !!keycloakService.getToken());
         
         setKeycloak(keycloakService.keycloak);
         setAuthenticated(isAuthenticated);
         setUserInfo(keycloakService.userInfo);
         
-        // Store in window for API interceptor
         if (keycloakService.keycloak) {
           window.keycloak = keycloakService.keycloak;
         }
         
         if (keycloakService.authError) {
+          console.error('[KeycloakContext] Auth error:', keycloakService.authError);
           setError(keycloakService.authError.message);
         }
       } catch (err) {
-        console.error('Failed to initialize Keycloak:', err);
+        console.error('[KeycloakContext] Failed to initialize Keycloak:', err);
         setError(i18next.t('auth.authServiceUnavailable'));
         setAuthenticated(false);
       } finally {

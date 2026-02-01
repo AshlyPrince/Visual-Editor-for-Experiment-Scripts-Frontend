@@ -274,7 +274,6 @@ export default function AppRouter() {
   return (
     <ThemeProvider theme={professionalTheme}>
       <CssBaseline />
-      <DevelopmentModeIndicator />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
