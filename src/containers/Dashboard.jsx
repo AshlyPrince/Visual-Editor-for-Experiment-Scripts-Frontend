@@ -930,7 +930,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
             setSimplifyDialogOpen(false);
             setSimplifyingExperiment(null);
           }}
-          experiment={simplifyingExperiment}
+          experimentData={simplifyingExperiment}
           onExport={handleSimplifiedExport}
         />
       )}
