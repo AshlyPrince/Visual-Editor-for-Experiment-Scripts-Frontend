@@ -438,178 +438,101 @@ ${p.format}`;
 export const simplifyLanguage = async (experimentData, targetLevel = 'intermediate', t = null) => {
   const errorMsg = (key, fallback) => t ? t(key) : fallback;
   
-  const levelDescriptions = {
-    'beginner': 'elementary school (ages 8-11): Use very simple words, short sentences (max 12 words). Example: "mix" not "combine", "split" not "separate"',
-    'intermediate': 'middle school (ages 12-14): Use clear everyday language with brief explanations for technical terms.',
-    'advanced': 'high school (ages 15-18): Use proper scientific terminology, standard academic language.'
-  };
-
-  const levelDescription = levelDescriptions[targetLevel] || levelDescriptions['intermediate'];
-
   // Parse the experiment content
   const content = typeof experimentData.content === 'string' 
     ? JSON.parse(experimentData.content) 
     : experimentData.content;
   
   const actualContent = content?.content || content;
-  const config = actualContent?.config || {};
   const sections = actualContent?.sections || [];
 
-  // Build a structured representation for the AI
-  const sectionsForAI = sections.map(section => {
-    const sectionData = {
-      id: section.id,
-      type: section.type,
-      title: section.title
-    };
+  // Process each section independently - simpler and more reliable
+  const simplifiedSections = [];
+  
+  for (const section of sections) {
+    const simplifiedSection = { ...section };
     
-    if (section.type === 'text') {
-      sectionData.content = section.content || '';
-    } else if (section.type === 'list') {
-      sectionData.items = section.items || [];
-    } else if (section.type === 'steps') {
-      sectionData.steps = (section.steps || []).map(step => ({
-        id: step.id,
-        stepNumber: step.stepNumber,
-        instruction: step.instruction,
-        duration: step.duration,
-        media: step.media || []
-      }));
+    try {
+      // Only simplify text content, leave everything else untouched
+      if (section.type === 'text' && section.content) {
+        simplifiedSection.content = await simplifyText(section.content, targetLevel, t);
+      } else if (section.type === 'list' && section.items && Array.isArray(section.items)) {
+        simplifiedSection.items = await Promise.all(
+          section.items.map(item => {
+            if (typeof item === 'string') {
+              return simplifyText(item, targetLevel, t);
+            }
+            return item;
+          })
+        );
+      } else if (section.type === 'steps' && section.steps && Array.isArray(section.steps)) {
+        simplifiedSection.steps = await Promise.all(
+          section.steps.map(async (step) => {
+            if (step.instruction) {
+              return {
+                ...step,
+                instruction: await simplifyText(step.instruction, targetLevel, t)
+              };
+            }
+            return step;
+          })
+        );
+      }
+    } catch (error) {
+      console.warn(`Failed to simplify section ${section.id}:`, error);
+      // Keep original content if simplification fails
     }
     
-    return sectionData;
-  });
+    simplifiedSections.push(simplifiedSection);
+  }
+  
+  return {
+    ...experimentData,
+    content: {
+      ...actualContent,
+      sections: simplifiedSections
+    }
+  };
+};
 
-  const prompt = `You are a language simplifier. Your ONLY job is to rewrite text to match ${levelDescription}.
+// Helper function to simplify a single text string
+const simplifyText = async (text, targetLevel, t) => {
+  if (!text || text.trim().length === 0) {
+    return text;
+  }
+  
+  const levelInstructions = {
+    'beginner': 'Rewrite this in very simple language suitable for elementary school children (ages 8-11). Use simple words, short sentences (max 10 words), avoid technical terms.',
+    'intermediate': 'Rewrite this in clear language suitable for middle school students (ages 12-14). Use everyday words with brief explanations for technical terms.',
+    'advanced': 'Rewrite this in standard academic language suitable for high school students (ages 15-18). Use proper scientific terminology.'
+  };
+  
+  const instruction = levelInstructions[targetLevel] || levelInstructions['intermediate'];
+  
+  const prompt = `${instruction}
 
-ABSOLUTE RULES - DO NOT BREAK THESE:
-1. DO NOT change ANY section titles - copy them EXACTLY as they are
-2. DO NOT change ANY IDs, types, stepNumbers, durations, or media arrays - copy them EXACTLY
-3. DO NOT remove or add sections
-4. DO NOT translate anything - keep the same language
-5. ONLY rewrite the text in "content", "items", and "instruction" fields
-6. Keep ALL information - just use simpler/different words
-7. Keep ALL measurements, numbers, quantities EXACTLY the same
+Keep the same meaning and all important details (numbers, measurements, safety warnings).
+Do not translate - keep the same language.
 
-WHAT TO CHANGE:
-- "content" field in text sections: Rewrite the text only
-- "items" array in list sections: Rewrite each item text only
-- "instruction" field in steps: Rewrite the instruction text only
+Original text:
+${text}
 
-WHAT TO NEVER CHANGE:
-- Section "id" - copy exact
-- Section "type" - copy exact  
-- Section "title" - copy exact (keep "Theoretischer Hintergrund", don't change to "Background")
-- Step "id" - copy exact
-- Step "stepNumber" - copy exact
-- Step "duration" - copy exact
-- Step "media" - copy exact array
-
-EXAMPLE:
-Input:
-{
-  "id": "theoretischer_hintergrund",
-  "type": "text",
-  "title": "Theoretischer Hintergrund",
-  "content": "Die Filtration ist ein wichtiges Trennverfahren."
-}
-
-Beginner Output:
-{
-  "id": "theoretischer_hintergrund",
-  "type": "text",
-  "title": "Theoretischer Hintergrund",
-  "content": "Filtration is a way to separate things."
-}
-
-SECTIONS TO SIMPLIFY (ONLY THE TEXT):
-${JSON.stringify(sectionsForAI, null, 2)}
-
-OUTPUT FORMAT - Valid JSON only, no markdown:
-{
-  "sections": [exact structure as input, only text in content/items/instruction simplified]
-}`;
+Simplified version:`;
 
   try {
     const response = await sendChatConversation(
       [{ role: 'user', content: prompt }],
-      { temperature: 0.2, max_tokens: 4000 },
+      { temperature: 0.3, max_tokens: 500 },
       t
     );
-
-    let responseContent = response.choices[0].message.content.trim();
     
-    console.log('[SIMPLIFY] Raw AI response length:', responseContent.length);
+    const simplifiedText = response.choices[0].message.content.trim();
     
-    // Remove markdown code blocks if present
-    if (responseContent.includes('```')) {
-      responseContent = responseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    }
-    
-    // Find JSON object if there's extra text
-    const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      responseContent = jsonMatch[0];
-    }
-
-    const simplifiedResult = JSON.parse(responseContent);
-    
-    if (!simplifiedResult.sections || !Array.isArray(simplifiedResult.sections)) {
-      throw new Error('Invalid response structure: missing sections array');
-    }
-    
-    console.log('[SIMPLIFY] Original sections count:', sections.length);
-    console.log('[SIMPLIFY] Simplified sections count:', simplifiedResult.sections.length);
-    
-    // Validate that structure is preserved
-    if (simplifiedResult.sections.length !== sections.length) {
-      console.error('Section count mismatch!');
-      throw new Error('AI changed the number of sections');
-    }
-    
-    // Additional validation: ensure titles weren't changed
-    for (let i = 0; i < sections.length; i++) {
-      const original = sections[i];
-      const simplified = simplifiedResult.sections[i];
-      
-      if (original.id !== simplified.id) {
-        console.error(`Section ${i} ID mismatch: "${original.id}" vs "${simplified.id}"`);
-        throw new Error('AI changed section IDs');
-      }
-      
-      if (original.title !== simplified.title) {
-        console.error(`Section ${i} title mismatch: "${original.title}" vs "${simplified.title}"`);
-        throw new Error('AI changed section titles');
-      }
-      
-      if (original.type !== simplified.type) {
-        console.error(`Section ${i} type mismatch: "${original.type}" vs "${simplified.type}"`);
-        throw new Error('AI changed section types');
-      }
-    }
-    
-    console.log('[SIMPLIFY] Validation passed - structure preserved');
-    
-    // Return the complete experiment data with simplified sections
-    return {
-      ...experimentData,
-      content: {
-        ...actualContent,
-        sections: simplifiedResult.sections
-      }
-    };
+    // Return simplified text, or original if it's empty
+    return simplifiedText || text;
   } catch (error) {
-    console.error('Language simplification error:', error);
-    console.error('Error details:', error.message);
-    
-    // Provide more specific error messages
-    if (error instanceof SyntaxError) {
-      throw new Error(errorMsg('llm.errors.simplificationFailed', 'The AI returned invalid data. Please try again.'));
-    } else if (error.message.includes('Invalid response structure') || error.message.includes('AI changed')) {
-      throw new Error(errorMsg('llm.errors.simplificationFailed', 'The AI modified the structure. Please try again.'));
-    } else {
-      throw new Error(errorMsg('llm.errors.simplificationFailed', 'Failed to simplify language. Please try again.'));
-    }
+    console.error('Error simplifying text:', error);
+    return text; // Return original on error
   }
 };
 
