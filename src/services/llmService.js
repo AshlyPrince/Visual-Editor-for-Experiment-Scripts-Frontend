@@ -455,78 +455,90 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   const config = actualContent?.config || {};
   const sections = actualContent?.sections || [];
 
-  // Build a text representation of all sections for the AI
-  const sectionsText = sections.map(section => {
-    let sectionContent = '';
+  // Build a structured representation for the AI
+  const sectionsForAI = sections.map(section => {
+    const sectionData = {
+      id: section.id,
+      type: section.type,
+      title: section.title
+    };
     
     if (section.type === 'text') {
-      sectionContent = section.content || '';
+      sectionData.content = section.content || '';
     } else if (section.type === 'list') {
-      sectionContent = (section.items || []).join('\n- ');
+      sectionData.items = section.items || [];
     } else if (section.type === 'steps') {
-      sectionContent = (section.steps || []).map((step, idx) => 
-        `Step ${idx + 1}: ${step.instruction}`
-      ).join('\n');
+      sectionData.steps = (section.steps || []).map(step => ({
+        id: step.id,
+        stepNumber: step.stepNumber,
+        instruction: step.instruction,
+        duration: step.duration,
+        media: step.media || []
+      }));
     }
     
-    return `\n[${section.title || section.type}]\n${sectionContent}`;
-  }).join('\n');
+    return sectionData;
+  });
 
-  const prompt = `You are an educational content adapter. Your task is to simplify the language of this scientific experiment to make it appropriate for ${levelDescription}.
+  const prompt = `You are an educational content adapter. Simplify the text content for ${levelDescription}.
 
-IMPORTANT: You must maintain the EXACT same structure. Only simplify the TEXT content within each section. Do not change titles, types, or remove sections.
+CRITICAL: You MUST respond with ONLY valid JSON. No explanations, no markdown, no extra text.
 
-EXPERIMENT TO SIMPLIFY:
-Title: ${experimentData.title || 'Untitled'}
-${config.subject ? `Subject: ${config.subject}` : ''}
-${config.gradeLevel ? `Grade Level: ${config.gradeLevel}` : ''}
-${config.duration ? `Duration: ${config.duration}` : ''}
+EXPERIMENT SECTIONS TO SIMPLIFY:
+${JSON.stringify(sectionsForAI, null, 2)}
 
-SECTIONS TO SIMPLIFY:
-${sectionsText}
+RULES:
+1. Keep the EXACT same structure with all IDs, types, and titles
+2. Only simplify the TEXT within content/items/instruction fields
+3. For text sections: simplify the "content" field
+4. For list sections: simplify each string in the "items" array
+5. For steps sections: simplify the "instruction" field of each step, keep everything else
+6. Use ${levelDescription}
+7. Keep safety information accurate
 
-INSTRUCTIONS:
-1. Simplify ONLY the text content to match ${levelDescription}
-2. Keep all section types, titles, and structure EXACTLY the same
-3. For text sections: simplify the paragraph text
-4. For list sections: simplify each list item
-5. For procedure steps: simplify each step instruction
-6. Keep all safety warnings - just make them easier to understand
-7. Maintain scientific accuracy while using simpler language
-
-Return a JSON object with this EXACT structure:
+REQUIRED OUTPUT FORMAT (valid JSON only):
 {
   "sections": [
     {
-      "id": "keep original id",
-      "type": "keep original type (text/list/steps)",
-      "title": "keep original title",
-      "content": "simplified text (for text sections)",
-      "items": ["simplified item 1", "simplified item 2"] (for list sections),
-      "steps": [{"id": "original id", "stepNumber": 1, "instruction": "simplified instruction"}] (for steps sections)
+      "id": "original-id",
+      "type": "original-type",
+      "title": "original-title",
+      "content": "simplified text" OR "items": ["simplified", "items"] OR "steps": [{"id": "x", "stepNumber": 1, "instruction": "simplified", "duration": null, "media": []}]
     }
   ]
 }
 
-Return ONLY valid JSON with the simplified content, no explanations.`;
+Respond with ONLY the JSON object above. No markdown code blocks, no explanations.`;
 
   try {
     const response = await sendChatConversation(
       [{ role: 'user', content: prompt }],
-      { temperature: 0.5, max_tokens: 3000 },
+      { temperature: 0.3, max_tokens: 4000 },
       t
     );
 
-    const responseContent = response.choices[0].message.content.trim();
+    let responseContent = response.choices[0].message.content.trim();
     
-    let jsonStr = responseContent;
-    if (responseContent.startsWith('```json')) {
-      jsonStr = responseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    } else if (responseContent.startsWith('```')) {
-      jsonStr = responseContent.replace(/```\n?/g, '').trim();
+    console.log('[SIMPLIFY] Raw AI response:', responseContent.substring(0, 200));
+    
+    // Remove markdown code blocks if present
+    if (responseContent.includes('```')) {
+      responseContent = responseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    }
+    
+    // Find JSON object if there's extra text
+    const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      responseContent = jsonMatch[0];
     }
 
-    const simplifiedResult = JSON.parse(jsonStr);
+    console.log('[SIMPLIFY] Cleaned response:', responseContent.substring(0, 200));
+
+    const simplifiedResult = JSON.parse(responseContent);
+    
+    if (!simplifiedResult.sections || !Array.isArray(simplifiedResult.sections)) {
+      throw new Error('Invalid response structure: missing sections array');
+    }
     
     // Return the complete experiment data with simplified sections
     return {
@@ -538,7 +550,16 @@ Return ONLY valid JSON with the simplified content, no explanations.`;
     };
   } catch (error) {
     console.error('Language simplification error:', error);
-    throw new Error(errorMsg('llm.errors.simplificationFailed', 'Failed to simplify language. Please try again.'));
+    console.error('Error details:', error.message);
+    
+    // Provide more specific error messages
+    if (error instanceof SyntaxError) {
+      throw new Error(errorMsg('llm.errors.simplificationFailed', 'The AI returned invalid data. Please try again.'));
+    } else if (error.message.includes('Invalid response structure')) {
+      throw new Error(errorMsg('llm.errors.simplificationFailed', 'The AI response was incomplete. Please try again.'));
+    } else {
+      throw new Error(errorMsg('llm.errors.simplificationFailed', 'Failed to simplify language. Please try again.'));
+    }
   }
 };
 
