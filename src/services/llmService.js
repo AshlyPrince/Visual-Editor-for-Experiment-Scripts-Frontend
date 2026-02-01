@@ -535,8 +535,12 @@ const simplifyText = async (text, targetLevel, t) => {
   
   const level = levelInstructions[targetLevel] || levelInstructions['intermediate'];
   
-  console.log('[SIMPLIFY TEXT] Sending to AI, text length:', text.length, 'level:', targetLevel);
-  console.log('[SIMPLIFY TEXT] Original text preview:', text.substring(0, 100) + '...');
+  console.log('[SIMPLIFY TEXT] ========================================');
+  console.log('[SIMPLIFY TEXT] SENDING TO AI:');
+  console.log('[SIMPLIFY TEXT] Level:', targetLevel);
+  console.log('[SIMPLIFY TEXT] Original length:', text.length);
+  console.log('[SIMPLIFY TEXT] Original text (first 200 chars):\n', text.substring(0, 200));
+  console.log('[SIMPLIFY TEXT] ========================================');
 
   try {
     const response = await sendChatConversation(
@@ -557,8 +561,11 @@ ${text}` }
     );
     
     let simplifiedText = response.choices[0].message.content.trim();
-    console.log('[SIMPLIFY TEXT] Received from AI, length:', simplifiedText.length);
-    console.log('[SIMPLIFY TEXT] Simplified preview:', simplifiedText.substring(0, 100) + '...');
+    console.log('[SIMPLIFY TEXT] ========================================');
+    console.log('[SIMPLIFY TEXT] RECEIVED FROM AI:');
+    console.log('[SIMPLIFY TEXT] Simplified length:', simplifiedText.length);
+    console.log('[SIMPLIFY TEXT] Simplified text (first 200 chars):\n', simplifiedText.substring(0, 200));
+    console.log('[SIMPLIFY TEXT] ========================================');
     
     // Remove common meta-commentary patterns
     const metaPatterns = [
