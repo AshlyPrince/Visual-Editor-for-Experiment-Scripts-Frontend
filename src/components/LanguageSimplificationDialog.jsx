@@ -73,11 +73,14 @@ const LanguageSimplificationDialog = ({
     try {
       const simplified = await simplifyLanguage(experimentData, targetLevel, t);
       setSimplifiedData(simplified);
-      setStep('preview');
+      // Directly trigger export instead of showing preview
+      if (onExport) {
+        onExport(simplified, null, targetLevel);
+      }
+      handleClose();
     } catch (err) {
       console.error('Simplification error:', err);
       setError(err.message || t('simplification.error', 'Failed to simplify language'));
-    } finally {
       setSimplifying(false);
     }
   };
@@ -263,8 +266,7 @@ const LanguageSimplificationDialog = ({
         </Box>
       </DialogTitle>
 
-      {step === 'select' && renderSelectStep()}
-      {step === 'preview' && renderPreviewStep()}
+      {renderSelectStep()}
     </Dialog>
   );
 };
