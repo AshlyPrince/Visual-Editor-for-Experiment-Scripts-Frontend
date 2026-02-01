@@ -519,37 +519,70 @@ const simplifyText = async (text, targetLevel, t) => {
   }
   
   const levelInstructions = {
-    'beginner': 'Rewrite this in very simple language suitable for elementary school children (ages 8-11). Use simple words, short sentences (max 10 words), avoid technical terms.',
-    'intermediate': 'Rewrite this in clear language suitable for middle school students (ages 12-14). Use everyday words with brief explanations for technical terms.',
-    'advanced': 'Rewrite this in standard academic language suitable for high school students (ages 15-18). Use proper scientific terminology.'
+    'beginner': {
+      system: 'You are a science educator who explains scientific concepts to elementary school children (ages 8-11).',
+      instruction: 'Rewrite the following text in VERY SIMPLE language:\n- Use only simple, everyday words a child would know\n- Keep sentences SHORT (maximum 10-12 words each)\n- Replace ALL scientific/technical terms with simple explanations\n- Break complex ideas into multiple simple sentences\n- Keep all numbers, measurements, and safety information'
+    },
+    'intermediate': {
+      system: 'You are a science educator who explains scientific concepts to middle school students (ages 12-14).',
+      instruction: 'Rewrite the following text in CLEAR, ACCESSIBLE language:\n- Use everyday words whenever possible\n- When using technical terms, add a brief simple explanation in parentheses\n- Use moderate sentence length (15-20 words max)\n- Keep all numbers, measurements, and safety information'
+    },
+    'advanced': {
+      system: 'You are a science educator who explains scientific concepts to high school students (ages 15-18).',
+      instruction: 'Rewrite the following text in STANDARD ACADEMIC language:\n- Use proper scientific terminology\n- Ensure clarity while maintaining technical accuracy\n- Use well-structured sentences\n- Keep all numbers, measurements, and safety information'
+    }
   };
   
-  const instruction = levelInstructions[targetLevel] || levelInstructions['intermediate'];
+  const level = levelInstructions[targetLevel] || levelInstructions['intermediate'];
   
-  const prompt = `${instruction}
-
-Keep the same meaning and all important details (numbers, measurements, safety warnings).
-Do not translate - keep the same language.
-
-Original text:
-${text}
-
-Simplified version:`;
-
-  console.log('[SIMPLIFY TEXT] Sending to AI, text length:', text.length);
+  console.log('[SIMPLIFY TEXT] Sending to AI, text length:', text.length, 'level:', targetLevel);
+  console.log('[SIMPLIFY TEXT] Original text preview:', text.substring(0, 100) + '...');
 
   try {
     const response = await sendChatConversation(
-      [{ role: 'user', content: prompt }],
-      { temperature: 0.3, max_tokens: 500 },
+      [
+        { role: 'system', content: level.system },
+        { role: 'user', content: `${level.instruction}
+
+IMPORTANT: Return ONLY the rewritten text. Do NOT include phrases like "Here is the rewritten version" or any explanations.
+
+Original text:
+${text}` }
+      ],
+      { 
+        temperature: 0.7,  // Higher temperature for more creative rephrasing
+        max_tokens: 1000   // More tokens for longer texts
+      },
       t
     );
     
-    const simplifiedText = response.choices[0].message.content.trim();
-    console.log('[SIMPLIFY TEXT] Received simplified text, length:', simplifiedText.length);
+    let simplifiedText = response.choices[0].message.content.trim();
+    console.log('[SIMPLIFY TEXT] Received from AI, length:', simplifiedText.length);
+    console.log('[SIMPLIFY TEXT] Simplified preview:', simplifiedText.substring(0, 100) + '...');
     
-    // Return simplified text, or original if it's empty
-    return simplifiedText || text;
+    // Remove common meta-commentary patterns
+    const metaPatterns = [
+      /^here is the rewritten version:?\s*/i,
+      /^here is the simplified version:?\s*/i,
+      /^here's the rewritten version:?\s*/i,
+      /^rewritten version:?\s*/i,
+      /^simplified version:?\s*/i,
+      /^here is the text rewritten:?\s*/i
+    ];
+    
+    for (const pattern of metaPatterns) {
+      simplifiedText = simplifiedText.replace(pattern, '');
+    }
+    
+    simplifiedText = simplifiedText.trim();
+    
+    // Safety check: if result is too short or empty, return original
+    if (!simplifiedText || simplifiedText.length < 10) {
+      console.warn('[SIMPLIFY TEXT] Result too short, returning original');
+      return text;
+    }
+    
+    return simplifiedText;
   } catch (error) {
     console.error('[SIMPLIFY TEXT] Error simplifying text:', error);
     return text; // Return original on error
