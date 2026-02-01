@@ -74,10 +74,13 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
   };
 
   const toggleExpanded = (index) => {
-    setExpandedSteps(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
+    setExpandedSteps(prev => {
+      const newState = {
+        ...prev,
+        [index]: !prev[index]
+      };
+      return newState;
+    });
   };
 
   const toggleMediaExpanded = (index) => {
@@ -172,7 +175,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
                     </Button>
                   </Box>
 
-                  <Collapse in={expandedMedia[index]}>
+                  <Collapse in={Boolean(expandedMedia[index])} timeout="auto" unmountOnExit={false}>
                     <Box sx={{ mt: 2 }}>
                       <Divider sx={{ mb: 2 }} />
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
@@ -189,7 +192,7 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
                     </Box>
                   </Collapse>
 
-                  <Collapse in={expandedSteps[index]}>
+                  <Collapse in={Boolean(expandedSteps[index])} timeout="auto" unmountOnExit={false}>
                     <Box sx={{ mt: 2 }}>
                       <Divider sx={{ mb: 2 }} />
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>

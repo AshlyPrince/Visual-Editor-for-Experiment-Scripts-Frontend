@@ -421,9 +421,10 @@ const ModularExperimentWizard = ({
           required: false,
           locked: false,
           fields: [
-            { id: 'content', label: 'Content', type: 'richtext', required: false }
+            { id: 'content', label: 'Content', type: 'richtext', required: false },
+            { id: 'media', label: 'Media (Images/Videos)', type: 'media', required: false, accept: ['image', 'video'] }
           ],
-          defaultContent: { content: '' }
+          defaultContent: { content: '', media: [] }
         }));
       
       if (customSecs.length > 0) {
@@ -459,9 +460,10 @@ const ModularExperimentWizard = ({
       locked: false,
       isCustom: true,
       fields: [
-        { id: 'content', label: 'Content', type: 'richtext', required: false }
+        { id: 'content', label: 'Content', type: 'richtext', required: false },
+        { id: 'media', label: 'Media (Images/Videos)', type: 'media', required: false, accept: ['image', 'video'] }
       ],
-      defaultContent: { content: '' }
+      defaultContent: { content: '', media: [] }
     };
     
     setCustomSections(prev => [...prev, customSection]);

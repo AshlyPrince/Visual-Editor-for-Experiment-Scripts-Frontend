@@ -120,6 +120,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             padding-bottom: 8px;
             margin-bottom: 15px;
             font-weight: bold;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         
         .section-content {
@@ -130,6 +132,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         
         .subsection {
             margin-bottom: 15px;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
         
         .subsection p {
@@ -141,6 +145,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             color: #333333;
             margin-bottom: 8px;
             font-weight: bold;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         
         ul, ol {
@@ -181,6 +187,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         .procedure-steps li {
             margin-bottom: 15px;
             padding-left: 5px;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
         
         .procedure-steps li strong {
@@ -685,7 +693,23 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                       }
                     }
                     
-                    const result = itemText ? `<li>${itemText}</li>` : '';
+                    let result = itemText ? `<li>${itemText}` : '';
+                    
+                    // Add media if present
+                    if (item.media && item.media.data) {
+                      console.log(`[Export] Item ${idx} has media attachment:`, item.media);
+                      let imageSrc = item.media.data;
+                      if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
+                        imageSrc = new URL(imageSrc, window.location.origin).href;
+                      }
+                      result += `
+                        <div class="media-item" style="margin-top: 8px;">
+                          <img src="${imageSrc}" alt="${item.media.name || item.media.caption || 'Material photo'}" style="max-width: 300px; border-radius: 4px; border: 1px solid #ddd;" />
+                          ${item.media.caption ? `<div class="media-caption">${item.media.caption}</div>` : ''}
+                        </div>`;
+                    }
+                    
+                    result += itemText ? `</li>` : '';
                     console.log(`[Export] Final HTML for item ${idx}:`, result);
                     return result;
                   }
@@ -942,8 +966,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       setExportSuccess(false);
 
       
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
+      const html2pdf = (await import('html2pdf.js')).default;
       
       const htmlContent = generateHTML();
       
@@ -953,9 +976,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       container.style.left = '-9999px';
       container.style.top = '0';
       container.style.width = '210mm'; // A4 width
-      container.style.minHeight = '297mm'; // A4 height
-      container.style.padding = '15mm';
-      container.style.paddingBottom = '25mm'; // Extra padding at bottom for footer
       container.style.backgroundColor = '#ffffff';
       container.style.fontFamily = 'Arial, sans-serif';
       container.style.fontSize = '12px';
@@ -987,53 +1007,43 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       await Promise.all(imageLoadPromises);
 
       
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const filename = `${experiment.title || 'experiment'}-v${experiment.version_number || 1}.pdf`;
+      
+      
+      const opt = {
+        margin: [15, 15, 15, 15],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          scrollY: 0,
+          scrollX: 0
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait',
+          compress: true
+        },
+        pagebreak: { 
+          mode: ['avoid-all', 'css', 'legacy'],
+          before: '.page-break-before',
+          after: '.page-break-after',
+          avoid: ['.section', '.media-item', '.procedure-steps li', 'h1', 'h2', 'h3']
+        }
+      };
 
       
-      const canvas = await html2canvas(container, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        windowWidth: 800,
-        windowHeight: container.scrollHeight
-      });
-
+      await html2pdf().set(opt).from(container).save();
+      
       
       document.body.removeChild(container);
-
-      
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const margin = 10;
-      const imgWidth = pdfWidth - (2 * margin); 
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      const pageHeight = pdfHeight - (2 * margin);
-
-      const totalPages = Math.ceil(imgHeight / pageHeight);
-
-      for (let page = 0; page < totalPages; page++) {
-        if (page > 0) {
-          pdf.addPage();
-        }
-        
-        const yOffset = -(page * pageHeight);
-        
-        pdf.addImage(imgData, 'JPEG', margin, yOffset + margin, imgWidth, imgHeight);
-      }
-      
-      const filename = `${experiment.title || 'experiment'}-v${experiment.version_number || 1}.pdf`;
-      pdf.save(filename);
-      
 
       setExportSuccess(true);
       
@@ -1044,7 +1054,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       setTimeout(() => {
         setExportSuccess(false);
       }, 2000);
-    } catch {
+    } catch (error) {
       alert(t('export.exportFailed') + ': ' + error.message);
     } finally {
       setExporting(false);

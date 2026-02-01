@@ -330,10 +330,13 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                      (section.content?.media && Array.isArray(section.content.media) && section.content.media.length > 0);
     const hasSafetyText = typeof safetyContent === 'string' && safetyContent.trim();
     
-    
     if (!hasSafetyText && !hasMedia) {
       return renderSectionContent(section);
     }
+
+    const allMedia = section.media || section.content?.media || [];
+    const safetyIcons = allMedia.filter(m => m.isSafetyIcon || m.name?.includes('safety-') || m.name?.includes('saftey-'));
+    const regularMedia = allMedia.filter(m => !m.isSafetyIcon && !m.name?.includes('safety-') && !m.name?.includes('saftey-'));
     
     return (
       <Box sx={{ mb: 4 }} key={section.id}>
@@ -342,7 +345,57 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           {t('wizard.safety')}
         </Typography>
         
-        {hasMedia && (
+        {regularMedia.length > 0 && (
+          <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
+            {regularMedia.map((mediaItem, index) => (
+              <Box key={index} sx={{ textAlign: 'center', maxWidth: '700px', width: '100%' }}>
+                <Box sx={{ 
+                  width: `${mediaItem.displaySize || 100}%`,
+                  mx: 'auto'
+                }}>
+                  {mediaItem.type?.startsWith('video/') ? (
+                    <Box
+                      component="video"
+                      controls
+                      sx={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: 1,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        mb: 1.5
+                      }}
+                    >
+                      <source src={mediaItem.url || mediaItem.data} type={mediaItem.type} />
+                      {t('viewer.browserNoVideoSupport')}
+                    </Box>
+                  ) : (
+                    <Box
+                      component="img"
+                      src={mediaItem.data || mediaItem.url}
+                      alt={mediaItem.caption || mediaItem.name || `${t('wizard.safety')} ${index + 1}`}
+                      sx={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: 1,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        mb: 1.5
+                      }}
+                    />
+                  )}
+                </Box>
+                {mediaItem.caption && (
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, fontStyle: 'italic' }}>
+                    {mediaItem.caption}
+                  </Typography>
+                )}
+              </Box>
+            ))}
+          </Box>
+        )}
+
+        {safetyIcons.length > 0 && (
           <Box sx={{ mb: hasSafetyText ? 3 : 0 }}>
             <Box sx={{ 
               display: 'grid', 
@@ -350,7 +403,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               gap: 1.5,
               maxWidth: '600px'
             }}>
-              {(section.media || section.content?.media || []).map((mediaItem, mediaIndex) => (
+              {safetyIcons.map((mediaItem, mediaIndex) => (
                 <Box 
                   key={mediaIndex}
                   sx={{
@@ -397,17 +450,19 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     );
   };
 
-  
   const renderHazardsSection = (section) => {
     const hazardsContent = getSectionContent(section);
     const hasMedia = (section.media && Array.isArray(section.media) && section.media.length > 0) ||
                      (section.content?.media && Array.isArray(section.content.media) && section.content.media.length > 0);
     const hasHazardsText = typeof hazardsContent === 'string' && hazardsContent.trim();
     
-    
     if (!hasHazardsText && !hasMedia) {
       return renderSectionContent(section);
     }
+
+    const allMedia = section.media || section.content?.media || [];
+    const hazardIcons = allMedia.filter(m => m.isHazardIcon || m.name?.includes('GHS') || m.name?.includes('hazard'));
+    const regularMedia = allMedia.filter(m => !m.isHazardIcon && !m.name?.includes('GHS') && !m.name?.includes('hazard'));
     
     return (
       <Box sx={{ mb: 4 }} key={section.id}>
@@ -416,7 +471,57 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           {t('viewer.potentialHazards')}
         </Typography>
         
-        {hasMedia && (
+        {regularMedia.length > 0 && (
+          <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
+            {regularMedia.map((mediaItem, index) => (
+              <Box key={index} sx={{ textAlign: 'center', maxWidth: '700px', width: '100%' }}>
+                <Box sx={{ 
+                  width: `${mediaItem.displaySize || 100}%`,
+                  mx: 'auto'
+                }}>
+                  {mediaItem.type?.startsWith('video/') ? (
+                    <Box
+                      component="video"
+                      controls
+                      sx={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: 1,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        mb: 1.5
+                      }}
+                    >
+                      <source src={mediaItem.url || mediaItem.data} type={mediaItem.type} />
+                      {t('viewer.browserNoVideoSupport')}
+                    </Box>
+                  ) : (
+                    <Box
+                      component="img"
+                      src={mediaItem.data || mediaItem.url}
+                      alt={mediaItem.caption || mediaItem.name || `${t('viewer.hazardIcon')} ${index + 1}`}
+                      sx={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: 1,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        mb: 1.5
+                      }}
+                    />
+                  )}
+                </Box>
+                {mediaItem.caption && (
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, fontStyle: 'italic' }}>
+                    {mediaItem.caption}
+                  </Typography>
+                )}
+              </Box>
+            ))}
+          </Box>
+        )}
+
+        {hazardIcons.length > 0 && (
           <Box sx={{ mb: hasHazardsText ? 3 : 0 }}>
             <Box sx={{ 
               display: 'grid', 
@@ -424,7 +529,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               gap: 1.5,
               maxWidth: '600px'
             }}>
-              {(section.media || section.content?.media || []).map((mediaItem, mediaIndex) => (
+              {hazardIcons.map((mediaItem, mediaIndex) => (
                 <Box 
                   key={mediaIndex}
                   sx={{
@@ -471,7 +576,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     );
   };
 
-  
   const renderProcedureSection = (section) => {
     console.log('[ExperimentViewer] Rendering procedure section:', section);
     console.log('[ExperimentViewer] Section content:', section.content);
