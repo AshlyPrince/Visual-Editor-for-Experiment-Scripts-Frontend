@@ -497,8 +497,6 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
 
 const simplifyText = async (text, targetLevel, t) => {
   if (!text || text.trim().length === 0) {
-const simplifyText = async (text, targetLevel, t) => {
-  if (!text || text.trim().length === 0) {
     return text;
   }
   
