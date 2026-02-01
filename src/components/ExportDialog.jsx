@@ -500,7 +500,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           console.log(`[Export] First item in array:`, sectionContent[0]);
         }
         
-        const isProcedureSteps = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && 'text' in sectionContent[0];
+        const isProcedureSteps = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && ('text' in sectionContent[0] || 'instruction' in sectionContent[0]);
         
         const isMaterialsList = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null;
         
@@ -510,10 +510,45 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           htmlContent += `
             <ol class="procedure-steps">
                 ${sectionContent.map((step, index) => {
-                  let stepHtml = `<li><strong>${step.text || ''}</strong>`;
+                  const stepText = step.instruction || step.text || '';
+                  let stepHtml = `<li><strong>${stepText}</strong>`;
                   if (step.notes) {
                     stepHtml += `<div class="step-notes">${step.notes}</div>`;
                   }
+                  
+                  // Add media for this step if it exists
+                  if (step.media && Array.isArray(step.media) && step.media.length > 0) {
+                    stepHtml += `<div class="media-gallery">`;
+                    step.media.forEach(mediaItem => {
+                      if (mediaItem.type && mediaItem.type.startsWith('image')) {
+                        let imageSrc = mediaItem.data;
+                        if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
+                          imageSrc = new URL(imageSrc, window.location.origin).href;
+                        }
+                        stepHtml += `
+                          <div class="media-item">
+                            <img src="${imageSrc}" alt="${mediaItem.caption || mediaItem.name || 'Image'}" />
+                            ${mediaItem.caption ? `<div class="media-caption">${mediaItem.caption}</div>` : ''}
+                          </div>
+                        `;
+                      } else if (mediaItem.type && mediaItem.type.startsWith('video')) {
+                        stepHtml += `
+                          <div class="media-item">
+                            <video controls poster="">
+                              <source src="${mediaItem.data}" type="${mediaItem.type || 'video/mp4'}" />
+                              Your browser does not support the video tag.
+                            </video>
+                            <div class="media-caption">
+                              ${mediaItem.caption || mediaItem.name || 'Video'}
+                              <br><small style="color: #999;">Note: Videos are not included in PDF exports</small>
+                            </div>
+                          </div>
+                        `;
+                      }
+                    });
+                    stepHtml += `</div>`;
+                  }
+                  
                   stepHtml += `</li>`;
                   return stepHtml;
                 }).join('\n')}
@@ -616,7 +651,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           if (Array.isArray(value)) {
             console.log(`[Export] Processing array value for key "${key}":`, value);
             
-            const isProcedureSteps = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'text' in value[0];
+            const isProcedureSteps = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && ('text' in value[0] || 'instruction' in value[0]);
             
             const isObjectList = value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
             
@@ -626,10 +661,45 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                 <div class="subsection-title">${keyLabel}</div>
                 <ol class="procedure-steps">
                     ${value.map((step, index) => {
-                      let stepHtml = `<li><strong>${step.text || ''}</strong>`;
+                      const stepText = step.instruction || step.text || '';
+                      let stepHtml = `<li><strong>${stepText}</strong>`;
                       if (step.notes) {
                         stepHtml += `<div class="step-notes">${step.notes}</div>`;
                       }
+                      
+                      // Add media for this step if it exists
+                      if (step.media && Array.isArray(step.media) && step.media.length > 0) {
+                        stepHtml += `<div class="media-gallery">`;
+                        step.media.forEach(mediaItem => {
+                          if (mediaItem.type && mediaItem.type.startsWith('image')) {
+                            let imageSrc = mediaItem.data;
+                            if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
+                              imageSrc = new URL(imageSrc, window.location.origin).href;
+                            }
+                            stepHtml += `
+                              <div class="media-item">
+                                <img src="${imageSrc}" alt="${mediaItem.caption || mediaItem.name || 'Image'}" />
+                                ${mediaItem.caption ? `<div class="media-caption">${mediaItem.caption}</div>` : ''}
+                              </div>
+                            `;
+                          } else if (mediaItem.type && mediaItem.type.startsWith('video')) {
+                            stepHtml += `
+                              <div class="media-item">
+                                <video controls poster="">
+                                  <source src="${mediaItem.data}" type="${mediaItem.type || 'video/mp4'}" />
+                                  Your browser does not support the video tag.
+                                </video>
+                                <div class="media-caption">
+                                  ${mediaItem.caption || mediaItem.name || 'Video'}
+                                  <br><small style="color: #999;">Note: Videos are not included in PDF exports</small>
+                                </div>
+                              </div>
+                            `;
+                          }
+                        });
+                        stepHtml += `</div>`;
+                      }
+                      
                       stepHtml += `</li>`;
                       return stepHtml;
                     }).join('\n')}

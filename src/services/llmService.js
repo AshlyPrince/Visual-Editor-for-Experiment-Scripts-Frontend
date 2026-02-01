@@ -439,9 +439,9 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   const errorMsg = (key, fallback) => t ? t(key) : fallback;
   
   const levelDescriptions = {
-    'beginner': 'elementary school (ages 8-11) - use very simple words, short sentences, and basic concepts',
-    'intermediate': 'middle school (ages 12-14) - use clear language with some technical terms explained simply',
-    'advanced': 'high school (ages 15-18) - use standard academic language with proper scientific terminology'
+    'beginner': 'elementary school (ages 8-11): Use very simple words (like "mix" instead of "combine"), short sentences (max 15 words), avoid technical terms or explain them in simple language.',
+    'intermediate': 'middle school (ages 12-14): Use clear everyday language, introduce technical terms with brief explanations, use moderate sentence length.',
+    'advanced': 'high school (ages 15-18): Use proper scientific terminology with definitions when needed, standard academic language, maintain technical accuracy.'
   };
 
   const levelDescription = levelDescriptions[targetLevel] || levelDescriptions['intermediate'];
@@ -480,35 +480,44 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
     return sectionData;
   });
 
-  const prompt = `You are an educational content adapter. Simplify the text content for ${levelDescription}.
+  const prompt = `You are an educational content adapter. Your ONLY job is to rewrite the text to be appropriate for ${levelDescription}
 
-CRITICAL: You MUST respond with ONLY valid JSON. No explanations, no markdown, no extra text.
+CRITICAL RULES:
+1. You MUST respond with ONLY valid JSON - no explanations, no markdown, no extra text
+2. Keep EVERY piece of information from the original - just use simpler/different words
+3. Do NOT remove details, measurements, quantities, or steps
+4. Do NOT touch any "media", "duration", "id", "stepNumber" fields - copy them exactly
+5. ONLY simplify the language in "content", "items", and "instruction" fields
+6. Keep the same level of detail and completeness
+7. For safety information: keep ALL warnings, just make the language appropriate for the level
 
-EXPERIMENT SECTIONS TO SIMPLIFY:
+EXAMPLE OF GOOD SIMPLIFICATION:
+Original (text): "The filtration process separates particulate matter from aqueous solutions"
+Beginner: "Filtration is a way to separate tiny pieces from water"
+Intermediate: "Filtration separates small particles from water solutions"
+Advanced: "Filtration separates solid particles from liquid solutions"
+
+Original (step): "Carefully pipette 5mL of the supernatant into a clean test tube"
+Beginner: "Use a pipette to move 5mL of liquid to a clean tube. Be very careful."
+Intermediate: "Carefully use a pipette to transfer 5mL of the top liquid into a clean test tube"
+Advanced: "Carefully pipette 5mL of the supernatant into a clean test tube"
+
+SECTIONS TO SIMPLIFY:
 ${JSON.stringify(sectionsForAI, null, 2)}
 
-RULES:
-1. Keep the EXACT same structure with all IDs, types, and titles
-2. Only simplify the TEXT within content/items/instruction fields
-3. For text sections: simplify the "content" field
-4. For list sections: simplify each string in the "items" array
-5. For steps sections: simplify the "instruction" field of each step, keep everything else
-6. Use ${levelDescription}
-7. Keep safety information accurate
-
-REQUIRED OUTPUT FORMAT (valid JSON only):
+REQUIRED OUTPUT (valid JSON only, no markdown):
 {
   "sections": [
     {
-      "id": "original-id",
-      "type": "original-type",
-      "title": "original-title",
-      "content": "simplified text" OR "items": ["simplified", "items"] OR "steps": [{"id": "x", "stepNumber": 1, "instruction": "simplified", "duration": null, "media": []}]
+      "id": "copy-exact-id",
+      "type": "copy-exact-type",
+      "title": "copy-exact-title",
+      "content": "simplified-text-keeping-all-details" (for text type),
+      "items": ["simplified-but-complete-item-1", "simplified-but-complete-item-2"] (for list type),
+      "steps": [{"id": "exact-id", "stepNumber": exact-number, "instruction": "simplified-but-complete-instruction", "duration": copy-exact-value, "media": copy-exact-array}] (for steps type)
     }
   ]
-}
-
-Respond with ONLY the JSON object above. No markdown code blocks, no explanations.`;
+}`;
 
   try {
     const response = await sendChatConversation(
@@ -519,7 +528,7 @@ Respond with ONLY the JSON object above. No markdown code blocks, no explanation
 
     let responseContent = response.choices[0].message.content.trim();
     
-    console.log('[SIMPLIFY] Raw AI response:', responseContent.substring(0, 200));
+    console.log('[SIMPLIFY] Raw AI response length:', responseContent.length);
     
     // Remove markdown code blocks if present
     if (responseContent.includes('```')) {
@@ -532,12 +541,17 @@ Respond with ONLY the JSON object above. No markdown code blocks, no explanation
       responseContent = jsonMatch[0];
     }
 
-    console.log('[SIMPLIFY] Cleaned response:', responseContent.substring(0, 200));
-
     const simplifiedResult = JSON.parse(responseContent);
     
     if (!simplifiedResult.sections || !Array.isArray(simplifiedResult.sections)) {
       throw new Error('Invalid response structure: missing sections array');
+    }
+    
+    console.log('[SIMPLIFY] Parsed sections count:', simplifiedResult.sections.length);
+    
+    // Validate that we didn't lose sections
+    if (simplifiedResult.sections.length !== sections.length) {
+      console.warn(`Section count mismatch: original ${sections.length}, simplified ${simplifiedResult.sections.length}`);
     }
     
     // Return the complete experiment data with simplified sections
