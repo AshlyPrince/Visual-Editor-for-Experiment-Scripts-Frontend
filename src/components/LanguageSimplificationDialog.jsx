@@ -234,7 +234,7 @@ const LanguageSimplificationDialog = ({
         >
           {t('simplification.exportHTML', 'Export as HTML')}
         </Button>
-        <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
+        <Box sx={{ display: 'flex', gap: 1, width: '100%', mt: 1 }}>
           <Button onClick={() => setStep('select')} fullWidth>
             {t('common.back', 'Back')}
           </Button>
