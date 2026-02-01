@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
 import VersionComparison from './VersionComparison.jsx';
+import MarkdownText from './MarkdownText.jsx';
 
 const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
   const { t } = useTranslation();
@@ -754,17 +755,9 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                               );
                             })}
                           </Stack>
-                        ) : typeof sectionContent === 'string' && sectionContent.startsWith('<') ? (
-                          
-                          <Box
-                            sx={{
-                              '& p': { mb: 1 },
-                              '& ul, & ol': { pl: 3, mb: 1 },
-                              '& li': { mb: 0.5 },
-                              '& h1, & h2, & h3, & h4, & h5, & h6': { mt: 2, mb: 1, fontWeight: 600 },
-                            }}
-                            dangerouslySetInnerHTML={{ __html: sectionContent }}
-                          />
+                        ) : typeof sectionContent === 'string' && (sectionContent.startsWith('<') || sectionContent.includes('<p>') || sectionContent.includes('<div>')) ? (
+                          // HTML content - use MarkdownText component for proper rendering
+                          <MarkdownText content={sectionContent} />
                         ) : typeof sectionContent === 'string' ? (
                           // Plain text with proper paragraph formatting
                           <Box>
