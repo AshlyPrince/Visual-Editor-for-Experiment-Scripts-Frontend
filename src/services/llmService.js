@@ -456,17 +456,25 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
-    console.log(`[SIMPLIFY] Processing section ${i}:`, section.id, section.type);
+    console.log(`[SIMPLIFY] Processing section ${i}:`, section.id, 'type:', section.type);
+    console.log(`[SIMPLIFY] Section has content:`, !!section.content, 'items:', !!section.items, 'steps:', !!section.steps);
     
     const simplifiedSection = { ...section };
     
     try {
-      // Only simplify text content, leave everything else untouched
-      if (section.type === 'text' && section.content) {
+      // Detect section type by content if type is missing
+      const hasTextContent = section.content && typeof section.content === 'string';
+      const hasListItems = section.items && Array.isArray(section.items);
+      const hasSteps = section.steps && Array.isArray(section.steps);
+      
+      // Simplify text content (check both explicit type and presence of content)
+      if ((section.type === 'text' || hasTextContent) && section.content) {
         console.log(`[SIMPLIFY] Simplifying text content, length: ${section.content.length}`);
         simplifiedSection.content = await simplifyText(section.content, targetLevel, t);
         console.log(`[SIMPLIFY] Simplified text length: ${simplifiedSection.content.length}`);
-      } else if (section.type === 'list' && section.items && Array.isArray(section.items)) {
+      } 
+      // Simplify list items
+      else if ((section.type === 'list' || hasListItems) && section.items && Array.isArray(section.items)) {
         console.log(`[SIMPLIFY] Simplifying list with ${section.items.length} items`);
         simplifiedSection.items = await Promise.all(
           section.items.map(async (item, idx) => {
@@ -477,7 +485,9 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
             return item;
           })
         );
-      } else if (section.type === 'steps' && section.steps && Array.isArray(section.steps)) {
+      } 
+      // Simplify procedure steps
+      else if ((section.type === 'steps' || hasSteps) && section.steps && Array.isArray(section.steps)) {
         console.log(`[SIMPLIFY] Simplifying steps with ${section.steps.length} steps`);
         simplifiedSection.steps = await Promise.all(
           section.steps.map(async (step, idx) => {
@@ -491,6 +501,8 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
             return step;
           })
         );
+      } else {
+        console.log(`[SIMPLIFY] Skipping section - no recognizable content to simplify`);
       }
     } catch (error) {
       console.error(`[SIMPLIFY] Failed to simplify section ${section.id}:`, error);
