@@ -16,11 +16,12 @@ import {
   ExitToApp as LogoutIcon,
   Settings as SettingsIcon,
   Language as LanguageIcon,
-  Check as CheckIcon
+  Check as CheckIcon,
+  Help as HelpIcon
 } from '@mui/icons-material';
 import keycloakService from '../services/keycloakService.js';
 
-const UserInfo = () => {
+const UserInfo = ({ onHelpClick }) => {
   const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -155,6 +156,17 @@ const UserInfo = () => {
             )}
           </MenuItem>
         ))}
+        
+        <Divider />
+        
+        <MenuItem onClick={() => { onHelpClick?.(); handleClose(); }}>
+          <ListItemIcon>
+            <HelpIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            {t('help.helpGuide', 'Help & User Guide')}
+          </ListItemText>
+        </MenuItem>
         
         <Divider />
         

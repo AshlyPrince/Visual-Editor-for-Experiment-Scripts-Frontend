@@ -148,16 +148,7 @@ function Layout({ children }) {
           >
             Visual Editor Platform
           </Typography>
-          <Tooltip title={t('help.helpGuide', 'Help & User Guide')}>
-            <IconButton
-              color="inherit"
-              onClick={handleHelpOpen}
-              sx={{ mr: 2 }}
-            >
-              <HelpIcon />
-            </IconButton>
-          </Tooltip>
-          <UserInfo onLogout={handleLogout} />
+          <UserInfo onHelpClick={handleHelpOpen} />
         </Toolbar>
       </AppBar>
       <Container maxWidth="xl" sx={{ py: 4 }}>

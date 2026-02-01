@@ -21,11 +21,12 @@ import {
   VpnKey,
   Person,
   Security,
-  AdminPanelSettings
+  AdminPanelSettings,
+  Help
 } from '@mui/icons-material';
 import { useKeycloak } from './KeycloakContext.jsx';
 
-export const UserMenu = () => {
+export const UserMenu = ({ onHelpClick }) => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const { userInfo, logout, updateProfile, hasRole } = useKeycloak();
@@ -172,6 +173,18 @@ export const UserMenu = () => {
             <Typography variant="body1">{t('auth.userPreferences')}</Typography>
             <Typography variant="body2" color="text.secondary">
               {t('auth.customizeExperience')}
+            </Typography>
+          </ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={() => { onHelpClick?.(); handleClose(); }}>
+          <ListItemIcon>
+            <Help />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography variant="body1">{t('help.helpGuide', 'Help & User Guide')}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('help.getStartedWithPlatform', 'Get started with the platform')}
             </Typography>
           </ListItemText>
         </MenuItem>

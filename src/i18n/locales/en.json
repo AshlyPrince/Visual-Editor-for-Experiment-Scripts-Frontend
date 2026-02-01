@@ -114,6 +114,9 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "myExperiments": "My Experiments",
+    "experiments": "Experiments",
+    "createdBy": "Created by",
     "welcome": "Welcome to Visual Experiment Editor",
     "subtitle": "Manage and create educational experiments",
     "totalExperiments": "Total Experiments",
@@ -1186,6 +1189,7 @@
   "help": {
     "title": "User Guide & Help",
     "helpGuide": "Help & User Guide",
+    "getStartedWithPlatform": "Get started with the platform",
     "gettingStarted": "Getting Started",
     "features": "Features",
     "tips": "Tips & Tricks",

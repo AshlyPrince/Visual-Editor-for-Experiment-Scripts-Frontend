@@ -114,6 +114,9 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "myExperiments": "Meine Experimente",
+    "experiments": "Experimente",
+    "createdBy": "Erstellt von",
     "welcome": "Willkommen im visuellen Experiment-Editor",
     "subtitle": "Verwalten und erstellen Sie pädagogische Experimente",
     "totalExperiments": "Experimente gesamt",
@@ -1186,6 +1189,7 @@
   "help": {
     "title": "Benutzerhandbuch & Hilfe",
     "helpGuide": "Hilfe & Benutzerhandbuch",
+    "getStartedWithPlatform": "Erste Schritte mit der Plattform",
     "gettingStarted": "Erste Schritte",
     "features": "Funktionen",
     "tips": "Tipps & Tricks",

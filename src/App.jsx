@@ -497,16 +497,7 @@ function AppContent() {
             </Box>
             
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <IconButton
-                color="primary"
-                onClick={() => setHelpOpen(true)}
-                sx={{ 
-                  '&:hover': { backgroundColor: alpha(theme.palette.primary.main, 0.1) }
-                }}
-              >
-                <HelpIcon />
-              </IconButton>
-              <UserInfo />
+              <UserInfo onHelpClick={() => setHelpOpen(true)} />
             </Box>
           </Toolbar>
         </AppBar>

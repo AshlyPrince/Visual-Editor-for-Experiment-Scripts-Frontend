@@ -657,7 +657,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
             mb: 1,
             color: 'text.primary'
           }}>
-            {t('dashboard.title')}
+            {t('dashboard.experiments', 'Experiments')}
           </Typography>
         </Box>
 
@@ -816,6 +816,21 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                     </Box>
 
                     <Box sx={{ mt: 'auto' }}>
+                      {(experiment.created_by || experiment.creator || experiment.user) && (
+                        <Typography 
+                          variant="body2" 
+                          color="text.secondary"
+                          sx={{ 
+                            mb: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5
+                          }}
+                        >
+                          <span style={{ fontWeight: 500 }}>{t('dashboard.createdBy', 'Created by')}:</span>
+                          {experiment.created_by || experiment.creator || experiment.user}
+                        </Typography>
+                      )}
                       <Typography variant="body2" color="text.secondary">
                         {t('dashboard.lastUpdated')}: {formatDate(experiment.updated_at)}
                       </Typography>
