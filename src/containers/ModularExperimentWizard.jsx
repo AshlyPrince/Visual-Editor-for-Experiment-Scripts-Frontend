@@ -2057,12 +2057,7 @@ const ModularExperimentWizard = ({
             zIndex: 1000,
           }}
         >
-          <Box
-            component="img"
-            src={aiAssistantIcon}
-            alt="AI Assistant"
-            sx={{ width: 32, height: 32, objectFit: 'contain' }}
-          />
+          <ChatIcon />
         </Fab>
       </Tooltip>
 

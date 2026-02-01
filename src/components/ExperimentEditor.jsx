@@ -67,6 +67,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     { id: 'safety', name: t('wizard.safety'), icon: '⚠️', type: 'rich-text' },
     { id: 'hazards', name: t('wizard.potentialHazards'), icon: '🚫', type: 'rich-text' },
     { id: 'disposal', name: t('wizard.disposal'), icon: '♻️', type: 'rich-text' },
+    { id: 'custom', name: t('wizard.customSection'), icon: '📝', type: 'rich-text' },
   ];
   
   const [experiment, setExperiment] = useState(null);
@@ -639,21 +640,21 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
             {duration && (
               <Chip 
-                label={duration} 
+                label={`${t('experiment.duration')}: ${duration}`} 
                 size="medium"
                 sx={{ fontWeight: 500 }}
               />
             )}
             {course && (
               <Chip 
-                label={course} 
+                label={`${t('experiment.course')}: ${course}`} 
                 size="medium"
                 sx={{ fontWeight: 500 }}
               />
             )}
             {program && (
               <Chip 
-                label={program} 
+                label={`${t('experiment.program')}: ${program}`} 
                 size="medium"
                 sx={{ fontWeight: 500 }}
               />
@@ -844,12 +845,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             zIndex: 1000,
           }}
         >
-          <Box
-            component="img"
-            src={aiAssistantIcon}
-            alt="AI Assistant"
-            sx={{ width: 32, height: 32, objectFit: 'contain' }}
-          />
+          <ChatIcon />
         </Fab>
       </Tooltip>
 

@@ -1075,13 +1075,13 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
             {(config.subjectArea || config.subject || experiment.course) && (
               <Chip 
-                label={config.subjectArea || config.subject || experiment.course} 
+                label={`${t('experiment.course')}: ${config.subjectArea || config.subject || experiment.course}`} 
                 variant="outlined" 
               />
             )}
             {(config.difficultyLevel || config.gradeLevel || experiment.program) && (
               <Chip 
-                label={config.difficultyLevel || config.gradeLevel || experiment.program} 
+                label={`${t('experiment.program')}: ${config.difficultyLevel || config.gradeLevel || experiment.program}`} 
                 variant="outlined" 
               />
             )}
