@@ -479,98 +479,48 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
   const handleSimplifiedExport = async (simplifiedData, format, targetLevel) => {
     try {
-      // Format the simplified data to match the experiment structure that ExportDialog expects
+      // The simplifiedData now has the full experiment structure with simplified text content
       const levelNames = {
         beginner: 'Elementary Level (Ages 8-11)',
         intermediate: 'Middle School Level (Ages 12-14)',
         advanced: 'High School Level (Ages 15-18)'
       };
 
-      // Convert simplified data to the format ExportDialog expects
-      const formattedExperiment = {
-        id: simplifyingExperiment.id,
-        title: simplifiedData.title || simplifyingExperiment.title,
-        version_number: simplifyingExperiment.version_number,
+      // Extract the content
+      const content = typeof simplifiedData.content === 'string' 
+        ? JSON.parse(simplifiedData.content) 
+        : simplifiedData.content;
+      
+      const actualContent = content?.content || content;
+      const config = actualContent?.config || {};
+      const sections = actualContent?.sections || [];
+
+      // Create the experiment object for ExportDialog with a note about simplification
+      const exportExperiment = {
+        ...simplifiedData,
+        title: simplifiedData.title,
         content: {
           config: {
-            subject: simplifyingExperiment.content?.config?.subject || '',
-            gradeLevel: simplifyingExperiment.content?.config?.gradeLevel || '',
-            duration: simplifiedData.duration || simplifyingExperiment.content?.config?.duration || '',
-            course: simplifyingExperiment.content?.config?.course || '',
-            program: simplifyingExperiment.content?.config?.program || '',
-            // Add a badge to show this is simplified
+            ...config,
+            // Add metadata about simplification
             simplifiedLevel: levelNames[targetLevel]
           },
-          sections: []
+          sections: [
+            // Add a note section at the beginning
+            {
+              id: 'simplification-note',
+              type: 'text',
+              title: '📚 Language Simplified',
+              content: `This experiment has been simplified to ${levelNames[targetLevel]}. The content has been adapted to be more accessible while maintaining scientific accuracy and safety information.`
+            },
+            // Then include all the simplified sections
+            ...sections
+          ]
         }
       };
 
-      // Add description section
-      if (simplifiedData.description) {
-        formattedExperiment.content.sections.push({
-          id: 'description',
-          type: 'text',
-          title: 'Description',
-          content: simplifiedData.description
-        });
-      }
-
-      // Add objectives section
-      if (simplifiedData.objectives && simplifiedData.objectives.length > 0) {
-        formattedExperiment.content.sections.push({
-          id: 'objectives',
-          type: 'list',
-          title: 'Learning Objectives',
-          items: simplifiedData.objectives
-        });
-      }
-
-      // Add materials section
-      if (simplifiedData.materials && simplifiedData.materials.length > 0) {
-        formattedExperiment.content.sections.push({
-          id: 'materials',
-          type: 'list',
-          title: 'Materials',
-          items: simplifiedData.materials
-        });
-      }
-
-      // Add procedure section
-      if (simplifiedData.procedure && simplifiedData.procedure.length > 0) {
-        formattedExperiment.content.sections.push({
-          id: 'procedure',
-          type: 'steps',
-          title: 'Procedure',
-          steps: simplifiedData.procedure.map((step, index) => ({
-            id: `step-${index}`,
-            stepNumber: index + 1,
-            instruction: step,
-            duration: null,
-            media: []
-          }))
-        });
-      }
-
-      // Add safety section
-      if (simplifiedData.safety && simplifiedData.safety.length > 0) {
-        formattedExperiment.content.sections.push({
-          id: 'safety',
-          type: 'list',
-          title: 'Safety Guidelines',
-          items: simplifiedData.safety
-        });
-      }
-
-      // Add a note at the beginning indicating this is simplified
-      formattedExperiment.content.sections.unshift({
-        id: 'simplification-note',
-        type: 'text',
-        title: '📚 Language Simplified',
-        content: `This experiment has been simplified to ${levelNames[targetLevel]}. The content has been adapted to be more accessible while maintaining scientific accuracy and safety information.`
-      });
-
       // Store the formatted data and open the export dialog
-      setSimplifiedExportData(formattedExperiment);
+      setSimplifiedExportData(exportExperiment);
       setSimplifiedExportOpen(true);
       
     } catch (error) {

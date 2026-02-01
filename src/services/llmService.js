@@ -446,63 +446,96 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
 
   const levelDescription = levelDescriptions[targetLevel] || levelDescriptions['intermediate'];
 
+  // Parse the experiment content
+  const content = typeof experimentData.content === 'string' 
+    ? JSON.parse(experimentData.content) 
+    : experimentData.content;
+  
+  const actualContent = content?.content || content;
+  const config = actualContent?.config || {};
+  const sections = actualContent?.sections || [];
+
+  // Build a text representation of all sections for the AI
+  const sectionsText = sections.map(section => {
+    let sectionContent = '';
+    
+    if (section.type === 'text') {
+      sectionContent = section.content || '';
+    } else if (section.type === 'list') {
+      sectionContent = (section.items || []).join('\n- ');
+    } else if (section.type === 'steps') {
+      sectionContent = (section.steps || []).map((step, idx) => 
+        `Step ${idx + 1}: ${step.instruction}`
+      ).join('\n');
+    }
+    
+    return `\n[${section.title || section.type}]\n${sectionContent}`;
+  }).join('\n');
+
   const prompt = `You are an educational content adapter. Your task is to simplify the language of this scientific experiment to make it appropriate for ${levelDescription}.
 
-ORIGINAL EXPERIMENT:
-Title: ${experimentData.title || 'Untitled'}
-Duration: ${experimentData.duration || 'Not specified'}
-${experimentData.course ? `Course: ${experimentData.course}` : ''}
-${experimentData.program ? `Program: ${experimentData.program}` : ''}
+IMPORTANT: You must maintain the EXACT same structure. Only simplify the TEXT content within each section. Do not change titles, types, or remove sections.
 
-SECTIONS:
-${experimentData.sections?.map(section => `
-${section.title || section.type}:
-${section.content || 'No content'}
-`).join('\n') || 'No sections'}
+EXPERIMENT TO SIMPLIFY:
+Title: ${experimentData.title || 'Untitled'}
+${config.subject ? `Subject: ${config.subject}` : ''}
+${config.gradeLevel ? `Grade Level: ${config.gradeLevel}` : ''}
+${config.duration ? `Duration: ${config.duration}` : ''}
+
+SECTIONS TO SIMPLIFY:
+${sectionsText}
 
 INSTRUCTIONS:
-1. Simplify all technical language to match the target level
-2. Break down complex concepts into simpler explanations
-3. Use shorter sentences and clearer structure
-4. Keep all essential information and safety warnings
-5. Maintain the scientific accuracy
-6. Do NOT remove any important content, just make it easier to understand
+1. Simplify ONLY the text content to match ${levelDescription}
+2. Keep all section types, titles, and structure EXACTLY the same
+3. For text sections: simplify the paragraph text
+4. For list sections: simplify each list item
+5. For procedure steps: simplify each step instruction
+6. Keep all safety warnings - just make them easier to understand
+7. Maintain scientific accuracy while using simpler language
 
-Return the simplified experiment in the EXACT same JSON structure with these fields:
+Return a JSON object with this EXACT structure:
 {
-  "title": "simplified title",
-  "duration": "same duration",
-  "course": "same course",
-  "program": "same program",
   "sections": [
     {
-      "type": "same type",
-      "title": "same title",
-      "content": "simplified content"
+      "id": "keep original id",
+      "type": "keep original type (text/list/steps)",
+      "title": "keep original title",
+      "content": "simplified text (for text sections)",
+      "items": ["simplified item 1", "simplified item 2"] (for list sections),
+      "steps": [{"id": "original id", "stepNumber": 1, "instruction": "simplified instruction"}] (for steps sections)
     }
   ]
 }
 
-Return ONLY valid JSON, no explanations or markdown formatting.`;
+Return ONLY valid JSON with the simplified content, no explanations.`;
 
   try {
     const response = await sendChatConversation(
       [{ role: 'user', content: prompt }],
-      { temperature: 0.5, max_tokens: 2000 },
+      { temperature: 0.5, max_tokens: 3000 },
       t
     );
 
-    const content = response.choices[0].message.content.trim();
+    const responseContent = response.choices[0].message.content.trim();
     
-    let jsonStr = content;
-    if (content.startsWith('```json')) {
-      jsonStr = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    } else if (content.startsWith('```')) {
-      jsonStr = content.replace(/```\n?/g, '').trim();
+    let jsonStr = responseContent;
+    if (responseContent.startsWith('```json')) {
+      jsonStr = responseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    } else if (responseContent.startsWith('```')) {
+      jsonStr = responseContent.replace(/```\n?/g, '').trim();
     }
 
-    const simplifiedData = JSON.parse(jsonStr);
-    return simplifiedData;
+    const simplifiedResult = JSON.parse(jsonStr);
+    
+    // Return the complete experiment data with simplified sections
+    return {
+      ...experimentData,
+      content: {
+        ...actualContent,
+        sections: simplifiedResult.sections
+      }
+    };
   } catch (error) {
     console.error('Language simplification error:', error);
     throw new Error(errorMsg('llm.errors.simplificationFailed', 'Failed to simplify language. Please try again.'));
