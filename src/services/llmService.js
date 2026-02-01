@@ -435,6 +435,80 @@ ${p.format}`;
   }
 };
 
+export const simplifyLanguage = async (experimentData, targetLevel = 'intermediate', t = null) => {
+  const errorMsg = (key, fallback) => t ? t(key) : fallback;
+  
+  const levelDescriptions = {
+    'beginner': 'elementary school (ages 8-11) - use very simple words, short sentences, and basic concepts',
+    'intermediate': 'middle school (ages 12-14) - use clear language with some technical terms explained simply',
+    'advanced': 'high school (ages 15-18) - use standard academic language with proper scientific terminology'
+  };
+
+  const levelDescription = levelDescriptions[targetLevel] || levelDescriptions['intermediate'];
+
+  const prompt = `You are an educational content adapter. Your task is to simplify the language of this scientific experiment to make it appropriate for ${levelDescription}.
+
+ORIGINAL EXPERIMENT:
+Title: ${experimentData.title || 'Untitled'}
+Duration: ${experimentData.duration || 'Not specified'}
+${experimentData.course ? `Course: ${experimentData.course}` : ''}
+${experimentData.program ? `Program: ${experimentData.program}` : ''}
+
+SECTIONS:
+${experimentData.sections?.map(section => `
+${section.title || section.type}:
+${section.content || 'No content'}
+`).join('\n') || 'No sections'}
+
+INSTRUCTIONS:
+1. Simplify all technical language to match the target level
+2. Break down complex concepts into simpler explanations
+3. Use shorter sentences and clearer structure
+4. Keep all essential information and safety warnings
+5. Maintain the scientific accuracy
+6. Do NOT remove any important content, just make it easier to understand
+
+Return the simplified experiment in the EXACT same JSON structure with these fields:
+{
+  "title": "simplified title",
+  "duration": "same duration",
+  "course": "same course",
+  "program": "same program",
+  "sections": [
+    {
+      "type": "same type",
+      "title": "same title",
+      "content": "simplified content"
+    }
+  ]
+}
+
+Return ONLY valid JSON, no explanations or markdown formatting.`;
+
+  try {
+    const response = await sendChatConversation(
+      [{ role: 'user', content: prompt }],
+      { temperature: 0.5, max_tokens: 2000 },
+      t
+    );
+
+    const content = response.choices[0].message.content.trim();
+    
+    let jsonStr = content;
+    if (content.startsWith('```json')) {
+      jsonStr = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    } else if (content.startsWith('```')) {
+      jsonStr = content.replace(/```\n?/g, '').trim();
+    }
+
+    const simplifiedData = JSON.parse(jsonStr);
+    return simplifiedData;
+  } catch (error) {
+    console.error('Language simplification error:', error);
+    throw new Error(errorMsg('llm.errors.simplificationFailed', 'Failed to simplify language. Please try again.'));
+  }
+};
+
 export default {
   sendChatMessage,
   sendChatConversation,
@@ -442,5 +516,6 @@ export default {
   getSectionSuggestions,
   checkConsistency,
   generateTitleSuggestions,
-  generateSafetyRecommendations
+  generateSafetyRecommendations,
+  simplifyLanguage
 };

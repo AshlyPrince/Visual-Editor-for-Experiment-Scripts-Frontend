@@ -35,7 +35,8 @@ import {
   Science as ScienceIcon,
   Search as SearchIcon,
   Clear as ClearIcon,
-  Help as HelpIcon
+  Help as HelpIcon,
+  Psychology as PsychologyIcon
 } from '@mui/icons-material';
 import { useAsyncOperation, useNotifications } from '../hooks/exports';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog.jsx';
@@ -43,6 +44,7 @@ import ExportDialog from '../components/ExportDialog.jsx';
 import VersionHistory from '../components/VersionHistory.jsx';
 import HelpGuide from '../components/HelpGuide.jsx';
 import OnboardingTour from '../components/OnboardingTour.jsx';
+import LanguageSimplificationDialog from '../components/LanguageSimplificationDialog.jsx';
 
 const DashboardContainer = styled(Box)(({ theme }) => ({
   paddingLeft: theme.spacing(4),
@@ -100,6 +102,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const [versionHistoryExperiment, setVersionHistoryExperiment] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [simplifyDialogOpen, setSimplifyDialogOpen] = useState(false);
+  const [simplifyingExperiment, setSimplifyingExperiment] = useState(null);
 
   const { addNotification } = useNotifications();
   const {
@@ -461,6 +465,40 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       setVersionHistoryOpen(true);
     }
     handleMenuClose();
+  };
+
+  const handleSimplifyLanguage = () => {
+    if (selectedExperiment) {
+      setSimplifyingExperiment(selectedExperiment);
+      setSimplifyDialogOpen(true);
+    }
+    handleMenuClose();
+  };
+
+  const handleSimplifiedExport = async (simplifiedData, format, targetLevel) => {
+    try {
+      const exportData = {
+        ...simplifiedData,
+        metadata: {
+          ...simplifiedData.metadata,
+          simplifiedFor: targetLevel,
+          originalExperimentId: simplifyingExperiment.id
+        }
+      };
+
+      console.log('Exporting simplified version:', { format, targetLevel, data: exportData });
+      
+      addNotification({
+        type: 'success',
+        message: t('simplification.exportSuccess', `Simplified version exported as ${format.toUpperCase()}`)
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      addNotification({
+        type: 'error',
+        message: t('simplification.exportError', 'Failed to export simplified version')
+      });
+    }
   };
   
   const handleSearchChange = (event) => {
@@ -824,6 +862,12 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
           {t('common.export')}
         </MenuItem>
+        
+        <MenuItem onClick={handleSimplifyLanguage}>
+          <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
+          {t('simplification.menuItem', 'Simplify Language')}
+        </MenuItem>
+        
         <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
           <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
           {t('common.delete')}
@@ -878,6 +922,18 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         onClose={() => setOnboardingOpen(false)}
         onComplete={handleOnboardingComplete}
       />
+
+      {simplifyingExperiment && (
+        <LanguageSimplificationDialog
+          open={simplifyDialogOpen}
+          onClose={() => {
+            setSimplifyDialogOpen(false);
+            setSimplifyingExperiment(null);
+          }}
+          experiment={simplifyingExperiment}
+          onExport={handleSimplifiedExport}
+        />
+      )}
     </DashboardContainer>
   );
 };
