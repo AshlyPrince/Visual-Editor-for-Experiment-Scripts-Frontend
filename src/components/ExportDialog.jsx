@@ -119,10 +119,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         
         .section-content {
             padding-left: 5px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
         
         .subsection {
             margin-bottom: 15px;
+        }
+        
+        .subsection p {
+            margin-bottom: 10px;
         }
         
         .subsection-title {
@@ -144,8 +150,10 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         }
         
         p {
-            margin-bottom: 10px;
-            line-height: 1.5;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            text-align: justify;
+            white-space: pre-wrap;
         }
         
         .materials-list {
@@ -213,12 +221,14 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         }
         
         .footer {
-            margin-top: 40px;
-            padding-top: 15px;
+            margin-top: 50px;
+            padding-top: 20px;
             border-top: 1px solid #cccccc;
             text-align: center;
             color: #666666;
             font-size: 9pt;
+            page-break-inside: avoid;
+            clear: both;
         }
         
         .media-gallery {
@@ -293,9 +303,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             text-align: center;
             font-style: italic;
         }
-            font-style: italic;
-            text-align: center;
-        }
         
         @media print {
             body {
@@ -305,6 +312,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             
             .section {
                 page-break-inside: avoid;
+                margin-bottom: 25px;
+            }
+            
+            .footer {
+                page-break-before: auto;
+                margin-top: 30px;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
             }
             
             .media-gallery {
@@ -635,11 +652,17 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         }
       } else if (typeof sectionContent === 'string') {
         if (sectionContent.startsWith('<')) {
-          
+          // Already HTML formatted
           htmlContent += sectionContent;
         } else {
-          
-          htmlContent += `<p>${sectionContent.replace(/\n/g, '<br>')}</p>`;
+          // Convert plain text to proper paragraphs
+          const paragraphs = sectionContent.split(/\n\n+/); // Split on double newlines (paragraphs)
+          paragraphs.forEach(para => {
+            const cleanedPara = para.trim().replace(/\n/g, ' '); // Replace single newlines with spaces
+            if (cleanedPara) {
+              htmlContent += `<p>${cleanedPara}</p>`;
+            }
+          });
         }
       } else if (typeof sectionContent === 'object' && sectionContent !== null) {
         
@@ -766,10 +789,19 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
               }
             }
           } else if (typeof value === 'string') {
+            // Split into paragraphs for better formatting
+            const paragraphs = value.split(/\n\n+/);
             htmlContent += `
             <div class="subsection">
                 <div class="subsection-title">${keyLabel}</div>
-                <p>${value}</p>
+`;
+            paragraphs.forEach(para => {
+              const cleanedPara = para.trim().replace(/\n/g, ' ');
+              if (cleanedPara) {
+                htmlContent += `                <p>${cleanedPara}</p>\n`;
+              }
+            });
+            htmlContent += `
             </div>
 `;
           } else if (typeof value === 'object' && value !== null) {
@@ -873,6 +905,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       container.style.width = '210mm'; // A4 width
       container.style.minHeight = '297mm'; // A4 height
       container.style.padding = '15mm';
+      container.style.paddingBottom = '25mm'; // Extra padding at bottom for footer
       container.style.backgroundColor = '#ffffff';
       container.style.fontFamily = 'Arial, sans-serif';
       container.style.fontSize = '12px';
@@ -930,22 +963,23 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pdfWidth - 20; 
+      const margin = 10; // Margin on all sides
+      const imgWidth = pdfWidth - (2 * margin); 
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       let heightLeft = imgHeight;
-      let position = 10; 
+      let position = margin; 
 
-      
-      pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-      heightLeft -= (pdfHeight - 20); 
+      // Add first page
+      pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+      heightLeft -= (pdfHeight - (2 * margin)); // Account for both top and bottom margins
 
-      
+      // Add remaining pages
       while (heightLeft > 0) {
-        position = heightLeft - imgHeight + 10;
+        position = heightLeft - imgHeight + margin; // Maintain proper positioning
         pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-        heightLeft -= (pdfHeight - 20);
+        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+        heightLeft -= (pdfHeight - (2 * margin)); // Account for margins on each page
       }
 
       

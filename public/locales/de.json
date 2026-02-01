@@ -469,8 +469,8 @@
       "selectSectionsDesc": "Wählen Sie aus, welche Abschnitte in Ihrem Experiment enthalten sein sollen. Sie können jede Kombination von Abschnitten auswählen oder eigene erstellen.",
       "fillContent": "✍️ Inhalt ausfüllen",
       "fillContentDesc": "Vervollständigen Sie den Inhalt für jeden Abschnitt. Pflichtfelder sind mit * markiert.",
-      "contentReview": "✅ Inhaltsüberprüfung & Verbesserung",
-      "contentReviewDesc": "Überprüfen, verbessern und Konsistenz über alle Abschnitte hinweg sicherstellen.",
+      "contentReview": "✅ Inhaltsüberprüfung",
+      "contentReviewDesc": "Überprüfen und Konsistenz über alle Abschnitte hinweg sicherstellen.",
       "preview": "👁️ Vorschau & Erstellen",
       "previewDesc": "So werden die Studierenden Ihr Experiment sehen. Überprüfen Sie es sorgfältig vor der Erstellung."
     },

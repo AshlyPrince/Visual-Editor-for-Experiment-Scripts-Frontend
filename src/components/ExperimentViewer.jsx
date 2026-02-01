@@ -150,8 +150,24 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const content = experiment.content || {};
   const config = content.config || {};
   
+  const sectionEmojiMap = {
+    'objectives': '🎯',
+    'background': '📚',
+    'materials': '🧪',
+    'hypothesis': '💡',
+    'procedure': '📝',
+    'safety': '⚠️',
+    'disposal': '♻️',
+    'chemicals': '⚗️',
+    'title_header': '📋'
+  };
   
-  const sections = experiment.sections || content.sections || [];
+  const sectionsWithEmojis = (experiment.sections || content.sections || []).map(section => ({
+    ...section,
+    emoji: section.emoji || sectionEmojiMap[section.id] || '📄'
+  }));
+  
+  const sections = sectionsWithEmojis;
 
   const parseSectionContent = (section) => {
     if (!section || !section.content) return null;

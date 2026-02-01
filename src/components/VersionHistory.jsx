@@ -28,8 +28,6 @@ import {
   CompareArrows,
   Check,
   History as HistoryIcon,
-  Image as ImageIcon,
-  VideoLibrary as VideoIcon,
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
 import MediaViewer from './MediaViewer.jsx';
@@ -606,6 +604,19 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
 
                     <Divider sx={{ my: 2 }} />
 
+                    {/* Render media first, like in ExperimentViewer */}
+                    {sectionMedia.length > 0 && (
+                      <Box sx={{ mb: 3 }}>
+                        <Grid container spacing={2}>
+                          {sectionMedia.map((media, mediaIdx) => (
+                            <Grid item xs={12} sm={6} md={4} key={mediaIdx}>
+                              <MediaViewer media={[media]} compact={true} />
+                            </Grid>
+                          ))}
+                        </Grid>
+                      </Box>
+                    )}
+
                     {sectionContent && (
                       <Box sx={{ mb: 3 }}>
                         {Array.isArray(sectionContent) ? (
@@ -642,9 +653,17 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                                       {JSON.stringify(value, null, 2)}
                                     </Typography>
                                   ) : (
-                                    <Typography variant="body2" sx={{ ml: 2 }}>
-                                      {String(value)}
-                                    </Typography>
+                                    // String value with proper paragraph handling
+                                    <Box sx={{ ml: 2 }}>
+                                      {String(value).split(/\n\n+/).map((para, pIdx) => {
+                                        const cleanedPara = para.trim().replace(/\n/g, ' ');
+                                        return cleanedPara ? (
+                                          <Typography key={pIdx} variant="body2" sx={{ mb: 1, lineHeight: 1.6 }}>
+                                            {cleanedPara}
+                                          </Typography>
+                                        ) : null;
+                                      })}
+                                    </Box>
                                   )}
                                 </Box>
                               );
@@ -662,33 +681,31 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                             dangerouslySetInnerHTML={{ __html: sectionContent }}
                           />
                         ) : typeof sectionContent === 'string' ? (
-                          
-                          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                            {sectionContent}
-                          </Typography>
+                          // Plain text with proper paragraph formatting
+                          <Box>
+                            {sectionContent.split(/\n\n+/).map((paragraph, pIdx) => {
+                              const cleanedPara = paragraph.trim().replace(/\n/g, ' ');
+                              return cleanedPara ? (
+                                <Typography 
+                                  key={pIdx} 
+                                  variant="body1" 
+                                  sx={{ 
+                                    mb: 2,
+                                    lineHeight: 1.7,
+                                    textAlign: 'justify'
+                                  }}
+                                >
+                                  {cleanedPara}
+                                </Typography>
+                              ) : null;
+                            })}
+                          </Box>
                         ) : (
                           
                           <Typography variant="body2" color="text.secondary">
                             {t('versionHistory.unableToDisplay')}
                           </Typography>
                         )}
-                      </Box>
-                    )}
-
-                    {sectionMedia.length > 0 && (
-                      <Box>
-                        <Typography variant="subtitle2" color="text.secondary" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          {sectionMedia.some(m => m.type === 'image') && <ImageIcon fontSize="small" />}
-                          {sectionMedia.some(m => m.type === 'video') && <VideoIcon fontSize="small" />}
-                          {t('versionHistory.media')} ({sectionMedia.length})
-                        </Typography>
-                        <Grid container spacing={2} sx={{ mt: 1 }}>
-                          {sectionMedia.map((media, mediaIdx) => (
-                            <Grid item xs={12} sm={6} md={4} key={mediaIdx}>
-                              <MediaViewer media={[media]} compact={true} />
-                            </Grid>
-                          ))}
-                        </Grid>
                       </Box>
                     )}
                   </CardContent>

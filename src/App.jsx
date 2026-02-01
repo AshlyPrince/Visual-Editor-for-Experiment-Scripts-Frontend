@@ -121,7 +121,7 @@ function AppContent() {
   };
 
   const handleCancelEdit = () => {
-    navigate('/'); 
+    navigate(-1);
   };
 
   const handleExperimentSaved = async (savedExperiment) => {
@@ -597,7 +597,7 @@ function AppContent() {
               { }
               <Route path="/view/:experimentId" element={
                 <ExperimentViewerRoute
-                  onClose={() => navigate('/')}
+                  onClose={() => navigate(-1)}
                   onEdit={handleEditExperimentFromViewer}
                 />
               } />

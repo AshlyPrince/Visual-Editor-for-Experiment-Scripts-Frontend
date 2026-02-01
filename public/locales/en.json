@@ -469,8 +469,8 @@
       "selectSectionsDesc": "Choose which sections to include in your experiment. You can select any combination of sections that fit your needs, or create custom ones.",
       "fillContent": "✍️ Fill in Content",
       "fillContentDesc": "Complete the content for each section. Required fields are marked with *.",
-      "contentReview": "✅ Content Review & Polish",
-      "contentReviewDesc": "Review, improve, and ensure consistency across all sections.",
+      "contentReview": "✅ Content Review",
+      "contentReviewDesc": "Review and ensure consistency across all sections.",
       "preview": "👁️ Preview & Create",
       "previewDesc": "This is how students will see your experiment. Review carefully before creating."
     },
