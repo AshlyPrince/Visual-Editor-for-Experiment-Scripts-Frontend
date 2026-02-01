@@ -39,6 +39,7 @@ import {
   CheckCircle as CheckIcon,
   RadioButtonUnchecked as UncheckIcon,
   Lock as LockIcon,
+  LockOpen as LockOpenIcon,
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
