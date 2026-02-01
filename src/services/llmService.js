@@ -532,16 +532,16 @@ const simplifyText = async (text, targetLevel, t) => {
   
   const levelInstructions = {
     'beginner': {
-      system: 'You are a science educator who explains scientific concepts to elementary school children (ages 8-11).',
-      instruction: 'Rewrite the following text in VERY SIMPLE language:\n- Use only simple, everyday words a child would know\n- Keep sentences SHORT (maximum 10-12 words each)\n- Replace ALL scientific/technical terms with simple explanations\n- Break complex ideas into multiple simple sentences\n- Keep all numbers, measurements, and safety information'
+      system: 'You are a science educator who explains scientific concepts in very simple language suitable for primary school children.',
+      instruction: 'Rewrite the following text in VERY SIMPLE language:\n- Use only simple, basic words that young children understand\n- Keep sentences VERY SHORT (maximum 8-10 words each)\n- Replace ALL scientific/technical terms with everyday words\n- Break complex ideas into multiple very simple sentences\n- Keep all numbers, measurements, and safety information exactly as they are'
     },
     'intermediate': {
-      system: 'You are a science educator who explains scientific concepts to middle school students (ages 12-14).',
-      instruction: 'Rewrite the following text in CLEAR, ACCESSIBLE language:\n- Use everyday words whenever possible\n- When using technical terms, add a brief simple explanation in parentheses\n- Use moderate sentence length (15-20 words max)\n- Keep all numbers, measurements, and safety information'
+      system: 'You are a science educator who explains scientific concepts in clear, accessible language.',
+      instruction: 'Rewrite the following text in SIMPLE, CLEAR language:\n- Use everyday words that are easy to understand\n- Keep sentences clear and not too long (15-20 words max)\n- Simplify technical terms or add brief explanations\n- Make the text accessible without losing important information\n- Keep all numbers, measurements, and safety information exactly as they are'
     },
     'advanced': {
-      system: 'You are a science educator who explains scientific concepts to high school students (ages 15-18).',
-      instruction: 'Rewrite the following text in STANDARD ACADEMIC language:\n- Use proper scientific terminology\n- Ensure clarity while maintaining technical accuracy\n- Use well-structured sentences\n- Keep all numbers, measurements, and safety information'
+      system: 'You are a science educator who maintains standard academic language while ensuring clarity.',
+      instruction: 'Maintain the STANDARD ACADEMIC language of the following text:\n- Keep the current level of scientific terminology\n- Ensure the text is clear and well-structured\n- This level represents the original complexity\n- Keep all numbers, measurements, and safety information exactly as they are'
     }
   };
   

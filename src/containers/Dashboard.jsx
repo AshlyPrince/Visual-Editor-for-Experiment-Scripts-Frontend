@@ -481,9 +481,9 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     try {
       // The simplifiedData now has the full experiment structure with simplified text content
       const levelNames = {
-        beginner: 'Elementary Level (Ages 8-11)',
-        intermediate: 'Middle School Level (Ages 12-14)',
-        advanced: 'High School Level (Ages 15-18)'
+        beginner: 'Very Simple (Primary School)',
+        intermediate: 'Simple',
+        advanced: 'Standard (Current)'
       };
 
       // Extract the content
