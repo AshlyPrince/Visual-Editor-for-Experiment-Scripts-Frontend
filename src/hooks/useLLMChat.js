@@ -63,6 +63,10 @@ export const useLLMChat = (initialOptions = {}) => {
     setLoading(true);
     setError(null);
 
+  
+    const userMessage = { role: 'user', content: userContent };
+    setMessages(prev => [...prev, userMessage]);
+
     const conversationMessages = [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userContent }
@@ -80,11 +84,8 @@ export const useLLMChat = (initialOptions = {}) => {
         content: response.choices[0].message.content
       };
       
-      
-      setMessages(prev => [...prev, 
-        { role: 'user', content: userContent },
-        assistantMessage
-      ]);
+      // Add assistant response to messages
+      setMessages(prev => [...prev, assistantMessage]);
       
       return assistantMessage;
     } catch (err) {

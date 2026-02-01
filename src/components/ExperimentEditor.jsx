@@ -85,12 +85,36 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const [conflictDialogOpen, setConflictDialogOpen] = useState(false);
   const [conflictDetails, setConflictDetails] = useState(null);
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
 
+  // Load chat history from localStorage when experiment loads
   useEffect(() => {
     if (experimentId) {
       loadExperiment();
+      // Load chat history for this specific experiment
+      const savedHistory = localStorage.getItem(`chat_history_${experimentId}`);
+      if (savedHistory) {
+        try {
+          setChatHistory(JSON.parse(savedHistory));
+        } catch (err) {
+          console.error('Failed to load chat history:', err);
+          setChatHistory([]);
+        }
+      }
     }
   }, [experimentId]);
+
+  // Save chat history to localStorage whenever it changes
+  useEffect(() => {
+    if (experimentId) {
+      if (chatHistory.length > 0) {
+        localStorage.setItem(`chat_history_${experimentId}`, JSON.stringify(chatHistory));
+      } else {
+        // Clear from localStorage when chat is cleared
+        localStorage.removeItem(`chat_history_${experimentId}`);
+      }
+    }
+  }, [experimentId, chatHistory]);
 
   const loadExperiment = async () => {
     try {
@@ -849,6 +873,8 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           <ChatAssistant
             title=""
             placeholder={t('llm.chat.placeholder', 'Ask me anything about your experiment...')}
+            initialMessages={chatHistory}
+            onMessagesChange={setChatHistory}
             systemPrompt={`You are an AI assistant helping with scientific experiment design. You have access to the current experiment context and should provide specific, relevant advice.
 
 CURRENT EXPERIMENT CONTEXT:

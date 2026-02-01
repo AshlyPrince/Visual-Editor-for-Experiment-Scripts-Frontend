@@ -1,56 +1,38 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import i18next from 'i18next';
+import keycloakService from '../services/keycloakService';
 
 const KeycloakContext = createContext();
 
-const isDevelopmentMode = import.meta.env.VITE_DEVELOPMENT_MODE !== 'false';
-
-const mockUserInfo = {
-  id: 'dev-user-123',
-  username: 'developer',
-  email: 'developer@example.com',
-  firstName: 'John',
-  lastName: 'Developer',
-  fullName: 'John Developer',
-  roles: ['user', 'researcher', 'admin'], 
-};
-
 export const KeycloakProvider = ({ children }) => {
   const [keycloak, setKeycloak] = useState(null);
-  const [authenticated, setAuthenticated] = useState(isDevelopmentMode);
+  const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userInfo, setUserInfo] = useState(isDevelopmentMode ? mockUserInfo : null);
+  const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const initAuth = async () => {
       try {
-        if (isDevelopmentMode) {
-          
-          setAuthenticated(true);
-          setUserInfo(mockUserInfo);
-          
-          
-          const mockKeycloak = {
-            token: 'mock-jwt-token-for-development',
-            logout: () => {
-              setAuthenticated(false);
-              setUserInfo(null);
-            },
-            updateToken: () => Promise.resolve(true),
-          };
-          setKeycloak(mockKeycloak);
-          
-          
-          window.keycloak = mockKeycloak;
-        } else {
-          
-          
-          setAuthenticated(false);
-          setUserInfo(null);
+        // Initialize Keycloak with session persistence
+        const isAuthenticated = await keycloakService.initialize();
+        
+        setKeycloak(keycloakService.keycloak);
+        setAuthenticated(isAuthenticated);
+        setUserInfo(keycloakService.userInfo);
+        
+        // Store in window for API interceptor
+        if (keycloakService.keycloak) {
+          window.keycloak = keycloakService.keycloak;
         }
-      } catch {
+        
+        if (keycloakService.authError) {
+          setError(keycloakService.authError.message);
+        }
+      } catch (err) {
+        console.error('Failed to initialize Keycloak:', err);
         setError(i18next.t('auth.authServiceUnavailable'));
+        setAuthenticated(false);
       } finally {
         setLoading(false);
       }
@@ -60,50 +42,31 @@ export const KeycloakProvider = ({ children }) => {
   }, []);
 
   const login = () => {
-    if (isDevelopmentMode) {
-      setAuthenticated(true);
-      setUserInfo(mockUserInfo);
-    } else {
-      keycloak?.login();
-    }
+    keycloakService.login();
   };
 
   const logout = () => {
-    if (isDevelopmentMode) {
-      setAuthenticated(false);
-      setUserInfo(null);
-    } else {
-      keycloak?.logout();
-    }
+    keycloakService.logout();
   };
 
   const register = () => {
-    if (isDevelopmentMode) {
-      
-      login();
-    } else {
-      keycloak?.register();
-    }
+    keycloakService.register();
   };
 
   const getToken = () => {
-    return keycloak?.token || (isDevelopmentMode ? 'mock-development-token' : null);
+    return keycloakService.getToken();
   };
 
   const hasRole = (role) => {
-    return userInfo?.roles?.includes(role) || false;
+    return keycloakService.hasRole(role);
   };
 
   const hasAnyRole = (roles) => {
-    return roles.some(role => hasRole(role));
+    return keycloakService.hasAnyRole(roles);
   };
 
   const updateProfile = () => {
-    if (isDevelopmentMode) {
-      alert(i18next.t('auth.profileManagementWouldOpen'));
-    } else {
-      keycloak?.accountManagement();
-    }
+    keycloakService.updateProfile();
   };
 
   const value = {

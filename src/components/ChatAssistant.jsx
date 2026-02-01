@@ -26,6 +26,7 @@ const ChatAssistant = ({
   systemPrompt = null,
   onResponse = null,
   initialMessages = [],
+  onMessagesChange = null,
   maxHeight = 500,
   showHeader = true
 }) => {
@@ -45,6 +46,13 @@ const ChatAssistant = ({
       setConversation(initialMessages);
     }
   }, [initialMessages, setConversation]);
+
+  // Notify parent component when messages change
+  useEffect(() => {
+    if (onMessagesChange) {
+      onMessagesChange(messages);
+    }
+  }, [messages, onMessagesChange]);
 
   
   useEffect(() => {
@@ -83,6 +91,13 @@ const ChatAssistant = ({
     }
   };
 
+  const handleClearMessages = () => {
+    clearMessages();
+    if (onMessagesChange) {
+      onMessagesChange([]);
+    }
+  };
+
   return (
     <Paper elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {showHeader && (
@@ -91,9 +106,17 @@ const ChatAssistant = ({
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <SmartToyIcon color="primary" />
               <Typography variant="h6">{displayTitle}</Typography>
+              {messages.length > 0 && (
+                <Chip 
+                  label={`${messages.length} ${messages.length === 1 ? 'message' : 'messages'}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                />
+              )}
             </Box>
             <Tooltip title={t('llm.chat.clearConversation')}>
-              <IconButton onClick={clearMessages} size="small" disabled={loading || messages.length === 0}>
+              <IconButton onClick={handleClearMessages} size="small" disabled={loading || messages.length === 0}>
                 <ClearIcon />
               </IconButton>
             </Tooltip>

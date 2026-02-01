@@ -340,6 +340,32 @@ const ModularExperimentWizard = ({
   const [newCustomSectionDescription, setNewCustomSectionDescription] = useState('');
   const [discardDialog, setDiscardDialog] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
+
+  // Load chat history for wizard session
+  useEffect(() => {
+    const wizardSessionId = `wizard_${Date.now()}`;
+    const savedHistory = localStorage.getItem(`chat_history_${wizardSessionId}`);
+    if (savedHistory) {
+      try {
+        setChatHistory(JSON.parse(savedHistory));
+      } catch (err) {
+        console.error('Failed to load wizard chat history:', err);
+        setChatHistory([]);
+      }
+    }
+  }, []);
+
+  // Save chat history for wizard
+  useEffect(() => {
+    const wizardSessionId = 'wizard_current'; // Use a constant key for wizard sessions
+    if (chatHistory.length > 0) {
+      localStorage.setItem(`chat_history_${wizardSessionId}`, JSON.stringify(chatHistory));
+    } else {
+      // Clear from localStorage when chat is cleared
+      localStorage.removeItem(`chat_history_${wizardSessionId}`);
+    }
+  }, [chatHistory]);
 
   useEffect(() => {
     if (!existingExperiment && (basicInfo.title || selectedSectionIds.length > 0)) {
@@ -2060,6 +2086,8 @@ const ModularExperimentWizard = ({
           <ChatAssistant
             title=""
             placeholder={t('llm.chat.placeholder', 'Ask me anything about your experiment...')}
+            initialMessages={chatHistory}
+            onMessagesChange={setChatHistory}
             systemPrompt={`You are an AI assistant helping with scientific experiment design. You have access to the current experiment draft and should provide specific, relevant advice.
 
 CURRENT EXPERIMENT DRAFT:

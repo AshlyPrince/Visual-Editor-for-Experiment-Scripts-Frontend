@@ -9,9 +9,6 @@ class KeycloakService {
     this.initAttempted = false;
   }
 
-  /**
-   * Initialize Keycloak authentication
-   */
   async initialize(config = {}) {
     if (this.initializing) {
       return this.authenticated;
@@ -48,7 +45,8 @@ class KeycloakService {
       }
       
       const initOptions = {
-        onLoad: this.keycloak ? 'check-sso' : 'login-required',
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
         checkLoginIframe: false,
         pkceMethod: 'S256',
         flow: 'standard',
@@ -86,9 +84,6 @@ class KeycloakService {
     }
   }
 
-  /**
-   * Extract user information from Keycloak token
-   */
   extractUserInfo() {
     if (this.keycloak?.tokenParsed) {
       const token = this.keycloak.tokenParsed;
@@ -104,9 +99,6 @@ class KeycloakService {
     }
   }
 
-  /**
-   * Setup automatic token refresh
-   */
   setupTokenRefresh() {
     if (this.keycloak) {
       setInterval(() => {
@@ -120,46 +112,28 @@ class KeycloakService {
     }
   }
 
-  /**
-   * Check if user is authenticated
-   */
   isAuthenticated() {
     return this.authenticated;
   }
 
-  /**
-   * Get user information
-   */
   getUserInfo() {
     return this.userInfo;
   }
 
-  /**
-   * Get authentication error if any occurred
-   */
   getAuthError() {
     return this.authError;
   }
 
-  /**
-   * Clear authentication error
-   */
   clearAuthError() {
     this.authError = null;
     this.initAttempted = false;
     sessionStorage.removeItem('keycloak_init_attempted');
   }
 
-  /**
-   * Get authentication token
-   */
   getToken() {
     return this.keycloak?.token || null;
   }
 
-  /**
-   * Initiate login flow
-   */
   async login() {
     if (this.isLoggingIn) {
       return;
@@ -182,18 +156,12 @@ class KeycloakService {
     }
   }
 
-  /**
-   * Logout user
-   */
   logout() {
     if (this.keycloak) {
       this.keycloak.logout();
     }
   }
 
-  /**
-   * Get account management URL
-   */
   getAccountManagementUrl() {
     if (this.keycloak) {
       try {
@@ -207,9 +175,6 @@ class KeycloakService {
     return '#';
   }
 
-  /**
-   * Refresh token if needed
-   */
   async refreshTokenIfNeeded() {
     if (this.keycloak) {
       try {
