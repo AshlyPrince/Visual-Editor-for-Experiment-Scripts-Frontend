@@ -84,6 +84,9 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const [addSectionOpen, setAddSectionOpen] = useState(false);
   const [metadataDialogOpen, setMetadataDialogOpen] = useState(false);
   const [newSectionType, setNewSectionType] = useState('');
+  const [customSectionDialogOpen, setCustomSectionDialogOpen] = useState(false);
+  const [customSectionName, setCustomSectionName] = useState('');
+  const [customSectionDescription, setCustomSectionDescription] = useState('');
   const [conflictDialogOpen, setConflictDialogOpen] = useState(false);
   const [conflictDetails, setConflictDetails] = useState(null);
   const [chatOpen, setChatOpen] = useState(false);
@@ -160,6 +163,13 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const handleAddSection = () => {
     if (!newSectionType) return;
     
+    // If custom section is selected, open dialog to get name and description
+    if (newSectionType === 'custom') {
+      setAddSectionOpen(false);
+      setCustomSectionDialogOpen(true);
+      return;
+    }
+    
     const template = availableSectionTemplates.find(t => t.id === newSectionType);
     if (!template) return;
 
@@ -175,6 +185,26 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     setSections(prev => [...prev, newSection]);
     setHasUnsavedChanges(true);
     setAddSectionOpen(false);
+    setNewSectionType('');
+  };
+
+  const handleAddCustomSection = () => {
+    if (!customSectionName.trim()) return;
+
+    const newSection = {
+      id: `custom_${Date.now()}`,
+      name: customSectionName.trim(),
+      icon: '📝',
+      type: 'rich-text',
+      content: customSectionDescription.trim() || '',
+      media: [], 
+    };
+
+    setSections(prev => [...prev, newSection]);
+    setHasUnsavedChanges(true);
+    setCustomSectionDialogOpen(false);
+    setCustomSectionName('');
+    setCustomSectionDescription('');
     setNewSectionType('');
   };
 
@@ -743,6 +773,57 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
             onClick={handleAddSection} 
             variant="contained" 
             disabled={!newSectionType || getAvailableSections().length === 0}
+          >
+            {t('editor.addSection')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Custom Section Dialog */}
+      <Dialog open={customSectionDialogOpen} onClose={() => {
+        setCustomSectionDialogOpen(false);
+        setCustomSectionName('');
+        setCustomSectionDescription('');
+      }} maxWidth="sm" fullWidth>
+        <DialogTitle>{t('wizard.customSection')}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>
+            {t('wizard.sectionDescription', 'Enter a name and optional description for your custom section.')}
+          </Typography>
+          <TextField
+            autoFocus
+            margin="dense"
+            label={t('wizard.sectionName')}
+            fullWidth
+            required
+            value={customSectionName}
+            onChange={(e) => setCustomSectionName(e.target.value)}
+            placeholder={t('editor.customSectionNamePlaceholder', 'e.g., Conclusion, Discussion, Analysis')}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            label={t('wizard.sectionDescription', 'Description (optional)')}
+            fullWidth
+            multiline
+            rows={3}
+            value={customSectionDescription}
+            onChange={(e) => setCustomSectionDescription(e.target.value)}
+            placeholder={t('editor.customSectionDescPlaceholder', 'Initial content or description for this section...')}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {
+            setCustomSectionDialogOpen(false);
+            setCustomSectionName('');
+            setCustomSectionDescription('');
+          }}>
+            {t('common.cancel')}
+          </Button>
+          <Button 
+            onClick={handleAddCustomSection} 
+            variant="contained" 
+            disabled={!customSectionName.trim()}
           >
             {t('editor.addSection')}
           </Button>

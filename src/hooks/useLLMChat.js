@@ -67,8 +67,10 @@ export const useLLMChat = (initialOptions = {}) => {
     const userMessage = { role: 'user', content: userContent };
     setMessages(prev => [...prev, userMessage]);
 
+    // Build conversation with system prompt at the beginning and include all previous messages
     const conversationMessages = [
       { role: 'system', content: systemPrompt },
+      ...messages, // Include all previous messages
       { role: 'user', content: userContent }
     ];
 
@@ -95,7 +97,7 @@ export const useLLMChat = (initialOptions = {}) => {
     } finally {
       setLoading(false);
     }
-  }, [defaultOptions, t]);
+  }, [messages, defaultOptions, t]);
 
   
   const clearMessages = useCallback(() => {

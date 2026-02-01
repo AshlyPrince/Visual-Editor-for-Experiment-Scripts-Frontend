@@ -69,11 +69,10 @@ const ChatAssistant = ({
 
     try {
       let response;
-      if (systemPrompt && messages.length === 0) {
-        
+      // Always use system prompt if provided
+      if (systemPrompt) {
         response = await sendWithSystemPrompt(systemPrompt, userInput);
       } else {
-        
         response = await sendMessage(userInput);
       }
 
