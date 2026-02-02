@@ -292,17 +292,77 @@ class ExperimentService {
     // First get the current experiment to preserve all other data
     const currentExperiment = await this.getExperiment(experimentId);
     
-    // Update only the permissions in the content
-    const updatedExperiment = {
-      ...currentExperiment,
-      content: {
-        ...currentExperiment.content,
-        permissions: permissionsData
-      }
-    };
+    console.log('[experimentService] Current experiment before update:', {
+      id: currentExperiment.id,
+      title: currentExperiment.title,
+      hasContent: !!currentExperiment.content,
+      hasNestedContent: !!currentExperiment.content?.content,
+      currentPermissions: currentExperiment.content?.permissions?.visibility || 
+                         currentExperiment.content?.content?.permissions?.visibility ||
+                         currentExperiment.permissions?.visibility
+    });
+    
+    console.log('[experimentService] New permissions to save:', {
+      visibility: permissionsData.visibility,
+      allowEdit: permissionsData.allowEdit,
+      allowExport: permissionsData.allowExport
+    });
+    
+    // Ensure content exists
+    if (!currentExperiment.content) {
+      currentExperiment.content = {};
+    }
+    
+    // Check if we have nested content.content structure
+    const hasNestedContent = currentExperiment.content.content && typeof currentExperiment.content.content === 'object';
+    
+    let updatedExperiment;
+    
+    if (hasNestedContent) {
+      // Handle nested content.content.permissions
+      updatedExperiment = {
+        ...currentExperiment,
+        content: {
+          ...currentExperiment.content,
+          content: {
+            ...currentExperiment.content.content,
+            permissions: permissionsData
+          }
+        }
+      };
+    } else {
+      // Handle flat content.permissions
+      updatedExperiment = {
+        ...currentExperiment,
+        content: {
+          ...currentExperiment.content,
+          permissions: permissionsData
+        }
+      };
+    }
+    
+    console.log('[experimentService] Sending updated experiment:', {
+      id: updatedExperiment.id,
+      title: updatedExperiment.title,
+      hasContent: !!updatedExperiment.content,
+      hasNestedContent: !!updatedExperiment.content?.content,
+      newPermissions: updatedExperiment.content?.permissions?.visibility || 
+                      updatedExperiment.content?.content?.permissions?.visibility,
+      hasSections: !!(updatedExperiment.content?.sections || updatedExperiment.content?.content?.sections),
+      sectionsCount: (updatedExperiment.content?.sections?.length || updatedExperiment.content?.content?.sections?.length)
+    });
     
     // Send the full experiment with updated permissions
     const response = await api.put(`/api/experiments/${experimentId}`, updatedExperiment);
+    
+    console.log('[experimentService] Backend response:', {
+      id: response.data.id,
+      title: response.data.title,
+      savedPermissions: response.data.content?.permissions?.visibility ||
+                       response.data.content?.content?.permissions?.visibility ||
+                       response.data.permissions?.visibility
+    });
+    
     return response.data;
   }
 
