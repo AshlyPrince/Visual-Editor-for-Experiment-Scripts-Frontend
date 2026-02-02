@@ -47,6 +47,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const [exportOpen, setExportOpen] = useState(false);
   const [permissionsOpen, setPermissionsOpen] = useState(false);
   const [simplifyOpen, setSimplifyOpen] = useState(false);
+  const [simplifiedData, setSimplifiedData] = useState(null); // Store simplified version
 
   useEffect(() => {
     if (experimentId) {
@@ -1437,8 +1438,11 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       {experiment && (
         <ExportDialog
           open={exportOpen}
-          onClose={() => setExportOpen(false)}
-          experiment={experiment}
+          onClose={() => {
+            setExportOpen(false);
+            setSimplifiedData(null); // Reset simplified data when export dialog closes
+          }}
+          experiment={simplifiedData || experiment} // Use simplified data if available, otherwise use original
           onExported={(type) => {
             
           }}
@@ -1448,10 +1452,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       {experiment && (
         <LanguageSimplificationDialog
           open={simplifyOpen}
-          onClose={() => setSimplifyOpen(false)}
+          onClose={() => {
+            setSimplifyOpen(false);
+            setSimplifiedData(null); // Reset simplified data when dialog closes
+          }}
           experimentData={experiment}
-          onExport={(simplifiedData, format, level) => {
-            // Handle the simplified version - you can open the export dialog or handle it separately
+          onExport={(simplifiedExperiment, format, level) => {
+            // Store the simplified version and open export dialog when user clicks export
+            setSimplifiedData(simplifiedExperiment);
             setSimplifyOpen(false);
             setExportOpen(true);
           }}

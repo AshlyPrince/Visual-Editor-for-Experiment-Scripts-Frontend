@@ -45,22 +45,22 @@ const LanguageSimplificationDialog = ({
   const levels = [
     {
       value: 'beginner',
-      label: t('simplification.levels.beginner', 'Elementary Level'),
-      description: t('simplification.levels.beginnerDesc', 'Ages 8-11 - Very simple language, basic concepts'),
+      label: t('simplification.beginner', 'Simple'),
+      description: t('simplification.beginnerDescription', 'Very simple language with basic vocabulary and short sentences. Ideal for introductory education.'),
       icon: <SchoolIcon />,
       color: '#4CAF50'
     },
     {
       value: 'intermediate',
-      label: t('simplification.levels.intermediate', 'Middle School Level'),
-      description: t('simplification.levels.intermediateDesc', 'Ages 12-14 - Clear language with some technical terms'),
+      label: t('simplification.intermediate', 'Intermediate'),
+      description: t('simplification.intermediateDescription', 'Clear and accessible language with moderate technical vocabulary. Suitable for general education.'),
       icon: <PsychologyIcon />,
       color: '#2196F3'
     },
     {
       value: 'advanced',
-      label: t('simplification.levels.advanced', 'High School Level'),
-      description: t('simplification.levels.advancedDesc', 'Ages 15-18 - Standard academic language'),
+      label: t('simplification.advanced', 'Advanced'),
+      description: t('simplification.advancedDescription', 'Standard academic language with proper scientific terminology. Maintains original complexity.'),
       icon: <ScienceIcon />,
       color: '#9C27B0'
     }
@@ -73,10 +73,7 @@ const LanguageSimplificationDialog = ({
     try {
       const simplified = await simplifyLanguage(experimentData, targetLevel, t);
       setSimplifiedData(simplified);
-      if (onExport) {
-        onExport(simplified, null, targetLevel);
-      }
-      handleClose();
+      setStep('preview'); // Move to preview step instead of closing
     } catch (err) {
       console.error('Simplification error:', err);
       setError(err.message || t('simplification.error', 'Failed to simplify language'));
@@ -89,7 +86,7 @@ const LanguageSimplificationDialog = ({
     if (onExport && simplifiedData) {
       onExport(simplifiedData, format, targetLevel);
     }
-    handleClose();
+    // Don't close immediately - let user see export is happening
   };
 
   const handleClose = () => {
@@ -262,11 +259,14 @@ const LanguageSimplificationDialog = ({
       <DialogTitle>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <PsychologyIcon color="primary" />
-          {t('simplification.title', 'Simplify Language for Different Audiences')}
+          {step === 'select' 
+            ? t('simplification.title', 'Simplify Language for Different Audiences')
+            : t('simplification.preview', 'Preview Simplified Version')
+          }
         </Box>
       </DialogTitle>
 
-      {renderSelectStep()}
+      {step === 'select' ? renderSelectStep() : renderPreviewStep()}
     </Dialog>
   );
 };
