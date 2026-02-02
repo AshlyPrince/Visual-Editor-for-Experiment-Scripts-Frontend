@@ -48,7 +48,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const [permissionsOpen, setPermissionsOpen] = useState(false);
   const [simplifyOpen, setSimplifyOpen] = useState(false);
   const [simplifiedData, setSimplifiedData] = useState(null); 
-  const [autoExportFormat, setAutoExportFormat] = useState(null); 
+  const [autoExportFormat, setAutoExportFormat] = useState(null);
+  const [wasOwner, setWasOwner] = useState(false); 
 
   useEffect(() => {
     if (experimentId) {
@@ -113,6 +114,31 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       
       const canonical = toCanonical(rawData);
       
+      const currentUser = keycloakService.getUserInfo();
+      const isOwnerNow = isUserOwner(canonical, currentUser);
+      
+      if (isOwnerNow) {
+        setWasOwner(true);
+      }
+      
+      if (!canonical.created_by && !canonical.owner_id && !canonical.content?.permissions?.userPermissions) {
+        console.log('[ExperimentViewer] WARNING: No ownership data in response');
+        if (rawData.created_by) {
+          canonical.created_by = rawData.created_by;
+          console.log('[ExperimentViewer] Restored created_by from rawData:', rawData.created_by);
+        }
+        if (rawData.owner_id) canonical.owner_id = rawData.owner_id;
+        if (rawData.createdBy) canonical.createdBy = rawData.createdBy;
+        
+        if (wasOwner && !canonical.created_by && !canonical.owner_id) {
+          const userId = currentUser?.id || currentUser?.sub || currentUser?.email;
+          if (userId) {
+            canonical.created_by = userId;
+            console.log('[ExperimentViewer] User was previously owner, restoring ownership with userId:', userId);
+          }
+        }
+      }
+      
       const canonicalProcedureSection = (canonical.content?.sections || []).find(s => s.id === 'procedure');
       
       canonical.version_number = actualVersionNumber;
@@ -125,7 +151,12 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       console.log('[ExperimentViewer] Final canonical experiment:', {
         id: canonical.id,
         title: canonical.title,
-        version_number: canonical.version_number
+        version_number: canonical.version_number,
+        created_by: canonical.created_by,
+        createdBy: canonical.createdBy,
+        owner_id: canonical.owner_id,
+        hasContentPermissions: !!canonical.content?.permissions,
+        userPermissions: canonical.content?.permissions?.userPermissions
       });
       
       setExperiment(canonical);
