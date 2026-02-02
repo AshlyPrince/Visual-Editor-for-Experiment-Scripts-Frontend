@@ -244,14 +244,12 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     updatedExperiment.course = course;
     updatedExperiment.program = program;
     
-    // Use current permissions (may have been updated in editor)
     if (currentPermissions) {
       updatedExperiment.content.permissions = currentPermissions;
     } else if (experiment?.content?.permissions) {
       updatedExperiment.content.permissions = experiment.content.permissions;
     }
     
-    // Preserve ownership fields at top level (fallback for legacy experiments)
     if (experiment?.created_by) {
       updatedExperiment.created_by = experiment.created_by;
     }
@@ -332,12 +330,10 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   };
 
   const handleSavePermissions = (permissionsData) => {
-    console.log('[ExperimentEditor] Updating permissions in editor:', permissionsData);
     setCurrentPermissions(permissionsData);
     setHasUnsavedChanges(true);
     setPermissionsOpen(false);
     
-    // Show info that permissions will be saved with next version
     alert(t('editor.permissionsWillBeSavedWithVersion', 'Permissions updated. They will be saved when you create a new version.'));
   };
 

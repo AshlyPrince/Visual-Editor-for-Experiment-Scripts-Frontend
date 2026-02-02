@@ -29,10 +29,8 @@ const ExperimentPermissionBadge = ({
   const currentUser = keycloakService.getUserInfo();
   const userId = currentUser?.id || currentUser?.sub || currentUser?.email;
   
-  // Check if user is owner using the comprehensive isUserOwner function
   const isExpOwner = experiment ? isUserOwner(experiment, currentUser) : false;
   
-  // If no permissions object but user is owner, show owner badge
   if (!experiment?.content?.permissions) {
     if (isExpOwner) {
       return (
@@ -83,10 +81,8 @@ const ExperimentPermissionBadge = ({
 
   let accessLabel = null;
   if (isExpOwner) {
-    // User is owner - determined by isUserOwner check
     accessLabel = t('permissions.owner') || 'Owner';
   } else if (userPermissions) {
-    // User has explicit permissions
     const role = userPermissions.role;
     if (role === 'admin') {
       accessLabel = t('permissions.admin') || 'Admin';

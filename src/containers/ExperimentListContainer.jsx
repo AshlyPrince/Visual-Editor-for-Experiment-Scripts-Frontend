@@ -191,7 +191,6 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
       setDeleteLoading(false);
       setDeleteSuccess(true);
       
-      // Show success message briefly before closing
       setTimeout(() => {
         setDeleteDialogOpen(false);
         setExperimentToDelete(null);

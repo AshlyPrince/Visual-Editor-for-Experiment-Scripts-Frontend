@@ -365,7 +365,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 widows: 3;
             }
             
-            /* CRITICAL: Keep sections together - don't split them across pages */
             .section {
                 page-break-inside: auto;
                 break-inside: auto;
@@ -378,19 +377,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 overflow: visible !important;
             }
             
-            /* Keep section title with its content */
             .section-title {
                 page-break-after: avoid;
                 break-after: avoid;
             }
             
-            /* Keep section content together */
             .section-content {
                 orphans: 3;
                 widows: 3;
             }
             
-            /* Keep headings with following content */
             h1, h2, h3, h4, h5, h6 {
                 page-break-after: avoid;
                 break-after: avoid;
@@ -398,13 +394,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 widows: 3;
             }
             
-            /* Better paragraph control */
             p, li {
                 orphans: 3;
                 widows: 3;
             }
             
-            /* Keep media galleries together */
             .media-gallery {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
@@ -412,14 +406,12 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 break-inside: avoid;
             }
             
-            /* Keep individual media items together (image + caption) */
             .media-item {
                 page-break-inside: avoid;
                 break-inside: avoid;
                 display: block;
             }
             
-            /* Keep images from splitting */
             .media-item img {
                 max-height: 500px;
                 max-width: 100%;
@@ -433,7 +425,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 print-color-adjust: exact;
             }
             
-            /* Keep safety icon galleries together */
             .safety-icons-gallery {
                 page-break-inside: avoid;
                 break-inside: avoid;
@@ -441,19 +432,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 widows: 3;
             }
             
-            /* Keep icon items together */
             .safety-icon-item {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
             
-            /* Keep tables together */
             table {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
             
-            /* Keep subsections together */
             .subsection,
             .objectives-box,
             .safety-warning {
@@ -461,13 +449,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 break-inside: avoid;
             }
             
-            /* Keep procedure steps together */
             .procedure-steps li {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
             
-            /* Hide videos in print */
             .media-item video {
                 display: none;
             }
@@ -477,13 +463,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 font-weight: bold;
             }
             
-            /* Footer can break before if needed */
             .footer {
                 page-break-before: auto;
                 margin-top: 30px;
             }
             
-            /* Ensure colors print correctly */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;

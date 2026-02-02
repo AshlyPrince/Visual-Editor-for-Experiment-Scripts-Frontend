@@ -67,44 +67,25 @@ export function isOwner(userPermissions) {
 
 export function canAccessRestrictedFeature(experiment, feature, currentUser) {
   if (!experiment || !experiment.content || !experiment.content.permissions) {
-    console.log('[Permissions] canAccessRestrictedFeature: No permissions set, allowing access');
-    
     return true;
   }
 
   const permissions = experiment.content.permissions;
   
-  console.log('[Permissions] canAccessRestrictedFeature:', {
-    feature,
-    currentUser: currentUser?.email || currentUser?.preferred_username,
-    visibility: permissions.visibility,
-    allowExport: permissions.allowExport,
-    allowEdit: permissions.allowEdit,
-    allowViewDetails: permissions.allowViewDetails,
-    allowVersionControl: permissions.allowVersionControl,
-    allowSimplify: permissions.allowSimplify
-  });
-
   const isExperimentOwner = isUserOwner(experiment, currentUser);
   
   if (isExperimentOwner) {
-    console.log('[Permissions] User is owner, granting full access');
     return true; 
   }
 
-  // Private: only owner has access
   if (permissions.visibility === 'private') {
-    console.log('[Permissions] Experiment is private, denying access to non-owner');
     return false;
   }
 
-  // Public: everyone has access to all features
   if (permissions.visibility === 'public') {
-    console.log('[Permissions] Experiment is public, granting access');
     return true;
   }
 
-  // Restricted: check specific permissions
   const userName = currentUser?.preferred_username || currentUser?.id;
   let hasAccess = false; 
   
@@ -125,64 +106,50 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
       hasAccess = permissions.allowSimplify !== false;
       break;
     case 'delete':
-      // Only owner can delete
       hasAccess = false;
       break;
     default:
       hasAccess = true;
   }
   
-  console.log(`[Permissions] Feature '${feature}' access: ${hasAccess}`);
   return hasAccess;
 }
 
-// Check if current user is the owner of the experiment
 export function isUserOwner(experiment, currentUser) {
   if (!experiment || !currentUser) {
-    console.log('[Permissions] isUserOwner: Missing experiment or currentUser');
     return false;
   }
 
-  // Get all possible user identifiers
-  // Note: Check 'sub' first as it's the most reliable UUID, then fallback to 'id'
-  const userSub = currentUser.sub; // The UUID from Keycloak
-  const userId = currentUser.id; // May be username or UUID depending on token
+  const userSub = currentUser.sub;
+  const userId = currentUser.id;
   const userName = currentUser.preferred_username;
   const userEmail = currentUser.email;
   
   if (!userSub && !userId && !userName && !userEmail) {
-    console.log('[Permissions] isUserOwner: No user identifier found');
     return false;
   }
 
   const permissions = experiment.content?.permissions;
   
-  // Check userPermissions array for owner (primary method)
   if (permissions && permissions.userPermissions && Array.isArray(permissions.userPermissions)) {
     const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
     if (ownerPermission) {
-      // Check against all possible identifiers
       const isMatch = 
         (ownerPermission.username && (ownerPermission.username === userName || ownerPermission.username === userId || ownerPermission.username === userSub)) ||
         (ownerPermission.userId && (ownerPermission.userId === userSub || ownerPermission.userId === userId || ownerPermission.userId === userName)) ||
         (ownerPermission.email && ownerPermission.email === userEmail);
       
-      console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Checked identifiers: sub=${userSub}, username=${userName}, id=${userId}, email=${userEmail} vs owner data:`, ownerPermission);
       return isMatch;
     }
   }
 
-  // Fallback: check created_by/owner_id fields (legacy support)
   const createdBy = experiment.created_by || experiment.createdBy || experiment.owner_id;
   
   if (createdBy) {
-    // Check against all possible identifiers - prioritize UUID match
     const isMatch = createdBy === userSub || createdBy === userId || createdBy === userName || createdBy === userEmail;
-    console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Fallback check: identifiers (sub=${userSub}, username=${userName}, id=${userId}, email=${userEmail}) vs ${createdBy}`);
     return isMatch;
   }
 
-  console.log('[Permissions] isUserOwner: FALSE - No ownership data found');
   return false;
 }
 
@@ -196,7 +163,6 @@ export function getUserPermissions(experimentPermissions, userId) {
   ) || null;
 }
 
-// Get user permissions by username (primary method for username-based matching)
 export function getUserPermissionsByUsername(experimentPermissions, username) {
   if (!experimentPermissions || !experimentPermissions.userPermissions || !username) {
     return null;
@@ -207,26 +173,21 @@ export function getUserPermissionsByUsername(experimentPermissions, username) {
   );
 }
 
-// Check if user can view the experiment
 export function canViewExperiment(experiment, currentUser) {
   if (!experiment || !currentUser) return false;
   
   const permissions = experiment.content?.permissions;
   
-  // No permissions set - allow view (backward compatibility)
   if (!permissions) return true;
   
   const visibility = permissions.visibility || 'private';
   
-  // Public: everyone can view
   if (visibility === 'public') return true;
   
-  // Private: only owner can view
   if (visibility === 'private') {
     return isUserOwner(experiment, currentUser);
   }
   
-  // Restricted: check if user has any permissions or is owner
   if (visibility === 'restricted') {
     if (isUserOwner(experiment, currentUser)) return true;
     
@@ -245,7 +206,7 @@ export function getDefaultPermissions(owner, visibility = 'private', restrictedS
   const username = owner?.preferred_username || owner?.id;
   
   const permissions = {
-    visibility: visibility, // 'private', 'public', or 'restricted'
+    visibility: visibility,
     allowDuplication: true,
     requireApprovalForAccess: false,
     userPermissions: [
@@ -267,7 +228,6 @@ export function getDefaultPermissions(owner, visibility = 'private', restrictedS
     modifiedBy: ownerId
   };
 
-  // Apply restricted settings if visibility is 'restricted'
   if (visibility === 'restricted') {
     permissions.allowEdit = restrictedSettings.allowEdit === true;
     permissions.allowExport = restrictedSettings.allowExport !== false;
@@ -275,14 +235,12 @@ export function getDefaultPermissions(owner, visibility = 'private', restrictedS
     permissions.allowVersionControl = restrictedSettings.allowVersionControl === true;
     permissions.allowSimplify = restrictedSettings.allowSimplify !== false;
   } else if (visibility === 'public') {
-    // Public experiments allow all features
     permissions.allowEdit = true;
     permissions.allowExport = true;
     permissions.allowViewDetails = true;
     permissions.allowVersionControl = true;
     permissions.allowSimplify = true;
   }
-  // Private experiments don't need these flags (owner has full access)
 
   return permissions;
 }
@@ -351,7 +309,6 @@ export function validatePermissions(permissions) {
   return true;
 }
 
-// Update experiment visibility/access level
 export function updateExperimentVisibility(permissions, newVisibility, restrictedSettings = {}) {
   if (!permissions) return null;
   
@@ -372,11 +329,9 @@ export function updateExperimentVisibility(permissions, newVisibility, restricte
     permissions.allowVersionControl = true;
     permissions.allowSimplify = true;
     permissions.allowLinkSharing = true;
-    // Clear restricted flags
     delete permissions.allowDelete;
   } else if (newVisibility === 'private') {
     permissions.allowLinkSharing = false;
-    // Clear restricted flags
     delete permissions.allowEdit;
     delete permissions.allowExport;
     delete permissions.allowViewDetails;
@@ -388,7 +343,6 @@ export function updateExperimentVisibility(permissions, newVisibility, restricte
   return permissions;
 }
 
-// Add or update user permission
 export function addOrUpdateUserPermission(permissions, username, email, role = PERMISSION_LEVELS.VIEWER) {
   if (!permissions.userPermissions) {
     permissions.userPermissions = [];
@@ -407,7 +361,6 @@ export function addOrUpdateUserPermission(permissions, username, email, role = P
   };
 
   if (existingIndex >= 0) {
-    // Don't allow changing owner status
     if (permissions.userPermissions[existingIndex].isOwner) {
       return permissions;
     }
@@ -423,7 +376,6 @@ export function addOrUpdateUserPermission(permissions, username, email, role = P
   return permissions;
 }
 
-// Remove user permission
 export function removeUserPermissionByUsername(permissions, username) {
   if (!permissions.userPermissions) return permissions;
 
@@ -435,7 +387,6 @@ export function removeUserPermissionByUsername(permissions, username) {
   return permissions;
 }
 
-// Clone permissions for versioning (preserves all permissions)
 export function clonePermissions(permissions) {
   if (!permissions) return null;
   

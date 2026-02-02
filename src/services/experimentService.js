@@ -191,12 +191,8 @@ class ExperimentService {
       commit_message: commitMsg
     };
 
-    console.log('[experimentService.updateFromWizard] Creating version with title:', versionData.title);
-
     const result = await this.createVersion(experimentId, versionData);
     
-    console.log('[experimentService.updateFromWizard] Version created with title:', result.title);
-
     return result;
   }
 
@@ -288,33 +284,11 @@ class ExperimentService {
     return response.data;
   }
 
-  /**
-   * Update experiment permissions
-   * 
-   * ⚠️ KNOWN ISSUE: Backend does not currently support updating permissions
-   * through the regular experiment update endpoint. The permissions field
-   * is ignored in PUT /api/experiments/:id requests.
-   * 
-   * BACKEND FIX NEEDED: Backend needs to either:
-   * 1. Add PATCH /api/experiments/:id/permissions endpoint, OR
-   * 2. Make PUT /api/experiments/:id accept and save the permissions field
-   * 
-   * Current behavior: This function will attempt to update but permissions
-   * will not persist. The backend returns the old permissions instead.
-   */
   async updateExperimentPermissions(experimentId, permissionsData) {
-    console.log('[experimentService] Updating permissions for experiment:', experimentId);
-    console.log('[experimentService] New permissions data:', permissionsData);
-    console.warn('[experimentService] ⚠️ WARNING: Backend does not support permissions updates yet!');
-    
-    // Try PATCH method with only permissions field
-    // PATCH is typically used for partial updates
     const token = await keycloakService.getToken();
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://visual-editor-backend.onrender.com';
     
     try {
-      console.log('[experimentService] Attempting PATCH with permissions only');
-      
       const response = await fetch(`${apiBaseUrl}/api/experiments/${experimentId}`, {
         method: 'PATCH',
         headers: {
@@ -329,20 +303,9 @@ class ExperimentService {
       }
       
       const data = await response.json();
-      
-      console.log('[experimentService] PATCH response:', {
-        id: data.id,
-        title: data.title,
-        hasTopLevelPermissions: !!data.permissions,
-        savedVisibility: data.permissions?.visibility || 'not found'
-      });
-      
       return data;
       
     } catch (patchError) {
-      console.log('[experimentService] PATCH failed, trying full PUT update:', patchError.message);
-      
-      // Fallback to full PUT update
       const currentExperiment = await this.getExperiment(experimentId);
       
       const updatedContent = {
@@ -366,24 +329,7 @@ class ExperimentService {
         updatePayload.owner_id = currentExperiment.owner_id;
       }
       
-      console.log('[experimentService] Sending full PUT with permissions at top level');
-      console.warn('[experimentService] ⚠️ Backend will likely ignore permissions field');
-      
       const response = await this.updateExperiment(experimentId, updatePayload);
-      
-      console.log('[experimentService] PUT response:', {
-        id: response.id,
-        title: response.title,
-        hasTopLevelPermissions: !!response.permissions,
-        savedVisibility: response.permissions?.visibility || 'not found',
-        requestedVisibility: permissionsData.visibility
-      });
-      
-      if (response.permissions?.visibility !== permissionsData.visibility) {
-        console.error('[experimentService] ❌ PERMISSIONS NOT SAVED - Backend returned different visibility!');
-        console.error('[experimentService] Requested:', permissionsData.visibility, '| Got:', response.permissions?.visibility);
-      }
-      
       return response;
     }
   }

@@ -138,14 +138,12 @@ export function normalizeExperiment(experiment, t = null) {
     current_version_id: experiment.current_version_id,
     current_version_number: experiment.current_version_number,
     
-    // Preserve ownership fields
     created_by: experiment.created_by,
     owner_id: experiment.owner_id,
     createdBy: experiment.createdBy,
     
     content: {
       config: config,
-      // Preserve permissions if they exist
       permissions: actualContent.permissions || experiment.content?.permissions
     },
     sections: []
@@ -215,7 +213,6 @@ export function denormalizeExperiment(experiment, sections) {
     course: experiment.course,
     program: experiment.program,
     
-    // Preserve ownership fields at top level
     created_by: experiment.created_by,
     owner_id: experiment.owner_id,
     createdBy: experiment.createdBy,

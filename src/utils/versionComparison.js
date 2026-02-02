@@ -505,7 +505,6 @@ export const groupDifferences = (differences) => {
   differences.forEach((change) => {
     if (change.path && change.path.length > 0) {
       const fieldName = change.path[change.path.length - 1];
-      // Important top-level fields that should get their own group
       const topLevelFields = ['title', 'duration', 'subject', 'gradeLevel', 'name'];
       
       if (topLevelFields.includes(fieldName) && change.path.length <= 2) {

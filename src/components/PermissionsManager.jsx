@@ -67,7 +67,6 @@ const PermissionsManager = ({
       visibility,
       allowDuplication,
       
-      // For restricted mode, set specific permissions
       ...(visibility === 'restricted' && {
         allowViewDetails,
         allowExport,
@@ -76,7 +75,6 @@ const PermissionsManager = ({
         allowSimplify
       }),
       
-      // For public mode, grant all permissions
       ...(visibility === 'public' && {
         allowViewDetails: true,
         allowExport: true,
@@ -85,12 +83,10 @@ const PermissionsManager = ({
         allowSimplify: true
       }),
       
-      // Private mode: only owner has access (no need to set these flags)
-      
       requireApprovalForAccess: false,
       userPermissions: [{
         userId: currentUser?.id || currentUser?.sub || currentUser?.email,
-        username: username, // Store username for matching
+        username: username,
         email: currentUser?.email,
         name: currentUser?.name || currentUser?.preferred_username,
         role: 'admin',
@@ -105,7 +101,6 @@ const PermissionsManager = ({
       modifiedBy: currentUser?.id || currentUser?.sub || currentUser?.email
     };
     
-    console.log('[PermissionsManager] Saving permissions:', permissionsData);
     onSave(permissionsData);
   };
 

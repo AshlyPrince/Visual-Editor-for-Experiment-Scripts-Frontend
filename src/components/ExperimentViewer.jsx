@@ -68,17 +68,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       
       const rawData = await experimentService.getExperiment(experimentId);
       
-      console.log('[ExperimentViewer] Loaded experiment:', {
-        id: rawData.id,
-        title: rawData.title,
-        current_version_id: rawData.current_version_id,
-        current_version_number: rawData.current_version_number,
-        created_by: rawData.created_by,
-        createdBy: rawData.createdBy,
-        owner_id: rawData.owner_id,
-        hasContentPermissions: !!rawData.content?.permissions
-      });
-      
       const procedureSection = (rawData.sections || rawData.content?.sections || []).find(s => s.id === 'procedure');
       
       let actualVersionNumber = rawData.current_version_number || rawData.version_number || 1;
@@ -93,7 +82,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           }
         }
       } catch (versionErr) {
-        console.log('[ExperimentViewer] Could not load version history:', versionErr.message);
       }
       
       const canonical = toCanonical(rawData);
@@ -106,10 +94,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       }
       
       if (!canonical.created_by && !canonical.owner_id && !canonical.content?.permissions?.userPermissions) {
-        console.log('[ExperimentViewer] WARNING: No ownership data in response');
         if (rawData.created_by) {
           canonical.created_by = rawData.created_by;
-          console.log('[ExperimentViewer] Restored created_by from rawData:', rawData.created_by);
         }
         if (rawData.owner_id) canonical.owner_id = rawData.owner_id;
         if (rawData.createdBy) canonical.createdBy = rawData.createdBy;
@@ -118,7 +104,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           const userId = currentUser?.id || currentUser?.sub || currentUser?.email;
           if (userId) {
             canonical.created_by = userId;
-            console.log('[ExperimentViewer] User was previously owner, restoring ownership with userId:', userId);
           }
         }
       }
@@ -131,17 +116,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       canonical.estimated_duration = canonical.content.config.duration;
       canonical.course = canonical.content.config.subject;
       canonical.program = canonical.content.config.gradeLevel;
-      
-      console.log('[ExperimentViewer] Final canonical experiment:', {
-        id: canonical.id,
-        title: canonical.title,
-        version_number: canonical.version_number,
-        created_by: canonical.created_by,
-        createdBy: canonical.createdBy,
-        owner_id: canonical.owner_id,
-        hasContentPermissions: !!canonical.content?.permissions,
-        userPermissions: canonical.content?.permissions?.userPermissions
-      });
       
       setExperiment(canonical);
     } catch (err) {
@@ -1179,23 +1153,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
   const canSimplify = experiment ? canAccessRestrictedFeature(experiment, 'simplify', currentUser) : false;
-
-  console.log('[ExperimentViewer] Current user info:', {
-    id: currentUser?.id,
-    sub: currentUser?.sub,
-    email: currentUser?.email,
-    preferred_username: currentUser?.preferred_username
-  });
-
-  console.log('[ExperimentViewer] Permission check results:', {
-    userIsOwner,
-    canEditExp,
-    canExport,
-    canViewHistory,
-    canSimplify,
-    experimentId: experiment?.id,
-    hasPermissions: !!experiment?.content?.permissions
-  });
 
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
