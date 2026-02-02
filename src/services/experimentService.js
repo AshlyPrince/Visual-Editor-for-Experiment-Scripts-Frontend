@@ -289,78 +289,50 @@ class ExperimentService {
   }
 
   async updateExperimentPermissions(experimentId, permissionsData) {
-    // First get the current experiment to preserve all other data
+    console.log('[experimentService] Updating permissions for experiment:', experimentId);
+    console.log('[experimentService] New permissions data:', permissionsData);
+    
+    // Get the current experiment to preserve all other data
     const currentExperiment = await this.getExperiment(experimentId);
     
-    console.log('[experimentService] Current experiment before update:', {
+    console.log('[experimentService] Current experiment structure:', {
       id: currentExperiment.id,
       title: currentExperiment.title,
       hasContent: !!currentExperiment.content,
       hasNestedContent: !!currentExperiment.content?.content,
+      contentKeys: currentExperiment.content ? Object.keys(currentExperiment.content) : [],
       currentPermissions: currentExperiment.content?.permissions?.visibility || 
                          currentExperiment.content?.content?.permissions?.visibility ||
-                         currentExperiment.permissions?.visibility
+                         'none'
     });
     
-    console.log('[experimentService] New permissions to save:', {
-      visibility: permissionsData.visibility,
-      allowEdit: permissionsData.allowEdit,
-      allowExport: permissionsData.allowExport
+    // Build the update payload - send ONLY the content with updated permissions
+    // This prevents overwriting other fields
+    const updatePayload = {
+      content: {
+        ...currentExperiment.content,
+        permissions: permissionsData
+      }
+    };
+    
+    console.log('[experimentService] Sending update payload:', {
+      hasContent: !!updatePayload.content,
+      permissionsVisibility: updatePayload.content.permissions.visibility,
+      hasSections: !!updatePayload.content.sections,
+      sectionsCount: updatePayload.content.sections?.length || 0,
+      hasConfig: !!updatePayload.content.config
     });
     
-    // Ensure content exists
-    if (!currentExperiment.content) {
-      currentExperiment.content = {};
-    }
-    
-    // Check if we have nested content.content structure
-    const hasNestedContent = currentExperiment.content.content && typeof currentExperiment.content.content === 'object';
-    
-    let updatedExperiment;
-    
-    if (hasNestedContent) {
-      // Handle nested content.content.permissions
-      updatedExperiment = {
-        ...currentExperiment,
-        content: {
-          ...currentExperiment.content,
-          content: {
-            ...currentExperiment.content.content,
-            permissions: permissionsData
-          }
-        }
-      };
-    } else {
-      // Handle flat content.permissions
-      updatedExperiment = {
-        ...currentExperiment,
-        content: {
-          ...currentExperiment.content,
-          permissions: permissionsData
-        }
-      };
-    }
-    
-    console.log('[experimentService] Sending updated experiment:', {
-      id: updatedExperiment.id,
-      title: updatedExperiment.title,
-      hasContent: !!updatedExperiment.content,
-      hasNestedContent: !!updatedExperiment.content?.content,
-      newPermissions: updatedExperiment.content?.permissions?.visibility || 
-                      updatedExperiment.content?.content?.permissions?.visibility,
-      hasSections: !!(updatedExperiment.content?.sections || updatedExperiment.content?.content?.sections),
-      sectionsCount: (updatedExperiment.content?.sections?.length || updatedExperiment.content?.content?.sections?.length)
-    });
-    
-    // Send the full experiment with updated permissions
-    const response = await api.put(`/api/experiments/${experimentId}`, updatedExperiment);
+    // Send only the content update
+    const response = await api.put(`/api/experiments/${experimentId}`, updatePayload);
     
     console.log('[experimentService] Backend response:', {
       id: response.data.id,
       title: response.data.title,
-      savedPermissions: response.data.content?.permissions?.visibility ||
+      hasContent: !!response.data.content,
+      savedPermissions: response.data.content?.permissions?.visibility || 
                        response.data.content?.content?.permissions?.visibility ||
-                       response.data.permissions?.visibility
+                       'not found'
     });
     
     return response.data;
