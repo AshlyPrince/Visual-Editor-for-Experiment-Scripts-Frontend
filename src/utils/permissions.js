@@ -1,5 +1,3 @@
-
-
 export const PERMISSION_LEVELS = {
   VIEWER: 'viewer',
   COMMENTER: 'commenter',
@@ -94,12 +92,21 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
     return true; 
   }
 
+  // Private: only owner has access
   if (permissions.visibility === 'private') {
     console.log('[Permissions] Experiment is private, denying access to non-owner');
     return false;
   }
 
-  let hasAccess = true; 
+  // Public: everyone has access to all features
+  if (permissions.visibility === 'public') {
+    console.log('[Permissions] Experiment is public, granting access');
+    return true;
+  }
+
+  // Restricted: check specific permissions
+  const userName = currentUser?.preferred_username || currentUser?.id;
+  let hasAccess = false; 
   
   switch (feature) {
     case 'viewDetails':
@@ -118,7 +125,8 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
       hasAccess = permissions.allowSimplify !== false;
       break;
     case 'delete':
-      hasAccess = permissions.allowDelete === true;
+      // Only owner can delete
+      hasAccess = false;
       break;
     default:
       hasAccess = true;
@@ -128,50 +136,42 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
   return hasAccess;
 }
 
+// Check if current user is the owner of the experiment
 export function isUserOwner(experiment, currentUser) {
   if (!experiment || !currentUser) {
     console.log('[Permissions] isUserOwner: Missing experiment or currentUser');
     return false;
   }
 
-  const userEmail = currentUser.email;
   const userName = currentUser.preferred_username || currentUser.id;
-  const userSub = currentUser.sub;
   
-  if (!userEmail && !userName && !userSub) {
-    console.log('[Permissions] isUserOwner: No user identifiers found');
+  if (!userName) {
+    console.log('[Permissions] isUserOwner: No username found');
     return false;
   }
 
   const permissions = experiment.content?.permissions;
+  
+  // Check userPermissions array for owner (primary method)
   if (permissions && permissions.userPermissions && Array.isArray(permissions.userPermissions)) {
     const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
-    if (ownerPermission) {
-      const permUserId = ownerPermission.userId;
-      const permEmail = ownerPermission.email;
-      
-      if (permEmail && userEmail && permEmail === userEmail) {
-        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions email');
-        return true;
-      }
-      
-      if (permUserId && (permUserId === userName || permUserId === userSub || permUserId === currentUser.id)) {
-        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions userId');
-        return true;
-      }
+    if (ownerPermission && ownerPermission.username) {
+      const isMatch = ownerPermission.username === userName;
+      console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Checked username: ${userName} vs ${ownerPermission.username}`);
+      return isMatch;
     }
   }
 
-  const ownerId = experiment.created_by || experiment.createdBy || experiment.owner_id;
+  // Fallback: check created_by field (legacy support)
+  const createdBy = experiment.created_by || experiment.createdBy || experiment.owner_id;
   
-  if (ownerId) {
-    if (ownerId === userSub || ownerId === userName || ownerId === userEmail || ownerId === currentUser.id) {
-      console.log('[Permissions] isUserOwner: TRUE - Matched via created_by field');
-      return true;
-    }
+  if (createdBy) {
+    const isMatch = createdBy === userName;
+    console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Fallback check: ${userName} vs ${createdBy}`);
+    return isMatch;
   }
 
-  console.log('[Permissions] isUserOwner: FALSE - No match found');
+  console.log('[Permissions] isUserOwner: FALSE - No ownership data found');
   return false;
 }
 
@@ -181,22 +181,66 @@ export function getUserPermissions(experimentPermissions, userId) {
   }
   
   return experimentPermissions.userPermissions.find(
-    up => up.userId === userId || up.email === userId
+    up => up.userId === userId || up.email === userId || up.username === userId
   ) || null;
 }
 
-export function getDefaultPermissions(owner) {
+// Get user permissions by username (primary method for username-based matching)
+export function getUserPermissionsByUsername(experimentPermissions, username) {
+  if (!experimentPermissions || !experimentPermissions.userPermissions || !username) {
+    return null;
+  }
+  
+  return experimentPermissions.userPermissions.find(up => 
+    up.username === username || up.userId === username
+  );
+}
+
+// Check if user can view the experiment
+export function canViewExperiment(experiment, currentUser) {
+  if (!experiment || !currentUser) return false;
+  
+  const permissions = experiment.content?.permissions;
+  
+  // No permissions set - allow view (backward compatibility)
+  if (!permissions) return true;
+  
+  const visibility = permissions.visibility || 'private';
+  
+  // Public: everyone can view
+  if (visibility === 'public') return true;
+  
+  // Private: only owner can view
+  if (visibility === 'private') {
+    return isUserOwner(experiment, currentUser);
+  }
+  
+  // Restricted: check if user has any permissions or is owner
+  if (visibility === 'restricted') {
+    if (isUserOwner(experiment, currentUser)) return true;
+    
+    const userName = currentUser.preferred_username || currentUser.id;
+    const userPerms = getUserPermissionsByUsername(permissions, userName);
+    return userPerms !== null;
+  }
+  
+  return false;
+}
+
+export function getDefaultPermissions(owner, visibility = 'private', restrictedSettings = {}) {
   const ownerId = owner?.id || owner?.sub || owner?.email;
   const ownerEmail = owner?.email;
   const ownerName = owner?.name || owner?.preferred_username || ownerEmail?.split('@')[0];
+  const username = owner?.preferred_username || owner?.id;
   
-  return {
-    visibility: 'public',
+  const permissions = {
+    visibility: visibility, // 'private', 'public', or 'restricted'
     allowDuplication: true,
     requireApprovalForAccess: false,
     userPermissions: [
       {
         userId: ownerId,
+        username: username,
         email: ownerEmail,
         name: ownerName,
         role: PERMISSION_LEVELS.ADMIN,
@@ -205,12 +249,31 @@ export function getDefaultPermissions(owner) {
       }
     ],
     groupPermissions: [],
-    allowLinkSharing: true,
+    allowLinkSharing: visibility === 'public',
     linkPermissionLevel: PERMISSION_LEVELS.EDITOR,
     linkExpiryDays: 0,
     lastModified: new Date().toISOString(),
     modifiedBy: ownerId
   };
+
+  // Apply restricted settings if visibility is 'restricted'
+  if (visibility === 'restricted') {
+    permissions.allowEdit = restrictedSettings.allowEdit === true;
+    permissions.allowExport = restrictedSettings.allowExport !== false;
+    permissions.allowViewDetails = restrictedSettings.allowViewDetails !== false;
+    permissions.allowVersionControl = restrictedSettings.allowVersionControl === true;
+    permissions.allowSimplify = restrictedSettings.allowSimplify !== false;
+  } else if (visibility === 'public') {
+    // Public experiments allow all features
+    permissions.allowEdit = true;
+    permissions.allowExport = true;
+    permissions.allowViewDetails = true;
+    permissions.allowVersionControl = true;
+    permissions.allowSimplify = true;
+  }
+  // Private experiments don't need these flags (owner has full access)
+
+  return permissions;
 }
 
 export function isPublic(experimentPermissions) {
@@ -277,6 +340,102 @@ export function validatePermissions(permissions) {
   return true;
 }
 
+// Update experiment visibility/access level
+export function updateExperimentVisibility(permissions, newVisibility, restrictedSettings = {}) {
+  if (!permissions) return null;
+  
+  permissions.visibility = newVisibility;
+  permissions.lastModified = new Date().toISOString();
+  
+  if (newVisibility === 'restricted') {
+    permissions.allowEdit = restrictedSettings.allowEdit === true;
+    permissions.allowExport = restrictedSettings.allowExport !== false;
+    permissions.allowViewDetails = restrictedSettings.allowViewDetails !== false;
+    permissions.allowVersionControl = restrictedSettings.allowVersionControl === true;
+    permissions.allowSimplify = restrictedSettings.allowSimplify !== false;
+    permissions.allowLinkSharing = false;
+  } else if (newVisibility === 'public') {
+    permissions.allowEdit = true;
+    permissions.allowExport = true;
+    permissions.allowViewDetails = true;
+    permissions.allowVersionControl = true;
+    permissions.allowSimplify = true;
+    permissions.allowLinkSharing = true;
+    // Clear restricted flags
+    delete permissions.allowDelete;
+  } else if (newVisibility === 'private') {
+    permissions.allowLinkSharing = false;
+    // Clear restricted flags
+    delete permissions.allowEdit;
+    delete permissions.allowExport;
+    delete permissions.allowViewDetails;
+    delete permissions.allowVersionControl;
+    delete permissions.allowSimplify;
+    delete permissions.allowDelete;
+  }
+  
+  return permissions;
+}
+
+// Add or update user permission
+export function addOrUpdateUserPermission(permissions, username, email, role = PERMISSION_LEVELS.VIEWER) {
+  if (!permissions.userPermissions) {
+    permissions.userPermissions = [];
+  }
+
+  const existingIndex = permissions.userPermissions.findIndex(
+    up => up.username === username || up.email === email
+  );
+  
+  const userPermission = {
+    username: username,
+    email: email,
+    role: role,
+    isOwner: false,
+    addedAt: new Date().toISOString()
+  };
+
+  if (existingIndex >= 0) {
+    // Don't allow changing owner status
+    if (permissions.userPermissions[existingIndex].isOwner) {
+      return permissions;
+    }
+    permissions.userPermissions[existingIndex] = {
+      ...permissions.userPermissions[existingIndex],
+      ...userPermission
+    };
+  } else {
+    permissions.userPermissions.push(userPermission);
+  }
+
+  permissions.lastModified = new Date().toISOString();
+  return permissions;
+}
+
+// Remove user permission
+export function removeUserPermissionByUsername(permissions, username) {
+  if (!permissions.userPermissions) return permissions;
+
+  permissions.userPermissions = permissions.userPermissions.filter(
+    up => (up.username !== username && up.userId !== username) || up.isOwner === true
+  );
+
+  permissions.lastModified = new Date().toISOString();
+  return permissions;
+}
+
+// Clone permissions for versioning (preserves all permissions)
+export function clonePermissions(permissions) {
+  if (!permissions) return null;
+  
+  return {
+    ...permissions,
+    userPermissions: permissions.userPermissions ? [...permissions.userPermissions] : [],
+    groupPermissions: permissions.groupPermissions ? [...permissions.groupPermissions] : [],
+    lastModified: new Date().toISOString()
+  };
+}
+
 export default {
   PERMISSION_LEVELS,
   PERMISSIONS,
@@ -289,11 +448,19 @@ export default {
   canDuplicate,
   isOwner,
   getUserPermissions,
+  getUserPermissionsByUsername,
   getDefaultPermissions,
   isPublic,
   allowsLinkSharing,
   requiresAccessRequest,
   getPermissionLevelLabel,
   getPermissionLevelDescription,
-  validatePermissions
+  validatePermissions,
+  updateExperimentVisibility,
+  addOrUpdateUserPermission,
+  removeUserPermissionByUsername,
+  clonePermissions,
+  canViewExperiment,
+  canAccessRestrictedFeature,
+  isUserOwner
 };

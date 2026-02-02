@@ -61,20 +61,36 @@ const PermissionsManager = ({
   }, [currentPermissions]);
 
   const handleSave = () => {
+    const username = currentUser?.preferred_username || currentUser?.id;
+    
     const permissionsData = {
       visibility,
       allowDuplication,
       
-      allowViewDetails: visibility === 'private' ? false : allowViewDetails,
-      allowExport: visibility === 'private' ? false : allowExport,
-      allowVersionControl: visibility === 'private' ? false : allowVersionControl,
-      allowEdit: visibility === 'private' ? false : allowEdit,
-      allowSimplify: visibility === 'private' ? false : allowSimplify,
-      allowDelete: visibility === 'private' ? false : allowDelete,
+      // For restricted mode, set specific permissions
+      ...(visibility === 'restricted' && {
+        allowViewDetails,
+        allowExport,
+        allowVersionControl,
+        allowEdit,
+        allowSimplify
+      }),
+      
+      // For public mode, grant all permissions
+      ...(visibility === 'public' && {
+        allowViewDetails: true,
+        allowExport: true,
+        allowVersionControl: true,
+        allowEdit: true,
+        allowSimplify: true
+      }),
+      
+      // Private mode: only owner has access (no need to set these flags)
       
       requireApprovalForAccess: false,
       userPermissions: [{
         userId: currentUser?.id || currentUser?.sub || currentUser?.email,
+        username: username, // Store username for matching
         email: currentUser?.email,
         name: currentUser?.name || currentUser?.preferred_username,
         role: 'admin',
@@ -82,7 +98,7 @@ const PermissionsManager = ({
         addedAt: new Date().toISOString()
       }],
       groupPermissions: [],
-      allowLinkSharing: visibility !== 'private',
+      allowLinkSharing: visibility === 'public',
       linkPermissionLevel: 'viewer',
       linkExpiryDays: 0,
       lastModified: new Date().toISOString(),
@@ -217,7 +233,7 @@ const PermissionsManager = ({
                           </Typography>
                         </Box>
                         <Typography variant="body2" color="text.secondary">
-                          Only people with the link can access
+                          Control specific features - choose which actions others can perform
                         </Typography>
                       </Box>
                     }
@@ -229,13 +245,13 @@ const PermissionsManager = ({
           </Box>
 
           {}
-          {(visibility === 'public' || visibility === 'restricted') && (
+          {visibility === 'restricted' && (
             <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
               <Typography variant="subtitle2" fontWeight="600" gutterBottom sx={{ mb: 1 }}>
-                Feature Permissions
+                Restricted Access Settings
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                Control what actions others can perform on this experiment
+                Select which features others can access. You must select at least one option.
               </Typography>
               
               <Stack spacing={1.5}>
@@ -309,19 +325,9 @@ const PermissionsManager = ({
                   }
                 />
                 
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={allowDelete}
-                      onChange={(e) => setAllowDelete(e.target.checked)}
-                    />
-                  }
-                  label={
-                    <Typography variant="body2">
-                      Delete experiment
-                    </Typography>
-                  }
-                />
+                <Typography variant="caption" color="warning.main" sx={{ display: 'block', mt: 1, fontStyle: 'italic' }}>
+                  Note: Only the creator can delete experiments
+                </Typography>
               </Stack>
             </Paper>
           )}
