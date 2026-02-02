@@ -299,7 +299,8 @@ class ExperimentService {
       id: currentExperiment.id,
       title: currentExperiment.title,
       hasContent: !!currentExperiment.content,
-      currentPermissions: currentExperiment.content?.permissions?.visibility || 'none'
+      currentPermissions: currentExperiment.content?.permissions?.visibility || 'none',
+      contentKeys: currentExperiment.content ? Object.keys(currentExperiment.content) : []
     });
     
     // Update permissions in the content while preserving everything else
@@ -307,6 +308,13 @@ class ExperimentService {
       ...currentExperiment.content,
       permissions: permissionsData
     };
+    
+    console.log('[experimentService] Updated content structure:', {
+      contentKeys: Object.keys(updatedContent),
+      sectionsCount: updatedContent.sections?.length || 0,
+      hasConfig: !!updatedContent.config,
+      permissionsVisibility: updatedContent.permissions?.visibility
+    });
     
     // Build the complete update payload - same as when saving experiment edits
     const updatePayload = {
@@ -325,19 +333,27 @@ class ExperimentService {
       updatePayload.owner_id = currentExperiment.owner_id;
     }
     
-    console.log('[experimentService] Sending update payload:', {
+    console.log('[experimentService] Complete update payload:', {
+      payloadKeys: Object.keys(updatePayload),
       title: updatePayload.title,
       hasContent: !!updatePayload.content,
-      sectionsCount: updatePayload.content?.sections?.length || 0,
-      permissionsVisibility: updatePayload.content?.permissions?.visibility
+      contentKeys: updatePayload.content ? Object.keys(updatePayload.content) : [],
+      permissionsInPayload: updatePayload.content?.permissions?.visibility
     });
+    
+    // Log the actual payload being sent (be careful with size)
+    console.log('[experimentService] FULL PAYLOAD:', JSON.stringify(updatePayload, null, 2));
     
     // Use the standard updateExperiment method
     const response = await this.updateExperiment(experimentId, updatePayload);
     
-    console.log('[experimentService] Backend response:', {
+    console.log('[experimentService] FULL RESPONSE:', JSON.stringify(response, null, 2));
+    
+    console.log('[experimentService] Backend response summary:', {
       id: response.id,
       title: response.title,
+      hasContent: !!response.content,
+      responseContentKeys: response.content ? Object.keys(response.content) : [],
       savedPermissions: response.content?.permissions?.visibility || 'not found'
     });
     
