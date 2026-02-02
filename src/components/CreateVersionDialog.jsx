@@ -41,7 +41,11 @@ const CreateVersionDialog = ({
 
       const nextVersionNumber = (currentVersion || 0) + 1;
       const versionData = {
-        content: updatedContent,
+        title: updatedContent.title,
+        estimated_duration: updatedContent.estimated_duration,
+        course: updatedContent.course,
+        program: updatedContent.program,
+        content: updatedContent.content,
         commit_message: commitMessage.trim(),
         base_version: currentVersion,
       };
