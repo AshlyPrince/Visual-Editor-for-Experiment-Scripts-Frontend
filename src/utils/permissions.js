@@ -102,7 +102,7 @@ export function isOwner(userPermissions) {
 /**
  * Check if a user can access a restricted feature based on experiment permissions
  * @param {Object} experiment - The experiment object with permissions
- * @param {string} feature - Feature to check ('viewDetails', 'export', 'versionControl')
+ * @param {string} feature - Feature to check ('viewDetails', 'export', 'versionControl', 'edit', 'simplify', 'delete')
  * @param {Object} currentUser - Current user info
  * @returns {boolean}
  */
@@ -114,25 +114,24 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
 
   const permissions = experiment.content.permissions;
   
-  // If experiment is private or public, check ownership first
-  if (permissions.visibility === 'private') {
-    // Only owner can access private experiments
-    const isExperimentOwner = isUserOwner(experiment, currentUser);
-    return isExperimentOwner;
+  // ALWAYS check if user is owner first - owners have full access regardless of visibility
+  const isExperimentOwner = isUserOwner(experiment, currentUser);
+  if (isExperimentOwner) {
+    return true; // Owner always has full access to everything
   }
   
+  // If experiment is private, only owner can access (already checked above)
+  if (permissions.visibility === 'private') {
+    return false;
+  }
+  
+  // If experiment is public, everyone has access to all features
   if (permissions.visibility === 'public') {
-    // Public experiments allow all features
     return true;
   }
   
+  // If experiment is restricted, check specific feature permissions for non-owners
   if (permissions.visibility === 'restricted') {
-    // Check if user is owner
-    const isExperimentOwner = isUserOwner(experiment, currentUser);
-    if (isExperimentOwner) {
-      return true; // Owner always has access
-    }
-    
     // For non-owners, check specific feature permissions
     switch (feature) {
       case 'viewDetails':
@@ -141,6 +140,12 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
         return permissions.allowExport === true;
       case 'versionControl':
         return permissions.allowVersionControl === true;
+      case 'edit':
+        return permissions.allowEdit === true;
+      case 'simplify':
+        return permissions.allowSimplify === true;
+      case 'delete':
+        return permissions.allowDelete === true;
       default:
         return true;
     }
@@ -161,22 +166,34 @@ export function isUserOwner(experiment, currentUser) {
     return false;
   }
 
-  const permissions = experiment.content?.permissions;
-  if (!permissions || !permissions.userPermissions) {
-    // Check legacy owner field
-    const ownerId = experiment.created_by || experiment.createdBy || experiment.owner_id;
-    const currentUserId = currentUser.id || currentUser.sub || currentUser.email;
-    return ownerId === currentUserId;
-  }
-
-  // Check in userPermissions array for owner
-  const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
-  if (!ownerPermission) {
+  // Get current user identifiers
+  const currentUserId = currentUser.id || currentUser.sub || currentUser.email || currentUser.preferred_username;
+  const currentUserEmail = currentUser.email;
+  
+  if (!currentUserId && !currentUserEmail) {
     return false;
   }
 
-  const currentUserId = currentUser.id || currentUser.sub || currentUser.email;
-  return ownerPermission.userId === currentUserId || ownerPermission.email === currentUser.email;
+  // Check legacy owner fields first (most reliable for existing experiments)
+  const ownerId = experiment.created_by || experiment.createdBy || experiment.owner_id;
+  if (ownerId && (ownerId === currentUserId || ownerId === currentUserEmail)) {
+    return true;
+  }
+
+  // Check permissions structure
+  const permissions = experiment.content?.permissions;
+  if (permissions && permissions.userPermissions && Array.isArray(permissions.userPermissions)) {
+    // Check in userPermissions array for owner
+    const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
+    if (ownerPermission) {
+      return ownerPermission.userId === currentUserId || 
+             ownerPermission.userId === currentUserEmail ||
+             ownerPermission.email === currentUserEmail ||
+             ownerPermission.email === currentUserId;
+    }
+  }
+
+  return false;
 }
 
 /**

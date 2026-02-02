@@ -45,6 +45,9 @@ const PermissionsManager = ({
   const [allowViewDetails, setAllowViewDetails] = useState(true);
   const [allowExport, setAllowExport] = useState(true);
   const [allowVersionControl, setAllowVersionControl] = useState(false);
+  const [allowEdit, setAllowEdit] = useState(false);
+  const [allowSimplify, setAllowSimplify] = useState(false);
+  const [allowDelete, setAllowDelete] = useState(false);
 
   useEffect(() => {
     if (currentPermissions) {
@@ -53,6 +56,9 @@ const PermissionsManager = ({
       setAllowViewDetails(currentPermissions.allowViewDetails ?? true);
       setAllowExport(currentPermissions.allowExport ?? true);
       setAllowVersionControl(currentPermissions.allowVersionControl ?? false);
+      setAllowEdit(currentPermissions.allowEdit ?? false);
+      setAllowSimplify(currentPermissions.allowSimplify ?? false);
+      setAllowDelete(currentPermissions.allowDelete ?? false);
     }
   }, [currentPermissions]);
 
@@ -64,6 +70,9 @@ const PermissionsManager = ({
       allowViewDetails: visibility === 'restricted' ? allowViewDetails : true,
       allowExport: visibility === 'restricted' ? allowExport : true,
       allowVersionControl: visibility === 'restricted' ? allowVersionControl : false,
+      allowEdit: visibility === 'restricted' ? allowEdit : false,
+      allowSimplify: visibility === 'restricted' ? allowSimplify : false,
+      allowDelete: visibility === 'restricted' ? allowDelete : false,
       // Owner info
       requireApprovalForAccess: false,
       userPermissions: [{
@@ -245,6 +254,20 @@ const PermissionsManager = ({
                 <FormControlLabel
                   control={
                     <Checkbox
+                      checked={allowEdit}
+                      onChange={(e) => setAllowEdit(e.target.checked)}
+                    />
+                  }
+                  label={
+                    <Typography variant="body2">
+                      Edit experiment
+                    </Typography>
+                  }
+                />
+                
+                <FormControlLabel
+                  control={
+                    <Checkbox
                       checked={allowExport}
                       onChange={(e) => setAllowExport(e.target.checked)}
                     />
@@ -266,6 +289,34 @@ const PermissionsManager = ({
                   label={
                     <Typography variant="body2">
                       Access version history
+                    </Typography>
+                  }
+                />
+                
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={allowSimplify}
+                      onChange={(e) => setAllowSimplify(e.target.checked)}
+                    />
+                  }
+                  label={
+                    <Typography variant="body2">
+                      Simplify language
+                    </Typography>
+                  }
+                />
+                
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={allowDelete}
+                      onChange={(e) => setAllowDelete(e.target.checked)}
+                    />
+                  }
+                  label={
+                    <Typography variant="body2">
+                      Delete experiment
                     </Typography>
                   }
                 />

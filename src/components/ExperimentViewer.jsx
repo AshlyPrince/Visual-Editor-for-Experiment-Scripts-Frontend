@@ -1154,6 +1154,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   // Check permissions for current user
   const currentUser = keycloakService.getUserInfo();
   const userIsOwner = experiment ? isUserOwner(experiment, currentUser) : false;
+  const canEditExp = experiment ? canAccessRestrictedFeature(experiment, 'edit', currentUser) : false;
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
 
@@ -1202,7 +1203,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               variant="contained"
               startIcon={<EditIcon />}
               onClick={() => onEdit(experiment)}
-              disabled={!userIsOwner}
+              disabled={!canEditExp}
             >
               {t('experiment.editExperiment')}
             </Button>

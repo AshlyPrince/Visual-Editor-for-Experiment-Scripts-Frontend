@@ -297,6 +297,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
             {experiments.map((experiment) => {
               const currentUser = keycloakService.getUserInfo();
               const userIsOwner = isUserOwner(experiment, currentUser);
+              const canEditExp = canAccessRestrictedFeature(experiment, 'edit', currentUser);
               
               return (
                 <Grid item xs={12} sm={6} md={4} key={experiment.id}>
@@ -376,7 +377,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
                       size="small"
                       onClick={() => handleEditClick(experiment)}
                       startIcon={<EditIcon />}
-                      disabled={!userIsOwner}
+                      disabled={!canEditExp}
                     >
                       {t('common.edit')}
                     </SecondaryButton>
@@ -396,12 +397,14 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
           {selectedExperiment && (() => {
             const currentUser = keycloakService.getUserInfo();
             const userIsOwner = isUserOwner(selectedExperiment, currentUser);
+            const canEditExp = canAccessRestrictedFeature(selectedExperiment, 'edit', currentUser);
             const canExport = canAccessRestrictedFeature(selectedExperiment, 'export', currentUser);
             const canViewHistory = canAccessRestrictedFeature(selectedExperiment, 'versionControl', currentUser);
+            const canDeleteExp = canAccessRestrictedFeature(selectedExperiment, 'delete', currentUser);
             
             return (
               <>
-                <MenuItem onClick={handleEdit} disabled={!userIsOwner}>
+                <MenuItem onClick={handleEdit} disabled={!canEditExp}>
                   <EditIcon sx={{ mr: 1 }} />
                   {t('experiment.editExperiment')}
                 </MenuItem>
@@ -414,7 +417,7 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
                   {t('common.export')}
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={handleDeleteClick} disabled={!userIsOwner} sx={{ color: userIsOwner ? 'error.main' : 'text.disabled' }}>
+                <MenuItem onClick={handleDeleteClick} disabled={!canDeleteExp} sx={{ color: canDeleteExp ? 'error.main' : 'text.disabled' }}>
                   <DeleteIcon sx={{ mr: 1 }} />
                   {t('common.delete')}
                 </MenuItem>

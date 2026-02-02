@@ -958,12 +958,15 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         {selectedExperiment && (() => {
           const currentUser = keycloakService.getUserInfo();
           const userIsOwner = isUserOwner(selectedExperiment, currentUser);
+          const canEditExp = canAccessRestrictedFeature(selectedExperiment, 'edit', currentUser);
           const canExport = canAccessRestrictedFeature(selectedExperiment, 'export', currentUser);
           const canViewHistory = canAccessRestrictedFeature(selectedExperiment, 'versionControl', currentUser);
+          const canSimplify = canAccessRestrictedFeature(selectedExperiment, 'simplify', currentUser);
+          const canDeleteExp = canAccessRestrictedFeature(selectedExperiment, 'delete', currentUser);
           
           return (
             <>
-              <MenuItem onClick={handleEdit} disabled={!userIsOwner}>
+              <MenuItem onClick={handleEdit} disabled={!canEditExp}>
                 <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
                 {t('experiment.editExperiment')}
               </MenuItem>
@@ -975,11 +978,11 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                 <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
                 {t('common.export')}
               </MenuItem>
-              <MenuItem onClick={handleSimplifyLanguage} disabled={!userIsOwner}>
+              <MenuItem onClick={handleSimplifyLanguage} disabled={!canSimplify}>
                 <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
                 {t('simplification.menuItem', 'Simplify Language')}
               </MenuItem>
-              <MenuItem onClick={handleDeleteClick} disabled={!userIsOwner} sx={{ color: userIsOwner ? 'error.main' : 'text.disabled' }}>
+              <MenuItem onClick={handleDeleteClick} disabled={!canDeleteExp} sx={{ color: canDeleteExp ? 'error.main' : 'text.disabled' }}>
                 <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
                 {t('common.delete')}
               </MenuItem>
