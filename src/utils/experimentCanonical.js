@@ -280,11 +280,19 @@ export const fromWizardState = (wizardState, selectedSections) => {
     console.log(`[fromWizardState] Schema definition for ${sectionDef.id}:`, schemaDef);
     
     if (!schemaDef) {
-      return {
+      // Custom section - include both content and media
+      const customSection = {
         id: sectionDef.id,
         name: sectionDef.name,
         content: fieldValues.content || ''
       };
+      
+      // Include media if present
+      if (fieldValues.media && Array.isArray(fieldValues.media) && fieldValues.media.length > 0) {
+        customSection.media = fieldValues.media;
+      }
+      
+      return customSection;
     }
     
     const canonical = {

@@ -350,6 +350,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              name.includes('helmet') ||
              name.includes('faceshield') ||
              name.includes('headset') ||
+             name.includes('lab coat') ||
+             name.includes('labcoat') ||
+             name.includes('coat') ||
+             name.includes('mask') ||
+             name.includes('respirator') ||
+             name.includes('apron') ||
+             name.includes('boots') ||
+             name.includes('shoe') ||
+             name.includes('wear') ||
              url.includes('/saftey/') ||
              url.includes('/safety/');
     });
@@ -365,6 +374,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              !name.includes('helmet') &&
              !name.includes('faceshield') &&
              !name.includes('headset') &&
+             !name.includes('lab coat') &&
+             !name.includes('labcoat') &&
+             !name.includes('coat') &&
+             !name.includes('mask') &&
+             !name.includes('respirator') &&
+             !name.includes('apron') &&
+             !name.includes('boots') &&
+             !name.includes('shoe') &&
+             !name.includes('wear') &&
              !url.includes('/saftey/') &&
              !url.includes('/safety/');
     });
@@ -675,9 +693,12 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   
   const renderSectionContent = (section) => {
     console.log('[ExperimentViewer] renderSectionContent called for section:', section.id, section.name);
+    console.log('[ExperimentViewer] Full section object:', section);
+    console.log('[ExperimentViewer] section.media:', section.media);
     
     const sectionContent = section.content || {};
     console.log('[ExperimentViewer] sectionContent:', sectionContent);
+    console.log('[ExperimentViewer] sectionContent.media:', sectionContent.media);
     console.log('[ExperimentViewer] sectionContent keys:', Object.keys(sectionContent));
     console.log('[ExperimentViewer] sectionContent values:', Object.values(sectionContent));
     

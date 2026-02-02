@@ -146,8 +146,16 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
     const selection = window.getSelection();
     if (selection && selection.toString()) {
       setLinkText(selection.toString());
+      // Save the selection range for later use
+      if (selection.rangeCount > 0) {
+        window.savedRange = selection.getRangeAt(0);
+      }
     } else {
       setLinkText('');
+      // Save cursor position
+      if (selection && selection.rangeCount > 0) {
+        window.savedRange = selection.getRangeAt(0);
+      }
     }
     setLinkUrl('');
     setLinkDialogOpen(true);
@@ -174,6 +182,13 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
       
       editorRef.current?.focus();
       
+      // Restore the saved selection/cursor position
+      if (window.savedRange) {
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(window.savedRange);
+      }
+      
       
       const displayText = linkText.trim() || validUrl;
       const linkHTML = `<a href="${validUrl}" target="_blank" rel="noopener noreferrer">${displayText}</a>&nbsp;`;
@@ -184,6 +199,9 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
         handleContentChange();
       } catch {
       }
+      
+      // Clean up saved range
+      window.savedRange = null;
       
       
       setLinkDialogOpen(false);

@@ -74,11 +74,14 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
           Object.entries(section.content).forEach(([contentKey, contentValue]) => {
             if (typeof contentValue === 'string' && contentValue.trim().length > 0) {
               const fieldKey = `section_${section.id}_${contentKey}`;
+              // Make labels more readable by replacing underscores with spaces
+              const readableSectionName = section.name.replace(/_/g, ' ');
+              const readableContentKey = contentKey.replace(/_/g, ' ').charAt(0).toUpperCase() + contentKey.replace(/_/g, ' ').slice(1);
               fields.push({
                 key: fieldKey,
-                label: `${section.name} - ${contentKey.charAt(0).toUpperCase() + contentKey.slice(1)}`,
+                label: `${readableSectionName} - ${readableContentKey}`,
                 value: contentValue,
-                context: `${section.name} section`,
+                context: `${readableSectionName} section`,
                 sectionId: section.id,
                 contentKey: contentKey
               });
@@ -280,9 +283,14 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
           if (section.content) {
             Object.entries(section.content).forEach(([key, value]) => {
               if (typeof value === 'string' && value.trim().length > 0) {
-                sectionsToCheck[`${section.name}_${key}`] = value;
+                // Create more readable section names by replacing underscores with spaces
+                const readableSectionName = section.name.replace(/_/g, ' ');
+                const readableKey = key.replace(/_/g, ' ');
+                sectionsToCheck[`${readableSectionName} - ${readableKey}`] = value;
               } else if (Array.isArray(value) && value.length > 0) {
-                sectionsToCheck[`${section.name}_${key}`] = value.join(', ');
+                const readableSectionName = section.name.replace(/_/g, ' ');
+                const readableKey = key.replace(/_/g, ' ');
+                sectionsToCheck[`${readableSectionName} - ${readableKey}`] = value.join(', ');
               }
             });
           }
