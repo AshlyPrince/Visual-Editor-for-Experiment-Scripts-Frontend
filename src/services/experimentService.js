@@ -294,12 +294,13 @@ class ExperimentService {
     
     // Try PATCH method with only permissions field
     // PATCH is typically used for partial updates
-    const token = await getValidToken();
+    const token = await keycloakService.getToken();
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://visual-editor-backend.onrender.com';
     
     try {
       console.log('[experimentService] Attempting PATCH with permissions only');
       
-      const response = await fetch(`${API_BASE_URL}/experiments/${experimentId}`, {
+      const response = await fetch(`${apiBaseUrl}/api/experiments/${experimentId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
