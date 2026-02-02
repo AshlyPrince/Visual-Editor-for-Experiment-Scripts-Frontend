@@ -144,11 +144,13 @@ export function isUserOwner(experiment, currentUser) {
   }
 
   // Get all possible user identifiers
+  // Note: Check 'sub' first as it's the most reliable UUID, then fallback to 'id'
+  const userSub = currentUser.sub; // The UUID from Keycloak
+  const userId = currentUser.id; // May be username or UUID depending on token
   const userName = currentUser.preferred_username;
-  const userId = currentUser.id || currentUser.sub;
   const userEmail = currentUser.email;
   
-  if (!userName && !userId && !userEmail) {
+  if (!userSub && !userId && !userName && !userEmail) {
     console.log('[Permissions] isUserOwner: No user identifier found');
     return false;
   }
@@ -161,11 +163,11 @@ export function isUserOwner(experiment, currentUser) {
     if (ownerPermission) {
       // Check against all possible identifiers
       const isMatch = 
-        (ownerPermission.username && (ownerPermission.username === userName || ownerPermission.username === userId)) ||
-        (ownerPermission.userId && (ownerPermission.userId === userId || ownerPermission.userId === userName)) ||
+        (ownerPermission.username && (ownerPermission.username === userName || ownerPermission.username === userId || ownerPermission.username === userSub)) ||
+        (ownerPermission.userId && (ownerPermission.userId === userSub || ownerPermission.userId === userId || ownerPermission.userId === userName)) ||
         (ownerPermission.email && ownerPermission.email === userEmail);
       
-      console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Checked identifiers: username=${userName}, userId=${userId}, email=${userEmail} vs owner data:`, ownerPermission);
+      console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Checked identifiers: sub=${userSub}, username=${userName}, id=${userId}, email=${userEmail} vs owner data:`, ownerPermission);
       return isMatch;
     }
   }
@@ -174,9 +176,9 @@ export function isUserOwner(experiment, currentUser) {
   const createdBy = experiment.created_by || experiment.createdBy || experiment.owner_id;
   
   if (createdBy) {
-    // Check against all possible identifiers
-    const isMatch = createdBy === userName || createdBy === userId || createdBy === userEmail;
-    console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Fallback check: identifiers (${userName}, ${userId}, ${userEmail}) vs ${createdBy}`);
+    // Check against all possible identifiers - prioritize UUID match
+    const isMatch = createdBy === userSub || createdBy === userId || createdBy === userName || createdBy === userEmail;
+    console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Fallback check: identifiers (sub=${userSub}, username=${userName}, id=${userId}, email=${userEmail}) vs ${createdBy}`);
     return isMatch;
   }
 
