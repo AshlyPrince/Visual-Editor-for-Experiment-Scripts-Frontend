@@ -95,7 +95,8 @@ const LanguageSimplificationDialog = ({
         await onExport(simplifiedData, format, targetLevel);
       }
       
-      // Dialog will be closed by parent after export completes
+      // Reset exporting state after callback completes
+      setExporting(false);
     } catch (err) {
       console.error('Export error:', err);
       setError(err.message || t('simplification.exportError', 'Unable to export the simplified experiment.'));
@@ -107,6 +108,8 @@ const LanguageSimplificationDialog = ({
     setStep('select');
     setSimplifiedData(null);
     setError(null);
+    setExporting(false); // Reset exporting state when closing
+    setSimplifying(false); // Reset simplifying state when closing
     onClose();
   };
 
