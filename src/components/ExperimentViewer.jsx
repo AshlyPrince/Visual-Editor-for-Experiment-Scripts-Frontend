@@ -1153,10 +1153,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   // Check permissions for current user
   const currentUser = keycloakService.getUserInfo();
+  console.log('[ExperimentViewer] Current user:', currentUser);
+  console.log('[ExperimentViewer] Experiment permissions:', experiment?.content?.permissions);
   const userIsOwner = experiment ? isUserOwner(experiment, currentUser) : false;
+  console.log('[ExperimentViewer] User is owner?', userIsOwner);
   const canEditExp = experiment ? canAccessRestrictedFeature(experiment, 'edit', currentUser) : false;
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
+  console.log('[ExperimentViewer] Permissions - canEdit:', canEditExp, 'canExport:', canExport, 'canViewHistory:', canViewHistory);
 
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
