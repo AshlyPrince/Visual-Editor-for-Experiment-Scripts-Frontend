@@ -143,15 +143,6 @@ export function isUserOwner(experiment, currentUser) {
     return false;
   }
 
-  const ownerId = experiment.created_by || experiment.createdBy || experiment.owner_id;
-  
-  if (ownerId) {
-    if (ownerId === userSub || ownerId === userName || ownerId === userEmail || ownerId === currentUser.id) {
-      console.log('[Permissions] isUserOwner: TRUE - Matched via created_by field');
-      return true;
-    }
-  }
-
   const permissions = experiment.content?.permissions;
   if (permissions && permissions.userPermissions && Array.isArray(permissions.userPermissions)) {
     const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
@@ -169,15 +160,15 @@ export function isUserOwner(experiment, currentUser) {
         return true;
       }
     }
-  } else if (!permissions || !permissions.userPermissions) {
-    console.log('[Permissions] No permissions object found - checking if user can access experiment');
-    if (ownerId && (ownerId === userSub || ownerId === userName || ownerId === userEmail || ownerId === currentUser.id)) {
-      console.log('[Permissions] isUserOwner: TRUE - Owner via created_by (no permissions object)');
+  }
+
+  const ownerId = experiment.created_by || experiment.createdBy || experiment.owner_id;
+  
+  if (ownerId) {
+    if (ownerId === userSub || ownerId === userName || ownerId === userEmail || ownerId === currentUser.id) {
+      console.log('[Permissions] isUserOwner: TRUE - Matched via created_by field');
       return true;
     }
-    
-    console.log('[Permissions] isUserOwner: TRUE (FALLBACK) - No permissions set, allowing access');
-    return true;
   }
 
   console.log('[Permissions] isUserOwner: FALSE - No match found');
