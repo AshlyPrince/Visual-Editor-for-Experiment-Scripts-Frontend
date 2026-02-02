@@ -1173,12 +1173,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const canEditExp = experiment ? canAccessRestrictedFeature(experiment, 'edit', currentUser) : false;
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
+  const canSimplify = experiment ? canAccessRestrictedFeature(experiment, 'simplify', currentUser) : false;
 
   console.log('[ExperimentViewer] Permission check results:', {
     userIsOwner,
     canEditExp,
     canExport,
     canViewHistory,
+    canSimplify,
     experimentId: experiment?.id,
     hasPermissions: !!experiment?.content?.permissions
   });
@@ -1186,7 +1188,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
       {/* Restriction Notice Banner */}
-      {!userIsOwner && (!canEditExp || !canExport || !canViewHistory) && (
+      {!userIsOwner && (!canEditExp || !canExport || !canViewHistory || !canSimplify) && (
         <Alert severity="info" sx={{ mb: 3 }} icon={<Box>🔒</Box>}>
           <Typography variant="body2" fontWeight="bold">
             {t('permissions.restrictedAccess', 'This experiment has restricted access')}
@@ -1286,7 +1288,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           
           {/* Simplify Language button */}
           <Tooltip 
-            title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('simplification.tooltip', 'Adapt the language for different education levels')}
+            title={!canSimplify ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('simplification.tooltip', 'Adapt the language for different education levels')}
             arrow
           >
             <span>
@@ -1294,7 +1296,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                 variant="outlined"
                 startIcon={<TranslateIcon />}
                 onClick={() => setSimplifyOpen(true)}
-                disabled={!canExport}
+                disabled={!canSimplify}
                 fullWidth
                 sx={{ height: '100%' }}
               >

@@ -43,11 +43,11 @@ function ExperimentEditorRoute({ onClose, onSaved }) {
   );
 }
 
-function ExperimentViewerRoute({ onClose, onEdit }) {
+function ExperimentViewerRoute({ onClose, onEdit, reloadKey }) {
   const { experimentId } = useParams();
   return (
     <ExperimentViewer
-      key={`experiment-${experimentId}-${Date.now()}`}
+      key={`experiment-${experimentId}-${reloadKey || 0}`}
       experimentId={experimentId}
       onClose={onClose}
       onEdit={onEdit}
@@ -589,6 +589,7 @@ function AppContent() {
                 <ExperimentViewerRoute
                   onClose={() => navigate(-1)}
                   onEdit={handleEditExperimentFromViewer}
+                  reloadKey={reload}
                 />
               } />
             </Routes>
