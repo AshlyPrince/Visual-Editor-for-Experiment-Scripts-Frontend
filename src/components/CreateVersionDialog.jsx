@@ -40,12 +40,18 @@ const CreateVersionDialog = ({
       setError(null);
 
       const nextVersionNumber = (currentVersion || 0) + 1;
+      
+      const contentWithPermissions = {
+        ...updatedContent.content,
+        permissions: updatedContent.content?.permissions || updatedContent.permissions || experiment?.content?.permissions
+      };
+      
       const versionData = {
         title: updatedContent.title,
         estimated_duration: updatedContent.estimated_duration,
         course: updatedContent.course,
         program: updatedContent.program,
-        content: updatedContent.content,
+        content: contentWithPermissions,
         commit_message: commitMessage.trim(),
         base_version: currentVersion,
       };
@@ -53,7 +59,9 @@ const CreateVersionDialog = ({
       console.log('[CreateVersionDialog] Saving version with data:', {
         title: versionData.title,
         experimentId,
-        contentSections: versionData.content?.sections?.length
+        contentSections: versionData.content?.sections?.length,
+        hasPermissions: !!versionData.content?.permissions,
+        userPermissions: versionData.content?.permissions?.userPermissions?.length
       });
 
       const newVersion = await experimentService.createVersion(experimentId, versionData);

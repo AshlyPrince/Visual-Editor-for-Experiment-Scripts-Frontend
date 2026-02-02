@@ -239,6 +239,10 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     updatedExperiment.course = course;
     updatedExperiment.program = program;
     
+    if (experiment?.content?.permissions) {
+      updatedExperiment.content.permissions = experiment.content.permissions;
+    }
+    
     return updatedExperiment;
   };
 
