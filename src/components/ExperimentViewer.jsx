@@ -26,11 +26,13 @@ import {
   Warning,
   History as HistoryIcon,
   FileDownload as ExportIcon,
+  Lock as LockIcon,
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
 import keycloakService from '../services/keycloakService.js';
 import VersionHistory from './VersionHistory';
 import ExportDialog from './ExportDialog';
+import PermissionsManager from './PermissionsManager';
 import { toCanonical } from '../utils/experimentCanonical.js';
 import { canAccessRestrictedFeature, isUserOwner } from '../utils/permissions.js';
 
@@ -41,6 +43,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const [error, setError] = useState(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [permissionsOpen, setPermissionsOpen] = useState(false);
 
   useEffect(() => {
     if (experimentId) {
@@ -52,6 +55,17 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const refresh = () => {
     if (experimentId) {
       loadExperiment();
+    }
+  };
+
+  const handleSavePermissions = async (permissionsData) => {
+    try {
+      await experimentService.updateExperimentPermissions(experimentId, permissionsData);
+      setPermissionsOpen(false);
+      refresh(); // Reload experiment to show updated permissions
+    } catch (err) {
+      console.error('[ExperimentViewer] Error saving permissions:', err);
+      // You could add error notification here
     }
   };
 
@@ -1238,6 +1252,21 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             </span>
           </Tooltip>
           
+          {userIsOwner && (
+            <Tooltip 
+              title={t('permissions.managePermissionsTooltip', 'Manage who can access and edit this experiment')}
+              arrow
+            >
+              <Button
+                variant="outlined"
+                startIcon={<LockIcon />}
+                onClick={() => setPermissionsOpen(true)}
+              >
+                {t('permissions.managePermissions', 'Permissions')}
+              </Button>
+            </Tooltip>
+          )}
+          
           <Tooltip 
             title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
             arrow
@@ -1434,6 +1463,17 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           onExported={(type) => {
             
           }}
+        />
+      )}
+
+      {experiment && (
+        <PermissionsManager
+          open={permissionsOpen}
+          onClose={() => setPermissionsOpen(false)}
+          experimentId={experimentId}
+          currentPermissions={experiment.content?.permissions}
+          isNewExperiment={false}
+          onSave={handleSavePermissions}
         />
       )}
     </Container>

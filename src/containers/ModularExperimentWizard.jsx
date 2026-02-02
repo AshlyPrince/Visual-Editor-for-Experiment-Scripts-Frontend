@@ -419,6 +419,11 @@ const ModularExperimentWizard = ({
       const sectionIds = canonical.content.sections.map(section => section.id);
       setSelectedSectionIds(sectionIds);
       
+      // Load existing permissions
+      if (canonical.content?.permissions) {
+        setPermissions(canonical.content.permissions);
+      }
+      
       const customSecs = canonical.content.sections
         .filter(section => {
           const isStandard = availableSections.find(s => s.id === section.id);
@@ -638,7 +643,15 @@ const ModularExperimentWizard = ({
 
       // Get or create permissions
       const userInfo = keycloakService.getUserInfo();
-      const experimentPermissions = permissions || getDefaultPermissions(userInfo);
+      let experimentPermissions;
+      
+      if (existingExperiment) {
+        // When updating, preserve existing permissions or use the current permissions state
+        experimentPermissions = permissions || existingExperiment.content?.permissions || getDefaultPermissions(userInfo);
+      } else {
+        // When creating, use permissions state or create default
+        experimentPermissions = permissions || getDefaultPermissions(userInfo);
+      }
 
       const experimentData = {
         name: basicInfo.title.trim(),

@@ -602,8 +602,10 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 `;
 
       if (sectionMedia && sectionMedia.length > 0) {
-        const isSafetySection = section.id === 'safety';
-        const isHazardsSection = section.id === 'hazards';
+        const isSafetySection = section.id === 'safety' || 
+                                (section.name && section.name.toLowerCase().includes('safety'));
+        const isHazardsSection = section.id === 'hazards' || 
+                                 (section.name && section.name.toLowerCase().includes('hazard'));
         
         // Separate safety/hazard icons from regular media
         const iconMedia = sectionMedia.filter(m => {
@@ -620,6 +622,15 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                    name.includes('helmet') ||
                    name.includes('faceshield') ||
                    name.includes('headset') ||
+                   name.includes('lab coat') ||
+                   name.includes('labcoat') ||
+                   name.includes('coat') ||
+                   name.includes('mask') ||
+                   name.includes('respirator') ||
+                   name.includes('apron') ||
+                   name.includes('boots') ||
+                   name.includes('shoe') ||
+                   name.includes('wear') ||
                    url.includes('/saftey/') ||
                    url.includes('/safety/');
           } else if (isHazardsSection) {
@@ -654,6 +665,15 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                    !name.includes('helmet') &&
                    !name.includes('faceshield') &&
                    !name.includes('headset') &&
+                   !name.includes('lab coat') &&
+                   !name.includes('labcoat') &&
+                   !name.includes('coat') &&
+                   !name.includes('mask') &&
+                   !name.includes('respirator') &&
+                   !name.includes('apron') &&
+                   !name.includes('boots') &&
+                   !name.includes('shoe') &&
+                   !name.includes('wear') &&
                    !url.includes('/saftey/') &&
                    !url.includes('/safety/');
           } else if (isHazardsSection) {

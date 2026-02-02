@@ -500,8 +500,40 @@ const simplifyText = async (text, targetLevel, t) => {
     return text;
   }
   
-  // Check if text contains HTML (tables, links, etc.)
-  const containsHTML = /<[a-z][\s\S]*>/i.test(text);
+  // Extract and preserve tables, links, images, and other structured content
+  const preservedElements = [];
+  let processedText = text;
+  
+  // Preserve tables
+  processedText = processedText.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
+    const placeholder = `___TABLE_PLACEHOLDER_${preservedElements.length}___`;
+    preservedElements.push(match);
+    return placeholder;
+  });
+  
+  // Preserve links (keep link text for simplification, but preserve the href)
+  processedText = processedText.replace(/<a\s+(?:[^>]*?\s+)?href=["']([^"']+)["'][^>]*?>([\s\S]*?)<\/a>/gi, (match, href, linkText) => {
+    const placeholder = `___LINK_PLACEHOLDER_${preservedElements.length}___`;
+    preservedElements.push({ type: 'link', href, text: linkText, fullMatch: match });
+    return linkText; // Keep link text for simplification
+  });
+  
+  // Preserve images
+  processedText = processedText.replace(/<img[^>]*>/gi, (match) => {
+    const placeholder = `___IMAGE_PLACEHOLDER_${preservedElements.length}___`;
+    preservedElements.push(match);
+    return placeholder;
+  });
+  
+  // Preserve videos
+  processedText = processedText.replace(/<video[\s\S]*?<\/video>/gi, (match) => {
+    const placeholder = `___VIDEO_PLACEHOLDER_${preservedElements.length}___`;
+    preservedElements.push(match);
+    return placeholder;
+  });
+  
+  // Check if there's still HTML after preserving structured elements
+  const containsHTML = /<[a-z][\s\S]*>/i.test(processedText);
   
   const levelInstructions = {
     'beginner': {
@@ -512,10 +544,11 @@ const simplifyText = async (text, targetLevel, t) => {
 1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
 2. PRESERVE ALL original content - do not add or remove information
 3. Keep the SAME meaning and facts - only make words simpler in the SAME language
-4. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+4. Keep all HTML formatting tags (like <p>, <strong>, <em>, etc.) EXACTLY as they are
 5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-6. Use very simple words in the SAME language (maximum 8-10 words per sentence)
-7. Replace complex scientific terms with everyday words that children know IN THE SAME LANGUAGE
+6. Keep any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
+7. Use very simple words in the SAME language (maximum 8-10 words per sentence)
+8. Replace complex scientific terms with everyday words that children know IN THE SAME LANGUAGE
 
 DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text in its ORIGINAL LANGUAGE.`
     },
@@ -527,10 +560,11 @@ DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simpli
 1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
 2. PRESERVE ALL original content - do not add or remove information
 3. Keep the SAME meaning and facts - only make the language clearer in the SAME language
-4. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+4. Keep all HTML formatting tags (like <p>, <strong>, <em>, etc.) EXACTLY as they are
 5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-6. Use clear, everyday language in the SAME language (maximum 15-20 words per sentence)
-7. Explain or replace technical terms with simpler words IN THE SAME LANGUAGE
+6. Keep any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
+7. Use clear, everyday language in the SAME language (maximum 15-20 words per sentence)
+8. Explain or replace technical terms with simpler words IN THE SAME LANGUAGE
 
 DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text in its ORIGINAL LANGUAGE.`
     },
@@ -542,9 +576,10 @@ DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simpli
 1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
 2. PRESERVE ALL original content exactly - this is the original/advanced level
 3. Keep all scientific terminology and academic language in the SAME language
-4. If there are HTML tables, links, or formatting - keep them EXACTLY as they are
+4. Keep all HTML formatting tags EXACTLY as they are
 5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-6. Only fix obvious grammar or clarity issues
+6. Keep any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
+7. Only fix obvious grammar or clarity issues
 
 DO NOT translate. DO NOT simplify the language. DO NOT write new content. Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
     }
@@ -579,11 +614,11 @@ IMPORTANT:
 - Do NOT add phrases like "Here is the simplified version"
 - Do NOT add explanations or commentary
 - Do NOT translate to English or any other language
-- If the text has HTML tags, tables, or links, preserve them exactly
+- Keep all placeholder markers EXACTLY as they appear
 ${containsHTML ? '\n⚠️ WARNING: This text contains HTML formatting. You MUST preserve all HTML tags exactly as they appear!' : ''}
 
 Original text (in ${detectedLanguage}):
-${text}` }
+${processedText}` }
       ],
       { 
         temperature: 0.3,  // Lower temperature for more consistent output
@@ -618,11 +653,31 @@ ${text}` }
       /^simplified version:?\s*/i,
       /^rewritten version:?\s*/i,
       /^here is the text:?\s*/i,
-      /^the simplified text is:?\s*/i
+      /^here's the text:?\s*/i
     ];
     
     for (const pattern of metaPatterns) {
       simplifiedText = simplifiedText.replace(pattern, '');
+    }
+    
+    // Restore preserved elements (in reverse order for nested content)
+    for (let i = preservedElements.length - 1; i >= 0; i--) {
+      const element = preservedElements[i];
+      const placeholder = element.type === 'link' 
+        ? `___LINK_PLACEHOLDER_${i}___` 
+        : element.type 
+          ? `___${element.type.toUpperCase()}_PLACEHOLDER_${i}___`
+          : `___TABLE_PLACEHOLDER_${i}___`;
+      
+      if (element.type === 'link') {
+        // For links, check if the link text was simplified and wrap it back in the <a> tag
+        const originalLinkText = element.text;
+        // Find where the original link text appears in simplified text (it might have been simplified)
+        simplifiedText = simplifiedText.replace(originalLinkText, element.fullMatch);
+      } else {
+        // For tables, images, videos - restore as-is
+        simplifiedText = simplifiedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), element);
+      }
     }
     
     simplifiedText = simplifiedText.trim();

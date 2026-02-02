@@ -301,11 +301,30 @@ export const getChangePath = (change, version1 = null, version2 = null, t = null
     
     if (part === 'sections' && i + 1 < path.length && typeof path[i + 1] === 'number') {
       const sectionIndex = path[i + 1];
-      const section = version2?.content?.sections?.[sectionIndex] || 
-                     version1?.content?.sections?.[sectionIndex];
+      
+      // For array item changes, check if we have the section data in the change itself
+      let section = null;
+      
+      // Check if this is an array item change (kind 'A') with section data
+      if (change.kind === 'A' && change.item) {
+        if (change.item.rhs) {
+          section = change.item.rhs;
+        } else if (change.item.lhs) {
+          section = change.item.lhs;
+        }
+      } else {
+        // For regular changes, look up by index
+        section = version2?.content?.sections?.[sectionIndex] || 
+                 version1?.content?.sections?.[sectionIndex];
+      }
       
       if (section?.name) {
-        readableParts.push(`${section.name}`);
+        const icon = section.icon || '📝';
+        readableParts.push(`${icon} ${section.name}`);
+        i++;
+        continue;
+      } else if (section?.title) {
+        readableParts.push(section.title);
         i++;
         continue;
       }
@@ -384,9 +403,9 @@ export const formatValue = (value, t = null) => {
       return msg('versionComparison.values.items', '{{count}} items', { count: value.length });
     }
     
-    if ((value.name || value.title) && ('content' in value || 'type' in value)) {
+    if ((value.name || value.title) && ('content' in value || 'type' in value || 'id' in value)) {
       const sectionName = value.name || value.title || 'Unnamed Section';
-      const icon = value.icon || '📝';
+      const icon = value.icon || value.emoji || '📝';
       let preview = '';
       
       if (value.content) {
@@ -398,10 +417,20 @@ export const formatValue = (value, t = null) => {
           preview = stripped.length > 100 ? stripped.substring(0, 100) + '...' : stripped;
         } else if (Array.isArray(value.content) && value.content.length > 0) {
           preview = `${value.content.length} items`;
+        } else if (typeof value.content === 'object' && !Array.isArray(value.content)) {
+          const contentKeys = Object.keys(value.content).filter(k => 
+            !['config', 'type', 'format'].includes(k) && 
+            value.content[k] !== null && 
+            value.content[k] !== undefined && 
+            value.content[k] !== ''
+          );
+          if (contentKeys.length > 0) {
+            preview = `${contentKeys.length} field${contentKeys.length > 1 ? 's' : ''}`;
+          }
         }
       }
       
-      return `${icon} ${sectionName}${preview ? ': ' + preview : ''}`;
+      return `${icon} ${sectionName}${preview ? ' (' + preview + ')' : ''}`;
     }
     
     if (value.config) {
