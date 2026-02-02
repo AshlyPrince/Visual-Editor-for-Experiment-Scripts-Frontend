@@ -26,7 +26,6 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
   const [expandedSteps, setExpandedSteps] = useState({});
   const [expandedMedia, setExpandedMedia] = useState({});
 
-  
   useEffect(() => {
     const newExpandedSteps = {};
     const newExpandedMedia = {};

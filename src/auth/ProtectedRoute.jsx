@@ -21,7 +21,6 @@ export const ProtectedRoute = ({
     }
   }, [authenticated, loading, location]);
 
-  
   if (loading) {
     return (
       <Container maxWidth="sm" sx={{ py: 8, textAlign: 'center' }}>
@@ -33,7 +32,6 @@ export const ProtectedRoute = ({
     );
   }
 
-  
   if (!authenticated) {
     if (!showLoginCard && fallback) {
       return fallback;
@@ -46,7 +44,6 @@ export const ProtectedRoute = ({
     );
   }
 
-  
   if (roles.length > 0 && !hasAnyRole(roles)) {
     return (
       <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>

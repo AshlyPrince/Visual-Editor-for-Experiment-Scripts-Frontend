@@ -50,11 +50,9 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
   const [selectedFieldForCustom, setSelectedFieldForCustom] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({}); 
 
-  
   const getPolishableFields = () => {
     const fields = [];
-    
-    
+
     if (experimentData.title) {
       fields.push({ 
         key: 'title', 
@@ -63,10 +61,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         context: t('llm.polish.scientificExperimentTitle')
       });
     }
-    
-    
 
-    
     if (experimentData.sections && Array.isArray(experimentData.sections)) {
       experimentData.sections.forEach((section, index) => {
         if (section.content) {
@@ -74,7 +69,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
           Object.entries(section.content).forEach(([contentKey, contentValue]) => {
             if (typeof contentValue === 'string' && contentValue.trim().length > 0) {
               const fieldKey = `section_${section.id}_${contentKey}`;
-              // Make labels more readable by replacing underscores with spaces
+              
               const readableSectionName = section.name.replace(/_/g, ' ');
               const readableContentKey = contentKey.replace(/_/g, ' ').charAt(0).toUpperCase() + contentKey.replace(/_/g, ' ').slice(1);
               fields.push({
@@ -96,7 +91,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
 
   const polishableFields = getPolishableFields();
 
-  
   const getGuidanceMessage = (fieldKey, fieldLabel) => {
     const messages = {
       title: {
@@ -112,13 +106,11 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         example: t('llm.polish.exampleDefault')
       }
     };
-    
-    
+
     const baseKey = fieldKey.includes('_') ? fieldKey.split('_').pop() : fieldKey;
     return messages[baseKey] || messages.default;
   };
 
-  
   const handlePolishField = async (field, customPromptText = '') => {
     const currentValue = field.value;
     
@@ -144,9 +136,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
       }
       
       const improved = await polishText(currentValue, promptContext, t);
-      
-      
-      
+
       const isFeedbackMessage = improved && (
         improved.toLowerCase().includes('no content provided') ||
         improved.toLowerCase().includes('content too short') ||
@@ -160,8 +150,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         improved.toLowerCase().includes('bitte weitere details') ||
         improved.toLowerCase().includes('mehr details erforderlich')
       );
-      
-      
+
       if (isFeedbackMessage) {
         
         setFieldErrors(prev => ({
@@ -170,9 +159,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         }));
         return;
       }
-      
-      
-      
+
       setFieldErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[field.key];
@@ -198,14 +185,12 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
     }
   };
 
-  
   const handleCustomPromptPolish = () => {
     if (selectedFieldForCustom && customPrompt.trim()) {
       handlePolishField(selectedFieldForCustom, customPrompt);
     }
   };
 
-  
   const handlePolishAll = async () => {
     setPolishing(true);
     setError(null);
@@ -223,9 +208,7 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
           }
           
           const improved = await polishText(field.value, promptContext, t);
-          
-          
-          
+
           const isFeedbackMessage = improved && (
             improved.toLowerCase().includes('no content provided') ||
             improved.toLowerCase().includes('content too short') ||
@@ -265,7 +248,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
     setPolishing(false);
   };
 
-  
   const handleConsistencyCheck = async () => {
     setChecking(true);
     setError(null);
@@ -277,25 +259,24 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         
       };
 
-      
       if (experimentData.sections && Array.isArray(experimentData.sections)) {
         experimentData.sections.forEach(section => {
           if (section.content) {
             Object.entries(section.content).forEach(([key, value]) => {
               if (typeof value === 'string' && value.trim().length > 0) {
-                // Create more readable section names by replacing underscores with spaces
+                
                 const readableSectionName = section.name.replace(/_/g, ' ');
                 const readableKey = key.replace(/_/g, ' ');
                 sectionsToCheck[`${readableSectionName} - ${readableKey}`] = value;
               } else if (Array.isArray(value) && value.length > 0) {
                 const readableSectionName = section.name.replace(/_/g, ' ');
                 const readableKey = key.replace(/_/g, ' ');
-                // Extract text from objects in array
+                
                 const textItems = value.map(item => {
                   if (typeof item === 'string') {
                     return item;
                   } else if (typeof item === 'object' && item !== null) {
-                    // Extract meaningful text from objects (materials, steps, etc.)
+                    
                     return item.name || item.text || item.instruction || '';
                   }
                   return '';
@@ -310,7 +291,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
         });
       }
 
-      
       const hasContent = Object.values(sectionsToCheck).some(v => v && v.trim().length > 0);
       
       if (!hasContent) {
@@ -335,7 +315,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
     }
   };
 
-  
   const handleApplyPolished = (fieldKey) => {
     const polished = polishedFields[fieldKey];
     
@@ -365,7 +344,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
     }
   };
 
-  
   const handleApplyAll = () => {
     if (!onUpdate) return;
     
@@ -395,7 +373,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
     onUpdate({ ...updates, sections: sectionUpdates });
   };
 
-  
   const handleKeepOriginal = (fieldKey) => {
     setApprovedFields(prev => ({ ...prev, [fieldKey]: true }));
     
@@ -406,7 +383,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
     });
   };
 
-  
   const handleStartEdit = (fieldKey, currentValue) => {
     setEditingField(fieldKey);
     setTempEditValue(currentValue);
@@ -428,7 +404,6 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
     setTempEditValue('');
   };
 
-  
   const allFieldsReviewed = Object.keys(polishedFields).length === 0 || 
     Object.keys(polishedFields).every(key => approvedFields[key]);
 

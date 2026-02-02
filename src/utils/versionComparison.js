@@ -310,11 +310,9 @@ export const getChangePath = (change, version1 = null, version2 = null, t = null
     
     if (part === 'sections' && i + 1 < path.length && typeof path[i + 1] === 'number') {
       const sectionIndex = path[i + 1];
-      
-      // For array item changes, check if we have the section data in the change itself
+
       let section = null;
-      
-      // Check if this is an array item change (kind 'A') with section data
+
       if (change.kind === 'A' && change.item) {
         if (change.item.rhs) {
           section = change.item.rhs;
@@ -322,7 +320,7 @@ export const getChangePath = (change, version1 = null, version2 = null, t = null
           section = change.item.lhs;
         }
       } else {
-        // For regular changes, look up by index
+        
         section = version2?.content?.sections?.[sectionIndex] || 
                  version1?.content?.sections?.[sectionIndex];
       }

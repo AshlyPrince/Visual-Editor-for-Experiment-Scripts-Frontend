@@ -115,8 +115,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     execute: deleteExperimentAsync,
     loading: deleting
   } = useAsyncOperation();
-  
-  
+
   const extractTagsFromExperiment = (experiment) => {
     const tags = [];
     
@@ -199,7 +198,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     return uniqueTags.slice(0, 15);
   };
 
-  
   const refreshDashboard = async () => {
     try {
       setLoading(true);
@@ -221,22 +219,17 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         ...exp,
         autoTags: extractTagsFromExperiment(exp)
       }));
-      
-      // Filter experiments based on visibility permissions
+
       const currentUser = keycloakService.getUserInfo();
       const visibleExperiments = allExperimentData.filter(exp => {
         const permissions = exp.content?.permissions;
-        
-        // If no permissions set, show the experiment (backward compatibility)
+
         if (!permissions) return true;
-        
-        // Show all public experiments
+
         if (permissions.visibility === 'public') return true;
-        
-        // Show restricted experiments to everyone (but features will be restricted)
+
         if (permissions.visibility === 'restricted') return true;
-        
-        // For private experiments, only show to owner
+
         if (permissions.visibility === 'private') {
           return isUserOwner(exp, currentUser);
         }
@@ -275,8 +268,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       setLoading(false);
     }
   };
-  
-  
+
   useEffect(() => {
     if (!i18nReady) {
       return;
@@ -307,22 +299,17 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           ...exp,
           autoTags: extractTagsFromExperiment(exp)
         }));
-        
-        // Filter experiments based on visibility permissions
+
         const currentUser = keycloakService.getUserInfo();
         const visibleExperiments = allExperimentData.filter(exp => {
           const permissions = exp.content?.permissions;
-          
-          // If no permissions set, show the experiment (backward compatibility)
+
           if (!permissions) return true;
-          
-          // Show all public experiments
+
           if (permissions.visibility === 'public') return true;
-          
-          // Show restricted experiments to everyone (but features will be restricted)
+
           if (permissions.visibility === 'restricted') return true;
-          
-          // For private experiments, only show to owner
+
           if (permissions.visibility === 'private') {
             return isUserOwner(exp, currentUser);
           }
@@ -385,8 +372,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
     loadDashboardData();
   }, [i18nReady]);
-  
-  // Check for draft on mount and after any changes
+
   useEffect(() => {
     const checkForDraft = () => {
       const savedDraft = localStorage.getItem('wizardState');
@@ -394,11 +380,9 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     };
     
     checkForDraft();
-    
-    // Re-check when window gains focus (in case draft was cleared in another tab)
+
     window.addEventListener('focus', checkForDraft);
-    
-    // Listen for draft cleared events from the wizard
+
     window.addEventListener('draftCleared', checkForDraft);
     
     return () => {
@@ -415,8 +399,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       }, 1000);
     }
   }, [loading, i18nReady]);
-  
-  
+
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredExperiments(allExperiments);
@@ -473,8 +456,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       setPage(0); 
     }
   }, [searchQuery, allExperiments]);
-  
-  
+
   useEffect(() => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
@@ -566,7 +548,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     }
   };
 
-  
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -630,12 +611,10 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       if (paginatedExperiments.length === 0 && page > 0) {
         setPage(page - 1);
       }
-      
-      // Show success state
+
       setDeleteLoading(false);
       setDeleteSuccess(true);
-      
-      // Auto-close after showing success message
+
       setTimeout(() => {
         setDeleteDialogOpen(false);
         setExperimentToDelete(null);

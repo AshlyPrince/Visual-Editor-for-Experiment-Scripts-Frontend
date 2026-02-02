@@ -41,7 +41,7 @@ const LanguageSimplificationDialog = ({
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState(null);
   const [simplifiedData, setSimplifiedData] = useState(null);
-  const [step, setStep] = useState('select'); // 'select', 'preview', 'export'
+  const [step, setStep] = useState('select'); 
 
   const levels = [
     {
@@ -74,7 +74,7 @@ const LanguageSimplificationDialog = ({
     try {
       const simplified = await simplifyLanguage(experimentData, targetLevel, t);
       setSimplifiedData(simplified);
-      setStep('preview'); // Move to preview step instead of closing
+      setStep('preview'); 
     } catch (err) {
       console.error('Simplification error:', err);
       setError(err.message || t('simplification.error', 'Failed to simplify language'));
@@ -88,12 +88,10 @@ const LanguageSimplificationDialog = ({
     
     try {
       if (onExport) {
-        // Pass the simplified data to parent (ExperimentViewer)
-        // Parent will open the export dialog where user can choose format
+
         await onExport(simplifiedData, targetLevel);
       }
-      
-      // Close the simplification dialog
+
       handleClose();
     } catch (err) {
       console.error('Export error:', err);
@@ -105,8 +103,8 @@ const LanguageSimplificationDialog = ({
     setStep('select');
     setSimplifiedData(null);
     setError(null);
-    setExporting(false); // Reset exporting state when closing
-    setSimplifying(false); // Reset simplifying state when closing
+    setExporting(false); 
+    setSimplifying(false); 
     onClose();
   };
 
@@ -187,17 +185,17 @@ const LanguageSimplificationDialog = ({
   );
 
   const renderPreviewStep = () => {
-    // Helper function to render content based on its type
+    
     const renderContent = (content) => {
       if (!content) return null;
       
       if (typeof content === 'string') {
-        // HTML or plain text content
+        
         return <div dangerouslySetInnerHTML={{ __html: content }} />;
       }
       
       if (typeof content === 'object' && !Array.isArray(content)) {
-        // Object content (like {steps: [...], items: [...]})
+        
         if (content.steps && Array.isArray(content.steps)) {
           return (
             <Box component="ol" sx={{ pl: 2 }}>
@@ -225,8 +223,7 @@ const LanguageSimplificationDialog = ({
             </Box>
           );
         }
-        
-        // Generic object content
+
         return (
           <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
             {Object.entries(content).map(([key, value]) => 

@@ -82,14 +82,12 @@ export function normalizeSectionContent(section, t = null) {
       return normalized;
     }
 
-    
     if (content.text || content.theory || content.introduction || content.content) {
       normalized.type = 'rich-text';
       normalized.content = content.text || content.theory || content.introduction || content.content || '';
       return normalized;
     }
 
-    
     const arrayFields = Object.entries(content).filter(([key, value]) => 
       Array.isArray(value) && value.length > 0 && key !== 'media'
     );
@@ -97,8 +95,7 @@ export function normalizeSectionContent(section, t = null) {
     if (arrayFields.length > 0) {
       
       const allItems = arrayFields.flatMap(([key, value]) => value);
-      
-      
+
       if (allItems[0] && typeof allItems[0] === 'object' && 'name' in allItems[0]) {
         normalized.type = 'materials_with_media';
         normalized.content = { items: allItems };
@@ -109,15 +106,12 @@ export function normalizeSectionContent(section, t = null) {
       return normalized;
     }
 
-    
     normalized.content = content;
     return normalized;
   }
 
-  
   normalized.content = '';
-  
-  
+
   const errors = validateSection(normalized);
   if (errors.length > 0) {
   }
@@ -128,7 +122,6 @@ export function normalizeSectionContent(section, t = null) {
 export function normalizeExperiment(experiment, t = null) {
   if (!experiment) return null;
 
-  
   const actualContent = experiment.content?.content || experiment.content || {};
   const config = actualContent.config || {};
 
@@ -151,7 +144,6 @@ export function normalizeExperiment(experiment, t = null) {
     sections: []
   };
 
-  
   let sectionsData = null;
   if (experiment.sections && Array.isArray(experiment.sections)) {
     sectionsData = experiment.sections;
@@ -184,8 +176,7 @@ export function denormalizeSection(section) {
     name: section.name,
     content: section.content
   };
-  
-  
+
   if (section.description) {
     denormalized.description = section.description;
   }
@@ -201,8 +192,7 @@ export function denormalizeSection(section) {
   if (section.isCustom) {
     denormalized.isCustom = section.isCustom;
   }
-  
-  
+
   if (section.media && Array.isArray(section.media) && section.media.length > 0) {
     denormalized.media = section.media;
   }
@@ -230,7 +220,7 @@ export function denormalizeExperiment(experiment, sections) {
       },
       
       sections: sections.map(section => denormalizeSection(section)),
-      // Explicitly preserve permissions
+      
       permissions: experiment.content?.permissions || experiment.permissions
     },
     

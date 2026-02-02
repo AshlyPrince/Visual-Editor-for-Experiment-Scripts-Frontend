@@ -47,8 +47,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const [exportOpen, setExportOpen] = useState(false);
   const [permissionsOpen, setPermissionsOpen] = useState(false);
   const [simplifyOpen, setSimplifyOpen] = useState(false);
-  const [simplifiedData, setSimplifiedData] = useState(null); // Store simplified version
-  const [autoExportFormat, setAutoExportFormat] = useState(null); // Store format to auto-export
+  const [simplifiedData, setSimplifiedData] = useState(null); 
+  const [autoExportFormat, setAutoExportFormat] = useState(null); 
 
   useEffect(() => {
     if (experimentId) {
@@ -56,7 +56,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     }
   }, [experimentId]);
 
-  
   const refresh = () => {
     if (experimentId) {
       loadExperiment();
@@ -69,11 +68,11 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       const result = await experimentService.updateExperimentPermissions(experimentId, permissionsData);
       console.log('[ExperimentViewer] Permissions saved successfully:', result);
       setPermissionsOpen(false);
-      refresh(); // Reload experiment to show updated permissions
+      refresh(); 
     } catch (err) {
       console.error('[ExperimentViewer] Error saving permissions:', err);
       console.error('[ExperimentViewer] Error details:', err.response?.data || err.message);
-      // You could add error notification here
+      
     }
   };
 
@@ -174,8 +173,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   const parseSectionContent = (section) => {
     if (!section || !section.content) return null;
-    
-    
+
     if (typeof section.content === 'string') {
       try {
         return JSON.parse(section.content);
@@ -184,28 +182,23 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         return section.content;
       }
     }
-    
-    
+
     return section.content;
   };
 
-  
   const getSectionType = (section) => {
     return section?.id || section?.type || 'generic';
   };
 
-  
   const getSectionContent = (section) => {
     if (!section) return null;
-    
-    
+
     if (section.content) {
       
       if (typeof section.content === 'string') {
         return section.content;
       }
-      
-      
+
       if (typeof section.content === 'object') {
         
         if (section.content.text) return section.content.text;
@@ -217,12 +210,10 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     return null;
   };
 
-  
   const renderChemicalsSection = (section) => {
     
     const hasStructuredContent = section.content?.chemicals_list || section.content?.concentrations || section.content?.kits;
-    
-    
+
     if (!hasStructuredContent) {
       return renderSectionContent(section);
     }
@@ -328,7 +319,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     );
   };
 
-  
   const renderSafetySection = (section) => {
     const safetyContent = getSectionContent(section);
     const hasMedia = (section.media && Array.isArray(section.media) && section.media.length > 0) ||
@@ -362,7 +352,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              name.includes('boots') ||
              name.includes('shoe') ||
              name.includes('wear') ||
-             // German safety equipment terms
+             
              name.includes('schutzbrille') ||
              name.includes('handschuhe') ||
              name.includes('helm') ||
@@ -402,7 +392,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              !name.includes('boots') &&
              !name.includes('shoe') &&
              !name.includes('wear') &&
-             // German safety equipment terms
+             
              !name.includes('schutzbrille') &&
              !name.includes('handschuhe') &&
              !name.includes('helm') &&
@@ -560,7 +550,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              name.includes('irritant') ||
              name.includes('compressed') ||
              name.includes('environmental') ||
-             // German hazard terms
+             
              name.includes('giftig') ||
              name.includes('ätzend') ||
              name.includes('entzündbar') ||
@@ -592,7 +582,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              !name.includes('irritant') &&
              !name.includes('compressed') &&
              !name.includes('environmental') &&
-             // German hazard terms
+             
              !name.includes('giftig') &&
              !name.includes('ätzend') &&
              !name.includes('entzündbar') &&
@@ -727,19 +717,16 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     return renderSectionContent(section);
   };
 
-  
   const renderObservationsSection = (section) => {
     
     return renderSectionContent(section);
   };
 
-  
   const renderConclusionsSection = (section) => {
     
     return renderSectionContent(section);
   };
 
-  
   const renderSectionContent = (section) => {
     const sectionContent = section.content || {};
     
@@ -766,8 +753,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     if (!hasContent()) {
       return null;
     }
-    
-    
+
     if (typeof sectionContent === 'string') {
       return (
         <Box sx={{ mb: 4 }} key={section.id}>
@@ -834,8 +820,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         </Box>
       );
     }
-    
-    
+
     const nonMediaFields = Object.entries(sectionContent).filter(([key, value]) => {
       return key !== 'media' && value && !(Array.isArray(value) && value.length === 0);
     });
@@ -926,16 +911,13 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           {Object.entries(sectionContent).map(([key, value]) => {
             
             if (!value || (Array.isArray(value) && value.length === 0)) return null;
-            
-            
+
             if (key === 'media') return null;
-            
-            
+
             if (Array.isArray(value)) {
               
               const isMaterialsWithMedia = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'name' in value[0];
-              
-              
+
               const isProcedureSteps = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && 'text' in value[0];
               
               if (isProcedureSteps) {
@@ -1068,8 +1050,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                   </Box>
                 );
               }
-              
-              
+
               return (
                 <Box key={key} sx={{ mb: 3 }}>
                   {!hasOnlyOneField && (
@@ -1087,8 +1068,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                 </Box>
               );
             }
-            
-            
+
             if (typeof value === 'string') {
               const isHTML = /<[a-z][\s\S]*>/i.test(value);
               return (
@@ -1108,8 +1088,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                 </Box>
               );
             }
-            
-            
+
             if (typeof value === 'object') {
               return (
                 <Box key={key} sx={{ mb: 3 }}>
@@ -1121,8 +1100,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                   <Box sx={{ pl: 2 }}>
                     {Object.entries(value).map(([subKey, subValue]) => {
                       if (!subValue) return null;
-                      
-                      
+
                       let displayValue;
                       if (typeof subValue === 'object') {
                         displayValue = JSON.stringify(subValue);
@@ -1150,14 +1128,12 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     );
   };
 
-  
   const handleLinkClick = (e) => {
     const link = e.target.closest('a');
     if (link && link.href) {
       e.preventDefault();
       e.stopPropagation();
-      
-      
+
       try {
         const url = new URL(link.href);
         window.open(url.href, '_blank', 'noopener,noreferrer');
@@ -1167,7 +1143,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     }
   };
 
-  // Check permissions for current user
   const currentUser = keycloakService.getUserInfo();
   const userIsOwner = experiment ? isUserOwner(experiment, currentUser) : false;
   const canEditExp = experiment ? canAccessRestrictedFeature(experiment, 'edit', currentUser) : false;
@@ -1187,7 +1162,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
-      {/* Restriction Notice Banner */}
+      {}
       {!userIsOwner && (!canEditExp || !canExport || !canViewHistory || !canSimplify) && (
         <Alert severity="info" sx={{ mb: 3 }} icon={<Box>🔒</Box>}>
           <Typography variant="body2" fontWeight="bold">
@@ -1205,7 +1180,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         gap: 2,
         mb: 3 
       }}>
-        {/* Top row - Back button */}
+        {}
         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
           <Button
             variant="outlined"
@@ -1217,18 +1192,18 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           </Button>
         </Box>
 
-        {/* Bottom row - Action buttons in a grid */}
+        {}
         <Box sx={{ 
           display: 'grid',
           gridTemplateColumns: {
-            xs: '1fr',  // Mobile: 1 column
-            sm: 'repeat(2, 1fr)',  // Small: 2 columns
-            md: userIsOwner ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)',  // Medium+: 4 or 5 columns
+            xs: '1fr',  
+            sm: 'repeat(2, 1fr)',  
+            md: userIsOwner ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)',  
           },
           gap: 1.5,
           alignItems: 'stretch'
         }}>
-          {/* Primary action - Edit (most important) */}
+          {}
           {onEdit && (
             <Tooltip 
               title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
@@ -1249,7 +1224,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             </Tooltip>
           )}
           
-          {/* Secondary actions */}
+          {}
           <Tooltip 
             title={!canViewHistory ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
             arrow
@@ -1286,7 +1261,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             </span>
           </Tooltip>
           
-          {/* Simplify Language button */}
+          {}
           <Tooltip 
             title={!canSimplify ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('simplification.tooltip', 'Adapt the language for different education levels')}
             arrow
@@ -1305,7 +1280,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             </span>
           </Tooltip>
           
-          {/* Admin action - Permissions (only for owner) */}
+          {}
           {userIsOwner && (
             <Tooltip 
               title={t('permissions.managePermissionsTooltip', 'Manage who can access and edit this experiment')}
@@ -1412,8 +1387,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         {sections && sections.length > 0 ? (
           sections.map((section, index) => {
             const sectionType = getSectionType(section);
-            
-            
+
             switch (sectionType) {
               case 'chemicals':
                 return renderChemicalsSection(section);
@@ -1485,13 +1459,13 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           open={exportOpen}
           onClose={() => {
             setExportOpen(false);
-            setSimplifiedData(null); // Reset simplified data when export dialog closes
+            setSimplifiedData(null); 
             setAutoExportFormat(null);
           }}
-          experiment={simplifiedData || experiment} // Use simplified data if available, otherwise use original
-          autoExportFormat={autoExportFormat} // Pass format to auto-trigger export
+          experiment={simplifiedData || experiment} 
+          autoExportFormat={autoExportFormat} 
           onExported={(type) => {
-            // Reset after export completes
+            
             setSimplifiedData(null);
             setAutoExportFormat(null);
           }}
@@ -1503,15 +1477,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           open={simplifyOpen}
           onClose={() => {
             setSimplifyOpen(false);
-            setSimplifiedData(null); // Reset simplified data when dialog closes
+            setSimplifiedData(null); 
             setAutoExportFormat(null);
           }}
           experimentData={experiment}
           onExport={async (simplifiedExperiment, level) => {
-            // Store the simplified version, then open export dialog
+            
             setSimplifiedData(simplifiedExperiment);
             setSimplifyOpen(false);
-            // Open export dialog - user can choose format there
+            
             setExportOpen(true);
           }}
         />

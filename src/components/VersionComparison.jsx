@@ -54,10 +54,8 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
       setLoading(true);
       setError(null);
 
-      
       const versions = await experimentService.getVersionHistory(experimentId);
 
-      
       const version1 = versions.find((v) => v.id === parseInt(version1Id));
       const version2 = versions.find((v) => v.id === parseInt(version2Id));
 
@@ -65,7 +63,6 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
         throw new Error(t('version.versionsNotFound'));
       }
 
-      
       const comparisonResult = compareVersions(version1, version2);
       setComparison(comparisonResult);
     } catch (err) {
@@ -99,7 +96,6 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
     }
   };
 
-  
   const formatFieldName = (fieldName) => {
     
     if (fieldName.includes('.')) {
@@ -112,14 +108,12 @@ const VersionComparison = ({ experimentId, version1Id, version2Id, onClose }) =>
       
       return firstPart.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     }
-    
-    
+
     const translationKey = `fields.${fieldName}`;
     if (t(translationKey) !== translationKey) {
       return t(translationKey);
     }
-    
-    
+
     return fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 

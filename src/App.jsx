@@ -60,11 +60,9 @@ function AppContent() {
   const { t } = useTranslation();
   const [reload, setReload] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
-  
-  
+
   const hasExistingToken = keycloakService.isAuthenticated();
-  
-  
+
   const [authenticated, setAuthenticated] = useState(hasExistingToken);
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -126,9 +124,7 @@ function AppContent() {
 
   const handleExperimentSaved = async (savedExperiment) => {
     setReload(r => r + 1);
-    
-    
-    
+
     if (savedExperiment) {
       const experimentId = savedExperiment.experiment_id || savedExperiment.id;
       if (experimentId) {
@@ -143,7 +139,6 @@ function AppContent() {
     }
   };
 
-  
   if (verifying) {
     return (
       <Box sx={{ 
@@ -158,7 +153,6 @@ function AppContent() {
     );
   }
 
-  
   if (loading) {
     return (
       <Box sx={{ 
@@ -186,7 +180,6 @@ function AppContent() {
     );
   }
 
-  
   if (!authenticated) {
     return (
       <Box sx={{ 
@@ -466,7 +459,6 @@ function AppContent() {
     );
   }
 
-  
   return (
     <Box sx={{ 
       minHeight: '100vh',
@@ -530,15 +522,12 @@ function AppContent() {
                   </Typography>
                 </Box>
               )}
-              
-          
-              
+
               <Typography variant="body1" sx={{ opacity: 0.95, maxWidth: 600, color: 'white' }}>
                 {t('app.welcomeMessage')}
               </Typography>
             </Box>
 
-      
           </Box>
         </Container>
       </Box>

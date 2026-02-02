@@ -104,10 +104,8 @@ const ExperimentWizard = ({
     data: availableTemplatesData = []
   } = useAsyncOperation();
 
-  
   const availableTemplates = availableTemplatesData || [];
 
-  
   const availableSections = [
     { 
       id: 'title', 
@@ -178,7 +176,6 @@ const ExperimentWizard = ({
     }
   ];
 
-  
   React.useEffect(() => {
     const requiredSections = availableSections.filter(section => section.required);
     setSelectedSections(requiredSections.map(section => ({ 
@@ -285,8 +282,7 @@ const ExperimentWizard = ({
 
   const [selectedSections, setSelectedSections] = React.useState([]);
   const [customSections, setCustomSections] = React.useState([]);
-  
-  
+
   const [isEditing, setIsEditing] = React.useState(false);
   const [editValues, setEditValues] = React.useState({});
 
@@ -889,7 +885,6 @@ const ExperimentWizard = ({
     );
   };
 
-  
   React.useEffect(() => {
     const config = stepData[1] || {};
     setEditValues(config);

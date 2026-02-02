@@ -118,7 +118,7 @@ class ExperimentService {
           gradeLevel: gradeLevel || ''
         },
         sections: sections,
-        permissions: permissions  // Include permissions in content
+        permissions: permissions  
       },
       html_content: this.generateHTMLFromSections(sections, { name, duration, subject, gradeLevel }, t),
       commit_message: commitMsg
@@ -155,7 +155,6 @@ class ExperimentService {
     }
   }
 
-  
   async updateFromWizard(experimentId, wizardData, t = null) {
     const currentExperiment = await this.getExperiment(experimentId);
     const canonical = toCanonical(currentExperiment);
@@ -174,7 +173,7 @@ class ExperimentService {
           gradeLevel: wizardData.gradeLevel || ''
         },
         sections: wizardData.sections,
-        // Preserve permissions from wizardData or existing experiment
+        
         permissions: wizardData.permissions || canonical.content.permissions
       },
       html_content: this.generateHTMLFromSections(
@@ -241,11 +240,6 @@ class ExperimentService {
     return html;
   }
 
-  
-  
-  
-
-  
   formatExperimentForList(experiment) {
     return {
       id: experiment.id,
@@ -281,31 +275,19 @@ class ExperimentService {
     };
   }
 
-  // ============= PERMISSIONS & ACCESS CONTROL =============
-  
-  /**
-   * Get permissions for an experiment
-   */
   async getExperimentPermissions(experimentId) {
     const response = await api.get(`/api/experiments/${experimentId}/permissions`);
     return response.data;
   }
 
-  /**
-   * Update experiment permissions
-   */
   async updateExperimentPermissions(experimentId, permissionsData) {
-    // Since the backend doesn't have a separate permissions endpoint,
-    // we update the experiment with just the permissions field
+
     const response = await api.put(`/api/experiments/${experimentId}`, {
       permissions: permissionsData
     });
     return response.data;
   }
 
-  /**
-   * Check if current user has specific permission for an experiment
-   */
   async checkUserPermission(experimentId, permission) {
     try {
       const response = await api.get(`/api/experiments/${experimentId}/permissions/check`, {
@@ -317,9 +299,6 @@ class ExperimentService {
     }
   }
 
-  /**
-   * Get current user's permission level for an experiment
-   */
   async getUserPermissionLevel(experimentId) {
     try {
       const response = await api.get(`/api/experiments/${experimentId}/permissions/user`);
@@ -329,37 +308,23 @@ class ExperimentService {
     }
   }
 
-  // ============= ACCESS REQUESTS =============
-  
-  /**
-   * Submit an access request for an experiment
-   */
   async submitAccessRequest(experimentId, requestData) {
     const response = await api.post(`/api/experiments/${experimentId}/access-requests`, requestData);
     return response.data;
   }
 
-  /**
-   * Get all access requests for an experiment (owner only)
-   */
   async getAccessRequests(experimentId, status = null) {
     const params = status ? { status } : {};
     const response = await api.get(`/api/experiments/${experimentId}/access-requests`, { params });
     return response.data;
   }
 
-  /**
-   * Get user's own access requests
-   */
   async getUserAccessRequests(status = null) {
     const params = status ? { status } : {};
     const response = await api.get('/api/access-requests/my-requests', { params });
     return response.data;
   }
 
-  /**
-   * Approve an access request
-   */
   async approveAccessRequest(experimentId, requestId, approvalData) {
     const response = await api.post(
       `/api/experiments/${experimentId}/access-requests/${requestId}/approve`, 
@@ -368,9 +333,6 @@ class ExperimentService {
     return response.data;
   }
 
-  /**
-   * Reject an access request
-   */
   async rejectAccessRequest(experimentId, requestId, rejectionData) {
     const response = await api.post(
       `/api/experiments/${experimentId}/access-requests/${requestId}/reject`, 
@@ -379,17 +341,11 @@ class ExperimentService {
     return response.data;
   }
 
-  /**
-   * Cancel user's own access request
-   */
   async cancelAccessRequest(requestId) {
     const response = await api.delete(`/api/access-requests/${requestId}`);
     return response.data;
   }
 
-  /**
-   * Get count of pending access requests for an experiment
-   */
   async getPendingAccessRequestsCount(experimentId) {
     try {
       const response = await api.get(`/api/experiments/${experimentId}/access-requests/count`, {

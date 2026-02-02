@@ -74,7 +74,6 @@ const UserInfo = ({ onHelpClick }) => {
     );
   }
 
-  
   const getInitials = (user) => {
     if (user.given_name && user.family_name) {
       return `${user.given_name[0]}${user.family_name[0]}`.toUpperCase();

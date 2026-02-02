@@ -108,7 +108,6 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
       setCurrentCell(null);
     }
 
-    
     if (e.target.tagName === 'A' || e.target.closest('a')) {
       e.preventDefault();
       e.stopPropagation();
@@ -146,13 +145,13 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
     const selection = window.getSelection();
     if (selection && selection.toString()) {
       setLinkText(selection.toString());
-      // Save the selection range for later use
+      
       if (selection.rangeCount > 0) {
         window.savedRange = selection.getRangeAt(0);
       }
     } else {
       setLinkText('');
-      // Save cursor position
+      
       if (selection && selection.rangeCount > 0) {
         window.savedRange = selection.getRangeAt(0);
       }
@@ -165,45 +164,37 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
     if (linkUrl.trim()) {
       
       let validUrl = linkUrl.trim();
-      
-      
-      if (!validUrl.match(/^https?:\/\//)) {
+
+      if (!validUrl.match(/^https?:\/\
         validUrl = 'https://' + validUrl;
       }
-      
-      
+
       try {
         new URL(validUrl);
       } catch {
         alert(t('editor.invalidUrlError'));
         return;
       }
-      
-      
+
       editorRef.current?.focus();
-      
-      // Restore the saved selection/cursor position
+
       if (window.savedRange) {
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(window.savedRange);
       }
-      
-      
+
       const displayText = linkText.trim() || validUrl;
       const linkHTML = `<a href="${validUrl}" target="_blank" rel="noopener noreferrer">${displayText}</a>&nbsp;`;
-      
-      
+
       try {
         document.execCommand('insertHTML', false, linkHTML);
         handleContentChange();
       } catch {
       }
-      
-      // Clean up saved range
+
       window.savedRange = null;
-      
-      
+
       setLinkDialogOpen(false);
       setLinkUrl('');
       setLinkText('');
@@ -215,15 +206,13 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
     const cols = parseInt(tableCols) || 3;
     
     let tableHTML = '';
-    
-    
+
     if (tableCaption.trim()) {
       tableHTML += '<p style="font-weight: bold; margin: 20px 0 10px 0; font-style: italic;">' + tableCaption + '</p>';
     }
     
     tableHTML += '<table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 0 0 20px 0; border: 1px solid #ddd;">';
-    
-    
+
     if (hasHeader) {
       tableHTML += '<thead><tr style="background-color: #f5f5f5; font-weight: bold;">';
       for (let c = 0; c < cols; c++) {
@@ -231,8 +220,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
       }
       tableHTML += '</tr></thead>';
     }
-    
-    
+
     tableHTML += '<tbody>';
     const bodyRows = hasHeader ? rows - 1 : rows;
     for (let r = 0; r < bodyRows; r++) {
@@ -243,8 +231,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
       tableHTML += '</tr>';
     }
     tableHTML += '</tbody></table>';
-    
-    
+
     try {
       document.execCommand('insertHTML', false, tableHTML);
       handleContentChange();
@@ -255,7 +242,6 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
     }
   };
 
-  
   const addRowAbove = () => {
     if (!currentTable || !currentCell) return;
     
@@ -287,8 +273,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
     
     const row = currentCell.parentElement;
     const tbody = row.parentElement;
-    
-    
+
     if (tbody.querySelectorAll('tr').length <= 1) {
       setConfirmDialog({
         open: true,
@@ -344,8 +329,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
     
     const cellIndex = Array.from(currentCell.parentElement.children).indexOf(currentCell);
     const rows = currentTable.querySelectorAll('tr');
-    
-    
+
     if (rows[0]?.children.length <= 1) {
       setConfirmDialog({
         open: true,

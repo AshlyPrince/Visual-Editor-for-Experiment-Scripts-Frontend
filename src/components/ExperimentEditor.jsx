@@ -207,8 +207,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     const existingSectionBaseIds = sections.map(section => {
       return section.id.replace(/_\d+$/, '').replace(/^custom_/, 'custom');
     });
-    
-    // Always include 'custom' option, filter out only predefined sections that exist
+
     return availableSectionTemplates.filter(
       template => template.id === 'custom' || !existingSectionBaseIds.includes(template.id)
     );

@@ -16,12 +16,10 @@ export const useLLMChat = (initialOptions = {}) => {
     ...initialOptions
   };
 
-  
   const sendMessage = useCallback(async (content, options = {}) => {
     setLoading(true);
     setError(null);
-    
-    
+
     const userMessage = { role: 'user', content };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
@@ -33,22 +31,19 @@ export const useLLMChat = (initialOptions = {}) => {
         { ...defaultOptions, ...options },
         t
       );
-      
-      
+
       const assistantMessage = {
         role: 'assistant',
         content: response.choices[0].message.content
       };
-      
-      
+
       setMessages(prev => [...prev, assistantMessage]);
       
       return assistantMessage;
     } catch (err) {
       const errorMessage = err.message || t('llm.chat.error', 'Failed to get response. Please try again.');
       setError(errorMessage);
-      
-      
+
       setMessages(messages);
       
       throw err;
@@ -57,12 +52,10 @@ export const useLLMChat = (initialOptions = {}) => {
     }
   }, [messages, defaultOptions, t]);
 
-  
   const sendWithSystemPrompt = useCallback(async (systemPrompt, userContent, options = {}) => {
     setLoading(true);
     setError(null);
 
-  
     const userMessage = { role: 'user', content: userContent };
     setMessages(prev => [...prev, userMessage]);
 
@@ -95,18 +88,15 @@ export const useLLMChat = (initialOptions = {}) => {
     }
   }, [messages, defaultOptions, t]);
 
-  
   const clearMessages = useCallback(() => {
     setMessages([]);
     setError(null);
   }, []);
 
-  
   const removeLastMessage = useCallback(() => {
     setMessages(prev => prev.slice(0, -1));
   }, []);
 
-  
   const setConversation = useCallback((newMessages) => {
     setMessages(newMessages);
     setError(null);

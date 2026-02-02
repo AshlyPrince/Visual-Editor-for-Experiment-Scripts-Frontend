@@ -4,20 +4,13 @@ import { getSectionDefinition } from '../schemas/experimentSchema.js';
 
 export const toCanonical = (experiment) => {
   if (!experiment) return null;
-  
-  
-  
+
   const actualContent = experiment.content?.content || experiment.content;
-  
-  
+
   const sectionsData = experiment.sections || actualContent?.sections || experiment.content?.sections || [];
-  
-  
+
   const normalizedSections = sectionsData.map(section => normalizeSection(section));
-  
-  
-  
-  
+
   const config = {
     duration: (experiment.content?.content?.config?.duration && experiment.content.content.config.duration.trim()) ||
               (experiment.content?.config?.duration && experiment.content.config.duration.trim()) || 
@@ -32,8 +25,7 @@ export const toCanonical = (experiment) => {
                 (experiment.program && experiment.program.trim()) || 
                 (experiment.gradeLevel && experiment.gradeLevel.trim()) || ''
   };
-  
-  // Extract permissions from various possible locations
+
   const permissions = experiment.content?.permissions || 
                      experiment.content?.content?.permissions || 
                      experiment.permissions;
@@ -48,15 +40,13 @@ export const toCanonical = (experiment) => {
     ...(experiment.updated_at && { updated_at: experiment.updated_at }),
     ...(experiment.version_id && { version_id: experiment.version_id }),
     ...(experiment.version_number && { version_number: experiment.version_number }),
-    
-    
+
     content: {
       config,
       sections: normalizedSections,
       ...(permissions && { permissions })
     },
-    
-    
+
     ...(experiment.html_content && { html_content: experiment.html_content })
   };
 };
@@ -82,8 +72,7 @@ export const normalizeSection = (section) => {
     id: section.id,
     name: section.name || schemaDef.name
   };
-  
-  
+
   switch (schemaDef.type) {
     case 'rich-text':
       
@@ -110,8 +99,7 @@ export const normalizeSection = (section) => {
       
       normalized.content = section.content || '';
   }
-  
-  
+
   if (section.media && Array.isArray(section.media) && section.media.length > 0) {
     normalized.media = section.media.filter(m => m && (m.data || m.url));
   }
@@ -147,8 +135,7 @@ const normalizeMaterialsContent = (content) => {
       })
     };
   }
-  
-  
+
   if (Array.isArray(content)) {
     return {
       items: content.map(item => ({
@@ -157,8 +144,7 @@ const normalizeMaterialsContent = (content) => {
       }))
     };
   }
-  
-  
+
   return { items: [] };
 };
 
@@ -179,8 +165,7 @@ const normalizeStepsContent = (content) => {
       })
     };
   }
-  
-  
+
   if (Array.isArray(content)) {
     return {
       steps: content.map(step => ({
@@ -188,8 +173,7 @@ const normalizeStepsContent = (content) => {
       }))
     };
   }
-  
-  
+
   return { steps: [] };
 };
 
@@ -200,22 +184,19 @@ const normalizeListContent = (content) => {
       items: content.items.filter(item => typeof item === 'string' && item.trim())
     };
   }
-  
-  
+
   if (Array.isArray(content)) {
     return {
       items: content.filter(item => typeof item === 'string' && item.trim())
     };
   }
-  
-  
+
   return { items: [] };
 };
 
 export const toWizardState = (sections) => {
   if (!sections || !Array.isArray(sections)) return {};
-  
-  
+
   const wizardState = {};
   
   sections.forEach(section => {
@@ -226,15 +207,13 @@ export const toWizardState = (sections) => {
     }
     
     wizardState[section.id] = {};
-    
-    
+
     switch (schemaDef.type) {
       case 'rich-text':
         
         const richtextFieldId = schemaDef.fields?.find(f => f.type === 'richtext')?.id || 'content';
         wizardState[section.id][richtextFieldId] = section.content || '';
-        
-        
+
         if (section.media) {
           wizardState[section.id].media = section.media;
         }
@@ -246,8 +225,7 @@ export const toWizardState = (sections) => {
       case 'list':
         
         wizardState[section.id] = section.content || {};
-        
-        
+
         if (section.media) {
           wizardState[section.id].media = section.media;
         }
@@ -273,14 +251,13 @@ export const fromWizardState = (wizardState, selectedSections) => {
     const schemaDef = getSectionDefinition(sectionDef.id);
     
     if (!schemaDef) {
-      // Custom section - include both content and media
+      
       const customSection = {
         id: sectionDef.id,
         name: sectionDef.name,
         content: fieldValues.content || ''
       };
-      
-      // Include media if present
+
       if (fieldValues.media && Array.isArray(fieldValues.media) && fieldValues.media.length > 0) {
         customSection.media = fieldValues.media;
       }
@@ -292,19 +269,15 @@ export const fromWizardState = (wizardState, selectedSections) => {
       id: sectionDef.id,
       name: sectionDef.name
     };
-    
-    
+
     switch (schemaDef.type) {
       case 'rich-text':
         
         const richtextField = sectionDef.fields?.find(f => f.type === 'richtext');
         const richtextFieldId = richtextField?.id || 'content';
-        
-        
-        
+
         canonical.content = fieldValues[richtextFieldId] || '';
-        
-        
+
         if (fieldValues.media && Array.isArray(fieldValues.media) && fieldValues.media.length > 0) {
           canonical.media = fieldValues.media;
         }
@@ -374,8 +347,7 @@ export const validateCanonical = (experiment) => {
         if (section.content === undefined) {
           errors.push(`Section ${section.id || index} missing content`);
         }
-        
-        
+
         const schemaDef = getSectionDefinition(section.id);
         if (schemaDef) {
           const expectedType = schemaDef.contentFormat?.type;

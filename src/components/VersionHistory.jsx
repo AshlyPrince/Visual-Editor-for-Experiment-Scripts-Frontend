@@ -88,8 +88,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
       
       const v1 = versions.find(v => v.id === selectedVersions[0]);
       const v2 = versions.find(v => v.id === selectedVersions[1]);
-      
-      
+
       const sorted = [v1, v2].sort((a, b) => a.version_number - b.version_number);
       
       setCompareVersions({ v1: sorted[0], v2: sorted[1] });
@@ -116,11 +115,9 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
       
       setRestoreDialogOpen(false);
       setVersionToRestore(null);
-      
-      
+
       await loadData();
-      
-      
+
       if (onVersionRestored) {
         onVersionRestored(versionToRestore);
       }
@@ -507,12 +504,10 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
     </Box>
   );
 
-  
   function isCurrent(version) {
     return version?.id === experiment?.current_version_id;
   }
 
-  
   function renderVersionContent(version) {
     if (!version?.content) {
       return (
@@ -523,12 +518,10 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
     }
 
     const content = version.content;
-    
-    
+
     const actualContent = content?.content || content;
     const config = actualContent?.config || {};
-    
-    
+
     const sections = content?.sections || actualContent?.sections || [];
 
     return (
@@ -592,7 +585,6 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
               const sectionContent = sectionData.content || '';
               const sectionMedia = sectionData.media || [];
 
-              // Check if this is a safety or hazards section
               const isSafetySection = sectionName.toLowerCase().includes('safety') || 
                                      sectionName.toLowerCase().includes('sicherheit') ||
                                      sectionData.id?.includes('safety');
@@ -600,7 +592,6 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                                       sectionName.toLowerCase().includes('gefahr') ||
                                       sectionData.id?.includes('hazard');
 
-              // Separate safety/hazard icons from regular media
               const safetyIcons = isSafetySection || isHazardsSection ? sectionMedia.filter(m => {
                 const name = (m.name || '').toLowerCase();
                 const url = (m.url || m.data || '').toLowerCase();
@@ -625,7 +616,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          name.includes('boots') ||
                          name.includes('shoe') ||
                          name.includes('wear') ||
-                         // German safety equipment terms
+                         
                          name.includes('schutzbrille') ||
                          name.includes('handschuhe') ||
                          name.includes('helm') ||
@@ -654,7 +645,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          name.includes('irritant') ||
                          name.includes('compressed') ||
                          name.includes('environmental') ||
-                         // German hazard terms
+                         
                          name.includes('giftig') ||
                          name.includes('ätzend') ||
                          name.includes('entzündbar') ||
@@ -698,7 +689,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          !name.includes('boots') &&
                          !name.includes('shoe') &&
                          !name.includes('wear') &&
-                         // German safety equipment terms
+                         
                          !name.includes('schutzbrille') &&
                          !name.includes('handschuhe') &&
                          !name.includes('helm') &&
@@ -727,7 +718,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          !name.includes('irritant') &&
                          !name.includes('compressed') &&
                          !name.includes('environmental') &&
-                         // German hazard terms
+                         
                          !name.includes('giftig') &&
                          !name.includes('ätzend') &&
                          !name.includes('entzündbar') &&
@@ -786,7 +777,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
 
                     <Divider sx={{ my: 2 }} />
 
-                    {/* Safety/Hazard Icons */}
+                    {}
                     {safetyIcons.length > 0 && (
                       <Box sx={{ mb: 3 }}>
                         <Box sx={{ 
@@ -836,7 +827,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                       </Box>
                     )}
 
-                    {/* Regular Media */}
+                    {}
                     {regularMedia.length > 0 && (
                       <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
                         {regularMedia.map((mediaItem, index) => (
@@ -904,24 +895,24 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                     {sectionContent && (
                       <Box sx={{ mb: 3 }}>
                         {Array.isArray(sectionContent) ? (
-                          // Handle array content (like materials list or procedure steps)
+                          
                           <Box component="ul" sx={{ pl: 3, m: 0 }}>
                             {sectionContent.map((item, itemIdx) => {
-                              // Handle different item types
+                              
                               let displayText = '';
                               
                               if (typeof item === 'string') {
                                 displayText = item;
                               } else if (typeof item === 'object' && item !== null) {
-                                // Check for procedure step format
+                                
                                 if (item.text || item.instruction) {
                                   displayText = item.text || item.instruction;
                                 }
-                                // Check for material format
+                                
                                 else if (item.name) {
                                   displayText = item.name;
                                 }
-                                // Fallback to JSON
+                                
                                 else {
                                   displayText = JSON.stringify(item);
                                 }
@@ -951,21 +942,21 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                                   {Array.isArray(value) ? (
                                     <Box component="ul" sx={{ pl: 3, mt: 0.5, mb: 0 }}>
                                       {value.map((item, idx) => {
-                                        // Handle different item types in arrays
+                                        
                                         let displayText = '';
                                         
                                         if (typeof item === 'string') {
                                           displayText = item;
                                         } else if (typeof item === 'object' && item !== null) {
-                                          // Check for procedure step format
+                                          
                                           if (item.text || item.instruction) {
                                             displayText = item.text || item.instruction;
                                           }
-                                          // Check for material format
+                                          
                                           else if (item.name) {
                                             displayText = item.name;
                                           }
-                                          // Fallback to JSON
+                                          
                                           else {
                                             displayText = JSON.stringify(item);
                                           }

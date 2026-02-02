@@ -18,9 +18,6 @@ import {
 import { canEdit, canDelete, getUserPermissions, isOwner } from '../utils/permissions';
 import keycloakService from '../services/keycloakService';
 
-/**
- * Component to display experiment permission status and actions
- */
 const ExperimentPermissionBadge = ({ 
   experiment, 
   onRequestAccess, 
@@ -41,8 +38,7 @@ const ExperimentPermissionBadge = ({
   const isExpOwner = isOwner(userPermissions);
   const hasEditAccess = canEdit(userPermissions);
   const hasDeleteAccess = canDelete(userPermissions);
-  
-  // Determine visibility icon and color
+
   let visibilityIcon = <LockIcon />;
   let visibilityColor = 'default';
   let visibilityLabel = t('permissions.private') || 'Private';
@@ -56,8 +52,7 @@ const ExperimentPermissionBadge = ({
     visibilityColor = 'warning';
     visibilityLabel = t('permissions.restricted') || 'Restricted';
   }
-  
-  // Determine user's access level
+
   let accessLabel = null;
   if (userPermissions) {
     const role = userPermissions.role;

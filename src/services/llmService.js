@@ -15,7 +15,6 @@ export const sendChatMessage = async (message, options = {}, t = null) => {
     max_tokens
   };
 
-  
   if (model) {
     requestBody.model = model;
   }
@@ -62,7 +61,6 @@ export const sendChatConversation = async (messages, options = {}, t = null) => 
     max_tokens
   };
 
-  
   if (model) {
     requestBody.model = model;
   }
@@ -105,8 +103,7 @@ export const polishText = async (text, context = '', t = null) => {
   const MIN_LENGTH = 10;
   const MIN_WORDS = 2;
   const wordCount = trimmedText.split(/\s+/).filter(w => w.length > 0).length;
-  
-  
+
   const isInvalid = (
     !trimmedText || 
     trimmedText.length < MIN_LENGTH || 
@@ -125,8 +122,7 @@ export const polishText = async (text, context = '', t = null) => {
       return errorMsg('llm.feedback.invalidInput', 'Invalid input - please provide meaningful text');
     }
   }
-  
-  
+
   let prompt;
   
   if (context.includes('title')) {
@@ -210,14 +206,12 @@ ${p.instruction}`;
     });
 
     let improved = response.choices[0].message.content.trim();
-    
-    
+
     if ((improved.startsWith('"') && improved.endsWith('"')) || 
         (improved.startsWith("'") && improved.endsWith("'"))) {
       improved = improved.slice(1, -1).trim();
     }
-    
-    
+
     const isExplanation = (
       improved.toLowerCase().includes('upon reviewing') ||
       improved.toLowerCase().includes('it appears that') ||
@@ -335,28 +329,24 @@ ${p.instruction}`;
   try {
     
     const content = response.choices[0].message.content.trim();
-    
-    
+
     const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
     const jsonText = jsonMatch ? jsonMatch[1] : content;
-    
-    
+
     const parsed = JSON.parse(jsonText);
-    
-    // Helper function to ensure we have strings
+
     const normalizeToStrings = (arr) => {
       if (!Array.isArray(arr)) return [];
       return arr.map(item => {
         if (typeof item === 'string') return item;
         if (typeof item === 'object' && item !== null) {
-          // If it's an object, try to extract meaningful text
+          
           return item.text || item.message || item.description || JSON.stringify(item);
         }
         return String(item);
       });
     };
-    
-    
+
     return {
       consistent: parsed.consistent !== false, 
       issues: normalizeToStrings(parsed.issues),
@@ -468,38 +458,35 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
       const hasArrayContent = Array.isArray(section.content);
       const hasListItems = section.items && Array.isArray(section.items);
       const hasSteps = section.steps && Array.isArray(section.steps);
-      
-      // Handle string content
+
       if (hasTextContent && section.content) {
         simplifiedSection.content = await simplifyText(section.content, targetLevel, t);
       }
-      // Handle object content (like {description: "...", items: [...]})
+      
       else if (hasObjectContent) {
         const simplifiedContent = {};
         for (const [key, value] of Object.entries(section.content)) {
           if (typeof value === 'string' && value.trim().length > 0) {
-            // Simplify string values
+            
             simplifiedContent[key] = await simplifyText(value, targetLevel, t);
           } else if (Array.isArray(value)) {
-            // Simplify array items
+            
             simplifiedContent[key] = await Promise.all(
               value.map(async (item) => {
                 if (typeof item === 'string') {
                   return await simplifyText(item, targetLevel, t);
                 } else if (typeof item === 'object' && item !== null) {
-                  // Handle objects in arrays (like procedure steps)
-                  // NOTE: Only simplify text fields (text, instruction, notes)
-                  // Preserve media arrays and all other properties unchanged
+
                   if (item.text || item.instruction || item.notes) {
                     return {
-                      ...item, // Preserves media, id, and all other properties
+                      ...item, 
                       text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
                       instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
                       notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
                     };
                   } else if (item.name) {
                     return {
-                      ...item, // Preserves media and all other properties
+                      ...item, 
                       name: await simplifyText(item.name, targetLevel, t)
                     };
                   }
@@ -513,17 +500,17 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
         }
         simplifiedSection.content = simplifiedContent;
       }
-      // Handle array content
+      
       else if (hasArrayContent) {
         simplifiedSection.content = await Promise.all(
           section.content.map(async (item) => {
             if (typeof item === 'string') {
               return await simplifyText(item, targetLevel, t);
             } else if (typeof item === 'object' && item !== null) {
-              // Only simplify text fields, preserve media and all other properties
+              
               if (item.text || item.instruction || item.notes) {
                 return {
-                  ...item, // Preserves media, id, and all other properties
+                  ...item, 
                   text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
                   instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
                   notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
@@ -534,7 +521,7 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
           })
         );
       }
-      // Handle legacy items array
+      
       else if (hasListItems) {
         simplifiedSection.items = await Promise.all(
           section.items.map(async (item, idx) => {
@@ -545,14 +532,14 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
           })
         );
       } 
-      // Handle legacy steps array
+      
       else if (hasSteps) {
         simplifiedSection.steps = await Promise.all(
           section.steps.map(async (step, idx) => {
-            // Only simplify text fields, preserve media and all other properties
+            
             if (step.instruction || step.text || step.notes) {
               return {
-                ...step, // Preserves media, id, and all other properties
+                ...step, 
                 instruction: step.instruction ? await simplifyText(step.instruction, targetLevel, t) : step.instruction,
                 text: step.text ? await simplifyText(step.text, targetLevel, t) : step.text,
                 notes: step.notes ? await simplifyText(step.notes, targetLevel, t) : step.notes
@@ -582,40 +569,34 @@ const simplifyText = async (text, targetLevel, t) => {
   if (!text || text.trim().length === 0) {
     return text;
   }
-  
-  // Extract and preserve tables, links, images, and other structured content
+
   const preservedElements = [];
   let processedText = text;
-  
-  // Preserve tables
+
   processedText = processedText.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
     const placeholder = `___TABLE_PLACEHOLDER_${preservedElements.length}___`;
     preservedElements.push(match);
     return placeholder;
   });
-  
-  // Preserve links (preserve entire link including text - do not simplify)
+
   processedText = processedText.replace(/<a\s+(?:[^>]*?\s+)?href=["']([^"']+)["'][^>]*?>([\s\S]*?)<\/a>/gi, (match) => {
     const placeholder = `___LINK_PLACEHOLDER_${preservedElements.length}___`;
     preservedElements.push(match);
     return placeholder;
   });
-  
-  // Preserve images
+
   processedText = processedText.replace(/<img[^>]*>/gi, (match) => {
     const placeholder = `___IMAGE_PLACEHOLDER_${preservedElements.length}___`;
     preservedElements.push(match);
     return placeholder;
   });
-  
-  // Preserve videos
+
   processedText = processedText.replace(/<video[\s\S]*?<\/video>/gi, (match) => {
     const placeholder = `___VIDEO_PLACEHOLDER_${preservedElements.length}___`;
     preservedElements.push(match);
     return placeholder;
   });
-  
-  // Check if there's still HTML after preserving structured elements
+
   const containsHTML = /<[a-z][\s\S]*>/i.test(processedText);
   
   const levelInstructions = {
@@ -669,12 +650,10 @@ DO NOT translate. DO NOT simplify the language. DO NOT write new content. Return
   };
   
   const level = levelInstructions[targetLevel] || levelInstructions['intermediate'];
-  
-  // Detect language by checking for common words
+
   const textLower = text.toLowerCase();
   let detectedLanguage = 'English';
-  
-  // German detection - check for common German words and characters
+
   if (textLower.includes('die ') || textLower.includes('der ') || textLower.includes('das ') || 
       textLower.includes('und ') || textLower.includes('mit ') || textLower.includes('für ') ||
       textLower.includes('sie ') || textLower.includes('wie ') || textLower.includes('ist ') ||
@@ -704,15 +683,14 @@ Original text (in ${detectedLanguage}):
 ${processedText}` }
       ],
       { 
-        temperature: 0.3,  // Lower temperature for more consistent output
-        max_tokens: 2000   // Increased for longer content
+        temperature: 0.3,  
+        max_tokens: 2000   
       },
       t
     );
     
     let simplifiedText = response.choices[0].message.content.trim();
-    
-    // Remove instruction blocks that might have been returned by mistake
+
     const instructionPatterns = [
       /⚠️\s*IMPORTANT RULES[^]*?(?=\n\n[A-Z]|$)/gi,
       /⚠️\s*CRITICAL RULES[^]*?(?=\n\n[A-Z]|$)/gi,
@@ -727,8 +705,7 @@ ${processedText}` }
     for (const pattern of instructionPatterns) {
       simplifiedText = simplifiedText.replace(pattern, '');
     }
-    
-    // Remove meta-commentary
+
     const metaPatterns = [
       /^here is the simplified version:?\s*/i,
       /^here is the rewritten version:?\s*/i,
@@ -742,8 +719,7 @@ ${processedText}` }
     for (const pattern of metaPatterns) {
       simplifiedText = simplifiedText.replace(pattern, '');
     }
-    
-    // Restore preserved elements (in reverse order for nested content)
+
     for (let i = preservedElements.length - 1; i >= 0; i--) {
       const element = preservedElements[i];
       const placeholderName = element.includes('<table') ? 'TABLE' :
@@ -751,22 +727,19 @@ ${processedText}` }
                               element.includes('<video') ? 'VIDEO' :
                               element.includes('<a') ? 'LINK' : 'TABLE';
       const placeholder = `___${placeholderName}_PLACEHOLDER_${i}___`;
-      
-      // Restore all preserved elements as-is (tables, images, videos, links)
+
       simplifiedText = simplifiedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), element);
     }
     
     simplifiedText = simplifiedText.trim();
-    
-    // Only clean up spacing if NOT HTML
+
     if (!containsHTML) {
       simplifiedText = simplifiedText
         .replace(/\n\n+/g, '\n\n')
         .replace(/([.!?])\n(?=[A-Z])/g, '$1 ')
         .replace(/\n(?=[A-Z])/g, ' ');
     }
-    
-    // If result is too short or doesn't make sense, return original
+
     if (!simplifiedText || simplifiedText.length < 10) {
       return text;
     }

@@ -1,8 +1,7 @@
 import api from '../lib/api.js';
 
 class AuthService {
-  
-  
+
   async checkAuth() {
     try {
       const response = await api.get('/auth/check');
@@ -16,7 +15,6 @@ class AuthService {
     }
   }
 
-  
   async getCurrentUser() {
     try {
       const response = await api.get('/auth/user');
@@ -26,7 +24,6 @@ class AuthService {
     }
   }
 
-  
   async testAuth() {
     try {
       const response = await api.get('/test-auth');
@@ -36,7 +33,6 @@ class AuthService {
     }
   }
 
-  
   async getAuthStatus() {
     try {
       const [authCheck, userInfo] = await Promise.allSettled([

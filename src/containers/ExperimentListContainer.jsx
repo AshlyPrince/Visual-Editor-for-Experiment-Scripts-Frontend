@@ -99,22 +99,17 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
     const fetchExperiments = async () => {
       try {
         const data = await loadExperiments(experimentService.getExperiments);
-        
-        // Filter experiments based on visibility permissions
+
         const currentUser = keycloakService.getUserInfo();
         const visibleExperiments = (data || []).filter(exp => {
           const permissions = exp.content?.permissions;
-          
-          // If no permissions set, show the experiment (backward compatibility)
+
           if (!permissions) return true;
-          
-          // Show all public experiments
+
           if (permissions.visibility === 'public') return true;
-          
-          // Show restricted experiments to everyone (but features will be restricted)
+
           if (permissions.visibility === 'restricted') return true;
-          
-          // For private experiments, only show to owner
+
           if (permissions.visibility === 'private') {
             return isUserOwner(exp, currentUser);
           }
@@ -187,7 +182,6 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
         () => experimentService.deleteExperiment(experimentToDelete.id)
       );
 
-      
       setExperiments(prev => prev.filter(exp => exp.id !== experimentToDelete.id));
       
       addNotification({

@@ -336,8 +336,7 @@ const ModularExperimentWizard = ({
     .filter(Boolean);
   const [sectionContent, setSectionContent] = useState(savedState?.sectionContent || {});
   const [touched, setTouched] = useState({});
-  
-  // Permissions state
+
   const [permissions, setPermissions] = useState(savedState?.permissions || null);
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
   
@@ -396,7 +395,7 @@ const ModularExperimentWizard = ({
   const clearSavedState = () => {
     try {
       localStorage.removeItem('wizardState');
-      // Dispatch custom event to notify other components that draft was cleared
+      
       window.dispatchEvent(new CustomEvent('draftCleared'));
     } catch (error) {
     }
@@ -418,8 +417,7 @@ const ModularExperimentWizard = ({
       
       const sectionIds = canonical.content.sections.map(section => section.id);
       setSelectedSectionIds(sectionIds);
-      
-      // Load existing permissions
+
       if (canonical.content?.permissions) {
         setPermissions(canonical.content.permissions);
       }
@@ -535,15 +533,13 @@ const ModularExperimentWizard = ({
     if (typeof content === 'string') {
       return content.trim().length > 0;
     }
-    
-    
+
     if (Array.isArray(content)) {
       return content.length > 0 && content.some(item => 
         typeof item === 'string' ? item.trim().length > 0 : true
       );
     }
-    
-    
+
     if (typeof content === 'object' && content !== null) {
       return Object.values(content).some(value => {
         if (typeof value === 'string') {
@@ -636,15 +632,14 @@ const ModularExperimentWizard = ({
 
       const canonicalSections = fromWizardState(sectionContent, selectedSections);
 
-      // Get or create permissions
       const userInfo = keycloakService.getUserInfo();
       let experimentPermissions;
       
       if (existingExperiment) {
-        // When updating, preserve existing permissions or use the current permissions state
+        
         experimentPermissions = permissions || existingExperiment.content?.permissions || getDefaultPermissions(userInfo);
       } else {
-        // When creating, use permissions state or create default
+        
         experimentPermissions = permissions || getDefaultPermissions(userInfo);
       }
 
@@ -1287,8 +1282,7 @@ const ModularExperimentWizard = ({
           if (updates.title !== undefined) {
             setBasicInfo(prev => ({ ...prev, title: updates.title }));
           }
-          
-          
+
           if (updates.sections) {
             updates.sections.forEach(updatedSection => {
               if (updatedSection.content) {
@@ -1310,8 +1304,7 @@ const ModularExperimentWizard = ({
   const renderPermissionsStep = () => {
     const userInfo = keycloakService.getUserInfo();
     const currentPermissions = permissions || getDefaultPermissions(userInfo);
-    
-    // Helper to get visibility description
+
     const getVisibilityDescription = () => {
       if (currentPermissions.visibility === 'private') return t('wizard.permissions.descriptions.private');
       if (currentPermissions.visibility === 'public') return t('wizard.permissions.descriptions.public');
@@ -1476,16 +1469,14 @@ const ModularExperimentWizard = ({
             <Stack spacing={4}>
               {previewData.sections.map((section, index) => {
                 const sectionDef = availableSections.find(s => s.id === section.id);
-                
-                
+
                 const hasContent = Object.entries(section.content).some(([key, value]) => {
                   if (!value) return false;
                   if (Array.isArray(value) && value.length === 0) return false;
                   if (typeof value === 'string' && value.trim() === '') return false;
                   return true;
                 });
-                
-                
+
                 if (!hasContent) return null;
                 
                 return (
@@ -1717,14 +1708,11 @@ const ModularExperimentWizard = ({
                             return Object.entries(section.content).map(([key, value]) => {
                               
                               if (!value) return null;
-                              
-                              
+
                               if (Array.isArray(value) && value.length === 0) return null;
-                              
-                              
+
                               if (typeof value === 'string' && value.trim() === '') return null;
-                              
-                              
+
                               if (key === 'media') return null;
                               
                               return (
@@ -1965,10 +1953,6 @@ const ModularExperimentWizard = ({
     }
   };
 
-  
-  
-  
-  
   return (
     <>
       <WizardContainer>

@@ -92,8 +92,7 @@ const AccessRequestDialog = ({
       });
       
       setSubmitted(true);
-      
-      // Auto-close after showing success
+
       setTimeout(() => {
         handleClose();
       }, 2000);

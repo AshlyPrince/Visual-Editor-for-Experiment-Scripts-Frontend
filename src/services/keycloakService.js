@@ -13,8 +13,7 @@ class KeycloakService {
     if (this.initializing) {
       return this.authenticated;
     }
-    
-    // Don't block re-initialization on refresh if there was no error
+
     const lastAttempt = sessionStorage.getItem('keycloak_init_attempted');
     if (this.initAttempted && this.authError && lastAttempt === 'true') {
       return false;
@@ -44,8 +43,7 @@ class KeycloakService {
       if (hasError) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
-      
-      // Key fix: Use check-sso with proper token storage
+
       const initOptions = {
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
@@ -55,12 +53,7 @@ class KeycloakService {
         flow: 'standard',
         enableLogging: true,
         promiseType: 'native',
-        // CRITICAL: Enable token storage to persist across page refreshes
-        // Keycloak will store tokens in localStorage by default
-        // This ensures authentication persists on refresh
-        
-        // Try to restore tokens from sessionStorage if available
-        // This is a fallback mechanism if Keycloak's internal storage fails
+
         token: sessionStorage.getItem('kc_token') || undefined,
         refreshToken: sessionStorage.getItem('kc_refreshToken') || undefined,
         idToken: sessionStorage.getItem('kc_idToken') || undefined,
@@ -80,19 +73,16 @@ class KeycloakService {
       if (this.authenticated) {
         this.extractUserInfo();
         this.setupTokenRefresh();
-        // Clear the init attempted flag on successful auth
-        sessionStorage.removeItem('keycloak_init_attempted');
         
-        // Store tokens in sessionStorage as backup
-        // sessionStorage is cleared when browser closes but persists on refresh
-        // This is more secure than localStorage
+        sessionStorage.removeItem('keycloak_init_attempted');
+
         if (this.keycloak.token) {
           sessionStorage.setItem('kc_token', this.keycloak.token);
           sessionStorage.setItem('kc_refreshToken', this.keycloak.refreshToken);
           sessionStorage.setItem('kc_idToken', this.keycloak.idToken);
         }
       } else {
-        // Clear any stale tokens
+        
         sessionStorage.removeItem('kc_token');
         sessionStorage.removeItem('kc_refreshToken');
         sessionStorage.removeItem('kc_idToken');
@@ -130,14 +120,13 @@ class KeycloakService {
 
   setupTokenRefresh() {
     if (this.keycloak) {
-      // Refresh token if it expires in less than 60 seconds
+      
       setInterval(() => {
         this.keycloak.updateToken(60)
           .then((refreshed) => {
             if (refreshed) {
-              this.extractUserInfo(); // Update user info with new token
-              
-              // Update stored tokens
+              this.extractUserInfo(); 
+
               sessionStorage.setItem('kc_token', this.keycloak.token);
               sessionStorage.setItem('kc_refreshToken', this.keycloak.refreshToken);
               sessionStorage.setItem('kc_idToken', this.keycloak.idToken);
@@ -146,22 +135,20 @@ class KeycloakService {
           .catch((error) => {
             console.error('[Keycloak] Token refresh failed:', error);
             this.authenticated = false;
-            // Clear invalid tokens
+            
             sessionStorage.removeItem('kc_token');
             sessionStorage.removeItem('kc_refreshToken');
             sessionStorage.removeItem('kc_idToken');
-            // Don't automatically redirect - let the user stay on the page
-            // They can click login when needed
+
           });
-      }, 30000); // Check every 30 seconds
-      
-      // Also set up visibility change listener to refresh token when tab becomes visible
+      }, 30000); 
+
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden && this.keycloak) {
           this.keycloak.updateToken(60)
             .then((refreshed) => {
               if (refreshed) {
-                // Update stored tokens after refresh
+                
                 sessionStorage.setItem('kc_token', this.keycloak.token);
                 sessionStorage.setItem('kc_refreshToken', this.keycloak.refreshToken);
                 sessionStorage.setItem('kc_idToken', this.keycloak.idToken);
@@ -228,7 +215,7 @@ class KeycloakService {
   }
 
   logout() {
-    // Clear stored tokens before logout
+    
     sessionStorage.removeItem('kc_token');
     sessionStorage.removeItem('kc_refreshToken');
     sessionStorage.removeItem('kc_idToken');

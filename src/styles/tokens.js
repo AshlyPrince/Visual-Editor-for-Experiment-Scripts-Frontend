@@ -76,8 +76,7 @@ export const corporateColors = {
   white: '#FFFFFF',         
   darkBlue: '#1E3A8A',      
   navyBlue: '#1E40AF',      
-  
-  
+
   charcoal: '#1E293B',      
   slate: '#64748B',         
   platinum: '#F1F5F9',      

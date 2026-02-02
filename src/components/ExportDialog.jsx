@@ -27,7 +27,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
   const [exportType, setExportType] = useState(null);
   const [exportSuccess, setExportSuccess] = useState(false);
 
-  // Auto-trigger export when dialog opens with autoExportFormat
   useEffect(() => {
     if (open && autoExportFormat && !exporting) {
       if (autoExportFormat === 'html') {
@@ -504,7 +503,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
     </div>
 `;
 
-    
     if (config?.description) {
       htmlContent += `
     <div class="section">
@@ -516,7 +514,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
 `;
     }
 
-    
     sections.forEach(section => {
       if (!section) return;
       
@@ -587,8 +584,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
       }
       
       const icon = getSectionIcon(section.id);
-      
-      
+
       const sectionTitle = section.name || section.title || 
         (section.id?.startsWith('custom_') ? t('export.customSection') : section.id || t('export.section'));
       
@@ -603,8 +599,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                                 (section.name && section.name.toLowerCase().includes('safety'));
         const isHazardsSection = section.id === 'hazards' || 
                                  (section.name && section.name.toLowerCase().includes('hazard'));
-        
-        // Separate safety/hazard icons from regular media
+
         const iconMedia = sectionMedia.filter(m => {
           const name = (m.name || '').toLowerCase();
           const url = (m.url || m.data || '').toLowerCase();
@@ -629,7 +624,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                    name.includes('boots') ||
                    name.includes('shoe') ||
                    name.includes('wear') ||
-                   // German safety equipment terms
+                   
                    name.includes('schutzbrille') ||
                    name.includes('handschuhe') ||
                    name.includes('helm') ||
@@ -659,7 +654,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                    name.includes('irritant') ||
                    name.includes('compressed') ||
                    name.includes('environmental') ||
-                   // German hazard terms
+                   
                    name.includes('giftig') ||
                    name.includes('ätzend') ||
                    name.includes('entzündbar') ||
@@ -703,7 +698,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                    !name.includes('boots') &&
                    !name.includes('shoe') &&
                    !name.includes('wear') &&
-                   // German safety equipment terms
+                   
                    !name.includes('schutzbrille') &&
                    !name.includes('handschuhe') &&
                    !name.includes('helm') &&
@@ -732,7 +727,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                    !name.includes('irritant') &&
                    !name.includes('compressed') &&
                    !name.includes('environmental') &&
-                   // German hazard terms
+                   
                    !name.includes('giftig') &&
                    !name.includes('ätzend') &&
                    !name.includes('entzündbar') &&
@@ -751,8 +746,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
           }
           return true;
         });
-        
-        // Render icon media if present
+
         if (iconMedia.length > 0) {
           htmlContent += `
             <div class="safety-icons-gallery">
@@ -774,8 +768,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                 </div>
 `;
         }
-        
-        // Render regular media if present
+
         if (regularMedia.length > 0) {
           htmlContent += `
             <div class="media-gallery">
@@ -812,7 +805,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
         }
       }
 
-      
       if (Array.isArray(sectionContent)) {
         const isProcedureSteps = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && ('text' in sectionContent[0] || 'instruction' in sectionContent[0]);
         
@@ -915,7 +907,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
                     
                     let result = itemText ? `<li>${itemText}` : '';
                     
-                    // Add media if present
                     if (item.media && item.media.data) {
                       let imageSrc = item.media.data;
                       if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
@@ -1153,7 +1144,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
         onExported('html');
       }
 
-      // If auto-exporting, close dialog after short delay
       if (autoExportFormat) {
         setTimeout(() => {
           onClose();
@@ -1177,18 +1167,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
       setExportType('pdf');
       setExportSuccess(false);
 
-      
       const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
       
       const htmlContent = generateHTML();
-      
-      
+
       const container = document.createElement('div');
       container.style.position = 'absolute';
       container.style.left = '-9999px';
       container.style.top = '0';
-      container.style.width = '210mm'; // A4 width
+      container.style.width = '210mm'; 
       container.style.backgroundColor = '#ffffff';
       container.style.fontFamily = 'Arial, sans-serif';
       container.style.fontSize = '12px';
@@ -1200,7 +1188,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
       
       document.body.appendChild(container);
 
-      
       const images = container.querySelectorAll('img');
       const imageLoadPromises = Array.from(images).map(img => {
         return new Promise((resolve) => {
@@ -1219,10 +1206,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
 
       await Promise.all(imageLoadPromises);
 
-      
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      
       const canvas = await html2canvas(container, {
         scale: 2,
         useCORS: true,
@@ -1235,10 +1220,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
         height: container.scrollHeight
       });
 
-      
       document.body.removeChild(container);
 
-      
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -1261,30 +1244,25 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
         if (page > 0) {
           pdf.addPage();
         }
-        
-        // Calculate the y-offset for this page slice
+
         const yOffset = page * contentHeight;
-        
-        // Calculate how much of the image to show on this page
+
         const remainingHeight = imgHeight - yOffset;
         const pageContentHeight = Math.min(contentHeight, remainingHeight);
-        
-        // Add the image with proper positioning
-        // The key is to use negative margin offset to "slide" the visible portion
+
         pdf.addImage(
           imgData, 
           'JPEG', 
           margin, 
-          margin - yOffset,  // Negative offset to show the right part
+          margin - yOffset,  
           imgWidth, 
           imgHeight,
           undefined,
           'FAST'
         );
-        
-        // Add a white rectangle to hide content that should be on other pages
+
         if (page < totalPages - 1) {
-          // Hide content below the current page
+          
           pdf.setFillColor(255, 255, 255);
           pdf.rect(0, margin + pageContentHeight, pdfWidth, pdfHeight - margin - pageContentHeight, 'F');
         }
@@ -1299,7 +1277,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
         onExported('pdf');
       }
 
-      // If auto-exporting, close dialog after short delay
       if (autoExportFormat) {
         setTimeout(() => {
           onClose();

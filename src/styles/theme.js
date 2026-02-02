@@ -62,8 +62,7 @@ export const professionalTheme = createTheme({
       disabled: colors.gray[400],
     },
     divider: colors.gray[200],
-    
-    
+
     corporate: {
       main: colors.primary.main,
       black: corporateColors.black,
@@ -225,7 +224,6 @@ export const professionalTheme = createTheme({
       },
     },
 
-    
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -244,7 +242,6 @@ export const professionalTheme = createTheme({
       },
     },
 
-    
     MuiCard: {
       styleOverrides: {
         root: {
@@ -260,7 +257,6 @@ export const professionalTheme = createTheme({
       },
     },
 
-    
     MuiChip: {
       styleOverrides: {
         root: {
@@ -284,7 +280,6 @@ export const professionalTheme = createTheme({
       },
     },
 
-    
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -302,7 +297,6 @@ export const professionalTheme = createTheme({
       },
     },
 
-    
     MuiStepper: {
       styleOverrides: {
         root: {
@@ -324,7 +318,6 @@ export const professionalTheme = createTheme({
       },
     },
 
-    
     MuiAppBar: {
       styleOverrides: {
         root: {
@@ -337,7 +330,6 @@ export const professionalTheme = createTheme({
       },
     },
 
-    
     MuiToolbar: {
       styleOverrides: {
         root: {
@@ -348,12 +340,10 @@ export const professionalTheme = createTheme({
     },
   },
 
-  
   custom: {
     shadows,
     corporate: corporateColors,
-    
-    
+
     spacing: {
       xs: 4,
       sm: 8,
@@ -362,8 +352,7 @@ export const professionalTheme = createTheme({
       xl: 32,
       xxl: 48,
     },
-    
-    
+
     transitions: {
       fast: 'all 0.15s ease-in-out',
       normal: 'all 0.2s ease-in-out',

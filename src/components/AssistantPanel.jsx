@@ -42,18 +42,15 @@ const AssistantPanel = ({ experimentData, onUpdate }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
-  
+
   const [polishDialogOpen, setPolishDialogOpen] = useState(false);
   const [polishContext, setPolishContext] = useState({ text: '', field: '', context: '' });
-  
-  
+
   const [suggestions, setSuggestions] = useState(null);
   const [consistencyResults, setConsistencyResults] = useState(null);
   const [titleSuggestions, setTitleSuggestions] = useState([]);
   const [safetyRecommendations, setSafetyRecommendations] = useState(null);
-  
-  
+
   const [expandedSections, setExpandedSections] = useState({});
   
   const { t } = useTranslation();
@@ -70,7 +67,6 @@ const AssistantPanel = ({ experimentData, onUpdate }) => {
     }));
   };
 
-  
   const handleOpenPolish = (field, text, context) => {
     setPolishContext({ text, field, context });
     setPolishDialogOpen(true);
@@ -82,7 +78,6 @@ const AssistantPanel = ({ experimentData, onUpdate }) => {
     }
   };
 
-  
   const handleGetSuggestions = async (sectionType, content) => {
     setLoading(true);
     setError(null);
@@ -98,7 +93,6 @@ const AssistantPanel = ({ experimentData, onUpdate }) => {
     }
   };
 
-  
   const handleCheckConsistency = async () => {
     setLoading(true);
     setError(null);
@@ -114,7 +108,6 @@ const AssistantPanel = ({ experimentData, onUpdate }) => {
     }
   };
 
-  
   const handleGenerateTitles = async () => {
     if (!experimentData.description) {
       setError(t('messages.error.addDescriptionFirst'));
@@ -135,7 +128,6 @@ const AssistantPanel = ({ experimentData, onUpdate }) => {
     }
   };
 
-  
   const handleGenerateSafety = async () => {
     if (!experimentData.materials && !experimentData.procedures) {
       setError(t('messages.error.addMaterialsAndProceduresFirst'));

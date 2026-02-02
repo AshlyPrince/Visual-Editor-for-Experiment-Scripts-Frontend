@@ -40,7 +40,6 @@ const ChatAssistant = ({
   const displayTitle = title || t('llm.chat.title');
   const displayPlaceholder = placeholder || t('llm.chat.placeholder');
 
-  
   useEffect(() => {
     if (initialMessages.length > 0) {
       setConversation(initialMessages);
@@ -53,7 +52,6 @@ const ChatAssistant = ({
     }
   }, [messages, onMessagesChange]);
 
-  
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -73,7 +71,6 @@ const ChatAssistant = ({
         response = await sendMessage(userInput);
       }
 
-      
       if (onResponse) {
         onResponse(response.content, userInput);
       }

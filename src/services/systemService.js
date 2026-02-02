@@ -1,8 +1,7 @@
 import api from '../lib/api.js';
 
 class SystemService {
-  
-  
+
   async getHealth() {
     try {
       const response = await api.get('/health');
@@ -16,7 +15,6 @@ class SystemService {
     }
   }
 
-  
   async getDatabaseStatus() {
     try {
       const response = await api.get('/db/ping');
@@ -29,7 +27,6 @@ class SystemService {
     }
   }
 
-  
   async getSystemStatus() {
     try {
       const [health, database] = await Promise.allSettled([

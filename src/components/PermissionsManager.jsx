@@ -36,12 +36,10 @@ const PermissionsManager = ({
   onSave 
 }) => {
   const currentUser = keycloakService.getUserInfo();
-  
-  // Simple settings
-  const [visibility, setVisibility] = useState('public'); // private, public, restricted
+
+  const [visibility, setVisibility] = useState('public'); 
   const [allowDuplication, setAllowDuplication] = useState(true);
-  
-  // Restricted mode permissions (only shown when visibility is 'restricted')
+
   const [allowViewDetails, setAllowViewDetails] = useState(true);
   const [allowExport, setAllowExport] = useState(true);
   const [allowVersionControl, setAllowVersionControl] = useState(false);
@@ -66,14 +64,14 @@ const PermissionsManager = ({
     const permissionsData = {
       visibility,
       allowDuplication,
-      // Feature restrictions - independent of visibility (except private blocks everything)
+      
       allowViewDetails: visibility === 'private' ? false : allowViewDetails,
       allowExport: visibility === 'private' ? false : allowExport,
       allowVersionControl: visibility === 'private' ? false : allowVersionControl,
       allowEdit: visibility === 'private' ? false : allowEdit,
       allowSimplify: visibility === 'private' ? false : allowSimplify,
       allowDelete: visibility === 'private' ? false : allowDelete,
-      // Owner info
+      
       requireApprovalForAccess: false,
       userPermissions: [{
         userId: currentUser?.id || currentUser?.sub || currentUser?.email,
@@ -118,7 +116,7 @@ const PermissionsManager = ({
       
       <DialogContent>
         <Stack spacing={3} sx={{ pt: 1 }}>
-          {/* Visibility Setting */}
+          {}
           <Box>
             <Typography variant="subtitle1" fontWeight="600" gutterBottom sx={{ mb: 2 }}>
               Who can see your experiment?
@@ -129,7 +127,7 @@ const PermissionsManager = ({
                 value={visibility}
                 onChange={(e) => setVisibility(e.target.value)}
               >
-                {/* Private Option */}
+                {}
                 <Paper 
                   variant="outlined" 
                   sx={{ 
@@ -162,7 +160,7 @@ const PermissionsManager = ({
                   />
                 </Paper>
 
-                {/* Public Option */}
+                {}
                 <Paper 
                   variant="outlined" 
                   sx={{ 
@@ -195,7 +193,7 @@ const PermissionsManager = ({
                   />
                 </Paper>
 
-                {/* Restricted Option */}
+                {}
                 <Paper 
                   variant="outlined" 
                   sx={{ 
@@ -230,7 +228,7 @@ const PermissionsManager = ({
             </FormControl>
           </Box>
 
-          {/* Feature Restrictions - Available for both Public and Restricted */}
+          {}
           {(visibility === 'public' || visibility === 'restricted') && (
             <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
               <Typography variant="subtitle2" fontWeight="600" gutterBottom sx={{ mb: 1 }}>

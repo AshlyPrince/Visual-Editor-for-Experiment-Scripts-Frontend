@@ -72,7 +72,6 @@ class ApiClient {
       ...options,
     };
 
-    
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -92,13 +91,11 @@ class ApiClient {
   }
 
   async handleMockRequest(endpoint, options = {}) {
-    
-    
+
     await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 700));
 
     const method = options.method || 'GET';
-    
-    
+
     if (endpoint === '/templates' && method === 'GET') {
       return { data: mockTemplates };
     }

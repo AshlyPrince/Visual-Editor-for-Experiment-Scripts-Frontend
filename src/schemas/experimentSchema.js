@@ -11,48 +11,44 @@ export const DATABASE_EXPERIMENT_SCHEMA = {
   created_at: "timestamp",           
   updated_at: "timestamp",           
   created_by: "uuid",                
-  
-  // Permissions and Access Control (stored in content.permissions)
+
   permissions: {
-    visibility: "string",            // private, restricted, public
-    allowDuplication: "boolean",     // can others duplicate this experiment
-    requireApprovalForAccess: "boolean",  // require approval for access requests
-    userPermissions: [               // array of user-specific permissions
+    visibility: "string",            
+    allowDuplication: "boolean",     
+    requireApprovalForAccess: "boolean",  
+    userPermissions: [               
       {
         userId: "string",
         email: "string",
         name: "string",
-        role: "string",              // viewer, commenter, editor, admin
+        role: "string",              
         isOwner: "boolean",
         addedAt: "timestamp"
       }
     ],
-    groupPermissions: [              // optional: group-based permissions
+    groupPermissions: [              
       {
         groupId: "string",
         groupName: "string",
         role: "string"
       }
     ],
-    allowLinkSharing: "boolean",     // enable shareable links
-    linkPermissionLevel: "string",   // permission level for link access
-    linkExpiryDays: "number",        // link expiry in days (0 = no expiry)
+    allowLinkSharing: "boolean",     
+    linkPermissionLevel: "string",   
+    linkExpiryDays: "number",        
     lastModified: "timestamp",
     modifiedBy: "string"
   },
-  
-  
+
   sections: [
     {
       id: "string",                  
       name: "string",                
       icon: "string",                
       type: "string",                
-      
-      
+
       content: "string | object",    
-      
-      
+
       media: [
         {
           data: "string (base64)",   
@@ -69,19 +65,14 @@ export const DATABASE_EXPERIMENT_SCHEMA = {
 };
 
 export const CONTENT_FORMATS = {
-  
-  
-  
+
   'rich-text': {
     
     content: "<p>HTML content here...</p>",
-    
-    
+
     media: [ ]
   },
-  
-  
-  
+
   'list': {
     
     content: {
@@ -90,9 +81,7 @@ export const CONTENT_FORMATS = {
     
     media: [ ]
   },
-  
-  
-  
+
   'materials_with_media': {
     
     content: {
@@ -108,13 +97,10 @@ export const CONTENT_FORMATS = {
         }
       ]
     },
-    
-    
+
     media: [ ]
   },
-  
-  
-  
+
   'procedure-steps': {
     
     content: {
@@ -133,8 +119,7 @@ export const CONTENT_FORMATS = {
         }
       ]
     },
-    
-    
+
     media: [ ]
   }
 };
@@ -149,19 +134,16 @@ export const CANONICAL_EXPERIMENT = {
   version: 1,
   created_at: "",
   updated_at: "",
-  
-  
+
   sections: [
     {
       id: "",                        
       name: "",                      
       icon: "",                      
       type: "",                      
-      
-      
+
       content: null,                 
-      
-      
+
       media: []
     }
   ]
@@ -185,8 +167,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',  
     required: false
   },
-  
-  
+
   'background': {
     id: 'background',
     name: t('sections.background.name'),
@@ -202,8 +183,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',
     required: false
   },
-  
-  
+
   'materials': {
     id: 'materials',
     name: t('sections.materials.name'),
@@ -231,8 +211,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'content.items[].media (inline)',  
     required: false
   },
-  
-  
+
   'chemicals': {
     id: 'chemicals',
     name: t('sections.chemicals.name'),
@@ -260,8 +239,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'content.items[].media (inline)',
     required: false
   },
-  
-  
+
   'safety': {
     id: 'safety',
     name: t('sections.safety.name'),
@@ -277,8 +255,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',  
     required: false
   },
-  
-  
+
   'hazards': {
     id: 'hazards',
     name: t('sections.hazards.name'),
@@ -294,8 +271,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',  
     required: false
   },
-  
-  
+
   'procedure': {
     id: 'procedure',
     name: t('sections.procedure.name'),
@@ -332,8 +308,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'content.steps[].media (per-step)',  
     required: true  
   },
-  
-  
+
   'observations': {
     id: 'observations',
     name: t('sections.observations.name'),
@@ -349,8 +324,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',  
     required: false
   },
-  
-  
+
   'analysis': {
     id: 'analysis',
     name: t('sections.analysis.name'),
@@ -366,8 +340,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',
     required: false
   },
-  
-  
+
   'conclusions': {
     id: 'conclusions',
     name: t('sections.conclusions.name'),
@@ -383,8 +356,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',
     required: false
   },
-  
-  
+
   'references': {
     id: 'references',
     name: t('sections.references.name'),
@@ -407,8 +379,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: null,
     required: false
   },
-  
-  
+
   'disposal': {
     id: 'disposal',
     name: t('sections.disposal.name'),
@@ -424,8 +395,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: null,
     required: false
   },
-  
-  
+
   'risk_assessment': {
     id: 'risk_assessment',
     name: t('sections.risk_assessment.name'),
@@ -441,8 +411,7 @@ export function getSectionDefinitions(t) {
     mediaLocation: 'section.media',
     required: false
   },
-  
-  
+
   'questions': {
     id: 'questions',
     name: t('sections.questions.name'),
@@ -519,13 +488,11 @@ export function validateSectionAgainstDefinition(section, t = null) {
     errors.push(`Unknown section ID: ${section.id}`);
     return errors;
   }
-  
-  
+
   if (section.type !== definition.type) {
     errors.push(`Section "${section.name}" type mismatch: expected "${definition.type}", got "${section.type}"`);
   }
-  
-  
+
   if (definition.contentFormat.type === 'string' && typeof section.content !== 'string') {
     errors.push(`Section "${section.name}" content must be string (HTML)`);
   }
@@ -542,8 +509,7 @@ export function validateSectionAgainstDefinition(section, t = null) {
       });
     }
   }
-  
-  
+
   if (!definition.mediaAllowed && section.media && section.media.length > 0) {
     errors.push(`Section "${section.name}" does not allow media`);
   }
@@ -574,12 +540,10 @@ export const MEDIA_ITEM_SCHEMA = {
   
   data: "string (base64) | undefined",
   url: "string | undefined",
-  
-  
+
   type: "string (MIME type)",
   name: "string",
-  
-  
+
   size: "number | undefined",
   caption: "string | undefined",
   displaySize: "number (1-100) | undefined"
@@ -597,8 +561,7 @@ export const MATERIAL_ITEM_SCHEMA = {
 };
 
 export const CONVERSION_RULES = {
-  
-  
+
   loading: {
     description: "When loading from database, normalize all content to canonical format",
     rules: [
@@ -609,8 +572,7 @@ export const CONVERSION_RULES = {
       "Ensure all required fields exist with defaults"
     ]
   },
-  
-  
+
   saving: {
     description: "When saving to database, denormalize to consistent storage format",
     rules: [
@@ -651,8 +613,7 @@ export const EXAMPLE_EXPERIMENT = {
         }
       ]
     },
-    
-    
+
     {
       id: "procedure",
       name: "Step-by-Step Procedure",
@@ -681,8 +642,7 @@ export const EXAMPLE_EXPERIMENT = {
       },
       media: []
     },
-    
-    
+
     {
       id: "materials",
       name: "Materials & Equipment",
@@ -729,8 +689,7 @@ export function validateSection(section) {
   if (!VALID_SECTION_TYPES.includes(section.type)) {
     errors.push(`Invalid section.type: ${section.type}`);
   }
-  
-  
+
   if (section.type === 'procedure-steps') {
     if (!section.content?.steps || !Array.isArray(section.content.steps)) {
       errors.push("procedure-steps must have content.steps array");
@@ -742,8 +701,7 @@ export function validateSection(section) {
       errors.push("materials_with_media must have content.items array");
     }
   }
-  
-  
+
   if (section.media && !Array.isArray(section.media)) {
     errors.push("section.media must be array");
   }

@@ -46,17 +46,14 @@ const MediaUploader = ({
   const [error, setError] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewMedia, setPreviewMedia] = useState(null);
-  
-  
+
   const uploaderId = React.useMemo(() => `media-upload-${Math.random().toString(36).substr(2, 9)}`, []);
 
-  
   const acceptTypes = [
     acceptImages && 'image/*',
     acceptVideos && 'video/*'
   ].filter(Boolean).join(',');
 
-  
   const compressImage = async (file) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -70,22 +67,18 @@ const MediaUploader = ({
         
         let width = img.width;
         let height = img.height;
-        
-        
+
         if (width > maxWidth || height > maxHeight) {
           const ratio = Math.min(maxWidth / width, maxHeight / height);
           width = width * ratio;
           height = height * ratio;
         }
-        
-        
+
         canvas.width = width;
         canvas.height = height;
-        
-        
+
         ctx.drawImage(img, 0, 0, width, height);
-        
-        
+
         canvas.toBlob(
           (blob) => {
             if (blob) {
@@ -104,7 +97,6 @@ const MediaUploader = ({
     });
   };
 
-  
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -114,7 +106,6 @@ const MediaUploader = ({
     });
   };
 
-  
   const validateFile = (file) => {
     
     const fileSizeMB = file.size / (1024 * 1024);
@@ -122,7 +113,6 @@ const MediaUploader = ({
       return t('messages.fileExceedsLimit', { name: file.name, size: maxSize });
     }
 
-    
     const isImage = file.type.startsWith('image/');
     const isVideo = file.type.startsWith('video/');
     
@@ -141,13 +131,11 @@ const MediaUploader = ({
     return null;
   };
 
-  
   const handleFileSelect = async (event) => {
     const files = Array.from(event.target.files);
     
     if (files.length === 0) return;
 
-    
     if (media.length + files.length > maxFiles) {
       setError(t('messages.maxFilesExceeded', { max: maxFiles }));
       return;
@@ -168,8 +156,7 @@ const MediaUploader = ({
         }
 
         let processedFile = file;
-        
-        
+
         if (file.type.startsWith('image/')) {
           try {
             const compressedBlob = await compressImage(file);
@@ -179,13 +166,10 @@ const MediaUploader = ({
           }
         }
 
-        
         const base64Data = await fileToBase64(processedFile);
 
-        
         const type = file.type.startsWith('image/') ? 'image' : 'video';
 
-        
         const mediaItem = {
           id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           type,
@@ -200,7 +184,6 @@ const MediaUploader = ({
         newMediaItems.push(mediaItem);
       }
 
-      
       onChange([...media, ...newMediaItems]);
 
     } catch (err) {
@@ -212,12 +195,10 @@ const MediaUploader = ({
     }
   };
 
-  
   const handleRemove = (mediaId) => {
     onChange(media.filter(item => item.id !== mediaId));
   };
 
-  
   const handleCaptionChange = (mediaId, caption) => {
     onChange(
       media.map(item => 
@@ -226,13 +207,11 @@ const MediaUploader = ({
     );
   };
 
-  
   const handlePreview = (mediaItem) => {
     setPreviewMedia(mediaItem);
     setPreviewOpen(true);
   };
 
-  
   const handleSafetyIconsSelected = (icons) => {
     const newMedia = icons.map(icon => ({
       ...icon,
@@ -241,7 +220,6 @@ const MediaUploader = ({
     onChange([...media, ...newMedia]);
   };
 
-  
   const formatSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
