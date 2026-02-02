@@ -289,10 +289,20 @@ class ExperimentService {
   }
 
   async updateExperimentPermissions(experimentId, permissionsData) {
-
-    const response = await api.put(`/api/experiments/${experimentId}`, {
-      permissions: permissionsData
-    });
+    // First get the current experiment to preserve all other data
+    const currentExperiment = await this.getExperiment(experimentId);
+    
+    // Update only the permissions in the content
+    const updatedExperiment = {
+      ...currentExperiment,
+      content: {
+        ...currentExperiment.content,
+        permissions: permissionsData
+      }
+    };
+    
+    // Send the full experiment with updated permissions
+    const response = await api.put(`/api/experiments/${experimentId}`, updatedExperiment);
     return response.data;
   }
 

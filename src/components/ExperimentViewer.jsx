@@ -74,6 +74,9 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       console.error('[ExperimentViewer] Error saving permissions:', err);
       console.error('[ExperimentViewer] Error details:', err.response?.data || err.message);
       
+      // Show error to user
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to save permissions';
+      alert(`Error: ${errorMessage}`);
     }
   };
 
