@@ -508,7 +508,7 @@
       "fillContentDesc": "Complete the content for each section. Required fields are marked with *.",
       "aiPolish": "🤖 AI Polish & Review",
       "aiPolishDesc": "Use AI to review, improve, and ensure consistency across all sections.",
-      "permissions": "🔒 Sharing & Access",
+      "permissions": "Sharing & Access",
       "permissionsDesc": "Control who can see and work with your experiment",
       "preview": "👁️ Preview & Create",
       "previewDesc": "This is how students will see your experiment. Review carefully before creating."

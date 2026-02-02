@@ -43,7 +43,6 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
     {
       title: t('onboarding.welcome.title', 'Welcome to Visual Editor!'),
       content: t('onboarding.welcome.content', 'Create professional experiment scripts in minutes, not hours.'),
-      icon: <ScienceIcon sx={{ fontSize: 60, color: 'primary.main' }} />,
       details: [
         t('onboarding.welcome.detail1', 'Step-by-step wizard guides you through creation'),
         t('onboarding.welcome.detail2', 'AI assistant helps improve your content'),
