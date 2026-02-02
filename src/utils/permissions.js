@@ -136,11 +136,11 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
     // For non-owners, check specific feature permissions
     switch (feature) {
       case 'viewDetails':
-        return permissions.allowViewDetails !== false;
+        return permissions.allowViewDetails === true;
       case 'export':
-        return permissions.allowExport !== false;
+        return permissions.allowExport === true;
       case 'versionControl':
-        return permissions.allowVersionControl !== false;
+        return permissions.allowVersionControl === true;
       default:
         return true;
     }
