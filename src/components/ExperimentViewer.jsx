@@ -83,23 +83,28 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       
       const rawData = await experimentService.getExperiment(experimentId);
       
+      console.log('[ExperimentViewer] Loaded experiment:', {
+        id: rawData.id,
+        title: rawData.title,
+        current_version_id: rawData.current_version_id,
+        current_version_number: rawData.current_version_number
+      });
+      
       const procedureSection = (rawData.sections || rawData.content?.sections || []).find(s => s.id === 'procedure');
       
       let actualVersionNumber = rawData.current_version_number || rawData.version_number || 1;
       try {
         const versions = await experimentService.getVersionHistory(experimentId);
         if (versions && versions.length > 0) {
-          
           const currentVersion = versions.find(v => v.id === rawData.current_version_id);
           if (currentVersion && currentVersion.version_number) {
             actualVersionNumber = currentVersion.version_number;
           } else {
-            
             actualVersionNumber = Math.max(...versions.map(v => v.version_number || 1));
           }
         }
       } catch (versionErr) {
-        
+        console.log('[ExperimentViewer] Could not load version history:', versionErr.message);
       }
       
       const canonical = toCanonical(rawData);
@@ -112,6 +117,12 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       canonical.estimated_duration = canonical.content.config.duration;
       canonical.course = canonical.content.config.subject;
       canonical.program = canonical.content.config.gradeLevel;
+      
+      console.log('[ExperimentViewer] Final canonical experiment:', {
+        id: canonical.id,
+        title: canonical.title,
+        version_number: canonical.version_number
+      });
       
       setExperiment(canonical);
     } catch (err) {
