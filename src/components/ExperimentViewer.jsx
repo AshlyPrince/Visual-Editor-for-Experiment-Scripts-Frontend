@@ -1123,32 +1123,32 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
       <Box sx={{ 
         display: 'flex', 
-        flexDirection: { xs: 'column', sm: 'row' },
-        justifyContent: 'space-between',
-        alignItems: { xs: 'stretch', sm: 'center' },
+        flexDirection: 'column',
         gap: 2,
         mb: 3 
       }}>
-        {/* Left side - Back button */}
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBack />}
-          onClick={onClose}
-          sx={{ 
-            flexShrink: 0,
-            minWidth: { xs: '100%', sm: 'auto' }
-          }}
-        >
-          {t('buttons.backToDashboard')}
-        </Button>
+        {/* Top row - Back button */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBack />}
+            onClick={onClose}
+            sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+          >
+            {t('buttons.backToDashboard')}
+          </Button>
+        </Box>
 
-        {/* Right side - Action buttons */}
+        {/* Bottom row - Action buttons in a grid */}
         <Box sx={{ 
-          display: 'flex', 
-          flexWrap: 'wrap',
-          gap: 1,
-          justifyContent: { xs: 'stretch', sm: 'flex-end' },
-          flex: 1
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',  // Mobile: 1 column
+            sm: 'repeat(2, 1fr)',  // Small: 2 columns
+            md: userIsOwner ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)',  // Medium+: 4 or 5 columns
+          },
+          gap: 1.5,
+          alignItems: 'stretch'
         }}>
           {/* Primary action - Edit (most important) */}
           {onEdit && (
@@ -1156,14 +1156,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
               arrow
             >
-              <span style={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
+              <span>
                 <Button
                   variant="contained"
                   startIcon={<EditIcon />}
                   onClick={() => onEdit(experiment)}
                   disabled={!canEditExp}
                   fullWidth
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+                  sx={{ height: '100%' }}
                 >
                   {t('experiment.editExperiment')}
                 </Button>
@@ -1171,19 +1171,19 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             </Tooltip>
           )}
           
-          {/* Secondary actions - grouped together */}
+          {/* Secondary actions */}
           <Tooltip 
             title={!canViewHistory ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
             arrow
           >
-            <span style={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '0 0 auto' } }}>
+            <span>
               <Button
                 variant="outlined"
                 startIcon={<HistoryIcon />}
                 onClick={() => setHistoryOpen(true)}
                 disabled={!canViewHistory}
                 fullWidth
-                sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+                sx={{ height: '100%' }}
               >
                 {t('version.versionHistory')}
               </Button>
@@ -1194,14 +1194,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
             arrow
           >
-            <span style={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '0 0 auto' } }}>
+            <span>
               <Button
                 variant="outlined"
                 startIcon={<ExportIcon />}
                 onClick={() => setExportOpen(true)}
                 disabled={!canExport}
                 fullWidth
-                sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+                sx={{ height: '100%' }}
               >
                 {t('common.export')}
               </Button>
@@ -1213,14 +1213,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             title={t('simplification.tooltip', 'Simplify the language for different education levels')}
             arrow
           >
-            <span style={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '0 0 auto' } }}>
+            <span>
               <Button
                 variant="outlined"
                 color="info"
                 startIcon={<TranslateIcon />}
                 onClick={() => setSimplifyOpen(true)}
                 fullWidth
-                sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+                sx={{ height: '100%' }}
               >
                 {t('simplification.simplify', 'Simplify')}
               </Button>
@@ -1233,14 +1233,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               title={t('permissions.managePermissionsTooltip', 'Manage who can access and edit this experiment')}
               arrow
             >
-              <span style={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
+              <span>
                 <Button
                   variant="outlined"
                   color="secondary"
                   startIcon={<LockIcon />}
                   onClick={() => setPermissionsOpen(true)}
                   fullWidth
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+                  sx={{ height: '100%' }}
                 >
                   {t('permissions.managePermissions', 'Permissions')}
                 </Button>

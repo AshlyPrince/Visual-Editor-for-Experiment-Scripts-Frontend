@@ -477,6 +477,8 @@
       "fillContentDesc": "Complete the content for each section. Required fields are marked with *.",
       "contentReview": "✅ Content Review",
       "contentReviewDesc": "Review and ensure consistency across all sections.",
+      "permissions": "🔒 Sharing & Access",
+      "permissionsDesc": "Control who can see and work with your experiment",
       "preview": "👁️ Preview & Create",
       "previewDesc": "This is how students will see your experiment. Review carefully before creating."
     },
@@ -642,17 +644,30 @@
         }
       }
     },
+    "setPermissions": "Set Permissions",
+    "setPermissionsDesc": "Configure access and permissions",
     "permissions": {
-      "currentSettings": "Current Permission Settings",
-      "clickConfigure": "Click \"Configure Permissions\" to set up access control",
-      "configure": "Configure Permissions",
-      "visibility": "Visibility",
-      "usersWithAccess": "Users with Access",
-      "users": "user(s)",
-      "settings": "Settings",
-      "info": "You can skip this step and use default settings (Public experiment, link sharing enabled). You can always modify permissions after creating the experiment.",
-      "protection": "Your experiment is protected",
-      "protectionDesc": "With the permission system, other users cannot delete or modify your experiment without proper access. You maintain full control over who can view, edit, or manage your work."
+      "title": "Sharing & Access",
+      "subtitle": "Control who can see and work with your experiment",
+      "whoCanSee": "Who can see your experiment?",
+      "visibility": {
+        "private": "Private",
+        "public": "Public",
+        "restricted": "Restricted"
+      },
+      "descriptions": {
+        "private": "Only you",
+        "public": "Everyone can view and access all features",
+        "restricted": "Limited access (restricted: {{features}})",
+        "restrictedDefault": "Visible with some restrictions"
+      },
+      "restrictedFeatures": {
+        "viewingDetails": "viewing details",
+        "export": "export",
+        "versionHistory": "version history"
+      },
+      "customizeSettings": "Customize Settings",
+      "tip": "Default settings work for most cases. You can change these anytime after creating your experiment."
     }
   },
   "editor": {

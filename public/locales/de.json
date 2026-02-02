@@ -477,6 +477,8 @@
       "fillContentDesc": "Vervollständigen Sie den Inhalt für jeden Abschnitt. Pflichtfelder sind mit * markiert.",
       "contentReview": "✅ Inhaltsüberprüfung",
       "contentReviewDesc": "Überprüfen und Konsistenz über alle Abschnitte hinweg sicherstellen.",
+      "permissions": "🔒 Freigabe & Zugriff",
+      "permissionsDesc": "Steuern Sie, wer Ihr Experiment sehen und damit arbeiten kann",
       "preview": "👁️ Vorschau & Erstellen",
       "previewDesc": "So werden die Studierenden Ihr Experiment sehen. Überprüfen Sie es sorgfältig vor der Erstellung."
     },
@@ -642,17 +644,30 @@
         }
       }
     },
+    "setPermissions": "Berechtigungen festlegen",
+    "setPermissionsDesc": "Zugriff und Berechtigungen konfigurieren",
     "permissions": {
-      "currentSettings": "Aktuelle Berechtigungseinstellungen",
-      "clickConfigure": "Klicken Sie auf \"Berechtigungen konfigurieren\", um die Zugriffskontrolle einzurichten",
-      "configure": "Berechtigungen konfigurieren",
-      "visibility": "Sichtbarkeit",
-      "usersWithAccess": "Benutzer mit Zugriff",
-      "users": "Benutzer",
-      "settings": "Einstellungen",
-      "info": "Sie können diesen Schritt überspringen und die Standardeinstellungen verwenden (Öffentliches Experiment, Link-Freigabe aktiviert). Sie können die Berechtigungen jederzeit nach der Erstellung des Experiments ändern.",
-      "protection": "Ihr Experiment ist geschützt",
-      "protectionDesc": "Mit dem Berechtigungssystem können andere Benutzer Ihr Experiment nicht ohne entsprechenden Zugriff löschen oder ändern. Sie behalten die volle Kontrolle darüber, wer Ihre Arbeit ansehen, bearbeiten oder verwalten kann."
+      "title": "Freigabe & Zugriff",
+      "subtitle": "Steuern Sie, wer Ihr Experiment sehen und damit arbeiten kann",
+      "whoCanSee": "Wer kann Ihr Experiment sehen?",
+      "visibility": {
+        "private": "Privat",
+        "public": "Öffentlich",
+        "restricted": "Eingeschränkt"
+      },
+      "descriptions": {
+        "private": "Nur Sie",
+        "public": "Jeder kann alle Funktionen ansehen und darauf zugreifen",
+        "restricted": "Eingeschränkter Zugriff (eingeschränkt: {{features}})",
+        "restrictedDefault": "Sichtbar mit einigen Einschränkungen"
+      },
+      "restrictedFeatures": {
+        "viewingDetails": "Details anzeigen",
+        "export": "Exportieren",
+        "versionHistory": "Versionsverlauf"
+      },
+      "customizeSettings": "Einstellungen anpassen",
+      "tip": "Standardeinstellungen funktionieren für die meisten Fälle. Sie können diese jederzeit nach der Erstellung Ihres Experiments ändern."
     }
   },
   "editor": {
