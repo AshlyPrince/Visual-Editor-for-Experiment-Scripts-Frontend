@@ -169,6 +169,15 @@ export function isUserOwner(experiment, currentUser) {
         return true;
       }
     }
+  } else if (!permissions || !permissions.userPermissions) {
+    console.log('[Permissions] No permissions object found - checking if user can access experiment');
+    if (ownerId && (ownerId === userSub || ownerId === userName || ownerId === userEmail || ownerId === currentUser.id)) {
+      console.log('[Permissions] isUserOwner: TRUE - Owner via created_by (no permissions object)');
+      return true;
+    }
+    
+    console.log('[Permissions] isUserOwner: TRUE (FALLBACK) - No permissions set, allowing access');
+    return true;
   }
 
   console.log('[Permissions] isUserOwner: FALSE - No match found');
