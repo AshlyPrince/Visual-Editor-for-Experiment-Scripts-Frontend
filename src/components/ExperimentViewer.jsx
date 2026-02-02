@@ -65,11 +65,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   const handleSavePermissions = async (permissionsData) => {
     try {
-      await experimentService.updateExperimentPermissions(experimentId, permissionsData);
+      console.log('[ExperimentViewer] Saving permissions:', permissionsData);
+      const result = await experimentService.updateExperimentPermissions(experimentId, permissionsData);
+      console.log('[ExperimentViewer] Permissions saved successfully:', result);
       setPermissionsOpen(false);
       refresh(); // Reload experiment to show updated permissions
     } catch (err) {
       console.error('[ExperimentViewer] Error saving permissions:', err);
+      console.error('[ExperimentViewer] Error details:', err.response?.data || err.message);
       // You could add error notification here
     }
   };
@@ -1274,7 +1277,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           
           {/* Simplify Language button */}
           <Tooltip 
-            title={t('simplification.tooltip', 'Simplify the language for different education levels')}
+            title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('simplification.tooltip', 'Simplify the language for different education levels')}
             arrow
           >
             <span>
@@ -1283,6 +1286,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                 color="info"
                 startIcon={<TranslateIcon />}
                 onClick={() => setSimplifyOpen(true)}
+                disabled={!canExport}
                 fullWidth
                 sx={{ height: '100%' }}
               >

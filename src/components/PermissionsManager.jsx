@@ -91,6 +91,7 @@ const PermissionsManager = ({
       modifiedBy: currentUser?.id || currentUser?.sub || currentUser?.email
     };
     
+    console.log('[PermissionsManager] Saving permissions:', permissionsData);
     onSave(permissionsData);
   };
 
