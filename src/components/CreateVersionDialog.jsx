@@ -43,7 +43,7 @@ const CreateVersionDialog = ({
       
       const contentWithPermissions = {
         ...updatedContent.content,
-        permissions: updatedContent.content?.permissions || updatedContent.permissions || experiment?.content?.permissions
+        permissions: updatedContent.content?.permissions || updatedContent.permissions
       };
       
       const versionData = {
