@@ -80,6 +80,8 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
   const [editingExperiment, setEditingExperiment] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [experimentToDelete, setExperimentToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [exportingExperiment, setExportingExperiment] = useState(null);
   
@@ -177,6 +179,8 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
   const handleDeleteConfirm = async () => {
     if (!experimentToDelete) return;
 
+    setDeleteLoading(true);
+    
     try {
       await deleteExperimentAsync(
         () => experimentService.deleteExperiment(experimentToDelete.id)
@@ -184,14 +188,26 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
 
       setExperiments(prev => prev.filter(exp => exp.id !== experimentToDelete.id));
       
-      addNotification({
-        type: 'success',
-        message: t('messages.experimentDeletedSuccess', { title: experimentToDelete.title })
-      });
+      setDeleteLoading(false);
+      setDeleteSuccess(true);
       
+      // Show success message briefly before closing
+      setTimeout(() => {
+        setDeleteDialogOpen(false);
+        setExperimentToDelete(null);
+        setDeleteSuccess(false);
+        
+        addNotification({
+          type: 'success',
+          message: t('messages.experimentDeletedSuccess', { title: experimentToDelete.title })
+        });
+      }, 1500);
+    } catch {
+      setDeleteLoading(false);
+      setDeleteSuccess(false);
       setDeleteDialogOpen(false);
       setExperimentToDelete(null);
-    } catch {
+      
       addNotification({
         type: 'error',
         message: t('messages.deleteExperimentFailed')
@@ -427,7 +443,8 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
           title={t('experimentList.deleteExperimentTitle')}
           itemName={experimentToDelete?.title || experimentToDelete?.name || t('experimentList.thisExperiment')}
           itemType={t('experimentList.experiment')}
-          loading={deleting}
+          loading={deleteLoading}
+          success={deleteSuccess}
           additionalInfo={t('version.confirmDeleteInfo')}
         />
 

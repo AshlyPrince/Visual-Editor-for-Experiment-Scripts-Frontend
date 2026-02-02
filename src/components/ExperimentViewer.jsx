@@ -33,7 +33,6 @@ import experimentService from '../services/experimentService.js';
 import keycloakService from '../services/keycloakService.js';
 import VersionHistory from './VersionHistory';
 import ExportDialog from './ExportDialog';
-import PermissionsManager from './PermissionsManager';
 import LanguageSimplificationDialog from './LanguageSimplificationDialog';
 import { toCanonical } from '../utils/experimentCanonical.js';
 import { canAccessRestrictedFeature, isUserOwner } from '../utils/permissions.js';
@@ -45,7 +44,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const [error, setError] = useState(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
-  const [permissionsOpen, setPermissionsOpen] = useState(false);
   const [simplifyOpen, setSimplifyOpen] = useState(false);
   const [simplifiedData, setSimplifiedData] = useState(null); 
   const [autoExportFormat, setAutoExportFormat] = useState(null);
@@ -60,23 +58,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const refresh = () => {
     if (experimentId) {
       loadExperiment();
-    }
-  };
-
-  const handleSavePermissions = async (permissionsData) => {
-    try {
-      console.log('[ExperimentViewer] Saving permissions:', permissionsData);
-      const result = await experimentService.updateExperimentPermissions(experimentId, permissionsData);
-      console.log('[ExperimentViewer] Permissions saved successfully:', result);
-      setPermissionsOpen(false);
-      refresh(); 
-    } catch (err) {
-      console.error('[ExperimentViewer] Error saving permissions:', err);
-      console.error('[ExperimentViewer] Error details:', err.response?.data || err.message);
-      
-      // Show error to user
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to save permissions';
-      alert(`Error: ${errorMessage}`);
     }
   };
 
@@ -1254,7 +1235,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           gridTemplateColumns: {
             xs: '1fr',  
             sm: 'repeat(2, 1fr)',  
-            md: userIsOwner ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)',  
+            md: 'repeat(4, 1fr)',  
           },
           gap: 1.5,
           alignItems: 'stretch'
@@ -1335,27 +1316,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
               </Button>
             </span>
           </Tooltip>
-          
-          {}
-          {userIsOwner && (
-            <Tooltip 
-              title={t('permissions.managePermissionsTooltip', 'Manage who can access and edit this experiment')}
-              arrow
-            >
-              <span>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  startIcon={<LockIcon />}
-                  onClick={() => setPermissionsOpen(true)}
-                  fullWidth
-                  sx={{ height: '100%' }}
-                >
-                  {t('permissions.managePermissions', 'Permissions')}
-                </Button>
-              </span>
-            </Tooltip>
-          )}
         </Box>
       </Box>
 
@@ -1544,17 +1504,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             
             setExportOpen(true);
           }}
-        />
-      )}
-
-      {experiment && (
-        <PermissionsManager
-          open={permissionsOpen}
-          onClose={() => setPermissionsOpen(false)}
-          experimentId={experimentId}
-          currentPermissions={experiment.content?.permissions}
-          isNewExperiment={false}
-          onSave={handleSavePermissions}
         />
       )}
     </Container>
