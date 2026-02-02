@@ -292,65 +292,77 @@ class ExperimentService {
     console.log('[experimentService] Updating permissions for experiment:', experimentId);
     console.log('[experimentService] New permissions data:', permissionsData);
     
-    // Get the current experiment to preserve all other data
-    const currentExperiment = await this.getExperiment(experimentId);
+    // Try PATCH method with only permissions field
+    // PATCH is typically used for partial updates
+    const token = await getValidToken();
     
-    console.log('[experimentService] Current experiment structure:', {
-      id: currentExperiment.id,
-      title: currentExperiment.title,
-      hasContent: !!currentExperiment.content,
-      hasTopLevelPermissions: !!currentExperiment.permissions,
-      topLevelPermissionsVisibility: currentExperiment.permissions?.visibility || 'none',
-      contentPermissionsVisibility: currentExperiment.content?.permissions?.visibility || 'none'
-    });
-    
-    // Update permissions in BOTH locations:
-    // 1. Top-level (for backend compatibility)
-    // 2. Inside content (for frontend state)
-    const updatedContent = {
-      ...currentExperiment.content,
-      permissions: permissionsData
-    };
-    
-    // Build the complete update payload
-    const updatePayload = {
-      title: currentExperiment.title,
-      estimated_duration: currentExperiment.estimated_duration,
-      course: currentExperiment.course,
-      program: currentExperiment.program,
-      content: updatedContent,
-      permissions: permissionsData  // ADD permissions at top level for backend
-    };
-    
-    // Preserve ownership fields if they exist
-    if (currentExperiment.created_by) {
-      updatePayload.created_by = currentExperiment.created_by;
+    try {
+      console.log('[experimentService] Attempting PATCH with permissions only');
+      
+      const response = await fetch(`${API_BASE_URL}/experiments/${experimentId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ permissions: permissionsData })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`PATCH failed: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      console.log('[experimentService] PATCH response:', {
+        id: data.id,
+        title: data.title,
+        hasTopLevelPermissions: !!data.permissions,
+        savedVisibility: data.permissions?.visibility || 'not found'
+      });
+      
+      return data;
+      
+    } catch (patchError) {
+      console.log('[experimentService] PATCH failed, trying full PUT update:', patchError.message);
+      
+      // Fallback to full PUT update
+      const currentExperiment = await this.getExperiment(experimentId);
+      
+      const updatedContent = {
+        ...currentExperiment.content,
+        permissions: permissionsData
+      };
+      
+      const updatePayload = {
+        title: currentExperiment.title,
+        estimated_duration: currentExperiment.estimated_duration,
+        course: currentExperiment.course,
+        program: currentExperiment.program,
+        content: updatedContent,
+        permissions: permissionsData
+      };
+      
+      if (currentExperiment.created_by) {
+        updatePayload.created_by = currentExperiment.created_by;
+      }
+      if (currentExperiment.owner_id) {
+        updatePayload.owner_id = currentExperiment.owner_id;
+      }
+      
+      console.log('[experimentService] Sending full PUT with permissions at top level');
+      
+      const response = await this.updateExperiment(experimentId, updatePayload);
+      
+      console.log('[experimentService] PUT response:', {
+        id: response.id,
+        title: response.title,
+        hasTopLevelPermissions: !!response.permissions,
+        savedVisibility: response.permissions?.visibility || 'not found'
+      });
+      
+      return response;
     }
-    if (currentExperiment.owner_id) {
-      updatePayload.owner_id = currentExperiment.owner_id;
-    }
-    
-    console.log('[experimentService] Sending update with permissions at TWO locations:', {
-      title: updatePayload.title,
-      hasTopLevelPermissions: !!updatePayload.permissions,
-      topLevelVisibility: updatePayload.permissions?.visibility,
-      hasContent: !!updatePayload.content,
-      contentVisibility: updatePayload.content?.permissions?.visibility
-    });
-    
-    // Use the standard updateExperiment method
-    const response = await this.updateExperiment(experimentId, updatePayload);
-    
-    console.log('[experimentService] Backend response:', {
-      id: response.id,
-      title: response.title,
-      hasContent: !!response.content,
-      hasTopLevelPermissions: !!response.permissions,
-      savedTopLevelVisibility: response.permissions?.visibility || 'not found',
-      savedContentVisibility: response.content?.permissions?.visibility || 'not found'
-    });
-    
-    return response;
   }
 
   async checkUserPermission(experimentId, permission) {
