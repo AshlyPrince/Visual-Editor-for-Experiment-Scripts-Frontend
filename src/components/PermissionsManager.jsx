@@ -272,34 +272,6 @@ const PermissionsManager = ({
               </Stack>
             </Paper>
           )}
-
-          <Divider />
-
-          {/* Duplication Setting */}
-          <Box>
-            <Typography variant="subtitle1" fontWeight="600" gutterBottom sx={{ mb: 1.5 }}>
-              Additional Options
-            </Typography>
-            
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={allowDuplication}
-                  onChange={(e) => setAllowDuplication(e.target.checked)}
-                />
-              }
-              label={
-                <Box>
-                  <Typography variant="body2">
-                    Allow others to make a copy
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Users can duplicate this experiment to their own workspace
-                  </Typography>
-                </Box>
-              }
-            />
-          </Box>
         </Stack>
       </DialogContent>
       

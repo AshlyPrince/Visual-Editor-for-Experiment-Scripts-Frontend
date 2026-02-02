@@ -30,9 +30,12 @@ import experimentService from '../services/experimentService.js';
 import VersionHistory from './VersionHistory';
 import ExportDialog from './ExportDialog';
 import { toCanonical } from '../utils/experimentCanonical.js';
+import { canAccessRestrictedFeature, isUserOwner } from '../utils/permissions.js';
+import { useKeycloak } from '../auth/KeycloakContext';
 
 const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const { t } = useTranslation();
+  const { keycloak } = useKeycloak();
   const [experiment, setExperiment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -1149,6 +1152,12 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     }
   };
 
+  // Check permissions for current user
+  const currentUser = keycloak?.tokenParsed;
+  const userIsOwner = experiment ? isUserOwner(experiment, currentUser) : false;
+  const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
+  const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
+
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
       <Box sx={{ 
@@ -1173,21 +1182,25 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           gap: 1,
           order: { xs: 0, sm: 1 }
         }}>
-          <Button
-            variant="outlined"
-            startIcon={<HistoryIcon />}
-            onClick={() => setHistoryOpen(true)}
-          >
-            {t('version.versionHistory')}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<ExportIcon />}
-            onClick={() => setExportOpen(true)}
-          >
-            {t('common.export')}
-          </Button>
-          {onEdit && (
+          {canViewHistory && (
+            <Button
+              variant="outlined"
+              startIcon={<HistoryIcon />}
+              onClick={() => setHistoryOpen(true)}
+            >
+              {t('version.versionHistory')}
+            </Button>
+          )}
+          {canExport && (
+            <Button
+              variant="outlined"
+              startIcon={<ExportIcon />}
+              onClick={() => setExportOpen(true)}
+            >
+              {t('common.export')}
+            </Button>
+          )}
+          {onEdit && (userIsOwner || canAccessRestrictedFeature(experiment, 'viewDetails', currentUser)) && (
             <Button
               variant="contained"
               startIcon={<EditIcon />}
@@ -1325,7 +1338,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         </>
       </Paper>
 
-      {historyOpen && (
+      {canViewHistory && historyOpen && (
         <Paper
           sx={{
             position: 'fixed',
@@ -1351,7 +1364,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         </Paper>
       )}
 
-      {experiment && (
+      {canExport && experiment && (
         <ExportDialog
           open={exportOpen}
           onClose={() => setExportOpen(false)}

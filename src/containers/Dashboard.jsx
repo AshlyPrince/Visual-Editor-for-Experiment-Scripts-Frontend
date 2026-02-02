@@ -35,7 +35,8 @@ import {
   Science as ScienceIcon,
   Search as SearchIcon,
   Clear as ClearIcon,
-  Psychology as PsychologyIcon
+  Psychology as PsychologyIcon,
+  DraftsOutlined as DraftIcon
 } from '@mui/icons-material';
 import { useAsyncOperation, useNotifications } from '../hooks/exports';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog.jsx';
@@ -43,6 +44,7 @@ import ExportDialog from '../components/ExportDialog.jsx';
 import VersionHistory from '../components/VersionHistory.jsx';
 import OnboardingTour from '../components/OnboardingTour.jsx';
 import LanguageSimplificationDialog from '../components/LanguageSimplificationDialog.jsx';
+import { canAccessRestrictedFeature, isUserOwner } from '../utils/permissions.js';
 
 const DashboardContainer = styled(Box)(({ theme }) => ({
   paddingLeft: theme.spacing(4),
@@ -98,6 +100,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const [exportingExperiment, setExportingExperiment] = useState(null);
   const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
   const [versionHistoryExperiment, setVersionHistoryExperiment] = useState(null);
+  const [hasDraft, setHasDraft] = useState(false);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [simplifyDialogOpen, setSimplifyDialogOpen] = useState(false);
   const [simplifyingExperiment, setSimplifyingExperiment] = useState(null);
@@ -222,17 +225,39 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         autoTags: extractTagsFromExperiment(exp)
       }));
       
-      setAllExperiments(allExperimentData);
-      setFilteredExperiments(allExperimentData);
-      setTotalExperiments(allExperimentData.length);
+      // Filter experiments based on visibility permissions
+      const currentUser = keycloakService.getUserInfo();
+      const visibleExperiments = allExperimentData.filter(exp => {
+        const permissions = exp.content?.permissions;
+        
+        // If no permissions set, show the experiment (backward compatibility)
+        if (!permissions) return true;
+        
+        // Show all public experiments
+        if (permissions.visibility === 'public') return true;
+        
+        // Show restricted experiments to everyone (but features will be restricted)
+        if (permissions.visibility === 'restricted') return true;
+        
+        // For private experiments, only show to owner
+        if (permissions.visibility === 'private') {
+          return isUserOwner(exp, currentUser);
+        }
+        
+        return true;
+      });
+      
+      setAllExperiments(visibleExperiments);
+      setFilteredExperiments(visibleExperiments);
+      setTotalExperiments(visibleExperiments.length);
       
       const startIndex = page * rowsPerPage;
       const endIndex = startIndex + rowsPerPage;
-      const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
+      const paginatedExperiments = visibleExperiments.slice(startIndex, endIndex);
       
       setExperiments(paginatedExperiments);
       setStats({
-        totalExperiments: allExperimentData.length
+        totalExperiments: visibleExperiments.length
       });
 
       console.log('[Dashboard Refresh] Refresh complete. Total experiments:', allExperimentData.length);
@@ -304,21 +329,45 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         
         console.log('[Dashboard] Experiments with tags:', allExperimentData.length);
         
+        // Filter experiments based on visibility permissions
+        const currentUser = keycloakService.getUserInfo();
+        const visibleExperiments = allExperimentData.filter(exp => {
+          const permissions = exp.content?.permissions;
+          
+          // If no permissions set, show the experiment (backward compatibility)
+          if (!permissions) return true;
+          
+          // Show all public experiments
+          if (permissions.visibility === 'public') return true;
+          
+          // Show restricted experiments to everyone (but features will be restricted)
+          if (permissions.visibility === 'restricted') return true;
+          
+          // For private experiments, only show to owner
+          if (permissions.visibility === 'private') {
+            return isUserOwner(exp, currentUser);
+          }
+          
+          return true;
+        });
         
-        setAllExperiments(allExperimentData);
-        setFilteredExperiments(allExperimentData);
-        setTotalExperiments(allExperimentData.length);
+        console.log('[Dashboard] Filtered visible experiments:', visibleExperiments.length, 'out of', allExperimentData.length);
+        
+        
+        setAllExperiments(visibleExperiments);
+        setFilteredExperiments(visibleExperiments);
+        setTotalExperiments(visibleExperiments.length);
         
         
         const startIndex = page * rowsPerPage;
         const endIndex = startIndex + rowsPerPage;
-        const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
+        const paginatedExperiments = visibleExperiments.slice(startIndex, endIndex);
         
         console.log('[Dashboard] Paginated experiments for display:', paginatedExperiments.length);
         
         setExperiments(paginatedExperiments);
         setStats({
-          totalExperiments: allExperimentData.length
+          totalExperiments: visibleExperiments.length
         });
 
         console.log('[Dashboard] State updated successfully. Total experiments:', allExperimentData.length);
@@ -365,6 +414,27 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
     loadDashboardData();
   }, [i18nReady]);
+  
+  // Check for draft on mount and after any changes
+  useEffect(() => {
+    const checkForDraft = () => {
+      const savedDraft = localStorage.getItem('wizardState');
+      setHasDraft(!!savedDraft);
+    };
+    
+    checkForDraft();
+    
+    // Re-check when window gains focus (in case draft was cleared in another tab)
+    window.addEventListener('focus', checkForDraft);
+    
+    // Listen for draft cleared events from the wizard
+    window.addEventListener('draftCleared', checkForDraft);
+    
+    return () => {
+      window.removeEventListener('focus', checkForDraft);
+      window.removeEventListener('draftCleared', checkForDraft);
+    };
+  }, []);
   
   useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
@@ -656,7 +726,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              startIcon={hasDraft ? <DraftIcon /> : <AddIcon />}
               onClick={onCreateExperiment}
               sx={{ 
                 fontWeight: 600,
@@ -667,7 +737,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                 fontSize: '0.95rem'
               }}
             >
-              {t('experiment.createNew')}
+              {hasDraft ? t('experiment.continueDraft', 'Continue Draft') : t('experiment.createNew')}
             </Button>
           )}
         </Box>
@@ -748,10 +818,10 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
+              startIcon={hasDraft ? <DraftIcon /> : <AddIcon />}
               onClick={onCreateExperiment}
             >
-              {t('experiment.createNew')}
+              {hasDraft ? t('experiment.continueDraft', 'Continue Draft') : t('experiment.createNew')}
             </Button>
           </Box>
         ) : (
@@ -875,28 +945,47 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           }
         }}
       >
-        <MenuItem onClick={handleEdit}>
-          <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          {t('experiment.editExperiment')}
-        </MenuItem>
-        <MenuItem onClick={handleVersionHistory}>
-          <HistoryIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          {t('version.versionHistory')}
-        </MenuItem>
-        <MenuItem onClick={handleExport}>
-          <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          {t('common.export')}
-        </MenuItem>
-        
-        <MenuItem onClick={handleSimplifyLanguage}>
-          <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          {t('simplification.menuItem', 'Simplify Language')}
-        </MenuItem>
-        
-        <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
-          <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
-          {t('common.delete')}
-        </MenuItem>
+        {selectedExperiment && (() => {
+          const currentUser = keycloakService.getUserInfo();
+          const userIsOwner = isUserOwner(selectedExperiment, currentUser);
+          const canExport = canAccessRestrictedFeature(selectedExperiment, 'export', currentUser);
+          const canViewHistory = canAccessRestrictedFeature(selectedExperiment, 'versionControl', currentUser);
+          
+          return (
+            <>
+              {userIsOwner && (
+                <MenuItem onClick={handleEdit}>
+                  <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                  {t('experiment.editExperiment')}
+                </MenuItem>
+              )}
+              {canViewHistory && (
+                <MenuItem onClick={handleVersionHistory}>
+                  <HistoryIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                  {t('version.versionHistory')}
+                </MenuItem>
+              )}
+              {canExport && (
+                <MenuItem onClick={handleExport}>
+                  <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                  {t('common.export')}
+                </MenuItem>
+              )}
+              {userIsOwner && (
+                <MenuItem onClick={handleSimplifyLanguage}>
+                  <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                  {t('simplification.menuItem', 'Simplify Language')}
+                </MenuItem>
+              )}
+              {userIsOwner && (
+                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+                  <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                  {t('common.delete')}
+                </MenuItem>
+              )}
+            </>
+          );
+        })()}
       </Menu>
 
       <DeleteConfirmDialog

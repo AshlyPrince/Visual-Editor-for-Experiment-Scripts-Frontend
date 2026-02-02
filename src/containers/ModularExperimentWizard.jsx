@@ -396,6 +396,8 @@ const ModularExperimentWizard = ({
   const clearSavedState = () => {
     try {
       localStorage.removeItem('wizardState');
+      // Dispatch custom event to notify other components that draft was cleared
+      window.dispatchEvent(new CustomEvent('draftCleared'));
     } catch (error) {
     }
   };
@@ -1362,22 +1364,7 @@ const ModularExperimentWizard = ({
               </Stack>
             </Box>
 
-            <Divider />
-
-            <Box>
-              <Stack direction="row" spacing={1.5} alignItems="center">
-                {currentPermissions.allowDuplication ? (
-                  <CheckIcon fontSize="small" color="success" />
-                ) : (
-                  <CloseIcon fontSize="small" color="disabled" />
-                )}
-                <Typography variant="body2">
-                  Others {currentPermissions.allowDuplication ? 'can' : 'cannot'} make a copy
-                </Typography>
-              </Stack>
-            </Box>
-
-            <Box sx={{ pt: 1 }}>
+            <Box sx={{ pt: 2 }}>
               <Button
                 variant="outlined"
                 fullWidth
@@ -1980,19 +1967,6 @@ const ModularExperimentWizard = ({
   return (
     <>
       <WizardContainer>
-        {savedState && !existingExperiment && (
-          <Alert 
-            severity="info" 
-            sx={{ m: 3, mb: 0 }}
-            action={
-              <Button color="inherit" size="small" onClick={clearSavedState}>
-                Clear Draft
-              </Button>
-            }
-          >
-          </Alert>
-        )}
-
         <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
           <WizardStepper
             steps={wizardSteps}

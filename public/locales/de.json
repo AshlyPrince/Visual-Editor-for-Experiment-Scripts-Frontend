@@ -158,6 +158,7 @@
     "references": "Literaturverzeichnis",
     "notes": "Notizen",
     "createNew": "Neues Experiment erstellen",
+    "continueDraft": "Entwurf fortsetzen",
     "editExperiment": "Experiment bearbeiten",
     "viewExperiment": "Experiment anzeigen",
     "deleteExperiment": "Experiment löschen",

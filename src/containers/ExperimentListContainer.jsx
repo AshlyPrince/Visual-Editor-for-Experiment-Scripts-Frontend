@@ -40,13 +40,14 @@ import {
   SecondaryButton
 } from '../components/ui/Button';
 import { useAsyncOperation, useNotifications } from '../hooks/exports';
-import { experimentService } from '../services/exports';
+import { experimentService, keycloakService } from '../services/exports';
 import { createCardStyles } from '../styles/components.js';
 import { colors } from '../styles/tokens.js';
 import VersionHistory from '../components/VersionHistory.jsx';
 import ModularExperimentWizard from './ModularExperimentWizard.jsx';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog.jsx';
 import ExportDialog from '../components/ExportDialog.jsx';
+import { canAccessRestrictedFeature, isUserOwner } from '../utils/permissions.js';
 
 const ExperimentCard = styled(Card)(({ theme }) => ({
   ...createCardStyles(theme, 'interactive'),
@@ -98,7 +99,30 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
     const fetchExperiments = async () => {
       try {
         const data = await loadExperiments(experimentService.getExperiments);
-        setExperiments(data || []);
+        
+        // Filter experiments based on visibility permissions
+        const currentUser = keycloakService.getUserInfo();
+        const visibleExperiments = (data || []).filter(exp => {
+          const permissions = exp.content?.permissions;
+          
+          // If no permissions set, show the experiment (backward compatibility)
+          if (!permissions) return true;
+          
+          // Show all public experiments
+          if (permissions.visibility === 'public') return true;
+          
+          // Show restricted experiments to everyone (but features will be restricted)
+          if (permissions.visibility === 'restricted') return true;
+          
+          // For private experiments, only show to owner
+          if (permissions.visibility === 'private') {
+            return isUserOwner(exp, currentUser);
+          }
+          
+          return true;
+        });
+        
+        setExperiments(visibleExperiments);
       } catch {
         
       }
@@ -270,70 +294,74 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
           </Box>
         ) : (
           <Grid container spacing={3}>
-            {experiments.map((experiment) => (
-              <Grid item xs={12} sm={6} md={4} key={experiment.id}>
-                <ExperimentCard>
-                  <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-                      <ExperimentAvatar>
-                        {getExperimentInitials(experiment.name || experiment.title || 'EX')}
-                      </ExperimentAvatar>
-                      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 600,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          {experiment.title}
-                        </Typography>
-                      </Box>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => handleMenuClick(e, experiment)}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                    </Box>
-
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        mb: 3,
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      {experiment.content?.config?.description || t('wizard.noDescriptionProvided')}
-                    </Typography>
-
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <TimeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                        <Typography variant="caption" color="text.secondary">
-                          {formatDate(experiment.createdAt || experiment.created_at)}
-                        </Typography>
-                      </Box>
-                      
-                      {experiment.version_number && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <LayersIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                          <Typography variant="caption" color="text.secondary">
-                            {t('version.version')} {experiment.version_number}
+            {experiments.map((experiment) => {
+              const currentUser = keycloakService.getUserInfo();
+              const userIsOwner = isUserOwner(experiment, currentUser);
+              
+              return (
+                <Grid item xs={12} sm={6} md={4} key={experiment.id}>
+                  <ExperimentCard>
+                    <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+                        <ExperimentAvatar>
+                          {getExperimentInitials(experiment.name || experiment.title || 'EX')}
+                        </ExperimentAvatar>
+                        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontWeight: 600,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            {experiment.title}
                           </Typography>
                         </Box>
-                      )}
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleMenuClick(e, experiment)}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                      </Box>
 
-                      {experiment.createdBy && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          mb: 3,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        {experiment.content?.config?.description || t('wizard.noDescriptionProvided')}
+                      </Typography>
+
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <PersonIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                          <TimeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
                           <Typography variant="caption" color="text.secondary">
+                            {formatDate(experiment.createdAt || experiment.created_at)}
+                          </Typography>
+                        </Box>
+                        
+                        {experiment.version_number && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <LayersIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="caption" color="text.secondary">
+                              {t('version.version')} {experiment.version_number}
+                            </Typography>
+                          </Box>
+                        )}
+
+                        {experiment.createdBy && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <PersonIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="caption" color="text.secondary">
                             {experiment.createdBy}
                           </Typography>
                         </Box>
@@ -344,17 +372,20 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
                   <Divider />
 
                   <CardActions sx={{ p: 2, justifyContent: 'flex-start' }}>
-                    <SecondaryButton
-                      size="small"
-                      onClick={() => handleEditClick(experiment)}
-                      startIcon={<EditIcon />}
-                    >
-                      {t('common.edit')}
-                    </SecondaryButton>
+                    {userIsOwner && (
+                      <SecondaryButton
+                        size="small"
+                        onClick={() => handleEditClick(experiment)}
+                        startIcon={<EditIcon />}
+                      >
+                        {t('common.edit')}
+                      </SecondaryButton>
+                    )}
                   </CardActions>
                 </ExperimentCard>
               </Grid>
-            ))}
+            );
+            })}
           </Grid>
         )}
 
@@ -363,23 +394,42 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
           open={Boolean(menuAnchor)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleEdit}>
-            <EditIcon sx={{ mr: 1 }} />
-            {t('experiment.editExperiment')}
-          </MenuItem>
-          <MenuItem onClick={handleVersionHistory}>
-            <HistoryIcon sx={{ mr: 1 }} />
-            {t('version.versionHistory')}
-          </MenuItem>
-          <MenuItem onClick={handleExport}>
-            <ExportIcon sx={{ mr: 1 }} />
-            {t('common.export')}
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
-            <DeleteIcon sx={{ mr: 1 }} />
-            {t('common.delete')}
-          </MenuItem>
+          {selectedExperiment && (() => {
+            const currentUser = keycloakService.getUserInfo();
+            const userIsOwner = isUserOwner(selectedExperiment, currentUser);
+            const canExport = canAccessRestrictedFeature(selectedExperiment, 'export', currentUser);
+            const canViewHistory = canAccessRestrictedFeature(selectedExperiment, 'versionControl', currentUser);
+            
+            return (
+              <>
+                {userIsOwner && (
+                  <MenuItem onClick={handleEdit}>
+                    <EditIcon sx={{ mr: 1 }} />
+                    {t('experiment.editExperiment')}
+                  </MenuItem>
+                )}
+                {canViewHistory && (
+                  <MenuItem onClick={handleVersionHistory}>
+                    <HistoryIcon sx={{ mr: 1 }} />
+                    {t('version.versionHistory')}
+                  </MenuItem>
+                )}
+                {canExport && (
+                  <MenuItem onClick={handleExport}>
+                    <ExportIcon sx={{ mr: 1 }} />
+                    {t('common.export')}
+                  </MenuItem>
+                )}
+                <Divider />
+                {userIsOwner && (
+                  <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+                    <DeleteIcon sx={{ mr: 1 }} />
+                    {t('common.delete')}
+                  </MenuItem>
+                )}
+              </>
+            );
+          })()}
         </Menu>
 
         <DeleteConfirmDialog

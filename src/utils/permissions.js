@@ -100,6 +100,86 @@ export function isOwner(userPermissions) {
 }
 
 /**
+ * Check if a user can access a restricted feature based on experiment permissions
+ * @param {Object} experiment - The experiment object with permissions
+ * @param {string} feature - Feature to check ('viewDetails', 'export', 'versionControl')
+ * @param {Object} currentUser - Current user info
+ * @returns {boolean}
+ */
+export function canAccessRestrictedFeature(experiment, feature, currentUser) {
+  if (!experiment || !experiment.content || !experiment.content.permissions) {
+    // No permissions set, allow access (backward compatibility)
+    return true;
+  }
+
+  const permissions = experiment.content.permissions;
+  
+  // If experiment is private or public, check ownership first
+  if (permissions.visibility === 'private') {
+    // Only owner can access private experiments
+    const isExperimentOwner = isUserOwner(experiment, currentUser);
+    return isExperimentOwner;
+  }
+  
+  if (permissions.visibility === 'public') {
+    // Public experiments allow all features
+    return true;
+  }
+  
+  if (permissions.visibility === 'restricted') {
+    // Check if user is owner
+    const isExperimentOwner = isUserOwner(experiment, currentUser);
+    if (isExperimentOwner) {
+      return true; // Owner always has access
+    }
+    
+    // For non-owners, check specific feature permissions
+    switch (feature) {
+      case 'viewDetails':
+        return permissions.allowViewDetails !== false;
+      case 'export':
+        return permissions.allowExport !== false;
+      case 'versionControl':
+        return permissions.allowVersionControl !== false;
+      default:
+        return true;
+    }
+  }
+  
+  // Default: allow access
+  return true;
+}
+
+/**
+ * Check if current user is the owner of the experiment
+ * @param {Object} experiment - The experiment object
+ * @param {Object} currentUser - Current user info from keycloak
+ * @returns {boolean}
+ */
+export function isUserOwner(experiment, currentUser) {
+  if (!experiment || !currentUser) {
+    return false;
+  }
+
+  const permissions = experiment.content?.permissions;
+  if (!permissions || !permissions.userPermissions) {
+    // Check legacy owner field
+    const ownerId = experiment.created_by || experiment.createdBy || experiment.owner_id;
+    const currentUserId = currentUser.id || currentUser.sub || currentUser.email;
+    return ownerId === currentUserId;
+  }
+
+  // Check in userPermissions array for owner
+  const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
+  if (!ownerPermission) {
+    return false;
+  }
+
+  const currentUserId = currentUser.id || currentUser.sub || currentUser.email;
+  return ownerPermission.userId === currentUserId || ownerPermission.email === currentUser.email;
+}
+
+/**
  * Get user's permission level from experiment's permissions structure
  * @param {Object} experimentPermissions - Experiment's permissions object
  * @param {string} userId - User ID to check

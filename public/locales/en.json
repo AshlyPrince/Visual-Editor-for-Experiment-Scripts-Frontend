@@ -158,6 +158,7 @@
     "references": "References",
     "notes": "Notes",
     "createNew": "Create New Experiment",
+    "continueDraft": "Continue Draft",
     "editExperiment": "Edit Experiment",
     "viewExperiment": "View Experiment",
     "deleteExperiment": "Delete Experiment",
