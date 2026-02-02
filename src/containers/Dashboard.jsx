@@ -792,13 +792,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
               {searchQuery ? t('emptyStates.noSearchResults.description', 'Try adjusting your search terms or filters.') : t('emptyStates.noExperiments.description', 'Start by creating your first experiment. You can use the wizard for a guided experience or start from scratch.')}
             </Typography>
             {!searchQuery && (
-              <Box sx={{ mb: 3, p: 2, bgcolor: 'info.lighter', borderRadius: 2, maxWidth: 500, mx: 'auto' }}>
-                <Typography variant="body2" color="info.dark">
-                  {searchQuery ? t('emptyStates.noSearchResults.tip', '💡 Tip: Use tags to organize and find experiments easier!') : t('emptyStates.noExperiments.tip', '💡 Tip: Use the wizard if you\'re new to creating experiments!')}
-                </Typography>
-              </Box>
-            )}
-            {!searchQuery && (
               <Tooltip title={hasDraft ? t('tooltips.dashboard.continueDraft', 'Resume working on your saved draft') : t('tooltips.dashboard.createExperiment', 'Create a new experiment from scratch')} arrow>
                 <Button
                   variant="contained"

@@ -1176,14 +1176,16 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       }}>
         {}
         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBack />}
-            onClick={onClose}
-            sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
-          >
-            {t('buttons.backToDashboard')}
-          </Button>
+          <Tooltip title={t('tooltips.experiment.backToDashboard', 'Return to your experiment list')} arrow>
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBack />}
+              onClick={onClose}
+              sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+            >
+              {t('buttons.backToDashboard')}
+            </Button>
+          </Tooltip>
         </Box>
 
         {}
@@ -1200,7 +1202,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           {}
           {onEdit && (
             <Tooltip 
-              title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+              title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('tooltips.experiment.editExperiment', 'Make changes to this experiment')}
               arrow
             >
               <span>
@@ -1220,7 +1222,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           
           {}
           <Tooltip 
-            title={!canViewHistory ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+            title={!canViewHistory ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('tooltips.version.viewHistory', 'View and compare previous versions')}
             arrow
           >
             <span>
@@ -1238,7 +1240,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           </Tooltip>
           
           <Tooltip 
-            title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+            title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('tooltips.experiment.export', 'Download as PDF or Word document')}
             arrow
           >
             <span>

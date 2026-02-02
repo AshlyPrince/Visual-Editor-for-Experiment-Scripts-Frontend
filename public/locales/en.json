@@ -1476,12 +1476,14 @@
     },
     "experiment": {
       "edit": "Edit experiment details and content",
+      "editExperiment": "Make changes to this experiment",
       "view": "View experiment in read-only mode",
       "delete": "Permanently delete this experiment",
-      "export": "Export to PDF or HTML format",
+      "export": "Download as PDF or Word document",
       "duplicate": "Create a copy of this experiment",
       "share": "Share with other users",
       "versionHistory": "View all previous versions",
+      "backToDashboard": "Return to your experiment list",
       "managePermissions": "Control who can access this experiment",
       "requestAccess": "Request permission to view or edit",
       "viewDetails": "See complete experiment information"
@@ -1535,6 +1537,7 @@
       "richTextHelp": "Use formatting tools: Bold for emphasis, lists for steps, headings for organization",
       "polishAllHelp": "AI will review and improve all your content for clarity and scientific accuracy",
       "checkConsistencyHelp": "AI will verify that terminology and content are consistent across sections",
+      "addCustomSection": "Create your own section with a custom name and description",
       "publicPermissionHelp": "Everyone can view this experiment - Great for sharing with the wider community",
       "privatePermissionHelp": "Only you can access this experiment - Ideal while still developing content",
       "restrictedPermissionHelp": "Control exactly who can access and what they can do - Best for collaborative work",
@@ -1558,6 +1561,7 @@
       "compareVersions": "See differences between versions",
       "restoreVersion": "Revert to this version",
       "viewVersion": "See this version's content",
+      "viewHistory": "View and compare previous versions",
       "versionNumber": "Version identifier",
       "commitMessage": "Description of what changed"
     },

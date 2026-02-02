@@ -1197,6 +1197,7 @@
     "restrictedDesc": "Jeder mit dem Link kann ansehen, Bearbeitung erfordert Genehmigung",
     "restrictedAccess": "Dieses Experiment hat eingeschränkten Zugriff",
     "restrictedAccessDesc": "Einige Funktionen sind vom Ersteller deaktiviert. Deaktivierte Schaltflächen sind ausgegraut und zeigen einen Tooltip, der die Einschränkung erklärt.",
+    "featureRestricted": "Diese Funktion wurde vom Experiment-Ersteller eingeschränkt",
     "public": "Öffentlich",
     "publicDesc": "Jeder kann dieses Experiment im öffentlichen Katalog ansehen",
     "additionalSettings": "Zusätzliche Einstellungen",
@@ -1278,6 +1279,7 @@
   "help": {
     "title": "Benutzerhandbuch & Hilfe",
     "helpGuide": "Hilfe & Benutzerhandbuch",
+    "getStartedWithPlatform": "Erste Schritte mit der Plattform",
     "gettingStarted": "Erste Schritte",
     "features": "Funktionen",
     "tips": "Tipps & Tricks",
@@ -1474,12 +1476,14 @@
     },
     "experiment": {
       "edit": "Experimentdetails und Inhalt bearbeiten",
+      "editExperiment": "Änderungen an diesem Experiment vornehmen",
       "view": "Experiment im Nur-Lese-Modus anzeigen",
       "delete": "Dieses Experiment endgültig löschen",
-      "export": "Als PDF oder HTML exportieren",
+      "export": "Als PDF- oder Word-Dokument herunterladen",
       "duplicate": "Eine Kopie dieses Experiments erstellen",
       "share": "Mit anderen Benutzern teilen",
       "versionHistory": "Alle vorherigen Versionen anzeigen",
+      "backToDashboard": "Zurück zu Ihrer Experimentliste",
       "managePermissions": "Steuern, wer auf dieses Experiment zugreifen kann",
       "requestAccess": "Berechtigung zum Anzeigen oder Bearbeiten anfordern",
       "viewDetails": "Vollständige Experimentinformationen anzeigen"
@@ -1533,6 +1537,7 @@
       "richTextHelp": "Verwenden Sie Formatierungswerkzeuge: Fett für Betonung, Listen für Schritte, Überschriften für Organisation",
       "polishAllHelp": "KI wird alle Ihre Inhalte auf Klarheit und wissenschaftliche Genauigkeit überprüfen und verbessern",
       "checkConsistencyHelp": "KI wird überprüfen, dass Terminologie und Inhalt über alle Abschnitte hinweg konsistent sind",
+      "addCustomSection": "Erstellen Sie Ihren eigenen Abschnitt mit einem benutzerdefinierten Namen und einer Beschreibung",
       "publicPermissionHelp": "Jeder kann dieses Experiment ansehen - Ideal zum Teilen mit der breiteren Community",
       "privatePermissionHelp": "Nur Sie können auf dieses Experiment zugreifen - Ideal während der Inhaltsentwicklung",
       "restrictedPermissionHelp": "Kontrollieren Sie genau, wer zugreifen kann und was sie tun können - Am besten für kollaborative Arbeit",
@@ -1556,6 +1561,7 @@
       "compareVersions": "Unterschiede zwischen Versionen anzeigen",
       "restoreVersion": "Zu dieser Version zurückkehren",
       "viewVersion": "Inhalt dieser Version anzeigen",
+      "viewHistory": "Vorherige Versionen anzeigen und vergleichen",
       "versionNumber": "Versionskennung",
       "commitMessage": "Beschreibung der Änderungen"
     },

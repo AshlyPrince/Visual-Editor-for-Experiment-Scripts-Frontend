@@ -708,12 +708,6 @@ const ModularExperimentWizard = ({
       <Typography variant="body2" color="text.secondary" paragraph>
         {t('wizard.steps.basicInfoDesc')}
       </Typography>
-      
-      <Alert severity="info" sx={{ mb: 3 }}>
-        <Typography variant="body2">
-          💡 {t('emptyStates.noExperiments.tip', 'Tip: Use the wizard if you\'re new to creating experiments!')}
-        </Typography>
-      </Alert>
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid item xs={12}>
@@ -782,14 +776,16 @@ const ModularExperimentWizard = ({
               </Grid>
 
               <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label={t('wizard.basicInfo.program')}
-                  value={basicInfo.program}
-                  onChange={(e) => updateBasicInfo('program', e.target.value)}
-                  placeholder={t('wizard.basicInfo.programPlaceholder')}
-                  size="small"
-                />
+                <Tooltip title={t('tooltips.wizard.programHelp', 'Specify the program or academic track')} arrow>
+                  <TextField
+                    fullWidth
+                    label={t('wizard.basicInfo.program')}
+                    value={basicInfo.program}
+                    onChange={(e) => updateBasicInfo('program', e.target.value)}
+                    placeholder={t('wizard.basicInfo.programPlaceholder')}
+                    size="small"
+                  />
+                </Tooltip>
               </Grid>
             </Grid>
           </Box>
@@ -816,11 +812,6 @@ const ModularExperimentWizard = ({
       <Alert severity="info" icon={<InfoIcon />} sx={{ mb: 3 }}>
         <Typography variant="body2">
           💡 {t('tooltips.wizard.selectSection', 'Choose sections to include in your experiment')}
-        </Typography>
-        <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
-          ⭐ = {t('tooltips.wizard.sectionRequired', 'Required')} | 
-          ✨ = {t('tooltips.wizard.sectionRecommended', 'Recommended')} | 
-          ⚡ = {t('tooltips.wizard.sectionOptional', 'Optional')}
         </Typography>
       </Alert>
 
@@ -940,13 +931,15 @@ const ModularExperimentWizard = ({
           <Typography variant="h6">
             {t('wizard.sections.customSections')}
           </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={() => setCustomSectionDialog(true)}
-          >
-            {t('wizard.sections.addCustomSection')}
-          </Button>
+          <Tooltip title={t('tooltips.wizard.addCustomSection', 'Create your own section with a custom name and description')} arrow>
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={() => setCustomSectionDialog(true)}
+            >
+              {t('wizard.sections.addCustomSection')}
+            </Button>
+          </Tooltip>
         </Box>
 
         {customSections.length > 0 ? (
