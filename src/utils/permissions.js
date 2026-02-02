@@ -154,9 +154,15 @@ export function isUserOwner(experiment, currentUser) {
     owner_id: experiment.owner_id
   });
   
-  if (ownerId && (ownerId === currentUserId || ownerId === currentUserEmail)) {
-    console.log('[Permissions] isUserOwner: TRUE - Matched via owner fields');
-    return true;
+  if (ownerId) {
+    if (ownerId === currentUserId) {
+      console.log('[Permissions] isUserOwner: TRUE - Matched via currentUserId');
+      return true;
+    }
+    if (currentUserEmail && ownerId === currentUserEmail) {
+      console.log('[Permissions] isUserOwner: TRUE - Matched via currentUserEmail');
+      return true;
+    }
   }
 
   const permissions = experiment.content?.permissions;
@@ -165,14 +171,14 @@ export function isUserOwner(experiment, currentUser) {
     const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
     console.log('[Permissions] Checking userPermissions:', ownerPermission);
     if (ownerPermission) {
-      const isMatch = ownerPermission.userId === currentUserId || 
-                      ownerPermission.userId === currentUserEmail ||
-                      ownerPermission.email === currentUserEmail ||
-                      ownerPermission.email === currentUserId;
-      if (isMatch) {
-        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions');
+      if (ownerPermission.userId === currentUserId) {
+        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions.userId');
+        return true;
       }
-      return isMatch;
+      if (currentUserEmail && (ownerPermission.email === currentUserEmail || ownerPermission.userId === currentUserEmail)) {
+        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions.email');
+        return true;
+      }
     }
   }
 

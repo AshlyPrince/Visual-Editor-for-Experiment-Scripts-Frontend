@@ -87,7 +87,11 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         id: rawData.id,
         title: rawData.title,
         current_version_id: rawData.current_version_id,
-        current_version_number: rawData.current_version_number
+        current_version_number: rawData.current_version_number,
+        created_by: rawData.created_by,
+        createdBy: rawData.createdBy,
+        owner_id: rawData.owner_id,
+        hasContentPermissions: !!rawData.content?.permissions
       });
       
       const procedureSection = (rawData.sections || rawData.content?.sections || []).find(s => s.id === 'procedure');
@@ -1160,6 +1164,13 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
   const canSimplify = experiment ? canAccessRestrictedFeature(experiment, 'simplify', currentUser) : false;
+
+  console.log('[ExperimentViewer] Current user info:', {
+    id: currentUser?.id,
+    sub: currentUser?.sub,
+    email: currentUser?.email,
+    preferred_username: currentUser?.preferred_username
+  });
 
   console.log('[ExperimentViewer] Permission check results:', {
     userIsOwner,
