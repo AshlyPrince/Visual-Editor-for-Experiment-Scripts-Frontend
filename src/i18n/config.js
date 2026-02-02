@@ -4,9 +4,9 @@ import HttpBackend from 'i18next-http-backend';
 
 const getInitialLanguage = () => {
   try {
-    return localStorage.getItem('i18nextLng') || 'en';
+    return localStorage.getItem('i18nextLng') || 'de';
   } catch (e) {
-    return 'en';
+    return 'de';
   }
 };
 
@@ -15,7 +15,7 @@ export const i18nInitPromise = new Promise((resolve) => {
     .use(HttpBackend)
     .use(initReactI18next)
     .init({
-      fallbackLng: 'en',
+      fallbackLng: 'de',
       lng: getInitialLanguage(),
       supportedLngs: ['en', 'de'],
       

@@ -97,6 +97,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const [selectedExperiment, setSelectedExperiment] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [experimentToDelete, setExperimentToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [exportingExperiment, setExportingExperiment] = useState(null);
   const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
@@ -582,6 +584,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     if (selectedExperiment) {
       setExperimentToDelete(selectedExperiment);
       setDeleteDialogOpen(true);
+      setDeleteLoading(false);
+      setDeleteSuccess(false);
     }
     handleMenuClose();
   };
@@ -589,6 +593,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const handleDeleteConfirm = async () => {
     if (!experimentToDelete) return;
 
+    setDeleteLoading(true);
+    
     try {
       await deleteExperimentAsync(
         () => experimentService.deleteExperiment(experimentToDelete.id)
@@ -625,15 +631,29 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         setPage(page - 1);
       }
       
-      addNotification({
-        type: 'success',
-        message: t('experiment.experimentDeleted')
-      });
+      // Show success state
+      setDeleteLoading(false);
+      setDeleteSuccess(true);
       
-      setDeleteDialogOpen(false);
-      setExperimentToDelete(null);
+      // Auto-close after showing success message
+      setTimeout(() => {
+        setDeleteDialogOpen(false);
+        setExperimentToDelete(null);
+        setDeleteSuccess(false);
+        
+        addNotification({
+          type: 'success',
+          message: t('experiment.experimentDeleted')
+        });
+      }, 1500);
+      
     } catch (err) {
       console.error('Error deleting experiment:', err);
+      setDeleteLoading(false);
+      setDeleteSuccess(false);
+      setDeleteDialogOpen(false);
+      setExperimentToDelete(null);
+      
       addNotification({
         type: 'error',
         message: t('messages.errorDeletingExperiment')
@@ -644,6 +664,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
     setExperimentToDelete(null);
+    setDeleteLoading(false);
+    setDeleteSuccess(false);
   };
 
   const handleCardClick = (experiment) => {
@@ -1010,7 +1032,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         onConfirm={handleDeleteConfirm}
         itemName={experimentToDelete?.title || ''}
         itemType="experiment"
-        loading={deleting}
+        loading={deleteLoading}
+        success={deleteSuccess}
       />
 
       {exportDialogOpen && exportingExperiment && (
