@@ -299,30 +299,27 @@ class ExperimentService {
       id: currentExperiment.id,
       title: currentExperiment.title,
       hasContent: !!currentExperiment.content,
-      currentPermissions: currentExperiment.content?.permissions?.visibility || 'none',
-      contentKeys: currentExperiment.content ? Object.keys(currentExperiment.content) : []
+      hasTopLevelPermissions: !!currentExperiment.permissions,
+      topLevelPermissionsVisibility: currentExperiment.permissions?.visibility || 'none',
+      contentPermissionsVisibility: currentExperiment.content?.permissions?.visibility || 'none'
     });
     
-    // Update permissions in the content while preserving everything else
+    // Update permissions in BOTH locations:
+    // 1. Top-level (for backend compatibility)
+    // 2. Inside content (for frontend state)
     const updatedContent = {
       ...currentExperiment.content,
       permissions: permissionsData
     };
     
-    console.log('[experimentService] Updated content structure:', {
-      contentKeys: Object.keys(updatedContent),
-      sectionsCount: updatedContent.sections?.length || 0,
-      hasConfig: !!updatedContent.config,
-      permissionsVisibility: updatedContent.permissions?.visibility
-    });
-    
-    // Build the complete update payload - same as when saving experiment edits
+    // Build the complete update payload
     const updatePayload = {
       title: currentExperiment.title,
       estimated_duration: currentExperiment.estimated_duration,
       course: currentExperiment.course,
       program: currentExperiment.program,
-      content: updatedContent
+      content: updatedContent,
+      permissions: permissionsData  // ADD permissions at top level for backend
     };
     
     // Preserve ownership fields if they exist
@@ -333,28 +330,24 @@ class ExperimentService {
       updatePayload.owner_id = currentExperiment.owner_id;
     }
     
-    console.log('[experimentService] Complete update payload:', {
-      payloadKeys: Object.keys(updatePayload),
+    console.log('[experimentService] Sending update with permissions at TWO locations:', {
       title: updatePayload.title,
+      hasTopLevelPermissions: !!updatePayload.permissions,
+      topLevelVisibility: updatePayload.permissions?.visibility,
       hasContent: !!updatePayload.content,
-      contentKeys: updatePayload.content ? Object.keys(updatePayload.content) : [],
-      permissionsInPayload: updatePayload.content?.permissions?.visibility
+      contentVisibility: updatePayload.content?.permissions?.visibility
     });
-    
-    // Log the actual payload being sent (be careful with size)
-    console.log('[experimentService] FULL PAYLOAD:', JSON.stringify(updatePayload, null, 2));
     
     // Use the standard updateExperiment method
     const response = await this.updateExperiment(experimentId, updatePayload);
     
-    console.log('[experimentService] FULL RESPONSE:', JSON.stringify(response, null, 2));
-    
-    console.log('[experimentService] Backend response summary:', {
+    console.log('[experimentService] Backend response:', {
       id: response.id,
       title: response.title,
       hasContent: !!response.content,
-      responseContentKeys: response.content ? Object.keys(response.content) : [],
-      savedPermissions: response.content?.permissions?.visibility || 'not found'
+      hasTopLevelPermissions: !!response.permissions,
+      savedTopLevelVisibility: response.permissions?.visibility || 'not found',
+      savedContentVisibility: response.content?.permissions?.visibility || 'not found'
     });
     
     return response;
