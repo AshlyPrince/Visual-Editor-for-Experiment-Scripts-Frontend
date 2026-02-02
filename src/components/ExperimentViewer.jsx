@@ -27,12 +27,14 @@ import {
   History as HistoryIcon,
   FileDownload as ExportIcon,
   Lock as LockIcon,
+  Translate as TranslateIcon,
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
 import keycloakService from '../services/keycloakService.js';
 import VersionHistory from './VersionHistory';
 import ExportDialog from './ExportDialog';
 import PermissionsManager from './PermissionsManager';
+import LanguageSimplificationDialog from './LanguageSimplificationDialog';
 import { toCanonical } from '../utils/experimentCanonical.js';
 import { canAccessRestrictedFeature, isUserOwner } from '../utils/permissions.js';
 
@@ -44,6 +46,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [permissionsOpen, setPermissionsOpen] = useState(false);
+  const [simplifyOpen, setSimplifyOpen] = useState(false);
 
   useEffect(() => {
     if (experimentId) {
@@ -1205,6 +1208,25 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             </span>
           </Tooltip>
           
+          {/* Simplify Language button */}
+          <Tooltip 
+            title={t('simplification.tooltip', 'Simplify the language for different education levels')}
+            arrow
+          >
+            <span style={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '0 0 auto' } }}>
+              <Button
+                variant="outlined"
+                color="info"
+                startIcon={<TranslateIcon />}
+                onClick={() => setSimplifyOpen(true)}
+                fullWidth
+                sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+              >
+                {t('simplification.simplify', 'Simplify')}
+              </Button>
+            </span>
+          </Tooltip>
+          
           {/* Admin action - Permissions (only for owner) */}
           {userIsOwner && (
             <Tooltip 
@@ -1387,6 +1409,19 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           experiment={experiment}
           onExported={(type) => {
             
+          }}
+        />
+      )}
+
+      {experiment && (
+        <LanguageSimplificationDialog
+          open={simplifyOpen}
+          onClose={() => setSimplifyOpen(false)}
+          experimentData={experiment}
+          onExport={(simplifiedData, format, level) => {
+            // Handle the simplified version - you can open the export dialog or handle it separately
+            setSimplifyOpen(false);
+            setExportOpen(true);
           }}
         />
       )}

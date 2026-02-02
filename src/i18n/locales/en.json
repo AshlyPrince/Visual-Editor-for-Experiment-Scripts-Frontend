@@ -332,6 +332,8 @@
     "unableToExportHTML": "Unable to export HTML."
   },
   "simplification": {
+    "simplify": "Simplify",
+    "tooltip": "Simplify the language for different education levels",
     "menuItem": "Simplify Language",
     "dialogTitle": "Simplify Language",
     "selectLevel": "Select Complexity Level",

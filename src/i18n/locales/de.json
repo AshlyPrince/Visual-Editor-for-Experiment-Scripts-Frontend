@@ -332,6 +332,8 @@
     "unableToExportHTML": "HTML-Export nicht möglich."
   },
   "simplification": {
+    "simplify": "Vereinfachen",
+    "tooltip": "Sprache für verschiedene Bildungsstufen vereinfachen",
     "menuItem": "Sprache vereinfachen",
     "dialogTitle": "Sprache vereinfachen",
     "selectLevel": "Komplexitätsstufe auswählen",
