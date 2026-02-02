@@ -172,79 +172,146 @@ const LanguageSimplificationDialog = ({
     </>
   );
 
-  const renderPreviewStep = () => (
-    <>
-      <DialogContent>
-        <Alert severity="success" sx={{ mb: 3 }}>
-          {t('simplification.success', 'Language simplified successfully! Preview the changes below.')}
-        </Alert>
-
-        <Box sx={{ mb: 3 }}>
-          <Chip 
-            label={levels.find(l => l.value === targetLevel)?.label} 
-            color="primary" 
-            sx={{ mb: 2 }}
-          />
-          
-          <Paper elevation={2} sx={{ p: 3, maxHeight: 400, overflow: 'auto' }}>
-            <Typography variant="h6" gutterBottom>
-              {simplifiedData?.title}
-            </Typography>
-            
-            {simplifiedData?.duration && (
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                {t('experiment.duration', 'Duration')}: {simplifiedData.duration}
-              </Typography>
-            )}
-
-            <Divider sx={{ my: 2 }} />
-
-            {simplifiedData?.sections?.map((section, idx) => (
-              <Box key={idx} sx={{ mb: 3 }}>
-                <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                  {section.title || section.type}
+  const renderPreviewStep = () => {
+    // Helper function to render content based on its type
+    const renderContent = (content) => {
+      if (!content) return null;
+      
+      if (typeof content === 'string') {
+        // HTML or plain text content
+        return <div dangerouslySetInnerHTML={{ __html: content }} />;
+      }
+      
+      if (typeof content === 'object' && !Array.isArray(content)) {
+        // Object content (like {steps: [...], items: [...]})
+        if (content.steps && Array.isArray(content.steps)) {
+          return (
+            <Box component="ol" sx={{ pl: 2 }}>
+              {content.steps.map((step, i) => (
+                <li key={i}>
+                  <Typography variant="body2">
+                    {step.text || step.instruction || 'Step'}
+                  </Typography>
+                </li>
+              ))}
+            </Box>
+          );
+        }
+        
+        if (content.items && Array.isArray(content.items)) {
+          return (
+            <Box component="ul" sx={{ pl: 2 }}>
+              {content.items.map((item, i) => (
+                <li key={i}>
+                  <Typography variant="body2">
+                    {typeof item === 'string' ? item : item.name || 'Item'}
+                  </Typography>
+                </li>
+              ))}
+            </Box>
+          );
+        }
+        
+        // Generic object content
+        return (
+          <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+            {Object.entries(content).map(([key, value]) => 
+              typeof value === 'string' ? value : ''
+            ).filter(Boolean).join('\n')}
+          </Typography>
+        );
+      }
+      
+      if (Array.isArray(content)) {
+        return (
+          <Box component="ul" sx={{ pl: 2 }}>
+            {content.map((item, i) => (
+              <li key={i}>
+                <Typography variant="body2">
+                  {typeof item === 'string' ? item : item.text || item.name || 'Item'}
                 </Typography>
-                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                  {section.content}
-                </Typography>
-              </Box>
+              </li>
             ))}
-          </Paper>
-        </Box>
+          </Box>
+        );
+      }
+      
+      return null;
+    };
 
-        <Typography variant="body2" color="text.secondary">
-          {t('simplification.exportInfo', 'Choose how you want to export the simplified version:')}
-        </Typography>
-      </DialogContent>
+    return (
+      <>
+        <DialogContent>
+          <Alert severity="success" sx={{ mb: 3 }}>
+            {t('simplification.success', 'Language simplified successfully! Preview the changes below.')}
+          </Alert>
 
-      <DialogActions sx={{ flexDirection: 'column', alignItems: 'stretch', gap: 1, px: 3, pb: 2 }}>
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={() => handleExport('pdf')}
-          startIcon={<DownloadIcon />}
-        >
-          {t('simplification.exportPDF', 'Export as PDF')}
-        </Button>
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={() => handleExport('html')}
-          startIcon={<DownloadIcon />}
-        >
-          {t('simplification.exportHTML', 'Export as HTML')}
-        </Button>
-        <Box sx={{ display: 'flex', gap: 1, width: '100%', mt: 1 }}>
-          <Button onClick={() => setStep('select')} fullWidth>
-            {t('common.back', 'Back')}
+          <Box sx={{ mb: 3 }}>
+            <Chip 
+              label={levels.find(l => l.value === targetLevel)?.label} 
+              color="primary" 
+              sx={{ mb: 2 }}
+            />
+            
+            <Paper elevation={2} sx={{ p: 3, maxHeight: 400, overflow: 'auto' }}>
+              <Typography variant="h6" gutterBottom>
+                {simplifiedData?.title || simplifiedData?.content?.config?.title}
+              </Typography>
+              
+              {(simplifiedData?.estimated_duration || simplifiedData?.content?.config?.duration) && (
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  {t('experiment.duration', 'Duration')}: {simplifiedData.estimated_duration || simplifiedData.content?.config?.duration}
+                </Typography>
+              )}
+
+              <Divider sx={{ my: 2 }} />
+
+              {(simplifiedData?.content?.sections || simplifiedData?.sections || []).map((section, idx) => (
+                <Box key={section.id || idx} sx={{ mb: 3 }}>
+                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                    {section.icon && <span>{section.icon} </span>}
+                    {section.name || section.title || section.type}
+                  </Typography>
+                  {renderContent(section.content)}
+                </Box>
+              ))}
+            </Paper>
+          </Box>
+
+          <Typography variant="body2" color="text.secondary">
+            {t('simplification.exportInfo', 'Choose how you want to export the simplified version:')}
+          </Typography>
+        </DialogContent>
+
+        <DialogActions sx={{ flexDirection: 'column', alignItems: 'stretch', gap: 1, px: 3, pb: 2 }}>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => handleExport('pdf')}
+            startIcon={<DownloadIcon />}
+          >
+            {t('simplification.exportPDF', 'Export as PDF')}
           </Button>
-          <Button onClick={handleClose} fullWidth>
-            {t('common.close', 'Close')}
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => handleExport('html')}
+            startIcon={<DownloadIcon />}
+          >
+            {t('simplification.exportHTML', 'Export as HTML')}
           </Button>
-        </Box>
-      </DialogActions>
-    </>
-  );
+          <Box sx={{ display: 'flex', gap: 1, width: '100%', mt: 1 }}>
+            <Button onClick={() => setStep('select')} fullWidth>
+              {t('common.back', 'Back')}
+            </Button>
+            <Button onClick={handleClose} fullWidth>
+              {t('common.close', 'Close')}
+            </Button>
+          </Box>
+        </DialogActions>
+      </>
+    );
+  };
 
   return (
     <Dialog 
