@@ -110,6 +110,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         .section {
             margin-bottom: 30px;
             page-break-inside: avoid;
+            break-inside: avoid;
             clear: both;
         }
         
@@ -128,6 +129,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             padding-left: 5px;
             overflow-wrap: break-word;
             word-wrap: break-word;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
         
         .subsection {
@@ -288,12 +291,11 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         }
         
         .safety-icons-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             margin: 20px 0;
             max-width: 600px;
-            justify-items: center;
         }
         
         .safety-icon-item {
@@ -302,6 +304,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             align-items: center;
             text-align: center;
             page-break-inside: avoid;
+            width: 80px;
         }
         
         .safety-icon-item img {
@@ -355,7 +358,19 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             
             .section {
                 page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-before: auto;
                 margin-bottom: 25px;
+            }
+            
+            .section-title {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            .section-content {
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
             .footer {
@@ -365,6 +380,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             
             h1, h2, h3 {
                 page-break-after: avoid;
+                break-after: avoid;
             }
             
             .media-gallery {

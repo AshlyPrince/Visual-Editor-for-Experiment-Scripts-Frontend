@@ -798,7 +798,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         <Box sx={{ pl: 2 }}>
           {((section.media && Array.isArray(section.media) && section.media.length > 0) || 
             (sectionContent.media && Array.isArray(sectionContent.media) && sectionContent.media.length > 0)) && 
-            section.id !== 'safety' && (
+            section.id !== 'safety' && section.id !== 'hazards' && (
             <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
               {(section.media || sectionContent.media || []).map((mediaItem, index) => (
                 <Box key={index} sx={{ textAlign: 'center', maxWidth: '700px', width: '100%' }}>
@@ -1092,21 +1092,21 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             section.id === 'safety' && (
             <Box sx={{ mb: 3 }}>
               <Box sx={{ 
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+                display: 'flex',
+                flexWrap: 'wrap',
                 gap: 1.5,
                 maxWidth: '600px'
               }}>
                 {(section.media || sectionContent.media || []).map((mediaItem, index) => (
-                  <Box key={index} sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Box key={index} sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80px' }}>
                     {mediaItem.type?.startsWith('image/') && (
                       <Box
                         component="img"
                         src={mediaItem.url || mediaItem.data}
                         alt={mediaItem.caption || mediaItem.name || `Safety icon ${index + 1}`}
                         sx={{
-                          width: '80px',
-                          height: '80px',
+                          width: 80,
+                          height: 80,
                           borderRadius: 0,
                           objectFit: 'contain',
                           mb: 0.5

@@ -205,11 +205,12 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
 
   const getAvailableSections = () => {
     const existingSectionBaseIds = sections.map(section => {
-      return section.id.replace(/_\d+$/, '');
+      return section.id.replace(/_\d+$/, '').replace(/^custom_/, 'custom');
     });
     
+    // Always include 'custom' option, filter out only predefined sections that exist
     return availableSectionTemplates.filter(
-      template => !existingSectionBaseIds.includes(template.id)
+      template => template.id === 'custom' || !existingSectionBaseIds.includes(template.id)
     );
   };
 
@@ -731,31 +732,23 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
       <Dialog open={addSectionOpen} onClose={() => setAddSectionOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{t('editor.addNewSection')}</DialogTitle>
         <DialogContent>
-          {getAvailableSections().length > 0 ? (
-            <>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>
-                {t('editor.selectSectionType')}
-              </Typography>
-              <FormControl fullWidth>
-                <InputLabel>{t('editor.sectionType')}</InputLabel>
-                <Select
-                  value={newSectionType}
-                  onChange={(e) => setNewSectionType(e.target.value)}
-                  label={t('editor.sectionType')}
-                >
-                  {getAvailableSections().map((template) => (
-                    <MenuItem key={template.id} value={template.id}>
-                      {template.icon} {template.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          ) : (
-            <Alert severity="info" sx={{ mt: 2 }}>
-              {t('editor.allSectionsAdded')}
-            </Alert>
-          )}
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>
+            {t('editor.selectSectionType')}
+          </Typography>
+          <FormControl fullWidth>
+            <InputLabel>{t('editor.sectionType')}</InputLabel>
+            <Select
+              value={newSectionType}
+              onChange={(e) => setNewSectionType(e.target.value)}
+              label={t('editor.sectionType')}
+            >
+              {getAvailableSections().map((template) => (
+                <MenuItem key={template.id} value={template.id}>
+                  {template.icon} {template.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => {
@@ -767,7 +760,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
           <Button 
             onClick={handleAddSection} 
             variant="contained" 
-            disabled={!newSectionType || getAvailableSections().length === 0}
+            disabled={!newSectionType}
           >
             {t('editor.addSection')}
           </Button>

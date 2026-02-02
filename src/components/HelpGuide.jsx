@@ -406,24 +406,6 @@ const HelpGuide = ({ open, onClose }) => {
                 </Typography>
               </Box>
 
-              <Box sx={{ mb: 2, p: 2, bgcolor: 'green.50', borderRadius: 1 }}>
-                <Typography variant="subtitle2" fontWeight="bold" color="success.main" gutterBottom>
-                  ✨ Text Polisher (Smart Improvement)
-                </Typography>
-                <Typography variant="body2">
-                  • Available in rich text editor sections
-                </Typography>
-                <Typography variant="body2">
-                  • Automatically improves grammar, clarity, and professional tone
-                </Typography>
-                <Typography variant="body2">
-                  • Select text → Click "Polish Text" → Review → Accept changes
-                </Typography>
-                <Typography variant="body2">
-                  • Perfect for making instructions clearer for students
-                </Typography>
-              </Box>
-
               <Box sx={{ mb: 2, p: 2, bgcolor: 'purple.50', borderRadius: 1 }}>
                 <Typography variant="subtitle2" fontWeight="bold" color="secondary.main" gutterBottom>
                   📝 Language Simplification
@@ -798,12 +780,12 @@ const HelpGuide = ({ open, onClose }) => {
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle2">
-                {t('help.q12', 'What is Text Polisher and how do I use it?')}
+                {t('help.q12', 'Can I simplify my experiment for younger students?')}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
-                {t('help.a12', 'Text Polisher uses AI to improve your writing. In any rich text editor section, select text and click the "Polish Text" button. The AI will improve grammar, clarity, and professional tone. Review the suggestions and accept if satisfied.')}
+                {t('help.a12', 'Yes! Open your experiment, click the menu (three dots), and select "Simplify Language". Choose the target grade level, and AI will rewrite the content to match that comprehension level. This creates a new version, so your original is preserved.')}
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -811,12 +793,12 @@ const HelpGuide = ({ open, onClose }) => {
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle2">
-                {t('help.q13', 'Can I simplify my experiment for younger students?')}
+                {t('help.q13', 'What if I accidentally close the experiment wizard?')}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
-                {t('help.a13', 'Yes! Open your experiment, click the menu (three dots), and select "Simplify Language". Choose the target grade level, and AI will rewrite the content to match that comprehension level. This creates a new version, so your original is preserved.')}
+                {t('help.a13', 'Don\'t worry! Your work is automatically saved as a draft. Return to the dashboard, and the "Create New Experiment" button will show "Continue Draft". Click it to resume exactly where you left off.')}
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -824,25 +806,12 @@ const HelpGuide = ({ open, onClose }) => {
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle2">
-                {t('help.q14', 'What if I accidentally close the experiment wizard?')}
+                {t('help.q14', 'How do I check if my experiment is complete?')}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
-                {t('help.a14', 'Don\'t worry! Your work is automatically saved as a draft. Return to the dashboard, and the "Create New Experiment" button will show "Continue Draft". Click it to resume exactly where you left off.')}
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="subtitle2">
-                {t('help.q15', 'How do I check if my experiment is complete?')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography variant="body2">
-                {t('help.a15', 'Click the "Review Content" button in the wizard or experiment editor. The system will check for missing fields, incomplete sections, and consistency issues. You\'ll get a detailed report with suggestions for improvements.')}
+                {t('help.a14', 'Click the "Review Content" button in the wizard or experiment editor. The system will check for missing fields, incomplete sections, and consistency issues. You\'ll get a detailed report with suggestions for improvements.')}
               </Typography>
             </AccordionDetails>
           </Accordion>

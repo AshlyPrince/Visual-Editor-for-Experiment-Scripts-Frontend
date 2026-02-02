@@ -45,10 +45,10 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
       content: t('onboarding.welcome.content', 'Create professional experiment scripts in minutes, not hours.'),
       icon: <ScienceIcon sx={{ fontSize: 60, color: 'primary.main' }} />,
       details: [
-        t('onboarding.welcome.detail1', '📝 Step-by-step wizard guides you through creation'),
-        t('onboarding.welcome.detail2', '🤖 AI assistant helps improve your content'),
-        t('onboarding.welcome.detail3', '� Control who can access your experiments'),
-        t('onboarding.welcome.detail4', '📄 Export to PDF/HTML for easy sharing')
+        t('onboarding.welcome.detail1', 'Step-by-step wizard guides you through creation'),
+        t('onboarding.welcome.detail2', 'AI assistant helps improve your content'),
+        t('onboarding.welcome.detail3', 'Control who can access your experiments'),
+        t('onboarding.welcome.detail4', 'Export to PDF/HTML for easy sharing')
       ]
     },
     {
@@ -56,10 +56,10 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
       content: t('onboarding.create.content', 'Start with "Create New Experiment" and follow the wizard.'),
       icon: <AddIcon sx={{ fontSize: 60, color: 'success.main' }} />,
       details: [
-        t('onboarding.create.detail1', '1️⃣ Enter title, duration, and description'),
-        t('onboarding.create.detail2', '2️⃣ Select sections you need (materials, procedure, safety)'),
-        t('onboarding.create.detail3', '3️⃣ Fill in content with rich text editor'),
-        t('onboarding.create.detail4', '4️⃣ Add images, videos, and safety icons')
+        t('onboarding.create.detail1', 'Enter title, duration, and description'),
+        t('onboarding.create.detail2', 'Select sections you need (materials, procedure, safety)'),
+        t('onboarding.create.detail3', 'Fill in content with rich text editor'),
+        t('onboarding.create.detail4', 'Add images, videos, and safety icons')
       ]
     },
     {
@@ -67,10 +67,10 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
       content: t('onboarding.aiFeatures.content', 'Get instant help while creating your experiments.'),
       icon: <ChatIcon sx={{ fontSize: 60, color: '#2196f3' }} />,
       details: [
-        t('onboarding.aiFeatures.detail1', '💬 AI Chat: Click bottom-right chat icon for suggestions'),
-        t('onboarding.aiFeatures.detail2', '✨ Text Polisher: Improve grammar and clarity instantly'),
-        t('onboarding.aiFeatures.detail3', '✅ Content Review: Check for missing or incomplete sections'),
-        t('onboarding.aiFeatures.detail4', '🔄 Simplify Language: Adapt content for different grade levels')
+        t('onboarding.aiFeatures.detail1', 'AI Chat: Click bottom-right chat icon for suggestions'),
+        t('onboarding.aiFeatures.detail2', 'Content Review: Check for missing or incomplete sections'),
+        t('onboarding.aiFeatures.detail3', 'Simplify Language: Adapt content for different grade levels'),
+        t('onboarding.aiFeatures.detail4', 'Get personalized help based on your experiment context')
       ]
     },
     {
@@ -78,10 +78,10 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
       content: t('onboarding.permissions.content', 'Decide who can access your experiments.'),
       icon: <Box sx={{ fontSize: 60 }}>🔒</Box>,
       details: [
-        t('onboarding.permissions.detail1', '🔴 Private: Only you (perfect for drafts)'),
-        t('onboarding.permissions.detail2', '🟢 Public: Everyone has full access'),
-        t('onboarding.permissions.detail3', '🟡 Restricted: Choose which features others can use'),
-        t('onboarding.permissions.detail4', '👁️ Restricted users see disabled buttons with tooltips explaining why')
+        t('onboarding.permissions.detail1', 'Private: Only you (perfect for drafts)'),
+        t('onboarding.permissions.detail2', 'Public: Everyone has full access'),
+        t('onboarding.permissions.detail3', 'Restricted: Choose which features others can use'),
+        t('onboarding.permissions.detail4', 'Restricted users see disabled buttons with tooltips explaining why')
       ]
     },
     {
@@ -89,10 +89,10 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
       content: t('onboarding.workflow.content', 'Key features to remember as you work.'),
       icon: <SaveIcon sx={{ fontSize: 60, color: 'secondary.main' }} />,
       details: [
-        t('onboarding.workflow.detail1', '💾 Auto-save: Work is saved automatically, resume anytime'),
-        t('onboarding.workflow.detail2', '🔄 Versions: Every save creates a version you can restore'),
-        t('onboarding.workflow.detail3', '📤 Export: Download as PDF (print) or HTML (web)'),
-        t('onboarding.workflow.detail4', '❓ Help: Click "?" button anytime for detailed guides')
+        t('onboarding.workflow.detail1', 'Auto-save: Work is saved automatically, resume anytime'),
+        t('onboarding.workflow.detail2', 'Versions: Every save creates a version you can restore'),
+        t('onboarding.workflow.detail3', 'Export: Download as PDF (print) or HTML (web)'),
+        t('onboarding.workflow.detail4', 'Help: Click "?" button anytime for detailed guides')
       ]
     },
     {
@@ -100,10 +100,10 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
       content: t('onboarding.ready.content', 'Start creating amazing experiment scripts now.'),
       icon: <CheckIcon sx={{ fontSize: 60, color: 'success.main' }} />,
       details: [
-        t('onboarding.ready.detail1', '🚀 Click "Create New Experiment" to begin'),
-        t('onboarding.ready.detail2', '💡 Use AI assistant when you need guidance'),
-        t('onboarding.ready.detail3', '📚 Check Help Guide for detailed instructions'),
-        t('onboarding.ready.detail4', '✨ Experiment fearlessly - drafts auto-save!')
+        t('onboarding.ready.detail1', 'Click "Create New Experiment" to begin'),
+        t('onboarding.ready.detail2', 'Use AI assistant when you need guidance'),
+        t('onboarding.ready.detail3', 'Check Help Guide for detailed instructions'),
+        t('onboarding.ready.detail4', 'Experiment fearlessly - drafts auto-save!')
       ]
     }
   ];

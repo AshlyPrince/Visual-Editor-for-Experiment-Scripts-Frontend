@@ -1339,64 +1339,62 @@
     "a10b": "Grayed-out (disabled) buttons mean the experiment creator has restricted that feature. This is intentional - they want you to view the experiment but not use certain features like editing, exporting, or deleting.",
     "q11": "How do I use the AI Assistant?",
     "a11": "Click the chat icon in the bottom-right corner while creating or editing an experiment. The AI knows your experiment context and can answer questions, suggest improvements, or help with missing sections. Try asking: \"What's missing in my experiment?\" or \"Help me improve the safety section.\"",
-    "q12": "What is Text Polisher and how do I use it?",
-    "a12": "Text Polisher uses AI to improve your writing. In any rich text editor section, select text and click the \"Polish Text\" button. The AI will improve grammar, clarity, and professional tone. Review the suggestions and accept if satisfied.",
-    "q13": "Can I simplify my experiment for younger students?",
-    "a13": "Yes! Open your experiment, click the menu (three dots), and select \"Simplify Language\". Choose the target grade level, and AI will rewrite the content to match that comprehension level. This creates a new version, so your original is preserved.",
-    "q14": "What if I accidentally close the experiment wizard?",
-    "a14": "Don't worry! Your work is automatically saved as a draft. Return to the dashboard, and the \"Create New Experiment\" button will show \"Continue Draft\". Click it to resume exactly where you left off.",
-    "q15": "How do I check if my experiment is complete?",
-    "a15": "Click the \"Review Content\" button in the wizard or experiment editor. The system will check for missing fields, incomplete sections, and consistency issues. You'll get a detailed report with suggestions for improvements.",
+    "q12": "Can I simplify my experiment for younger students?",
+    "a12": "Yes! Open your experiment, click the menu (three dots), and select \"Simplify Language\". Choose the target grade level, and AI will rewrite the content to match that comprehension level. This creates a new version, so your original is preserved.",
+    "q13": "What if I accidentally close the experiment wizard?",
+    "a13": "Don't worry! Your work is automatically saved as a draft. Return to the dashboard, and the \"Create New Experiment\" button will show \"Continue Draft\". Click it to resume exactly where you left off.",
+    "q14": "How do I check if my experiment is complete?",
+    "a14": "Click the \"Review Content\" button in the wizard or experiment editor. The system will check for missing fields, incomplete sections, and consistency issues. You'll get a detailed report with suggestions for improvements.",
     "close": "Close"
   },
   "onboarding": {
     "welcome": {
       "title": "Welcome to Visual Editor!",
       "content": "Create professional experiment scripts in minutes, not hours.",
-      "detail1": "📝 Step-by-step wizard guides you through creation",
-      "detail2": "🤖 AI assistant helps improve your content",
-      "detail3": "🔒 Control who can access your experiments",
-      "detail4": "📄 Export to PDF/HTML for easy sharing"
+      "detail1": "Step-by-step wizard guides you through creation",
+      "detail2": "AI assistant helps improve your content",
+      "detail3": "Control who can access your experiments",
+      "detail4": "Export to PDF/HTML for easy sharing"
     },
     "create": {
       "title": "Creating an Experiment",
       "content": "Start with \"Create New Experiment\" and follow the wizard.",
-      "detail1": "1️⃣ Enter title, duration, and description",
-      "detail2": "2️⃣ Select sections you need (materials, procedure, safety)",
-      "detail3": "3️⃣ Fill in content with rich text editor",
-      "detail4": "4️⃣ Add images, videos, and safety icons"
+      "detail1": "Enter title, duration, and description",
+      "detail2": "Select sections you need (materials, procedure, safety)",
+      "detail3": "Fill in content with rich text editor",
+      "detail4": "Add images, videos, and safety icons"
     },
     "aiFeatures": {
       "title": "AI-Powered Features",
       "content": "Get instant help while creating your experiments.",
-      "detail1": "💬 AI Chat: Click bottom-right chat icon for suggestions",
-      "detail2": "✨ Text Polisher: Improve grammar and clarity instantly",
-      "detail3": "✅ Content Review: Check for missing or incomplete sections",
-      "detail4": "🔄 Simplify Language: Adapt content for different grade levels"
+      "detail1": "AI Chat: Click bottom-right chat icon for suggestions",
+      "detail2": "Content Review: Check for missing or incomplete sections",
+      "detail3": "Simplify Language: Adapt content for different grade levels",
+      "detail4": "Get personalized help based on your experiment context"
     },
     "permissions": {
       "title": "Sharing & Permissions",
       "content": "Decide who can access your experiments.",
-      "detail1": "🔴 Private: Only you (perfect for drafts)",
-      "detail2": "🟢 Public: Everyone has full access",
-      "detail3": "🟡 Restricted: Choose which features others can use",
-      "detail4": "👁️ Restricted users see disabled buttons with tooltips explaining why"
+      "detail1": "Private: Only you (perfect for drafts)",
+      "detail2": "Public: Everyone has full access",
+      "detail3": "Restricted: Choose which features others can use",
+      "detail4": "Restricted users see disabled buttons with tooltips explaining why"
     },
     "workflow": {
       "title": "Your Workflow",
       "content": "Key features to remember as you work.",
-      "detail1": "💾 Auto-save: Work is saved automatically, resume anytime",
-      "detail2": "🔄 Versions: Every save creates a version you can restore",
-      "detail3": "📤 Export: Download as PDF (print) or HTML (web)",
-      "detail4": "❓ Help: Click \"?\" button anytime for detailed guides"
+      "detail1": "Auto-save: Work is saved automatically, resume anytime",
+      "detail2": "Versions: Every save creates a version you can restore",
+      "detail3": "Export: Download as PDF (print) or HTML (web)",
+      "detail4": "Help: Click \"?\" button anytime for detailed guides"
     },
     "ready": {
       "title": "You're Ready!",
       "content": "Start creating amazing experiment scripts now.",
-      "detail1": "🚀 Click \"Create New Experiment\" to begin",
-      "detail2": "💡 Use AI assistant when you need guidance",
-      "detail3": "📚 Check Help Guide for detailed instructions",
-      "detail4": "✨ Experiment fearlessly - drafts auto-save!"
+      "detail1": "Click \"Create New Experiment\" to begin",
+      "detail2": "Use AI assistant when you need guidance",
+      "detail3": "Check Help Guide for detailed instructions",
+      "detail4": "Experiment fearlessly - drafts auto-save!"
     },
     "next": "Next",
     "back": "Back",
