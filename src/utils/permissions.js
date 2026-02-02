@@ -134,6 +134,8 @@ export function isUserOwner(experiment, currentUser) {
     return false;
   }
 
+  console.log('[Permissions] currentUser object:', currentUser);
+
   const userIdentifiers = [
     currentUser.id,
     currentUser.sub,
