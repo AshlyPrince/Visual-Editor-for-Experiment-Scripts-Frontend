@@ -192,7 +192,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         .procedure-steps li strong {
             display: block;
             margin-bottom: 5px;
-            color: #1976d2;
+            color: #333;
         }
         
         .step-checkbox {
@@ -297,12 +297,12 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             align-items: center;
             text-align: center;
             page-break-inside: avoid;
-            width: 80px;
+            width: 60px;
         }
         
         .safety-icon-item img {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
             display: block;
         }
@@ -312,7 +312,7 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             font-size: 8pt;
             color: #666;
             text-align: center;
-            max-width: 80px;
+            max-width: 60px;
             word-wrap: break-word;
             line-height: 1.2;
         }
@@ -343,21 +343,27 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                 margin: 0;
                 padding: 0;
                 background-color: white;
+                orphans: 3;
+                widows: 3;
             }
             
             .container {
                 padding: 30px 40px;
                 height: auto !important;
                 overflow: visible !important;
+                orphans: 3;
+                widows: 3;
             }
             
             /* CRITICAL: Keep sections together - don't split them across pages */
             .section {
-                page-break-inside: avoid;
-                break-inside: avoid;
+                page-break-inside: auto;
+                break-inside: auto;
                 page-break-before: auto;
                 margin-bottom: 25px;
                 position: static !important;
+                orphans: 3;
+                widows: 3;
                 height: auto !important;
                 overflow: visible !important;
             }
@@ -370,8 +376,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             
             /* Keep section content together */
             .section-content {
-                page-break-inside: avoid;
-                break-inside: avoid;
+                orphans: 3;
+                widows: 3;
             }
             
             /* Keep headings with following content */
@@ -405,8 +411,10 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             
             /* Keep images from splitting */
             .media-item img {
-                max-height: 300px;
-                width: 100%;
+                max-height: 500px;
+                max-width: 100%;
+                width: auto;
+                height: auto;
                 object-fit: contain;
                 display: block;
                 page-break-inside: avoid;
@@ -419,6 +427,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             .safety-icons-gallery {
                 page-break-inside: avoid;
                 break-inside: avoid;
+                orphans: 3;
+                widows: 3;
             }
             
             /* Keep icon items together */

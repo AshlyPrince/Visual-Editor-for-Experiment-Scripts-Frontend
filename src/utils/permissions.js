@@ -164,6 +164,7 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
  */
 export function isUserOwner(experiment, currentUser) {
   if (!experiment || !currentUser) {
+    console.log('[Permissions] isUserOwner: Missing experiment or currentUser');
     return false;
   }
 
@@ -172,13 +173,25 @@ export function isUserOwner(experiment, currentUser) {
   const currentUserEmail = currentUser.email;
   
   if (!currentUserId && !currentUserEmail) {
+    console.log('[Permissions] isUserOwner: No user identifiers found');
     return false;
   }
 
   // Check legacy owner fields first (most reliable for existing experiments)
   const ownerId = experiment.created_by || experiment.createdBy || experiment.owner_id;
   
+  console.log('[Permissions] Checking ownership:', {
+    experimentId: experiment.id,
+    currentUserId,
+    currentUserEmail,
+    ownerId,
+    created_by: experiment.created_by,
+    createdBy: experiment.createdBy,
+    owner_id: experiment.owner_id
+  });
+  
   if (ownerId && (ownerId === currentUserId || ownerId === currentUserEmail)) {
+    console.log('[Permissions] isUserOwner: TRUE - Matched via owner fields');
     return true;
   }
 
@@ -187,15 +200,20 @@ export function isUserOwner(experiment, currentUser) {
   if (permissions && permissions.userPermissions && Array.isArray(permissions.userPermissions)) {
     // Check in userPermissions array for owner
     const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
+    console.log('[Permissions] Checking userPermissions:', ownerPermission);
     if (ownerPermission) {
       const isMatch = ownerPermission.userId === currentUserId || 
                       ownerPermission.userId === currentUserEmail ||
                       ownerPermission.email === currentUserEmail ||
                       ownerPermission.email === currentUserId;
+      if (isMatch) {
+        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions');
+      }
       return isMatch;
     }
   }
 
+  console.log('[Permissions] isUserOwner: FALSE - No match found');
   return false;
 }
 

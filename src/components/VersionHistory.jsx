@@ -592,6 +592,101 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
               const sectionContent = sectionData.content || '';
               const sectionMedia = sectionData.media || [];
 
+              // Check if this is a safety or hazards section
+              const isSafetySection = sectionName.toLowerCase().includes('safety') || 
+                                     sectionName.toLowerCase().includes('sicherheit') ||
+                                     sectionData.id?.includes('safety');
+              const isHazardsSection = sectionName.toLowerCase().includes('hazard') || 
+                                      sectionName.toLowerCase().includes('gefahr') ||
+                                      sectionData.id?.includes('hazard');
+
+              // Separate safety/hazard icons from regular media
+              const safetyIcons = isSafetySection || isHazardsSection ? sectionMedia.filter(m => {
+                const name = (m.name || '').toLowerCase();
+                const url = (m.url || m.data || '').toLowerCase();
+                
+                if (isSafetySection) {
+                  return m.isSafetyIcon || 
+                         name.includes('safety-') || 
+                         name.includes('saftey-') ||
+                         name.includes('ppe') ||
+                         name.includes('goggles') ||
+                         name.includes('gloves') ||
+                         name.includes('helmet') ||
+                         name.includes('faceshield') ||
+                         name.includes('headset') ||
+                         name.includes('lab coat') ||
+                         name.includes('labcoat') ||
+                         name.includes('coat') ||
+                         name.includes('mask') ||
+                         name.includes('respirator') ||
+                         name.includes('apron') ||
+                         name.includes('boots') ||
+                         name.includes('shoe') ||
+                         name.includes('wear') ||
+                         url.includes('/saftey/') ||
+                         url.includes('/safety/');
+                } else if (isHazardsSection) {
+                  return m.isHazardIcon || 
+                         name.includes('ghs') || 
+                         name.includes('hazard') ||
+                         name.includes('toxic') ||
+                         name.includes('flammable') ||
+                         name.includes('corrosive') ||
+                         name.includes('explosive') ||
+                         name.includes('oxidizing') ||
+                         name.includes('irritant') ||
+                         name.includes('compressed') ||
+                         name.includes('environmental') ||
+                         url.includes('/ghs/') ||
+                         url.includes('/hazard/');
+                }
+                return false;
+              }) : [];
+
+              const regularMedia = isSafetySection || isHazardsSection ? sectionMedia.filter(m => {
+                const name = (m.name || '').toLowerCase();
+                const url = (m.url || m.data || '').toLowerCase();
+                
+                if (isSafetySection) {
+                  return !m.isSafetyIcon && 
+                         !name.includes('safety-') && 
+                         !name.includes('saftey-') &&
+                         !name.includes('ppe') &&
+                         !name.includes('goggles') &&
+                         !name.includes('gloves') &&
+                         !name.includes('helmet') &&
+                         !name.includes('faceshield') &&
+                         !name.includes('headset') &&
+                         !name.includes('lab coat') &&
+                         !name.includes('labcoat') &&
+                         !name.includes('coat') &&
+                         !name.includes('mask') &&
+                         !name.includes('respirator') &&
+                         !name.includes('apron') &&
+                         !name.includes('boots') &&
+                         !name.includes('shoe') &&
+                         !name.includes('wear') &&
+                         !url.includes('/saftey/') &&
+                         !url.includes('/safety/');
+                } else if (isHazardsSection) {
+                  return !m.isHazardIcon && 
+                         !name.includes('ghs') && 
+                         !name.includes('hazard') &&
+                         !name.includes('toxic') &&
+                         !name.includes('flammable') &&
+                         !name.includes('corrosive') &&
+                         !name.includes('explosive') &&
+                         !name.includes('oxidizing') &&
+                         !name.includes('irritant') &&
+                         !name.includes('compressed') &&
+                         !name.includes('environmental') &&
+                         !url.includes('/ghs/') &&
+                         !url.includes('/hazard/');
+                }
+                return true;
+              }) : sectionMedia;
+
               const hasContent = () => {
                 if (sectionMedia.length > 0) return true;
                 
@@ -631,9 +726,60 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
 
                     <Divider sx={{ my: 2 }} />
 
-                    {sectionMedia.length > 0 && (
+                    {/* Safety/Hazard Icons */}
+                    {safetyIcons.length > 0 && (
+                      <Box sx={{ mb: 3 }}>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          flexWrap: 'wrap', 
+                          gap: 2,
+                          mb: 2
+                        }}>
+                          {safetyIcons.map((mediaItem, mediaIndex) => (
+                            <Box
+                              key={mediaIndex}
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                width: '60px'
+                              }}
+                            >
+                              <Box
+                                component="img"
+                                src={mediaItem.data || mediaItem.url}
+                                alt={mediaItem.name || `Icon ${mediaIndex + 1}`}
+                                sx={{
+                                  width: 40,
+                                  height: 40,
+                                  objectFit: 'contain'
+                                }}
+                              />
+                              {mediaItem.name && (
+                                <Typography 
+                                  variant="caption" 
+                                  sx={{ 
+                                    textAlign: 'center',
+                                    fontSize: '0.65rem',
+                                    lineHeight: 1.2,
+                                    maxWidth: '60px',
+                                    wordWrap: 'break-word'
+                                  }}
+                                >
+                                  {mediaItem.name}
+                                </Typography>
+                              )}
+                            </Box>
+                          ))}
+                        </Box>
+                      </Box>
+                    )}
+
+                    {/* Regular Media */}
+                    {regularMedia.length > 0 && (
                       <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
-                        {sectionMedia.map((mediaItem, index) => (
+                        {regularMedia.map((mediaItem, index) => (
                           <Box key={index} sx={{ textAlign: 'center', maxWidth: '700px', width: '100%' }}>
                             <Box sx={{ 
                               width: `${mediaItem.displaySize || 100}%`,
@@ -698,13 +844,37 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                     {sectionContent && (
                       <Box sx={{ mb: 3 }}>
                         {Array.isArray(sectionContent) ? (
-                          
+                          // Handle array content (like materials list or procedure steps)
                           <Box component="ul" sx={{ pl: 3, m: 0 }}>
-                            {sectionContent.map((item, itemIdx) => (
-                              <Typography component="li" key={itemIdx} variant="body1" sx={{ mb: 1 }}>
-                                {typeof item === 'string' ? item : JSON.stringify(item)}
-                              </Typography>
-                            ))}
+                            {sectionContent.map((item, itemIdx) => {
+                              // Handle different item types
+                              let displayText = '';
+                              
+                              if (typeof item === 'string') {
+                                displayText = item;
+                              } else if (typeof item === 'object' && item !== null) {
+                                // Check for procedure step format
+                                if (item.text || item.instruction) {
+                                  displayText = item.text || item.instruction;
+                                }
+                                // Check for material format
+                                else if (item.name) {
+                                  displayText = item.name;
+                                }
+                                // Fallback to JSON
+                                else {
+                                  displayText = JSON.stringify(item);
+                                }
+                              } else {
+                                displayText = String(item);
+                              }
+                              
+                              return (
+                                <Typography component="li" key={itemIdx} variant="body1" sx={{ mb: 1 }}>
+                                  {displayText}
+                                </Typography>
+                              );
+                            })}
                           </Box>
                         ) : typeof sectionContent === 'object' && sectionContent !== null ? (
                           
@@ -720,11 +890,35 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                                   </Typography>
                                   {Array.isArray(value) ? (
                                     <Box component="ul" sx={{ pl: 3, mt: 0.5, mb: 0 }}>
-                                      {value.map((item, idx) => (
-                                        <Typography component="li" key={idx} variant="body2" sx={{ mb: 0.5 }}>
-                                          {typeof item === 'string' ? item : JSON.stringify(item)}
-                                        </Typography>
-                                      ))}
+                                      {value.map((item, idx) => {
+                                        // Handle different item types in arrays
+                                        let displayText = '';
+                                        
+                                        if (typeof item === 'string') {
+                                          displayText = item;
+                                        } else if (typeof item === 'object' && item !== null) {
+                                          // Check for procedure step format
+                                          if (item.text || item.instruction) {
+                                            displayText = item.text || item.instruction;
+                                          }
+                                          // Check for material format
+                                          else if (item.name) {
+                                            displayText = item.name;
+                                          }
+                                          // Fallback to JSON
+                                          else {
+                                            displayText = JSON.stringify(item);
+                                          }
+                                        } else {
+                                          displayText = String(item);
+                                        }
+                                        
+                                        return (
+                                          <Typography component="li" key={idx} variant="body2" sx={{ mb: 0.5 }}>
+                                            {displayText}
+                                          </Typography>
+                                        );
+                                      })}
                                     </Box>
                                   ) : typeof value === 'object' ? (
                                     <Typography variant="body2" sx={{ ml: 2, whiteSpace: 'pre-wrap' }}>

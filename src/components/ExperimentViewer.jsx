@@ -457,7 +457,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: 0.5,
-                    width: '80px'
+                    width: '60px'
                   }}
                 >
                   <Box
@@ -465,8 +465,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                     src={mediaItem.data || mediaItem.url}
                     alt={mediaItem.name || `${t('wizard.safety')} ${mediaIndex + 1}`}
                     sx={{
-                      width: 60,
-                      height: 60,
+                      width: 40,
+                      height: 40,
                       objectFit: 'contain'
                     }}
                   />
@@ -477,7 +477,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                         textAlign: 'center',
                         fontSize: '0.65rem',
                         lineHeight: 1.2,
-                        maxWidth: '70px',
+                        maxWidth: '60px',
                         wordWrap: 'break-word'
                       }}
                     >
@@ -616,7 +616,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: 0.5,
-                    width: '80px'
+                    width: '60px'
                   }}
                 >
                   <Box
@@ -624,8 +624,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                     src={mediaItem.data || mediaItem.url}
                     alt={mediaItem.name || `${t('viewer.hazardIcon')} ${mediaIndex + 1}`}
                     sx={{
-                      width: 60,
-                      height: 60,
+                      width: 40,
+                      height: 40,
                       objectFit: 'contain'
                     }}
                   />
@@ -636,7 +636,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                         textAlign: 'center',
                         fontSize: '0.65rem',
                         lineHeight: 1.2,
-                        maxWidth: '70px',
+                        maxWidth: '60px',
                         wordWrap: 'break-word'
                       }}
                     >

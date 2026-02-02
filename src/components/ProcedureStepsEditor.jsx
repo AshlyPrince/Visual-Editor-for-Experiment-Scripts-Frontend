@@ -96,15 +96,6 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
           {t('wizard.procedureSteps')}
         </Typography>
-        <Button
-          size="small"
-          variant="outlined"
-          startIcon={<AddIcon />}
-          onClick={handleAddStep}
-          sx={{ textTransform: 'none' }}
-        >
-          {t('editor.addStep')}
-        </Button>
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -118,9 +109,18 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
               borderColor: 'grey.300',
             }}
           >
-            <Typography color="text.secondary">
+            <Typography color="text.secondary" mb={2}>
               {t('editor.noStepsYet')}
             </Typography>
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={handleAddStep}
+              sx={{ textTransform: 'none' }}
+            >
+              {t('editor.addStep')}
+            </Button>
           </Paper>
         ) : (
           steps.map((step, index) => (
@@ -221,11 +221,24 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
       </Box>
 
       {steps.length > 0 && (
-        <Box sx={{ mt: 2, textAlign: 'center' }}>
-          <Typography variant="caption" color="text.secondary">
-            {t('messages.itemsCount', { count: steps.length, max: 50 })}
-          </Typography>
-        </Box>
+        <>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={handleAddStep}
+              sx={{ textTransform: 'none' }}
+            >
+              {t('editor.addStep')}
+            </Button>
+          </Box>
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Typography variant="caption" color="text.secondary">
+              {t('messages.itemsCount', { count: steps.length, max: 50 })}
+            </Typography>
+          </Box>
+        </>
       )}
     </Box>
   );

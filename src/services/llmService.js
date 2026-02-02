@@ -343,11 +343,24 @@ ${p.instruction}`;
     
     const parsed = JSON.parse(jsonText);
     
+    // Helper function to ensure we have strings
+    const normalizeToStrings = (arr) => {
+      if (!Array.isArray(arr)) return [];
+      return arr.map(item => {
+        if (typeof item === 'string') return item;
+        if (typeof item === 'object' && item !== null) {
+          // If it's an object, try to extract meaningful text
+          return item.text || item.message || item.description || JSON.stringify(item);
+        }
+        return String(item);
+      });
+    };
+    
     
     return {
       consistent: parsed.consistent !== false, 
-      issues: Array.isArray(parsed.issues) ? parsed.issues : [],
-      recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : []
+      issues: normalizeToStrings(parsed.issues),
+      recommendations: normalizeToStrings(parsed.recommendations)
     };
   } catch (error) {
     
@@ -451,13 +464,75 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
     
     try {
       const hasTextContent = section.content && typeof section.content === 'string';
+      const hasObjectContent = section.content && typeof section.content === 'object' && !Array.isArray(section.content);
+      const hasArrayContent = Array.isArray(section.content);
       const hasListItems = section.items && Array.isArray(section.items);
       const hasSteps = section.steps && Array.isArray(section.steps);
       
-      if ((section.type === 'text' || hasTextContent) && section.content) {
+      // Handle string content
+      if (hasTextContent && section.content) {
         simplifiedSection.content = await simplifyText(section.content, targetLevel, t);
-      } 
-      else if ((section.type === 'list' || hasListItems) && section.items && Array.isArray(section.items)) {
+      }
+      // Handle object content (like {description: "...", items: [...]})
+      else if (hasObjectContent) {
+        const simplifiedContent = {};
+        for (const [key, value] of Object.entries(section.content)) {
+          if (typeof value === 'string' && value.trim().length > 0) {
+            // Simplify string values
+            simplifiedContent[key] = await simplifyText(value, targetLevel, t);
+          } else if (Array.isArray(value)) {
+            // Simplify array items
+            simplifiedContent[key] = await Promise.all(
+              value.map(async (item) => {
+                if (typeof item === 'string') {
+                  return await simplifyText(item, targetLevel, t);
+                } else if (typeof item === 'object' && item !== null) {
+                  // Handle objects in arrays (like procedure steps)
+                  if (item.text || item.instruction || item.notes) {
+                    return {
+                      ...item,
+                      text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
+                      instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
+                      notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
+                    };
+                  } else if (item.name) {
+                    return {
+                      ...item,
+                      name: await simplifyText(item.name, targetLevel, t)
+                    };
+                  }
+                }
+                return item;
+              })
+            );
+          } else {
+            simplifiedContent[key] = value;
+          }
+        }
+        simplifiedSection.content = simplifiedContent;
+      }
+      // Handle array content
+      else if (hasArrayContent) {
+        simplifiedSection.content = await Promise.all(
+          section.content.map(async (item) => {
+            if (typeof item === 'string') {
+              return await simplifyText(item, targetLevel, t);
+            } else if (typeof item === 'object' && item !== null) {
+              if (item.text || item.instruction || item.notes) {
+                return {
+                  ...item,
+                  text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
+                  instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
+                  notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
+                };
+              }
+            }
+            return item;
+          })
+        );
+      }
+      // Handle legacy items array
+      else if (hasListItems) {
         simplifiedSection.items = await Promise.all(
           section.items.map(async (item, idx) => {
             if (typeof item === 'string') {
@@ -467,13 +542,16 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
           })
         );
       } 
-      else if ((section.type === 'steps' || hasSteps) && section.steps && Array.isArray(section.steps)) {
+      // Handle legacy steps array
+      else if (hasSteps) {
         simplifiedSection.steps = await Promise.all(
           section.steps.map(async (step, idx) => {
-            if (step.instruction) {
+            if (step.instruction || step.text || step.notes) {
               return {
                 ...step,
-                instruction: await simplifyText(step.instruction, targetLevel, t)
+                instruction: step.instruction ? await simplifyText(step.instruction, targetLevel, t) : step.instruction,
+                text: step.text ? await simplifyText(step.text, targetLevel, t) : step.text,
+                notes: step.notes ? await simplifyText(step.notes, targetLevel, t) : step.notes
               };
             }
             return step;
@@ -481,6 +559,7 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
         );
       }
     } catch (error) {
+      console.error('[LLM Service] Error simplifying section:', error);
     }
     
     simplifiedSections.push(simplifiedSection);
