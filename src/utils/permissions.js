@@ -134,10 +134,14 @@ export function isUserOwner(experiment, currentUser) {
     return false;
   }
 
-  const currentUserId = currentUser.id || currentUser.sub || currentUser.email || currentUser.preferred_username;
-  const currentUserEmail = currentUser.email;
+  const userIdentifiers = [
+    currentUser.id,
+    currentUser.sub,
+    currentUser.email,
+    currentUser.preferred_username
+  ].filter(Boolean);
   
-  if (!currentUserId && !currentUserEmail) {
+  if (userIdentifiers.length === 0) {
     console.log('[Permissions] isUserOwner: No user identifiers found');
     return false;
   }
@@ -146,23 +150,16 @@ export function isUserOwner(experiment, currentUser) {
   
   console.log('[Permissions] Checking ownership:', {
     experimentId: experiment.id,
-    currentUserId,
-    currentUserEmail,
+    userIdentifiers,
     ownerId,
     created_by: experiment.created_by,
     createdBy: experiment.createdBy,
     owner_id: experiment.owner_id
   });
   
-  if (ownerId) {
-    if (ownerId === currentUserId) {
-      console.log('[Permissions] isUserOwner: TRUE - Matched via currentUserId');
-      return true;
-    }
-    if (currentUserEmail && ownerId === currentUserEmail) {
-      console.log('[Permissions] isUserOwner: TRUE - Matched via currentUserEmail');
-      return true;
-    }
+  if (ownerId && userIdentifiers.includes(ownerId)) {
+    console.log('[Permissions] isUserOwner: TRUE - Matched via owner fields');
+    return true;
   }
 
   const permissions = experiment.content?.permissions;
@@ -171,12 +168,9 @@ export function isUserOwner(experiment, currentUser) {
     const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
     console.log('[Permissions] Checking userPermissions:', ownerPermission);
     if (ownerPermission) {
-      if (ownerPermission.userId === currentUserId) {
-        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions.userId');
-        return true;
-      }
-      if (currentUserEmail && (ownerPermission.email === currentUserEmail || ownerPermission.userId === currentUserEmail)) {
-        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions.email');
+      if (userIdentifiers.includes(ownerPermission.userId) || 
+          userIdentifiers.includes(ownerPermission.email)) {
+        console.log('[Permissions] isUserOwner: TRUE - Matched via userPermissions');
         return true;
       }
     }
