@@ -424,8 +424,8 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
     <div class="header">
         <h1>${experiment.title || t('export.experimentProtocol')}</h1>
         <div class="meta-info">
-            ${config?.subject || experiment.course ? `<span class="meta-badge">${config?.subject || experiment.course}</span>` : ''}
-            ${config?.gradeLevel || experiment.program ? `<span class="meta-badge">${config?.gradeLevel || experiment.program}</span>` : ''}
+            ${config?.subjectArea || config?.subject || experiment.course ? `<span class="meta-badge">${t('experiment.course')}: ${config?.subjectArea || config?.subject || experiment.course}</span>` : ''}
+            ${config?.difficultyLevel || config?.gradeLevel || experiment.program ? `<span class="meta-badge">${t('experiment.program')}: ${config?.difficultyLevel || config?.gradeLevel || experiment.program}</span>` : ''}
             ${config?.duration || experiment.estimated_duration ? `<span class="meta-badge">${t('export.duration')}: ${config?.duration || experiment.estimated_duration}</span>` : ''}
         </div>
     </div>
@@ -543,12 +543,83 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 `;
 
       if (sectionMedia && sectionMedia.length > 0) {
-        const isSafetySection = section.id === 'safety' || section.id === 'hazards';
+        const isSafetySection = section.id === 'safety';
+        const isHazardsSection = section.id === 'hazards';
         
-        if (isSafetySection) {
+        // Separate safety/hazard icons from regular media
+        const iconMedia = sectionMedia.filter(m => {
+          const name = (m.name || '').toLowerCase();
+          const url = (m.url || m.data || '').toLowerCase();
+          
+          if (isSafetySection) {
+            return m.isSafetyIcon || 
+                   name.includes('safety-') || 
+                   name.includes('saftey-') ||
+                   name.includes('ppe') ||
+                   name.includes('goggles') ||
+                   name.includes('gloves') ||
+                   name.includes('helmet') ||
+                   name.includes('faceshield') ||
+                   name.includes('headset') ||
+                   url.includes('/saftey/') ||
+                   url.includes('/safety/');
+          } else if (isHazardsSection) {
+            return m.isHazardIcon || 
+                   name.includes('ghs') || 
+                   name.includes('hazard') ||
+                   name.includes('toxic') ||
+                   name.includes('flammable') ||
+                   name.includes('corrosive') ||
+                   name.includes('explosive') ||
+                   name.includes('oxidizing') ||
+                   name.includes('irritant') ||
+                   name.includes('compressed') ||
+                   name.includes('environmental') ||
+                   url.includes('/ghs/') ||
+                   url.includes('/hazard/');
+          }
+          return false;
+        });
+        
+        const regularMedia = sectionMedia.filter(m => {
+          const name = (m.name || '').toLowerCase();
+          const url = (m.url || m.data || '').toLowerCase();
+          
+          if (isSafetySection) {
+            return !m.isSafetyIcon && 
+                   !name.includes('safety-') && 
+                   !name.includes('saftey-') &&
+                   !name.includes('ppe') &&
+                   !name.includes('goggles') &&
+                   !name.includes('gloves') &&
+                   !name.includes('helmet') &&
+                   !name.includes('faceshield') &&
+                   !name.includes('headset') &&
+                   !url.includes('/saftey/') &&
+                   !url.includes('/safety/');
+          } else if (isHazardsSection) {
+            return !m.isHazardIcon && 
+                   !name.includes('ghs') && 
+                   !name.includes('hazard') &&
+                   !name.includes('toxic') &&
+                   !name.includes('flammable') &&
+                   !name.includes('corrosive') &&
+                   !name.includes('explosive') &&
+                   !name.includes('oxidizing') &&
+                   !name.includes('irritant') &&
+                   !name.includes('compressed') &&
+                   !name.includes('environmental') &&
+                   !url.includes('/ghs/') &&
+                   !url.includes('/hazard/');
+          }
+          return true;
+        });
+        
+        // Render icon media if present
+        if (iconMedia.length > 0) {
           htmlContent += `
             <div class="safety-icons-gallery">
-                ${sectionMedia.map(mediaItem => {
+                ${iconMedia.map(mediaItem => {
                       if (mediaItem.type && mediaItem.type.startsWith('image')) {
                         let imageSrc = mediaItem.data;
                         if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
@@ -565,10 +636,13 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     }).join('\n')}
                 </div>
 `;
-        } else {
+        }
+        
+        // Render regular media if present
+        if (regularMedia.length > 0) {
           htmlContent += `
             <div class="media-gallery">
-                ${sectionMedia.map(mediaItem => {
+                ${regularMedia.map(mediaItem => {
                       if (mediaItem.type && mediaItem.type.startsWith('image')) {
                         let imageSrc = mediaItem.data;
                         if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {

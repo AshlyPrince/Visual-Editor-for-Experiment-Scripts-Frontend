@@ -594,6 +594,22 @@ ${text}` }
     
     let simplifiedText = response.choices[0].message.content.trim();
     
+    // Remove instruction blocks that might have been returned by mistake
+    const instructionPatterns = [
+      /⚠️\s*IMPORTANT RULES[^]*?(?=\n\n[A-Z]|$)/gi,
+      /⚠️\s*CRITICAL RULES[^]*?(?=\n\n[A-Z]|$)/gi,
+      /⚠️\s*WARNING:[^]*?(?=\n\n[A-Z]|$)/gi,
+      /🌍\s*LANGUAGE DETECTION:[^]*?(?=\n\n[A-Z]|$)/gi,
+      /⚠️\s*YOU MUST[^]*?(?=\n\n[A-Z]|$)/gi,
+      /IMPORTANT:[^]*?(?=Original text|$)/gi,
+      /DO NOT translate[^]*?(?=\n\n[A-Z]|$)/gi,
+      /- Return ONLY[^]*?(?=\n\n[A-Z]|Original text|$)/gi
+    ];
+    
+    for (const pattern of instructionPatterns) {
+      simplifiedText = simplifiedText.replace(pattern, '');
+    }
+    
     // Remove meta-commentary
     const metaPatterns = [
       /^here is the simplified version:?\s*/i,
