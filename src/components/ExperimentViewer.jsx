@@ -1181,29 +1181,28 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           gap: 1,
           order: { xs: 0, sm: 1 }
         }}>
-          {canViewHistory && (
-            <Button
-              variant="outlined"
-              startIcon={<HistoryIcon />}
-              onClick={() => setHistoryOpen(true)}
-            >
-              {t('version.versionHistory')}
-            </Button>
-          )}
-          {canExport && (
-            <Button
-              variant="outlined"
-              startIcon={<ExportIcon />}
-              onClick={() => setExportOpen(true)}
-            >
-              {t('common.export')}
-            </Button>
-          )}
-          {onEdit && (userIsOwner || canAccessRestrictedFeature(experiment, 'viewDetails', currentUser)) && (
+          <Button
+            variant="outlined"
+            startIcon={<HistoryIcon />}
+            onClick={() => setHistoryOpen(true)}
+            disabled={!canViewHistory}
+          >
+            {t('version.versionHistory')}
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<ExportIcon />}
+            onClick={() => setExportOpen(true)}
+            disabled={!canExport}
+          >
+            {t('common.export')}
+          </Button>
+          {onEdit && (
             <Button
               variant="contained"
               startIcon={<EditIcon />}
               onClick={() => onEdit(experiment)}
+              disabled={!userIsOwner}
             >
               {t('experiment.editExperiment')}
             </Button>
@@ -1337,7 +1336,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         </>
       </Paper>
 
-      {canViewHistory && historyOpen && (
+      {historyOpen && (
         <Paper
           sx={{
             position: 'fixed',
@@ -1363,7 +1362,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         </Paper>
       )}
 
-      {canExport && experiment && (
+      {experiment && (
         <ExportDialog
           open={exportOpen}
           onClose={() => setExportOpen(false)}

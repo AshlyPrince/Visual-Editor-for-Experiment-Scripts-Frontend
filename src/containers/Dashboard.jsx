@@ -827,14 +827,22 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         ) : (
           <>
             <Grid container spacing={3} sx={{ mb: 4 }}>
-            {experiments.map((experiment) => (
+            {experiments.map((experiment) => {
+              const currentUser = keycloakService.getUserInfo();
+              const canViewDetails = canAccessRestrictedFeature(experiment, 'viewDetails', currentUser);
+              const isClickable = canViewDetails;
+              
+              return (
               <Grid item xs={12} sm={6} md={4} key={experiment.id}>
                 <ExperimentCard 
-                  onClick={() => handleCardClick(experiment)}
+                  onClick={isClickable ? () => handleCardClick(experiment) : undefined}
                   sx={{
                     filter: menuAnchor && selectedExperiment?.id !== experiment.id ? 'blur(2px)' : 'none',
-                    opacity: menuAnchor && selectedExperiment?.id !== experiment.id ? 0.7 : 1,
-                    transition: 'filter 0.2s ease, opacity 0.2s ease'
+                    opacity: menuAnchor && selectedExperiment?.id !== experiment.id ? 0.7 : (!isClickable ? 0.6 : 1),
+                    transition: 'filter 0.2s ease, opacity 0.2s ease',
+                    cursor: isClickable ? 'pointer' : 'not-allowed',
+                    pointerEvents: isClickable ? 'auto' : 'none',
+                    backgroundColor: !isClickable ? 'action.disabledBackground' : 'background.paper'
                   }}
                 >
                   <CardContent sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
@@ -866,6 +874,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                         }}
                         sx={{ 
                           flexShrink: 0,
+                          pointerEvents: 'auto',
                           '&:hover': { 
                             bgcolor: 'transparent'
                           }
@@ -898,7 +907,8 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                   </CardContent>
                 </ExperimentCard>
               </Grid>
-            ))}
+              );
+            })}
           </Grid>
         </>
         )}
@@ -953,36 +963,26 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           
           return (
             <>
-              {userIsOwner && (
-                <MenuItem onClick={handleEdit}>
-                  <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                  {t('experiment.editExperiment')}
-                </MenuItem>
-              )}
-              {canViewHistory && (
-                <MenuItem onClick={handleVersionHistory}>
-                  <HistoryIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                  {t('version.versionHistory')}
-                </MenuItem>
-              )}
-              {canExport && (
-                <MenuItem onClick={handleExport}>
-                  <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                  {t('common.export')}
-                </MenuItem>
-              )}
-              {userIsOwner && (
-                <MenuItem onClick={handleSimplifyLanguage}>
-                  <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                  {t('simplification.menuItem', 'Simplify Language')}
-                </MenuItem>
-              )}
-              {userIsOwner && (
-                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
-                  <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                  {t('common.delete')}
-                </MenuItem>
-              )}
+              <MenuItem onClick={handleEdit} disabled={!userIsOwner}>
+                <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                {t('experiment.editExperiment')}
+              </MenuItem>
+              <MenuItem onClick={handleVersionHistory} disabled={!canViewHistory}>
+                <HistoryIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                {t('version.versionHistory')}
+              </MenuItem>
+              <MenuItem onClick={handleExport} disabled={!canExport}>
+                <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                {t('common.export')}
+              </MenuItem>
+              <MenuItem onClick={handleSimplifyLanguage} disabled={!userIsOwner}>
+                <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                {t('simplification.menuItem', 'Simplify Language')}
+              </MenuItem>
+              <MenuItem onClick={handleDeleteClick} disabled={!userIsOwner} sx={{ color: userIsOwner ? 'error.main' : 'text.disabled' }}>
+                <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                {t('common.delete')}
+              </MenuItem>
             </>
           );
         })()}

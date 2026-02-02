@@ -372,15 +372,14 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
                   <Divider />
 
                   <CardActions sx={{ p: 2, justifyContent: 'flex-start' }}>
-                    {userIsOwner && (
-                      <SecondaryButton
-                        size="small"
-                        onClick={() => handleEditClick(experiment)}
-                        startIcon={<EditIcon />}
-                      >
-                        {t('common.edit')}
-                      </SecondaryButton>
-                    )}
+                    <SecondaryButton
+                      size="small"
+                      onClick={() => handleEditClick(experiment)}
+                      startIcon={<EditIcon />}
+                      disabled={!userIsOwner}
+                    >
+                      {t('common.edit')}
+                    </SecondaryButton>
                   </CardActions>
                 </ExperimentCard>
               </Grid>
@@ -402,31 +401,23 @@ const ExperimentListContainer = ({ reloadSignal, onEditExperiment, onBackToDashb
             
             return (
               <>
-                {userIsOwner && (
-                  <MenuItem onClick={handleEdit}>
-                    <EditIcon sx={{ mr: 1 }} />
-                    {t('experiment.editExperiment')}
-                  </MenuItem>
-                )}
-                {canViewHistory && (
-                  <MenuItem onClick={handleVersionHistory}>
-                    <HistoryIcon sx={{ mr: 1 }} />
-                    {t('version.versionHistory')}
-                  </MenuItem>
-                )}
-                {canExport && (
-                  <MenuItem onClick={handleExport}>
-                    <ExportIcon sx={{ mr: 1 }} />
-                    {t('common.export')}
-                  </MenuItem>
-                )}
+                <MenuItem onClick={handleEdit} disabled={!userIsOwner}>
+                  <EditIcon sx={{ mr: 1 }} />
+                  {t('experiment.editExperiment')}
+                </MenuItem>
+                <MenuItem onClick={handleVersionHistory} disabled={!canViewHistory}>
+                  <HistoryIcon sx={{ mr: 1 }} />
+                  {t('version.versionHistory')}
+                </MenuItem>
+                <MenuItem onClick={handleExport} disabled={!canExport}>
+                  <ExportIcon sx={{ mr: 1 }} />
+                  {t('common.export')}
+                </MenuItem>
                 <Divider />
-                {userIsOwner && (
-                  <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
-                    <DeleteIcon sx={{ mr: 1 }} />
-                    {t('common.delete')}
-                  </MenuItem>
-                )}
+                <MenuItem onClick={handleDeleteClick} disabled={!userIsOwner} sx={{ color: userIsOwner ? 'error.main' : 'text.disabled' }}>
+                  <DeleteIcon sx={{ mr: 1 }} />
+                  {t('common.delete')}
+                </MenuItem>
               </>
             );
           })()}
