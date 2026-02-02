@@ -21,7 +21,8 @@ import {
   DialogActions,
   TextField,
   InputAdornment,
-  Chip
+  Chip,
+  Tooltip
 } from '@mui/material';
 import { experimentService, keycloakService } from '../services/exports.js';
 import { styled } from '@mui/material/styles';
@@ -966,26 +967,70 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           
           return (
             <>
-              <MenuItem onClick={handleEdit} disabled={!canEditExp}>
-                <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                {t('experiment.editExperiment')}
-              </MenuItem>
-              <MenuItem onClick={handleVersionHistory} disabled={!canViewHistory}>
-                <HistoryIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                {t('version.versionHistory')}
-              </MenuItem>
-              <MenuItem onClick={handleExport} disabled={!canExport}>
-                <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                {t('common.export')}
-              </MenuItem>
-              <MenuItem onClick={handleSimplifyLanguage} disabled={!canSimplify}>
-                <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                {t('simplification.menuItem', 'Simplify Language')}
-              </MenuItem>
-              <MenuItem onClick={handleDeleteClick} disabled={!canDeleteExp} sx={{ color: canDeleteExp ? 'error.main' : 'text.disabled' }}>
-                <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
-                {t('common.delete')}
-              </MenuItem>
+              <Tooltip 
+                title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+                placement="left"
+                arrow
+              >
+                <span>
+                  <MenuItem onClick={handleEdit} disabled={!canEditExp}>
+                    <EditIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                    {t('experiment.editExperiment')}
+                  </MenuItem>
+                </span>
+              </Tooltip>
+              
+              <Tooltip 
+                title={!canViewHistory ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+                placement="left"
+                arrow
+              >
+                <span>
+                  <MenuItem onClick={handleVersionHistory} disabled={!canViewHistory}>
+                    <HistoryIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                    {t('version.versionHistory')}
+                  </MenuItem>
+                </span>
+              </Tooltip>
+              
+              <Tooltip 
+                title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+                placement="left"
+                arrow
+              >
+                <span>
+                  <MenuItem onClick={handleExport} disabled={!canExport}>
+                    <ExportIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                    {t('common.export')}
+                  </MenuItem>
+                </span>
+              </Tooltip>
+              
+              <Tooltip 
+                title={!canSimplify ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+                placement="left"
+                arrow
+              >
+                <span>
+                  <MenuItem onClick={handleSimplifyLanguage} disabled={!canSimplify}>
+                    <PsychologyIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                    {t('simplification.menuItem', 'Simplify Language')}
+                  </MenuItem>
+                </span>
+              </Tooltip>
+              
+              <Tooltip 
+                title={!canDeleteExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+                placement="left"
+                arrow
+              >
+                <span>
+                  <MenuItem onClick={handleDeleteClick} disabled={!canDeleteExp} sx={{ color: canDeleteExp ? 'error.main' : 'text.disabled' }}>
+                    <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} />
+                    {t('common.delete')}
+                  </MenuItem>
+                </span>
+              </Tooltip>
             </>
           );
         })()}

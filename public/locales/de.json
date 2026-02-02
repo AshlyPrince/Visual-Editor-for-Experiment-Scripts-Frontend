@@ -1253,6 +1253,59 @@
     "rejectionReasonPrompt": "Grund für Ablehnung (optional):",
     "approveError": "Fehler beim Genehmigen der Anfrage",
     "rejectError": "Fehler beim Ablehnen der Anfrage"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Willkommen beim Visual Editor!",
+      "content": "Erstellen Sie professionelle Versuchsanleitungen in Minuten, nicht Stunden.",
+      "detail1": "📝 Schrittweiser Assistent führt Sie durch die Erstellung",
+      "detail2": "🤖 KI-Assistent hilft bei der Verbesserung Ihrer Inhalte",
+      "detail3": "🔒 Kontrollieren Sie, wer auf Ihre Experimente zugreifen kann",
+      "detail4": "📄 Export als PDF/HTML für einfaches Teilen"
+    },
+    "create": {
+      "title": "Experiment erstellen",
+      "content": "Beginnen Sie mit \"Neues Experiment erstellen\" und folgen Sie dem Assistenten.",
+      "detail1": "1️⃣ Titel, Dauer und Beschreibung eingeben",
+      "detail2": "2️⃣ Benötigte Abschnitte auswählen (Materialien, Ablauf, Sicherheit)",
+      "detail3": "3️⃣ Inhalte mit Rich-Text-Editor ausfüllen",
+      "detail4": "4️⃣ Bilder, Videos und Sicherheitssymbole hinzufügen"
+    },
+    "aiFeatures": {
+      "title": "KI-gestützte Funktionen",
+      "content": "Erhalten Sie sofortige Hilfe beim Erstellen Ihrer Experimente.",
+      "detail1": "💬 KI-Chat: Klicken Sie auf das Chat-Symbol unten rechts für Vorschläge",
+      "detail2": "✨ Text-Polierer: Verbessern Sie Grammatik und Klarheit sofort",
+      "detail3": "✅ Inhaltsüberprüfung: Prüfen auf fehlende oder unvollständige Abschnitte",
+      "detail4": "🔄 Sprache vereinfachen: Passen Sie Inhalte an verschiedene Klassenstufen an"
+    },
+    "permissions": {
+      "title": "Teilen & Berechtigungen",
+      "content": "Entscheiden Sie, wer auf Ihre Experimente zugreifen kann.",
+      "detail1": "🔴 Privat: Nur Sie (perfekt für Entwürfe)",
+      "detail2": "🟢 Öffentlich: Jeder hat vollen Zugriff",
+      "detail3": "🟡 Eingeschränkt: Wählen Sie, welche Funktionen andere nutzen können",
+      "detail4": "👁️ Eingeschränkte Benutzer sehen deaktivierte Schaltflächen mit Tooltips"
+    },
+    "workflow": {
+      "title": "Ihr Arbeitsablauf",
+      "content": "Wichtige Funktionen, die Sie sich merken sollten.",
+      "detail1": "💾 Auto-Speichern: Arbeit wird automatisch gespeichert, jederzeit fortsetzen",
+      "detail2": "🔄 Versionen: Jedes Speichern erstellt eine wiederherstellbare Version",
+      "detail3": "📤 Export: Als PDF (Druck) oder HTML (Web) herunterladen",
+      "detail4": "❓ Hilfe: Klicken Sie jederzeit auf \"?\" für detaillierte Anleitungen"
+    },
+    "ready": {
+      "title": "Sie sind bereit!",
+      "content": "Beginnen Sie jetzt mit der Erstellung großartiger Versuchsanleitungen.",
+      "detail1": "🚀 Klicken Sie auf \"Neues Experiment erstellen\" um zu beginnen",
+      "detail2": "💡 Nutzen Sie den KI-Assistenten, wenn Sie Hilfe benötigen",
+      "detail3": "📚 Konsultieren Sie die Hilfeanleitung für detaillierte Anleitungen",
+      "detail4": "✨ Experimentieren Sie furchtlos - Entwürfe werden automatisch gespeichert!"
+    },
+    "next": "Weiter",
+    "back": "Zurück",
+    "finish": "Los geht's",
+    "skip": "Tour überspringen"
   }
 }
-

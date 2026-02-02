@@ -258,6 +258,230 @@ const HelpGuide = ({ open, onClose }) => {
               </List>
             </AccordionDetails>
           </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <Box sx={{ fontSize: 24 }}>🔒</Box>
+                <Typography variant="subtitle1">{t('help.sharingPermissions', 'Sharing & Permissions')}</Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" paragraph fontWeight="bold">
+                {t('help.sharingPermissionsDesc', 'Control who can access your experiments with three visibility modes:')}
+              </Typography>
+              
+              <Box sx={{ mb: 2, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight="bold" color="error.main" gutterBottom>
+                  🔴 Private Mode
+                </Typography>
+                <Typography variant="body2">
+                  • Only you (the creator) can view and edit this experiment
+                </Typography>
+                <Typography variant="body2">
+                  • Perfect for drafts or personal experiments
+                </Typography>
+                <Typography variant="body2">
+                  • Others cannot see it in their dashboard
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight="bold" color="success.main" gutterBottom>
+                  🟢 Public Mode
+                </Typography>
+                <Typography variant="body2">
+                  • Everyone can view, edit, export, and access all features
+                </Typography>
+                <Typography variant="body2">
+                  • Great for open-source educational content
+                </Typography>
+                <Typography variant="body2">
+                  • Full collaboration access for all users
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight="bold" color="warning.main" gutterBottom>
+                  🟡 Restricted Mode (Granular Control)
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  • You control exactly what others can do with your experiment
+                </Typography>
+                <Typography variant="body2" fontWeight="bold" gutterBottom>
+                  You can enable/disable each feature individually:
+                </Typography>
+                <List dense sx={{ ml: 2 }}>
+                  <ListItem><ListItemText primary="✓ View Experiment Details - Let others read your experiment" /></ListItem>
+                  <ListItem><ListItemText primary="✓ Edit Experiment - Allow others to make changes" /></ListItem>
+                  <ListItem><ListItemText primary="✓ Export Experiment - Enable PDF/HTML downloads" /></ListItem>
+                  <ListItem><ListItemText primary="✓ Access Version History - Show past versions" /></ListItem>
+                  <ListItem><ListItemText primary="✓ Simplify Language - Allow AI language simplification" /></ListItem>
+                  <ListItem><ListItemText primary="✓ Delete Experiment - Permit deletion (use carefully!)" /></ListItem>
+                </List>
+                
+                <Box sx={{ mt: 2, p: 1.5, bgcolor: 'info.50', borderRadius: 1, border: '1px solid', borderColor: 'info.main' }}>
+                  <Typography variant="body2" fontWeight="bold" color="info.main" gutterBottom>
+                    👁️ What Users See When Features Are Disabled:
+                  </Typography>
+                  <Typography variant="body2">
+                    • Disabled buttons appear <strong>grayed out</strong> (not clickable)
+                  </Typography>
+                  <Typography variant="body2">
+                    • A <strong>blue info banner</strong> appears at the top explaining restrictions
+                  </Typography>
+                  <Typography variant="body2">
+                    • Hovering over disabled buttons shows a <strong>tooltip</strong>: "This feature has been restricted by the experiment creator"
+                  </Typography>
+                  <Typography variant="body2">
+                    • Users can still see what features exist, they just can't use them
+                  </Typography>
+                  <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
+                    💡 This design helps users understand WHY they can't access certain features!
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Typography variant="body2" paragraph fontWeight="bold" color="primary.main">
+                💡 How to Set Permissions:
+              </Typography>
+              <Typography variant="body2">
+                1. While creating a new experiment, go to "Sharing & Access" step
+              </Typography>
+              <Typography variant="body2">
+                2. Choose Private, Public, or Restricted
+              </Typography>
+              <Typography variant="body2">
+                3. If Restricted, check the features you want to allow
+              </Typography>
+              <Typography variant="body2">
+                4. Save - permissions apply immediately
+              </Typography>
+
+              <Typography variant="body2" paragraph fontWeight="bold" color="info.main" sx={{ mt: 2 }}>
+                ⚠️ Important Notes:
+              </Typography>
+              <Typography variant="body2">
+                • You (as creator) ALWAYS have full access regardless of settings
+              </Typography>
+              <Typography variant="body2">
+                • Restricted users will see disabled buttons for features they cannot access
+              </Typography>
+              <Typography variant="body2">
+                • You can change permissions anytime by editing the experiment
+              </Typography>
+              <Typography variant="body2">
+                • Permissions ensure your work is shared the way YOU want
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <Box sx={{ fontSize: 24 }}>🤖</Box>
+                <Typography variant="subtitle1">{t('help.aiAssistant', 'AI Assistant & Smart Features')}</Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" paragraph fontWeight="bold">
+                {t('help.aiAssistantDesc', 'Your intelligent co-pilot for creating better experiments:')}
+              </Typography>
+              
+              <Box sx={{ mb: 2, p: 2, bgcolor: 'blue.50', borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight="bold" color="primary.main" gutterBottom>
+                  💬 Context-Aware AI Chat
+                </Typography>
+                <Typography variant="body2">
+                  • Click the chat button (bottom-right corner) to open AI assistant
+                </Typography>
+                <Typography variant="body2">
+                  • AI understands YOUR experiment context - gives personalized advice
+                </Typography>
+                <Typography variant="body2">
+                  • Ask anything: "What's missing?", "Improve my objectives", "Is this safe?"
+                </Typography>
+                <Typography variant="body2">
+                  • Get suggestions for missing sections, safety improvements, clarity
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2, p: 2, bgcolor: 'green.50', borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight="bold" color="success.main" gutterBottom>
+                  ✨ Text Polisher (Smart Improvement)
+                </Typography>
+                <Typography variant="body2">
+                  • Available in rich text editor sections
+                </Typography>
+                <Typography variant="body2">
+                  • Automatically improves grammar, clarity, and professional tone
+                </Typography>
+                <Typography variant="body2">
+                  • Select text → Click "Polish Text" → Review → Accept changes
+                </Typography>
+                <Typography variant="body2">
+                  • Perfect for making instructions clearer for students
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2, p: 2, bgcolor: 'purple.50', borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight="bold" color="secondary.main" gutterBottom>
+                  📝 Language Simplification
+                </Typography>
+                <Typography variant="body2">
+                  • Simplify complex scientific language for younger students
+                </Typography>
+                <Typography variant="body2">
+                  • Choose target grade level (e.g., Grade 7, Grade 10)
+                </Typography>
+                <Typography variant="body2">
+                  • AI rewrites content to match comprehension level
+                </Typography>
+                <Typography variant="body2">
+                  • Access from experiment menu → "Simplify Language"
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2, p: 2, bgcolor: 'orange.50', borderRadius: 1 }}>
+                <Typography variant="subtitle2" fontWeight="bold" color="warning.main" gutterBottom>
+                  ✅ Content Review & Consistency Check
+                </Typography>
+                <Typography variant="body2">
+                  • Automatic validation of experiment completeness
+                </Typography>
+                <Typography variant="body2">
+                  • Checks for missing required fields (title, procedure, safety)
+                </Typography>
+                <Typography variant="body2">
+                  • Reviews structure consistency across sections
+                </Typography>
+                <Typography variant="body2">
+                  • Click "Review Content" button to get detailed report with suggestions
+                </Typography>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <Box sx={{ fontSize: 24 }}>💾</Box>
+                <Typography variant="subtitle1">{t('help.draftManagement', 'Draft Management')}</Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" paragraph>
+                {t('help.draftManagementDesc', 'Never lose your work with automatic draft saving:')}
+              </Typography>
+              <List dense>
+                <ListItem><ListItemText primary="• Your work is automatically saved as a draft while creating" /></ListItem>
+                <ListItem><ListItemText primary="• If you leave without saving, your draft is preserved" /></ListItem>
+                <ListItem><ListItemText primary="• Return to dashboard - 'Create New Experiment' button becomes 'Continue Draft'" /></ListItem>
+                <ListItem><ListItemText primary="• Click 'Continue Draft' to resume where you left off" /></ListItem>
+                <ListItem><ListItemText primary="• Draft is cleared only when you save the final experiment" /></ListItem>
+              </List>
+            </AccordionDetails>
+          </Accordion>
         </TabPanel>
 
         <TabPanel value={tabValue} index={2}>
@@ -271,6 +495,50 @@ const HelpGuide = ({ open, onClose }) => {
             </Typography>
             <Typography variant="body2" paragraph>
               {t('help.tip1Desc', 'Click the "Save" button regularly to avoid losing your work. The system auto-saves periodically, but manual saves ensure your latest changes are preserved.')}
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              💡 {t('help.tip2Title', 'Use Draft Auto-Save Feature')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t('help.tip2Desc', 'If you need to leave while creating an experiment, just close the wizard. Your draft is automatically saved and you can continue later by clicking "Continue Draft" on the dashboard.')}
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              💡 {t('help.tipPermissions', 'Choose the Right Permission Setting')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t('help.tipPermissionsDesc', 'Start with Private mode for work-in-progress experiments. Switch to Public when ready to share openly, or use Restricted mode to control specific features. Remember: you can always change permissions later!')}
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              💡 {t('help.tipAI', 'Leverage AI Assistant Effectively')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t('help.tipAIDesc', 'The AI assistant knows YOUR experiment context. Ask specific questions like "What safety measures should I add for sodium hydroxide?" instead of generic questions. The more specific you are, the better the suggestions!')}
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              💡 {t('help.tipReview', 'Use Content Review Before Sharing')}
+            </Typography>
+            <Typography variant="body2" paragraph>
+              {t('help.tipReviewDesc', 'Always run the Content Review feature before exporting or sharing. It catches missing sections, incomplete safety information, and inconsistencies that you might have missed.')}
             </Typography>
           </Box>
 
@@ -435,6 +703,146 @@ const HelpGuide = ({ open, onClose }) => {
             <AccordionDetails>
               <Typography variant="body2">
                 {t('help.a8', 'Yes! Use the language switcher in the top navigation bar to toggle between English and German. Your experiment content remains unchanged, but the interface labels will change.')}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q9', 'How do I control who can access my experiment?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" paragraph>
+                {t('help.a9', 'During experiment creation, go to the "Sharing & Access" step. Choose from three options:')}
+              </Typography>
+              <Typography variant="body2" paragraph>
+                <strong>Private:</strong> Only you can access the experiment
+              </Typography>
+              <Typography variant="body2" paragraph>
+                <strong>Public:</strong> Everyone has full access to all features
+              </Typography>
+              <Typography variant="body2">
+                <strong>Restricted:</strong> You select specific features others can use (view, edit, export, version history, simplify language, delete)
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q10', 'What happens if I set my experiment to Restricted?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" paragraph>
+                {t('help.a10', 'Other users will see disabled (grayed out) buttons for features you haven\'t allowed. For example, if you disable "Edit", they can view but cannot modify the experiment. You always have full access as the creator.')}
+              </Typography>
+              <Typography variant="body2" fontWeight="bold" color="info.main">
+                Visual Indicators for Users:
+              </Typography>
+              <Typography variant="body2">
+                • Blue info banner at top: "This experiment has restricted access"
+              </Typography>
+              <Typography variant="body2">
+                • Grayed-out buttons that can't be clicked
+              </Typography>
+              <Typography variant="body2">
+                • Tooltip on hover explaining the restriction
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q10b', 'Why are some buttons grayed out when I view an experiment?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" paragraph>
+                {t('help.a10b', 'Grayed-out (disabled) buttons mean the experiment creator has restricted that feature. This is intentional - they want you to view the experiment but not use certain features like editing, exporting, or deleting.')}
+              </Typography>
+              <Typography variant="body2" paragraph fontWeight="bold">
+                How to understand restrictions:
+              </Typography>
+              <Typography variant="body2">
+                1. Look for the blue info banner at the top explaining restrictions
+              </Typography>
+              <Typography variant="body2">
+                2. Hover over any disabled button to see a tooltip
+              </Typography>
+              <Typography variant="body2">
+                3. The tooltip says: "This feature has been restricted by the experiment creator"
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                💡 If you need access to a restricted feature, contact the experiment creator directly.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q11', 'How do I use the AI Assistant?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                {t('help.a11', 'Click the chat icon in the bottom-right corner while creating or editing an experiment. The AI knows your experiment context and can answer questions, suggest improvements, or help with missing sections. Try asking: "What\'s missing in my experiment?" or "Help me improve the safety section."')}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q12', 'What is Text Polisher and how do I use it?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                {t('help.a12', 'Text Polisher uses AI to improve your writing. In any rich text editor section, select text and click the "Polish Text" button. The AI will improve grammar, clarity, and professional tone. Review the suggestions and accept if satisfied.')}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q13', 'Can I simplify my experiment for younger students?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                {t('help.a13', 'Yes! Open your experiment, click the menu (three dots), and select "Simplify Language". Choose the target grade level, and AI will rewrite the content to match that comprehension level. This creates a new version, so your original is preserved.')}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q14', 'What if I accidentally close the experiment wizard?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                {t('help.a14', 'Don\'t worry! Your work is automatically saved as a draft. Return to the dashboard, and the "Create New Experiment" button will show "Continue Draft". Click it to resume exactly where you left off.')}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle2">
+                {t('help.q15', 'How do I check if my experiment is complete?')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                {t('help.a15', 'Click the "Review Content" button in the wizard or experiment editor. The system will check for missing fields, incomplete sections, and consistency issues. You\'ll get a detailed report with suggestions for improvements.')}
               </Typography>
             </AccordionDetails>
           </Accordion>

@@ -17,6 +17,7 @@ import {
   ListItemText,
   Alert,
   Stack,
+  Tooltip,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -1164,6 +1165,18 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
+      {/* Restriction Notice Banner */}
+      {!userIsOwner && (!canEditExp || !canExport || !canViewHistory) && (
+        <Alert severity="info" sx={{ mb: 3 }} icon={<Box>🔒</Box>}>
+          <Typography variant="body2" fontWeight="bold">
+            {t('permissions.restrictedAccess', 'This experiment has restricted access')}
+          </Typography>
+          <Typography variant="caption">
+            {t('permissions.restrictedAccessDesc', 'Some features are disabled by the creator. Disabled buttons are grayed out and show a tooltip explaining the restriction.')}
+          </Typography>
+        </Alert>
+      )}
+
       <Box sx={{ 
         display: 'flex', 
         flexDirection: { xs: 'column', sm: 'row' },
@@ -1186,31 +1199,54 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           gap: 1,
           order: { xs: 0, sm: 1 }
         }}>
-          <Button
-            variant="outlined"
-            startIcon={<HistoryIcon />}
-            onClick={() => setHistoryOpen(true)}
-            disabled={!canViewHistory}
+          <Tooltip 
+            title={!canViewHistory ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+            arrow
           >
-            {t('version.versionHistory')}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<ExportIcon />}
-            onClick={() => setExportOpen(true)}
-            disabled={!canExport}
+            <span>
+              <Button
+                variant="outlined"
+                startIcon={<HistoryIcon />}
+                onClick={() => setHistoryOpen(true)}
+                disabled={!canViewHistory}
+              >
+                {t('version.versionHistory')}
+              </Button>
+            </span>
+          </Tooltip>
+          
+          <Tooltip 
+            title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+            arrow
           >
-            {t('common.export')}
-          </Button>
+            <span>
+              <Button
+                variant="outlined"
+                startIcon={<ExportIcon />}
+                onClick={() => setExportOpen(true)}
+                disabled={!canExport}
+              >
+                {t('common.export')}
+              </Button>
+            </span>
+          </Tooltip>
+          
           {onEdit && (
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              onClick={() => onEdit(experiment)}
-              disabled={!canEditExp}
+            <Tooltip 
+              title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+              arrow
             >
-              {t('experiment.editExperiment')}
-            </Button>
+              <span>
+                <Button
+                  variant="contained"
+                  startIcon={<EditIcon />}
+                  onClick={() => onEdit(experiment)}
+                  disabled={!canEditExp}
+                >
+                  {t('experiment.editExperiment')}
+                </Button>
+              </span>
+            </Tooltip>
           )}
         </Box>
       </Box>

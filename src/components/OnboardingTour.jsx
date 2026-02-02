@@ -42,102 +42,68 @@ const OnboardingTour = ({ open, onClose, onComplete }) => {
   const steps = [
     {
       title: t('onboarding.welcome.title', 'Welcome to Visual Editor!'),
-      content: t('onboarding.welcome.content', 'Let\'s take a quick tour to help you get started with creating experiment scripts.'),
+      content: t('onboarding.welcome.content', 'Create professional experiment scripts in minutes, not hours.'),
       icon: <ScienceIcon sx={{ fontSize: 60, color: 'primary.main' }} />,
       details: [
-        t('onboarding.welcome.detail1', 'Create professional experiment scripts'),
-        t('onboarding.welcome.detail2', 'Add images, videos, and safety information'),
-        t('onboarding.welcome.detail3', 'Export as PDF or HTML for sharing'),
-        t('onboarding.welcome.detail4', 'Track versions and changes over time')
+        t('onboarding.welcome.detail1', '📝 Step-by-step wizard guides you through creation'),
+        t('onboarding.welcome.detail2', '🤖 AI assistant helps improve your content'),
+        t('onboarding.welcome.detail3', '� Control who can access your experiments'),
+        t('onboarding.welcome.detail4', '📄 Export to PDF/HTML for easy sharing')
       ]
     },
     {
-      title: t('onboarding.create.title', 'Creating Your First Experiment'),
-      content: t('onboarding.create.content', 'Click the "Create New Experiment" button to start building your experiment script.'),
+      title: t('onboarding.create.title', 'Creating an Experiment'),
+      content: t('onboarding.create.content', 'Start with "Create New Experiment" and follow the wizard.'),
       icon: <AddIcon sx={{ fontSize: 60, color: 'success.main' }} />,
       details: [
-        t('onboarding.create.detail1', 'Choose from templates or start from scratch'),
-        t('onboarding.create.detail2', 'Enter a descriptive title and summary'),
-        t('onboarding.create.detail3', 'Select relevant sections (materials, procedure, etc.)'),
-        t('onboarding.create.detail4', 'Add custom sections for specific needs')
+        t('onboarding.create.detail1', '1️⃣ Enter title, duration, and description'),
+        t('onboarding.create.detail2', '2️⃣ Select sections you need (materials, procedure, safety)'),
+        t('onboarding.create.detail3', '3️⃣ Fill in content with rich text editor'),
+        t('onboarding.create.detail4', '4️⃣ Add images, videos, and safety icons')
       ]
     },
     {
-      title: t('onboarding.sections.title', 'Working with Sections'),
-      content: t('onboarding.sections.content', 'Each experiment is organized into sections like materials, procedure, safety measures, and more.'),
-      icon: <EditIcon sx={{ fontSize: 60, color: 'info.main' }} />,
-      details: [
-        t('onboarding.sections.detail1', 'Materials & Equipment: List required items'),
-        t('onboarding.sections.detail2', 'Procedure: Add step-by-step instructions'),
-        t('onboarding.sections.detail3', 'Safety: Include warnings and protective gear'),
-        t('onboarding.sections.detail4', 'Media: Upload images and videos')
-      ]
-    },
-    {
-      title: t('onboarding.editing.title', 'Editing Content'),
-      content: t('onboarding.editing.content', 'Use the rich text editor to format your content and add media files.'),
-      icon: <EditIcon sx={{ fontSize: 60, color: 'warning.main' }} />,
-      details: [
-        t('onboarding.editing.detail1', 'Format text with bold, italic, lists'),
-        t('onboarding.editing.detail2', 'Upload images from your computer'),
-        t('onboarding.editing.detail3', 'Add procedure steps with notes'),
-        t('onboarding.editing.detail4', 'Select safety icons from the library')
-      ]
-    },
-    {
-      title: t('onboarding.aiAssistant.title', 'Context-Aware AI Assistant'),
-      content: t('onboarding.aiAssistant.content', 'Your intelligent co-pilot for creating better experiments:'),
+      title: t('onboarding.aiFeatures.title', 'AI-Powered Features'),
+      content: t('onboarding.aiFeatures.content', 'Get instant help while creating your experiments.'),
       icon: <ChatIcon sx={{ fontSize: 60, color: '#2196f3' }} />,
       details: [
-        t('onboarding.aiAssistant.detail1', '� Click the chat button (bottom-right) to open the AI Assistant'),
-        t('onboarding.aiAssistant.detail2', '🎯 Get personalized suggestions based on YOUR experiment'),
-        t('onboarding.aiAssistant.detail3', '✨ Ask for help improving text, adding sections, or fixing issues'),
-        t('onboarding.aiAssistant.detail4', '🔍 The AI knows your experiment context and gives specific advice'),
-        t('onboarding.aiAssistant.detail5', '💡 Try: "What\'s missing?", "Improve my objectives", "Is this safe?"')
+        t('onboarding.aiFeatures.detail1', '💬 AI Chat: Click bottom-right chat icon for suggestions'),
+        t('onboarding.aiFeatures.detail2', '✨ Text Polisher: Improve grammar and clarity instantly'),
+        t('onboarding.aiFeatures.detail3', '✅ Content Review: Check for missing or incomplete sections'),
+        t('onboarding.aiFeatures.detail4', '🔄 Simplify Language: Adapt content for different grade levels')
       ]
     },
     {
-      title: t('onboarding.consistency.title', 'Content Review & Consistency Checks'),
-      content: t('onboarding.consistency.content', 'Ensure your experiment is complete and professional before exporting:'),
-      icon: <ConsistencyIcon sx={{ fontSize: 60, color: '#4caf50' }} />,
+      title: t('onboarding.permissions.title', 'Sharing & Permissions'),
+      content: t('onboarding.permissions.content', 'Decide who can access your experiments.'),
+      icon: <Box sx={{ fontSize: 60 }}>🔒</Box>,
       details: [
-        t('onboarding.consistency.detail1', '✅ Automatic checks for missing required fields (title, sections, procedure)'),
-        t('onboarding.consistency.detail2', '🔍 Validates safety information and hazard warnings are complete'),
-        t('onboarding.consistency.detail3', '📊 Reviews structure consistency across all sections'),
-        t('onboarding.consistency.detail4', '⚡ Click \'Review Content\' button to get a detailed report with suggestions')
+        t('onboarding.permissions.detail1', '🔴 Private: Only you (perfect for drafts)'),
+        t('onboarding.permissions.detail2', '🟢 Public: Everyone has full access'),
+        t('onboarding.permissions.detail3', '🟡 Restricted: Choose which features others can use'),
+        t('onboarding.permissions.detail4', '👁️ Restricted users see disabled buttons with tooltips explaining why')
       ]
     },
     {
-      title: t('onboarding.saving.title', 'Saving Your Work'),
-      content: t('onboarding.saving.content', 'Always save your work regularly. The system creates automatic versions.'),
+      title: t('onboarding.workflow.title', 'Your Workflow'),
+      content: t('onboarding.workflow.content', 'Key features to remember as you work.'),
       icon: <SaveIcon sx={{ fontSize: 60, color: 'secondary.main' }} />,
       details: [
-        t('onboarding.saving.detail1', 'Click Save button after making changes'),
-        t('onboarding.saving.detail2', 'Each save creates a new version'),
-        t('onboarding.saving.detail3', 'View version history anytime'),
-        t('onboarding.saving.detail4', 'Compare or restore previous versions')
+        t('onboarding.workflow.detail1', '💾 Auto-save: Work is saved automatically, resume anytime'),
+        t('onboarding.workflow.detail2', '🔄 Versions: Every save creates a version you can restore'),
+        t('onboarding.workflow.detail3', '📤 Export: Download as PDF (print) or HTML (web)'),
+        t('onboarding.workflow.detail4', '❓ Help: Click "?" button anytime for detailed guides')
       ]
     },
     {
-      title: t('onboarding.export.title', 'Exporting & Sharing'),
-      content: t('onboarding.export.content', 'Export your completed experiment as PDF or HTML to share with students.'),
-      icon: <ExportIcon sx={{ fontSize: 60, color: 'error.main' }} />,
+      title: t('onboarding.ready.title', 'You\'re Ready!'),
+      content: t('onboarding.ready.content', 'Start creating amazing experiment scripts now.'),
+      icon: <CheckIcon sx={{ fontSize: 60, color: 'success.main' }} />,
       details: [
-        t('onboarding.export.detail1', 'PDF: Perfect for printing and offline use'),
-        t('onboarding.export.detail2', 'HTML: Interactive web-friendly format'),
-        t('onboarding.export.detail3', 'All media files are included'),
-        t('onboarding.export.detail4', 'Professional formatting applied')
-      ]
-    },
-    {
-      title: t('onboarding.help.title', 'Getting Help'),
-      content: t('onboarding.help.content', 'Access the Help Guide anytime you need assistance or want to review features.'),
-      icon: <HelpIcon sx={{ fontSize: 60, color: 'primary.main' }} />,
-      details: [
-        t('onboarding.help.detail1', 'Click the Help button on the dashboard'),
-        t('onboarding.help.detail2', 'Browse Getting Started, Features, and Tips'),
-        t('onboarding.help.detail3', 'Check FAQ for common questions'),
-        t('onboarding.help.detail4', 'Available in English and German')
+        t('onboarding.ready.detail1', '🚀 Click "Create New Experiment" to begin'),
+        t('onboarding.ready.detail2', '💡 Use AI assistant when you need guidance'),
+        t('onboarding.ready.detail3', '📚 Check Help Guide for detailed instructions'),
+        t('onboarding.ready.detail4', '✨ Experiment fearlessly - drafts auto-save!')
       ]
     }
   ];
