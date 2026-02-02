@@ -290,7 +290,20 @@ const ContentReviewPanel = ({ experimentData, onUpdate, onApprove, showPolishSec
               } else if (Array.isArray(value) && value.length > 0) {
                 const readableSectionName = section.name.replace(/_/g, ' ');
                 const readableKey = key.replace(/_/g, ' ');
-                sectionsToCheck[`${readableSectionName} - ${readableKey}`] = value.join(', ');
+                // Extract text from objects in array
+                const textItems = value.map(item => {
+                  if (typeof item === 'string') {
+                    return item;
+                  } else if (typeof item === 'object' && item !== null) {
+                    // Extract meaningful text from objects (materials, steps, etc.)
+                    return item.name || item.text || item.instruction || '';
+                  }
+                  return '';
+                }).filter(text => text.trim().length > 0);
+                
+                if (textItems.length > 0) {
+                  sectionsToCheck[`${readableSectionName} - ${readableKey}`] = textItems.join(', ');
+                }
               }
             });
           }

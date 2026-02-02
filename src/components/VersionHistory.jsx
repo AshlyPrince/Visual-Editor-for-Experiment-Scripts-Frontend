@@ -654,6 +654,20 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          name.includes('irritant') ||
                          name.includes('compressed') ||
                          name.includes('environmental') ||
+                         // German hazard terms
+                         name.includes('giftig') ||
+                         name.includes('ätzend') ||
+                         name.includes('entzündbar') ||
+                         name.includes('explosiv') ||
+                         name.includes('oxidierend') ||
+                         name.includes('reizend') ||
+                         name.includes('umwelt') ||
+                         name.includes('gesundheit') ||
+                         caption.includes('giftig') ||
+                         caption.includes('ätzend') ||
+                         caption.includes('entzündbar') ||
+                         caption.includes('explosiv') ||
+                         caption.includes('gefahr') ||
                          url.includes('/ghs/') ||
                          url.includes('/hazard/');
                 }
@@ -713,6 +727,20 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          !name.includes('irritant') &&
                          !name.includes('compressed') &&
                          !name.includes('environmental') &&
+                         // German hazard terms
+                         !name.includes('giftig') &&
+                         !name.includes('ätzend') &&
+                         !name.includes('entzündbar') &&
+                         !name.includes('explosiv') &&
+                         !name.includes('oxidierend') &&
+                         !name.includes('reizend') &&
+                         !name.includes('umwelt') &&
+                         !name.includes('gesundheit') &&
+                         !caption.includes('giftig') &&
+                         !caption.includes('ätzend') &&
+                         !caption.includes('entzündbar') &&
+                         !caption.includes('explosiv') &&
+                         !caption.includes('gefahr') &&
                          !url.includes('/ghs/') &&
                          !url.includes('/hazard/');
                 }

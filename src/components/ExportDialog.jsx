@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
@@ -21,11 +21,22 @@ import {
   CheckCircle as SuccessIcon
 } from '@mui/icons-material';
 
-const ExportDialog = ({ open, onClose, experiment, onExported }) => {
+const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat }) => {
   const { t } = useTranslation();
   const [exporting, setExporting] = useState(false);
   const [exportType, setExportType] = useState(null);
   const [exportSuccess, setExportSuccess] = useState(false);
+
+  // Auto-trigger export when dialog opens with autoExportFormat
+  useEffect(() => {
+    if (open && autoExportFormat && !exporting) {
+      if (autoExportFormat === 'html') {
+        handleExportHTML();
+      } else if (autoExportFormat === 'pdf') {
+        handleExportPDF();
+      }
+    }
+  }, [open, autoExportFormat]);
 
   const generateHTML = () => {
     if (!experiment) return '';
@@ -648,6 +659,20 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                    name.includes('irritant') ||
                    name.includes('compressed') ||
                    name.includes('environmental') ||
+                   // German hazard terms
+                   name.includes('giftig') ||
+                   name.includes('ätzend') ||
+                   name.includes('entzündbar') ||
+                   name.includes('explosiv') ||
+                   name.includes('oxidierend') ||
+                   name.includes('reizend') ||
+                   name.includes('umwelt') ||
+                   name.includes('gesundheit') ||
+                   caption.includes('giftig') ||
+                   caption.includes('ätzend') ||
+                   caption.includes('entzündbar') ||
+                   caption.includes('explosiv') ||
+                   caption.includes('gefahr') ||
                    url.includes('/ghs/') ||
                    url.includes('/hazard/');
           }
@@ -707,6 +732,20 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                    !name.includes('irritant') &&
                    !name.includes('compressed') &&
                    !name.includes('environmental') &&
+                   // German hazard terms
+                   !name.includes('giftig') &&
+                   !name.includes('ätzend') &&
+                   !name.includes('entzündbar') &&
+                   !name.includes('explosiv') &&
+                   !name.includes('oxidierend') &&
+                   !name.includes('reizend') &&
+                   !name.includes('umwelt') &&
+                   !name.includes('gesundheit') &&
+                   !caption.includes('giftig') &&
+                   !caption.includes('ätzend') &&
+                   !caption.includes('entzündbar') &&
+                   !caption.includes('explosiv') &&
+                   !caption.includes('gefahr') &&
                    !url.includes('/ghs/') &&
                    !url.includes('/hazard/');
           }
@@ -1114,9 +1153,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         onExported('html');
       }
 
-      setTimeout(() => {
-        setExportSuccess(false);
-      }, 2000);
+      // If auto-exporting, close dialog after short delay
+      if (autoExportFormat) {
+        setTimeout(() => {
+          onClose();
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          setExportSuccess(false);
+        }, 2000);
+      }
     } catch (error) {
       alert(t('export.unableToExportHTML') + ' ' + error.message);
     } finally {
@@ -1253,9 +1299,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
         onExported('pdf');
       }
 
-      setTimeout(() => {
-        setExportSuccess(false);
-      }, 2000);
+      // If auto-exporting, close dialog after short delay
+      if (autoExportFormat) {
+        setTimeout(() => {
+          onClose();
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          setExportSuccess(false);
+        }, 2000);
+      }
     } catch (error) {
       alert(t('export.exportFailed') + ': ' + error.message);
     } finally {

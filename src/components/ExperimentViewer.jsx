@@ -48,6 +48,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const [permissionsOpen, setPermissionsOpen] = useState(false);
   const [simplifyOpen, setSimplifyOpen] = useState(false);
   const [simplifiedData, setSimplifiedData] = useState(null); // Store simplified version
+  const [autoExportFormat, setAutoExportFormat] = useState(null); // Store format to auto-export
 
   useEffect(() => {
     if (experimentId) {
@@ -544,6 +545,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     const hazardIcons = allMedia.filter(m => {
       const name = (m.name || '').toLowerCase();
       const url = (m.url || m.data || '').toLowerCase();
+      const caption = (m.caption || '').toLowerCase();
       return m.isHazardIcon || 
              name.includes('ghs') || 
              name.includes('hazard') ||
@@ -555,12 +557,27 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              name.includes('irritant') ||
              name.includes('compressed') ||
              name.includes('environmental') ||
+             // German hazard terms
+             name.includes('giftig') ||
+             name.includes('ätzend') ||
+             name.includes('entzündbar') ||
+             name.includes('explosiv') ||
+             name.includes('oxidierend') ||
+             name.includes('reizend') ||
+             name.includes('umwelt') ||
+             name.includes('gesundheit') ||
+             caption.includes('giftig') ||
+             caption.includes('ätzend') ||
+             caption.includes('entzündbar') ||
+             caption.includes('explosiv') ||
+             caption.includes('gefahr') ||
              url.includes('/ghs/') ||
              url.includes('/hazard/');
     });
     const regularMedia = allMedia.filter(m => {
       const name = (m.name || '').toLowerCase();
       const url = (m.url || m.data || '').toLowerCase();
+      const caption = (m.caption || '').toLowerCase();
       return !m.isHazardIcon && 
              !name.includes('ghs') && 
              !name.includes('hazard') &&
@@ -572,6 +589,20 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
              !name.includes('irritant') &&
              !name.includes('compressed') &&
              !name.includes('environmental') &&
+             // German hazard terms
+             !name.includes('giftig') &&
+             !name.includes('ätzend') &&
+             !name.includes('entzündbar') &&
+             !name.includes('explosiv') &&
+             !name.includes('oxidierend') &&
+             !name.includes('reizend') &&
+             !name.includes('umwelt') &&
+             !name.includes('gesundheit') &&
+             !caption.includes('giftig') &&
+             !caption.includes('ätzend') &&
+             !caption.includes('entzündbar') &&
+             !caption.includes('explosiv') &&
+             !caption.includes('gefahr') &&
              !url.includes('/ghs/') &&
              !url.includes('/hazard/');
     });
@@ -1441,10 +1472,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           onClose={() => {
             setExportOpen(false);
             setSimplifiedData(null); // Reset simplified data when export dialog closes
+            setAutoExportFormat(null);
           }}
           experiment={simplifiedData || experiment} // Use simplified data if available, otherwise use original
+          autoExportFormat={autoExportFormat} // Pass format to auto-trigger export
           onExported={(type) => {
-            
+            // Reset after export completes
+            setSimplifiedData(null);
+            setAutoExportFormat(null);
           }}
         />
       )}
@@ -1455,12 +1490,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           onClose={() => {
             setSimplifyOpen(false);
             setSimplifiedData(null); // Reset simplified data when dialog closes
+            setAutoExportFormat(null);
           }}
           experimentData={experiment}
-          onExport={(simplifiedExperiment, format, level) => {
-            // Store the simplified version and open export dialog when user clicks export
+          onExport={async (simplifiedExperiment, format, level) => {
+            // Store the simplified version and format, then trigger export
             setSimplifiedData(simplifiedExperiment);
+            setAutoExportFormat(format);
             setSimplifyOpen(false);
+            // Open export dialog - it will auto-export based on autoExportFormat
             setExportOpen(true);
           }}
         />

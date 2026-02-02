@@ -38,6 +38,7 @@ const LanguageSimplificationDialog = ({
   const { t } = useTranslation();
   const [targetLevel, setTargetLevel] = useState('intermediate');
   const [simplifying, setSimplifying] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [error, setError] = useState(null);
   const [simplifiedData, setSimplifiedData] = useState(null);
   const [step, setStep] = useState('select'); // 'select', 'preview', 'export'
@@ -82,11 +83,24 @@ const LanguageSimplificationDialog = ({
     }
   };
 
-  const handleExport = (format) => {
-    if (onExport && simplifiedData) {
-      onExport(simplifiedData, format, targetLevel);
+  const handleExport = async (format) => {
+    if (!simplifiedData) return;
+    
+    setExporting(true);
+    
+    try {
+      if (onExport) {
+        // Pass the simplified data and format to parent (ExperimentViewer)
+        // Parent will handle the actual export through ExportDialog
+        await onExport(simplifiedData, format, targetLevel);
+      }
+      
+      // Dialog will be closed by parent after export completes
+    } catch (err) {
+      console.error('Export error:', err);
+      setError(err.message || t('simplification.exportError', 'Unable to export the simplified experiment.'));
+      setExporting(false);
     }
-    // Don't close immediately - let user see export is happening
   };
 
   const handleClose = () => {
@@ -287,24 +301,26 @@ const LanguageSimplificationDialog = ({
           <Button
             variant="contained"
             fullWidth
-            onClick={() => handleExport('pdf')}
-            startIcon={<DownloadIcon />}
+            onClick={() => handleExport('html')}
+            disabled={exporting}
+            startIcon={exporting ? <CircularProgress size={20} /> : <DownloadIcon />}
           >
-            {t('simplification.exportPDF', 'Export as PDF')}
+            {exporting ? t('common.exporting', 'Exporting...') : t('simplification.exportHTML', 'Export as HTML')}
           </Button>
           <Button
             variant="outlined"
             fullWidth
-            onClick={() => handleExport('html')}
-            startIcon={<DownloadIcon />}
+            onClick={() => handleExport('pdf')}
+            disabled={exporting}
+            startIcon={exporting ? <CircularProgress size={20} /> : <DownloadIcon />}
           >
-            {t('simplification.exportHTML', 'Export as HTML')}
+            {exporting ? t('common.exporting', 'Exporting...') : t('simplification.exportPDF', 'Export as PDF')}
           </Button>
           <Box sx={{ display: 'flex', gap: 1, width: '100%', mt: 1 }}>
-            <Button onClick={() => setStep('select')} fullWidth>
+            <Button onClick={() => setStep('select')} fullWidth disabled={exporting}>
               {t('common.back', 'Back')}
             </Button>
-            <Button onClick={handleClose} fullWidth>
+            <Button onClick={handleClose} fullWidth disabled={exporting}>
               {t('common.close', 'Close')}
             </Button>
           </Box>
