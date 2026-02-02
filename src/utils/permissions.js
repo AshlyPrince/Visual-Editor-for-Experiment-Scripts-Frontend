@@ -126,42 +126,34 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
     return false;
   }
   
-  // If experiment is public, everyone has access to all features
-  if (permissions.visibility === 'public') {
-    return true;
+  // For both 'public' and 'restricted' visibility, check specific feature permissions
+  // This allows granular control even for public experiments
+  let hasAccess = true; // Default to true for backward compatibility
+  
+  switch (feature) {
+    case 'viewDetails':
+      hasAccess = permissions.allowViewDetails !== false;
+      break;
+    case 'export':
+      hasAccess = permissions.allowExport !== false;
+      break;
+    case 'versionControl':
+      hasAccess = permissions.allowVersionControl === true;
+      break;
+    case 'edit':
+      hasAccess = permissions.allowEdit === true;
+      break;
+    case 'simplify':
+      hasAccess = permissions.allowSimplify !== false;
+      break;
+    case 'delete':
+      hasAccess = permissions.allowDelete === true;
+      break;
+    default:
+      hasAccess = true;
   }
   
-  // If experiment is restricted, check specific feature permissions for non-owners
-  if (permissions.visibility === 'restricted') {
-    // For non-owners, check specific feature permissions
-    let hasAccess = false;
-    switch (feature) {
-      case 'viewDetails':
-        hasAccess = permissions.allowViewDetails === true;
-        break;
-      case 'export':
-        hasAccess = permissions.allowExport === true;
-        break;
-      case 'versionControl':
-        hasAccess = permissions.allowVersionControl === true;
-        break;
-      case 'edit':
-        hasAccess = permissions.allowEdit === true;
-        break;
-      case 'simplify':
-        hasAccess = permissions.allowSimplify === true;
-        break;
-      case 'delete':
-        hasAccess = permissions.allowDelete === true;
-        break;
-      default:
-        hasAccess = true;
-    }
-    return hasAccess;
-  }
-  
-  // Default: allow access
-  return true;
+  return hasAccess;
 }
 
 /**

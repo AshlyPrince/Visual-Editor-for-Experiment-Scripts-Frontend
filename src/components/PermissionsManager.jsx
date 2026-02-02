@@ -66,13 +66,13 @@ const PermissionsManager = ({
     const permissionsData = {
       visibility,
       allowDuplication,
-      // Restricted mode settings
-      allowViewDetails: visibility === 'restricted' ? allowViewDetails : true,
-      allowExport: visibility === 'restricted' ? allowExport : true,
-      allowVersionControl: visibility === 'restricted' ? allowVersionControl : false,
-      allowEdit: visibility === 'restricted' ? allowEdit : false,
-      allowSimplify: visibility === 'restricted' ? allowSimplify : false,
-      allowDelete: visibility === 'restricted' ? allowDelete : false,
+      // Feature restrictions - independent of visibility (except private blocks everything)
+      allowViewDetails: visibility === 'private' ? false : allowViewDetails,
+      allowExport: visibility === 'private' ? false : allowExport,
+      allowVersionControl: visibility === 'private' ? false : allowVersionControl,
+      allowEdit: visibility === 'private' ? false : allowEdit,
+      allowSimplify: visibility === 'private' ? false : allowSimplify,
+      allowDelete: visibility === 'private' ? false : allowDelete,
       // Owner info
       requireApprovalForAccess: false,
       userPermissions: [{
@@ -186,7 +186,7 @@ const PermissionsManager = ({
                           </Typography>
                         </Box>
                         <Typography variant="body2" color="text.secondary">
-                          Everyone can view and access all features
+                          Everyone can discover this experiment
                         </Typography>
                       </Box>
                     }
@@ -218,7 +218,7 @@ const PermissionsManager = ({
                           </Typography>
                         </Box>
                         <Typography variant="body2" color="text.secondary">
-                          You control specific features others can access
+                          Only people with the link can access
                         </Typography>
                       </Box>
                     }
@@ -229,11 +229,14 @@ const PermissionsManager = ({
             </FormControl>
           </Box>
 
-          {/* Restricted Mode Options */}
-          {visibility === 'restricted' && (
+          {/* Feature Restrictions - Available for both Public and Restricted */}
+          {(visibility === 'public' || visibility === 'restricted') && (
             <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
-              <Typography variant="subtitle2" fontWeight="600" gutterBottom sx={{ mb: 2 }}>
-                What can others do?
+              <Typography variant="subtitle2" fontWeight="600" gutterBottom sx={{ mb: 1 }}>
+                Feature Permissions
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                Control what actions others can perform on this experiment
               </Typography>
               
               <Stack spacing={1.5}>
