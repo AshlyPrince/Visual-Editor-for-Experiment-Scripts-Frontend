@@ -295,7 +295,11 @@ class ExperimentService {
    * Update experiment permissions
    */
   async updateExperimentPermissions(experimentId, permissionsData) {
-    const response = await api.put(`/api/experiments/${experimentId}/permissions`, permissionsData);
+    // Since the backend doesn't have a separate permissions endpoint,
+    // we update the experiment with just the permissions field
+    const response = await api.put(`/api/experiments/${experimentId}`, {
+      permissions: permissionsData
+    });
     return response.data;
   }
 
