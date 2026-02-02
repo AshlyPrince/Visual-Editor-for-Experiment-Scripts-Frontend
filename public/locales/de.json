@@ -1277,6 +1277,7 @@
   },
   "help": {
     "title": "Benutzerhandbuch & Hilfe",
+    "helpGuide": "Hilfe & Benutzerhandbuch",
     "gettingStarted": "Erste Schritte",
     "features": "Funktionen",
     "tips": "Tipps & Tricks",
