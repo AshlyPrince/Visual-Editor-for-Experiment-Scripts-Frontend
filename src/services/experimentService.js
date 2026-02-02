@@ -299,43 +299,49 @@ class ExperimentService {
       id: currentExperiment.id,
       title: currentExperiment.title,
       hasContent: !!currentExperiment.content,
-      hasNestedContent: !!currentExperiment.content?.content,
-      contentKeys: currentExperiment.content ? Object.keys(currentExperiment.content) : [],
-      currentPermissions: currentExperiment.content?.permissions?.visibility || 
-                         currentExperiment.content?.content?.permissions?.visibility ||
-                         'none'
+      currentPermissions: currentExperiment.content?.permissions?.visibility || 'none'
     });
     
-    // Build the update payload - send ONLY the content with updated permissions
-    // This prevents overwriting other fields
-    const updatePayload = {
-      content: {
-        ...currentExperiment.content,
-        permissions: permissionsData
-      }
+    // Update permissions in the content while preserving everything else
+    const updatedContent = {
+      ...currentExperiment.content,
+      permissions: permissionsData
     };
     
+    // Build the complete update payload - same as when saving experiment edits
+    const updatePayload = {
+      title: currentExperiment.title,
+      estimated_duration: currentExperiment.estimated_duration,
+      course: currentExperiment.course,
+      program: currentExperiment.program,
+      content: updatedContent
+    };
+    
+    // Preserve ownership fields if they exist
+    if (currentExperiment.created_by) {
+      updatePayload.created_by = currentExperiment.created_by;
+    }
+    if (currentExperiment.owner_id) {
+      updatePayload.owner_id = currentExperiment.owner_id;
+    }
+    
     console.log('[experimentService] Sending update payload:', {
+      title: updatePayload.title,
       hasContent: !!updatePayload.content,
-      permissionsVisibility: updatePayload.content.permissions.visibility,
-      hasSections: !!updatePayload.content.sections,
-      sectionsCount: updatePayload.content.sections?.length || 0,
-      hasConfig: !!updatePayload.content.config
+      sectionsCount: updatePayload.content?.sections?.length || 0,
+      permissionsVisibility: updatePayload.content?.permissions?.visibility
     });
     
-    // Send only the content update
-    const response = await api.put(`/api/experiments/${experimentId}`, updatePayload);
+    // Use the standard updateExperiment method
+    const response = await this.updateExperiment(experimentId, updatePayload);
     
     console.log('[experimentService] Backend response:', {
-      id: response.data.id,
-      title: response.data.title,
-      hasContent: !!response.data.content,
-      savedPermissions: response.data.content?.permissions?.visibility || 
-                       response.data.content?.content?.permissions?.visibility ||
-                       'not found'
+      id: response.id,
+      title: response.title,
+      savedPermissions: response.content?.permissions?.visibility || 'not found'
     });
     
-    return response.data;
+    return response;
   }
 
   async checkUserPermission(experimentId, permission) {
