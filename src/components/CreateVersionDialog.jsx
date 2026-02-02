@@ -50,7 +50,19 @@ const CreateVersionDialog = ({
         base_version: currentVersion,
       };
 
+      console.log('[CreateVersionDialog] Saving version with data:', {
+        title: versionData.title,
+        experimentId,
+        contentSections: versionData.content?.sections?.length
+      });
+
       const newVersion = await experimentService.createVersion(experimentId, versionData);
+
+      console.log('[CreateVersionDialog] Version created:', {
+        id: newVersion.id,
+        title: newVersion.title,
+        version_number: newVersion.version_number
+      });
 
       setCommitMessage('');
       setVersionTitle('');

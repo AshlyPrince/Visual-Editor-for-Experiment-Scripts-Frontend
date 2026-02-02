@@ -159,11 +159,13 @@ class ExperimentService {
     const currentExperiment = await this.getExperiment(experimentId);
     const canonical = toCanonical(currentExperiment);
     
-    const defaultVersionName = t ? t('experiment.updated') : 'Updated';
     const commitMsg = t ? t('experiment.updatedWithWizard') : 'Updated with Experiment Wizard';
     
     const versionData = {
-      title: `${t ? t('experiment.version') : 'Version'} - ${wizardData.name || defaultVersionName}`,
+      title: wizardData.name,
+      estimated_duration: wizardData.duration || '',
+      course: wizardData.subject || '',
+      program: wizardData.gradeLevel || '',
       content: {
         ...canonical.content,
         config: {
@@ -189,7 +191,13 @@ class ExperimentService {
       commit_message: commitMsg
     };
 
-    return this.createVersion(experimentId, versionData);
+    console.log('[experimentService.updateFromWizard] Creating version with title:', versionData.title);
+
+    const result = await this.createVersion(experimentId, versionData);
+    
+    console.log('[experimentService.updateFromWizard] Version created with title:', result.title);
+
+    return result;
   }
 
   generateHTMLFromSections(sections, config = {}, t = null) {
