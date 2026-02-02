@@ -143,10 +143,13 @@ export function isUserOwner(experiment, currentUser) {
     return false;
   }
 
-  const userName = currentUser.preferred_username || currentUser.id;
+  // Get all possible user identifiers
+  const userName = currentUser.preferred_username;
+  const userId = currentUser.id || currentUser.sub;
+  const userEmail = currentUser.email;
   
-  if (!userName) {
-    console.log('[Permissions] isUserOwner: No username found');
+  if (!userName && !userId && !userEmail) {
+    console.log('[Permissions] isUserOwner: No user identifier found');
     return false;
   }
 
@@ -155,19 +158,25 @@ export function isUserOwner(experiment, currentUser) {
   // Check userPermissions array for owner (primary method)
   if (permissions && permissions.userPermissions && Array.isArray(permissions.userPermissions)) {
     const ownerPermission = permissions.userPermissions.find(up => up.isOwner === true);
-    if (ownerPermission && ownerPermission.username) {
-      const isMatch = ownerPermission.username === userName;
-      console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Checked username: ${userName} vs ${ownerPermission.username}`);
+    if (ownerPermission) {
+      // Check against all possible identifiers
+      const isMatch = 
+        (ownerPermission.username && (ownerPermission.username === userName || ownerPermission.username === userId)) ||
+        (ownerPermission.userId && (ownerPermission.userId === userId || ownerPermission.userId === userName)) ||
+        (ownerPermission.email && ownerPermission.email === userEmail);
+      
+      console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Checked identifiers: username=${userName}, userId=${userId}, email=${userEmail} vs owner data:`, ownerPermission);
       return isMatch;
     }
   }
 
-  // Fallback: check created_by field (legacy support)
+  // Fallback: check created_by/owner_id fields (legacy support)
   const createdBy = experiment.created_by || experiment.createdBy || experiment.owner_id;
   
   if (createdBy) {
-    const isMatch = createdBy === userName;
-    console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Fallback check: ${userName} vs ${createdBy}`);
+    // Check against all possible identifiers
+    const isMatch = createdBy === userName || createdBy === userId || createdBy === userEmail;
+    console.log(`[Permissions] isUserOwner: ${isMatch ? 'TRUE' : 'FALSE'} - Fallback check: identifiers (${userName}, ${userId}, ${userEmail}) vs ${createdBy}`);
     return isMatch;
   }
 

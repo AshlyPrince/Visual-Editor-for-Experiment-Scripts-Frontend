@@ -103,7 +103,7 @@ const removeExcludedFields = (obj) => {
 };
 
 const isMetadataField = (fieldName) => {
-  const metadataFields = ['duration', 'estimated_duration', 'course', 'program', 'title'];
+  const metadataFields = ['duration', 'estimated_duration', 'course', 'program'];
   return metadataFields.includes(fieldName);
 };
 

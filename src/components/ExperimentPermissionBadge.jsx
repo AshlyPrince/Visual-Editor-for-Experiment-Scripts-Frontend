@@ -15,7 +15,7 @@ import {
   NotificationsActive as NotificationsIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material';
-import { canEdit, canDelete, getUserPermissions, isOwner } from '../utils/permissions';
+import { canEdit, canDelete, getUserPermissions, isOwner, isUserOwner } from '../utils/permissions';
 import keycloakService from '../services/keycloakService';
 
 const ExperimentPermissionBadge = ({ 
@@ -29,13 +29,41 @@ const ExperimentPermissionBadge = ({
   const currentUser = keycloakService.getUserInfo();
   const userId = currentUser?.id || currentUser?.sub || currentUser?.email;
   
+  // Check if user is owner using the comprehensive isUserOwner function
+  const isExpOwner = experiment ? isUserOwner(experiment, currentUser) : false;
+  
+  // If no permissions object but user is owner, show owner badge
   if (!experiment?.content?.permissions) {
+    if (isExpOwner) {
+      return (
+        <Box display="flex" alignItems="center" gap={0.5}>
+          <Chip
+            label={t('permissions.owner') || 'Owner'}
+            size="small"
+            color="primary"
+            variant="outlined"
+          />
+          {onManagePermissions && (
+            <Tooltip title={t('permissions.manage') || 'Manage Permissions'}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onManagePermissions(experiment);
+                }}
+              >
+                <SettingsIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
+      );
+    }
     return null;
   }
   
   const permissions = experiment.content.permissions;
   const userPermissions = getUserPermissions(permissions, userId);
-  const isExpOwner = isOwner(userPermissions);
   const hasEditAccess = canEdit(userPermissions);
   const hasDeleteAccess = canDelete(userPermissions);
 
@@ -54,11 +82,13 @@ const ExperimentPermissionBadge = ({
   }
 
   let accessLabel = null;
-  if (userPermissions) {
+  if (isExpOwner) {
+    // User is owner - determined by isUserOwner check
+    accessLabel = t('permissions.owner') || 'Owner';
+  } else if (userPermissions) {
+    // User has explicit permissions
     const role = userPermissions.role;
-    if (isExpOwner) {
-      accessLabel = t('permissions.owner') || 'Owner';
-    } else if (role === 'admin') {
+    if (role === 'admin') {
       accessLabel = t('permissions.admin') || 'Admin';
     } else if (role === 'editor') {
       accessLabel = t('permissions.editor') || 'Editor';
