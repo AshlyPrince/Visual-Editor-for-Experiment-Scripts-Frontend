@@ -83,24 +83,21 @@ const LanguageSimplificationDialog = ({
     }
   };
 
-  const handleExport = async (format) => {
+  const handleExport = async () => {
     if (!simplifiedData) return;
-    
-    setExporting(true);
     
     try {
       if (onExport) {
-        // Pass the simplified data and format to parent (ExperimentViewer)
-        // Parent will handle the actual export through ExportDialog
-        await onExport(simplifiedData, format, targetLevel);
+        // Pass the simplified data to parent (ExperimentViewer)
+        // Parent will open the export dialog where user can choose format
+        await onExport(simplifiedData, targetLevel);
       }
       
-      // Reset exporting state after callback completes
-      setExporting(false);
+      // Close the simplification dialog
+      handleClose();
     } catch (err) {
       console.error('Export error:', err);
       setError(err.message || t('simplification.exportError', 'Unable to export the simplified experiment.'));
-      setExporting(false);
     }
   };
 
@@ -295,29 +292,20 @@ const LanguageSimplificationDialog = ({
             </Paper>
           </Box>
 
-          <Typography variant="body2" color="text.secondary">
-            {t('simplification.exportInfo', 'Choose how you want to export the simplified version:')}
-          </Typography>
+          <Alert severity="info" sx={{ mt: 2 }}>
+            {t('simplification.exportInfo', 'You can now export this simplified version using the export button below.')}
+          </Alert>
         </DialogContent>
 
         <DialogActions sx={{ flexDirection: 'column', alignItems: 'stretch', gap: 1, px: 3, pb: 2 }}>
           <Button
             variant="contained"
             fullWidth
-            onClick={() => handleExport('html')}
+            onClick={() => handleExport()}
             disabled={exporting}
-            startIcon={exporting ? <CircularProgress size={20} /> : <DownloadIcon />}
+            startIcon={<DownloadIcon />}
           >
-            {exporting ? t('common.exporting', 'Exporting...') : t('simplification.exportHTML', 'Export as HTML')}
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={() => handleExport('pdf')}
-            disabled={exporting}
-            startIcon={exporting ? <CircularProgress size={20} /> : <DownloadIcon />}
-          >
-            {exporting ? t('common.exporting', 'Exporting...') : t('simplification.exportPDF', 'Export as PDF')}
+            {t('simplification.exportSimplified', 'Export Simplified Version')}
           </Button>
           <Box sx={{ display: 'flex', gap: 1, width: '100%', mt: 1 }}>
             <Button onClick={() => setStep('select')} fullWidth disabled={exporting}>

@@ -1174,6 +1174,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
 
+  console.log('[ExperimentViewer] Permission check results:', {
+    userIsOwner,
+    canEditExp,
+    canExport,
+    canViewHistory,
+    experimentId: experiment?.id,
+    hasPermissions: !!experiment?.content?.permissions
+  });
+
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>
       {/* Restriction Notice Banner */}
@@ -1277,20 +1286,19 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           
           {/* Simplify Language button */}
           <Tooltip 
-            title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('simplification.tooltip', 'Simplify the language for different education levels')}
+            title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : t('simplification.tooltip', 'Adapt the language for different education levels')}
             arrow
           >
             <span>
               <Button
                 variant="outlined"
-                color="info"
                 startIcon={<TranslateIcon />}
                 onClick={() => setSimplifyOpen(true)}
                 disabled={!canExport}
                 fullWidth
                 sx={{ height: '100%' }}
               >
-                {t('simplification.simplify', 'Simplify')}
+                {t('simplification.adaptLanguage', 'Adapt Language')}
               </Button>
             </span>
           </Tooltip>
@@ -1497,12 +1505,11 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             setAutoExportFormat(null);
           }}
           experimentData={experiment}
-          onExport={async (simplifiedExperiment, format, level) => {
-            // Store the simplified version and format, then trigger export
+          onExport={async (simplifiedExperiment, level) => {
+            // Store the simplified version, then open export dialog
             setSimplifiedData(simplifiedExperiment);
-            setAutoExportFormat(format);
             setSimplifyOpen(false);
-            // Open export dialog - it will auto-export based on autoExportFormat
+            // Open export dialog - user can choose format there
             setExportOpen(true);
           }}
         />
