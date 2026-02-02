@@ -604,6 +604,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
               const safetyIcons = isSafetySection || isHazardsSection ? sectionMedia.filter(m => {
                 const name = (m.name || '').toLowerCase();
                 const url = (m.url || m.data || '').toLowerCase();
+                const caption = (m.caption || '').toLowerCase();
                 
                 if (isSafetySection) {
                   return m.isSafetyIcon || 
@@ -624,6 +625,21 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          name.includes('boots') ||
                          name.includes('shoe') ||
                          name.includes('wear') ||
+                         // German safety equipment terms
+                         name.includes('schutzbrille') ||
+                         name.includes('handschuhe') ||
+                         name.includes('helm') ||
+                         name.includes('kittel') ||
+                         name.includes('laborkittel') ||
+                         name.includes('schutzkleidung') ||
+                         name.includes('atemschutz') ||
+                         name.includes('schürze') ||
+                         name.includes('stiefel') ||
+                         caption.includes('schutzbrille') ||
+                         caption.includes('handschuhe') ||
+                         caption.includes('helm') ||
+                         caption.includes('kittel') ||
+                         caption.includes('schutz') ||
                          url.includes('/saftey/') ||
                          url.includes('/safety/');
                 } else if (isHazardsSection) {
@@ -647,6 +663,7 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
               const regularMedia = isSafetySection || isHazardsSection ? sectionMedia.filter(m => {
                 const name = (m.name || '').toLowerCase();
                 const url = (m.url || m.data || '').toLowerCase();
+                const caption = (m.caption || '').toLowerCase();
                 
                 if (isSafetySection) {
                   return !m.isSafetyIcon && 
@@ -667,6 +684,21 @@ const VersionHistory = ({ experimentId, onClose, onVersionRestored }) => {
                          !name.includes('boots') &&
                          !name.includes('shoe') &&
                          !name.includes('wear') &&
+                         // German safety equipment terms
+                         !name.includes('schutzbrille') &&
+                         !name.includes('handschuhe') &&
+                         !name.includes('helm') &&
+                         !name.includes('kittel') &&
+                         !name.includes('laborkittel') &&
+                         !name.includes('schutzkleidung') &&
+                         !name.includes('atemschutz') &&
+                         !name.includes('schürze') &&
+                         !name.includes('stiefel') &&
+                         !caption.includes('schutzbrille') &&
+                         !caption.includes('handschuhe') &&
+                         !caption.includes('helm') &&
+                         !caption.includes('kittel') &&
+                         !caption.includes('schutz') &&
                          !url.includes('/saftey/') &&
                          !url.includes('/safety/');
                 } else if (isHazardsSection) {

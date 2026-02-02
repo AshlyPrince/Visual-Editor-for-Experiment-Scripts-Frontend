@@ -2194,7 +2194,7 @@ IMPORTANT RESTRICTIONS:
 
 CURRENT WIZARD CONTEXT:
 Step: ${currentStep + 1} of 3 (${currentStep === 0 ? 'Basic Info' : currentStep === 1 ? 'Section Selection' : 'Section Content'})
-${currentStep === 2 ? `Currently editing section: ${selectedSectionIds[Math.min(activeSection, selectedSectionIds.length - 1)] || 'unknown'}` : ''}
+${currentStep === 2 && selectedSectionIds.length > 0 ? `Editing ${selectedSectionIds.length} section(s): ${selectedSectionIds.join(', ')}` : ''}
 
 CURRENT EXPERIMENT DRAFT:
 Title: ${basicInfo.title || '(not set yet)'}
