@@ -488,16 +488,18 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
                   return await simplifyText(item, targetLevel, t);
                 } else if (typeof item === 'object' && item !== null) {
                   // Handle objects in arrays (like procedure steps)
+                  // NOTE: Only simplify text fields (text, instruction, notes)
+                  // Preserve media arrays and all other properties unchanged
                   if (item.text || item.instruction || item.notes) {
                     return {
-                      ...item,
+                      ...item, // Preserves media, id, and all other properties
                       text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
                       instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
                       notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
                     };
                   } else if (item.name) {
                     return {
-                      ...item,
+                      ...item, // Preserves media and all other properties
                       name: await simplifyText(item.name, targetLevel, t)
                     };
                   }
@@ -518,9 +520,10 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
             if (typeof item === 'string') {
               return await simplifyText(item, targetLevel, t);
             } else if (typeof item === 'object' && item !== null) {
+              // Only simplify text fields, preserve media and all other properties
               if (item.text || item.instruction || item.notes) {
                 return {
-                  ...item,
+                  ...item, // Preserves media, id, and all other properties
                   text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
                   instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
                   notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
@@ -546,9 +549,10 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
       else if (hasSteps) {
         simplifiedSection.steps = await Promise.all(
           section.steps.map(async (step, idx) => {
+            // Only simplify text fields, preserve media and all other properties
             if (step.instruction || step.text || step.notes) {
               return {
-                ...step,
+                ...step, // Preserves media, id, and all other properties
                 instruction: step.instruction ? await simplifyText(step.instruction, targetLevel, t) : step.instruction,
                 text: step.text ? await simplifyText(step.text, targetLevel, t) : step.text,
                 notes: step.notes ? await simplifyText(step.notes, targetLevel, t) : step.notes
@@ -590,11 +594,11 @@ const simplifyText = async (text, targetLevel, t) => {
     return placeholder;
   });
   
-  // Preserve links (keep link text for simplification, but preserve the href)
-  processedText = processedText.replace(/<a\s+(?:[^>]*?\s+)?href=["']([^"']+)["'][^>]*?>([\s\S]*?)<\/a>/gi, (match, href, linkText) => {
+  // Preserve links (preserve entire link including text - do not simplify)
+  processedText = processedText.replace(/<a\s+(?:[^>]*?\s+)?href=["']([^"']+)["'][^>]*?>([\s\S]*?)<\/a>/gi, (match) => {
     const placeholder = `___LINK_PLACEHOLDER_${preservedElements.length}___`;
-    preservedElements.push({ type: 'link', href, text: linkText, fullMatch: match });
-    return linkText; // Keep link text for simplification
+    preservedElements.push(match);
+    return placeholder;
   });
   
   // Preserve images
@@ -742,21 +746,14 @@ ${processedText}` }
     // Restore preserved elements (in reverse order for nested content)
     for (let i = preservedElements.length - 1; i >= 0; i--) {
       const element = preservedElements[i];
-      const placeholder = element.type === 'link' 
-        ? `___LINK_PLACEHOLDER_${i}___` 
-        : element.type 
-          ? `___${element.type.toUpperCase()}_PLACEHOLDER_${i}___`
-          : `___TABLE_PLACEHOLDER_${i}___`;
+      const placeholderName = element.includes('<table') ? 'TABLE' :
+                              element.includes('<img') ? 'IMAGE' :
+                              element.includes('<video') ? 'VIDEO' :
+                              element.includes('<a') ? 'LINK' : 'TABLE';
+      const placeholder = `___${placeholderName}_PLACEHOLDER_${i}___`;
       
-      if (element.type === 'link') {
-        // For links, check if the link text was simplified and wrap it back in the <a> tag
-        const originalLinkText = element.text;
-        // Find where the original link text appears in simplified text (it might have been simplified)
-        simplifiedText = simplifiedText.replace(originalLinkText, element.fullMatch);
-      } else {
-        // For tables, images, videos - restore as-is
-        simplifiedText = simplifiedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), element);
-      }
+      // Restore all preserved elements as-is (tables, images, videos, links)
+      simplifiedText = simplifiedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), element);
     }
     
     simplifiedText = simplifiedText.trim();
