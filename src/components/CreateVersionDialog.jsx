@@ -55,13 +55,26 @@ const CreateVersionDialog = ({
         commit_message: commitMessage.trim(),
         base_version: currentVersion,
       };
+      
+      // Preserve ownership fields at top level (fallback for legacy experiments)
+      if (updatedContent.created_by) {
+        versionData.created_by = updatedContent.created_by;
+      }
+      if (updatedContent.owner_id) {
+        versionData.owner_id = updatedContent.owner_id;
+      }
+      if (updatedContent.createdBy) {
+        versionData.createdBy = updatedContent.createdBy;
+      }
 
       console.log('[CreateVersionDialog] Saving version with data:', {
         title: versionData.title,
         experimentId,
         contentSections: versionData.content?.sections?.length,
         hasPermissions: !!versionData.content?.permissions,
-        userPermissions: versionData.content?.permissions?.userPermissions?.length
+        userPermissions: versionData.content?.permissions?.userPermissions?.length,
+        hasOwnerId: !!versionData.owner_id,
+        hasCreatedBy: !!versionData.created_by
       });
 
       const newVersion = await experimentService.createVersion(experimentId, versionData);

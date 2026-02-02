@@ -239,8 +239,20 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     updatedExperiment.course = course;
     updatedExperiment.program = program;
     
+    // Preserve permissions if they exist
     if (experiment?.content?.permissions) {
       updatedExperiment.content.permissions = experiment.content.permissions;
+    }
+    
+    // Preserve ownership fields at top level (fallback for legacy experiments)
+    if (experiment?.created_by) {
+      updatedExperiment.created_by = experiment.created_by;
+    }
+    if (experiment?.owner_id) {
+      updatedExperiment.owner_id = experiment.owner_id;
+    }
+    if (experiment?.createdBy) {
+      updatedExperiment.createdBy = experiment.createdBy;
     }
     
     return updatedExperiment;
