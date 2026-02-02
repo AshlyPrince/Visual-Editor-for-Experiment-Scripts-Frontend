@@ -165,7 +165,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder }) => {
       
       let validUrl = linkUrl.trim();
 
-      if (!validUrl.match(/^https?:\/\
+      if (!validUrl.match(/^https?:\/\//)) {
         validUrl = 'https://' + validUrl;
       }
 
