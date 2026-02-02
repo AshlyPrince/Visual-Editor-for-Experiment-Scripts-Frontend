@@ -429,8 +429,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         {safetyIcons.length > 0 && (
           <Box sx={{ mb: hasSafetyText ? 3 : 0 }}>
             <Box sx={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))',
+              display: 'flex',
+              flexWrap: 'wrap',
               gap: 1.5,
               maxWidth: '600px'
             }}>
@@ -441,7 +441,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: 0.5
+                    gap: 0.5,
+                    width: '80px'
                   }}
                 >
                   <Box
@@ -587,8 +588,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         {hazardIcons.length > 0 && (
           <Box sx={{ mb: hasHazardsText ? 3 : 0 }}>
             <Box sx={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))',
+              display: 'flex',
+              flexWrap: 'wrap',
               gap: 1.5,
               maxWidth: '600px'
             }}>
@@ -599,7 +600,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: 0.5
+                    gap: 0.5,
+                    width: '80px'
                   }}
                 >
                   <Box

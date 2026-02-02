@@ -18,15 +18,15 @@ import {
 } from '@mui/material';
 import { Warning as WarningIcon } from '@mui/icons-material';
 
-import safetyGloves from '../assets/icons/saftey/saftey-gloves.png';
-import safetyGoggles from '../assets/icons/saftey/saftey-goggles.png';
-import labCoat from '../assets/icons/saftey/saftey-labcoat.png';
-import closedShoes from '../assets/icons/saftey/saftey-shoes.png';
-import faceshield from '../assets/icons/saftey/saftey-faceshield.png';
-import helmet from '../assets/icons/saftey/saftey-helmet.png';
-import mask from '../assets/icons/saftey/saftey-mask.png';
-import headset from '../assets/icons/saftey/saftey-headset.png';
-import highVisibilityJacket from '../assets/icons/saftey/saftey-highvisibilityjackets.png';
+import safetyGloves from '../assets/icons/saftey/saftey-gloves.jpg';
+import safetyGoggles from '../assets/icons/saftey/saftey-goggles.jpg';
+import labCoat from '../assets/icons/saftey/saftey-dress.jpg';
+import closedShoes from '../assets/icons/saftey/saftey-shoes.jpg';
+import faceshield from '../assets/icons/saftey/saftey-faceshield.jpg';
+import helmet from '../assets/icons/saftey/saftey-helmet.jpg';
+import mask from '../assets/icons/saftey/saftey-mask.jpg';
+import headset from '../assets/icons/saftey/saftey-headset.jpg';
+import highVisibilityJacket from '../assets/icons/saftey/saftey-highvisibilityjackets.jpg';
 
 const SafetyIconLibrary = ({ onIconsSelected }) => {
   const { t } = useTranslation();

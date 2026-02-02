@@ -354,55 +354,107 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             
             .container {
                 padding: 30px 40px;
+                height: auto !important;
+                overflow: visible !important;
             }
             
+            /* CRITICAL: Keep sections together - don't split them across pages */
             .section {
                 page-break-inside: avoid;
                 break-inside: avoid;
                 page-break-before: auto;
                 margin-bottom: 25px;
+                position: static !important;
+                height: auto !important;
+                overflow: visible !important;
             }
             
+            /* Keep section title with its content */
             .section-title {
                 page-break-after: avoid;
                 break-after: avoid;
             }
             
+            /* Keep section content together */
             .section-content {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
             
-            .footer {
-                page-break-before: auto;
-                margin-top: 30px;
-            }
-            
-            h1, h2, h3 {
+            /* Keep headings with following content */
+            h1, h2, h3, h4, h5, h6 {
                 page-break-after: avoid;
                 break-after: avoid;
+                orphans: 3;
+                widows: 3;
             }
             
+            /* Better paragraph control */
+            p, li {
+                orphans: 3;
+                widows: 3;
+            }
+            
+            /* Keep media galleries together */
             .media-gallery {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             
+            /* Keep individual media items together (image + caption) */
             .media-item {
                 page-break-inside: avoid;
                 break-inside: avoid;
                 display: block;
             }
             
+            /* Keep images from splitting */
             .media-item img {
                 max-height: 300px;
                 width: 100%;
                 object-fit: contain;
                 display: block;
+                page-break-inside: avoid;
+                break-inside: avoid;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
             
+            /* Keep safety icon galleries together */
+            .safety-icons-gallery {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Keep icon items together */
+            .safety-icon-item {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Keep tables together */
+            table {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Keep subsections together */
+            .subsection,
+            .objectives-box,
+            .safety-warning {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Keep procedure steps together */
+            .procedure-steps li {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Hide videos in print */
             .media-item video {
                 display: none;
             }
@@ -412,6 +464,13 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                 font-weight: bold;
             }
             
+            /* Footer can break before if needed */
+            .footer {
+                page-break-before: auto;
+                margin-top: 30px;
+            }
+            
+            /* Ensure colors print correctly */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
