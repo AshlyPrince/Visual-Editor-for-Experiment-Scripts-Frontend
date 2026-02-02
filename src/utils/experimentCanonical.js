@@ -33,7 +33,10 @@ export const toCanonical = (experiment) => {
                 (experiment.gradeLevel && experiment.gradeLevel.trim()) || ''
   };
   
-  
+  // Extract permissions from various possible locations
+  const permissions = experiment.content?.permissions || 
+                     experiment.content?.content?.permissions || 
+                     experiment.permissions;
   
   return {
     
@@ -49,7 +52,8 @@ export const toCanonical = (experiment) => {
     
     content: {
       config,
-      sections: normalizedSections
+      sections: normalizedSections,
+      ...(permissions && { permissions })
     },
     
     
