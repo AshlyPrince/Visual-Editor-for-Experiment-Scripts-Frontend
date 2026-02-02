@@ -27,15 +27,14 @@ import {
   FileDownload as ExportIcon,
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
+import keycloakService from '../services/keycloakService.js';
 import VersionHistory from './VersionHistory';
 import ExportDialog from './ExportDialog';
 import { toCanonical } from '../utils/experimentCanonical.js';
 import { canAccessRestrictedFeature, isUserOwner } from '../utils/permissions.js';
-import { useKeycloak } from '../auth/KeycloakContext';
 
 const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   const { t } = useTranslation();
-  const { keycloak } = useKeycloak();
   const [experiment, setExperiment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -1153,7 +1152,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   };
 
   // Check permissions for current user
-  const currentUser = keycloak?.tokenParsed;
+  const currentUser = keycloakService.getUserInfo();
   const userIsOwner = experiment ? isUserOwner(experiment, currentUser) : false;
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
