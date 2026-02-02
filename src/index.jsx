@@ -8,11 +8,7 @@ import { i18nInitPromise } from './i18n/config.js'
 
 window.keycloak = null;
 
-console.log('[index.jsx] Waiting for i18n initialization...');
-
 i18nInitPromise.then(() => {
-  console.log('[index.jsx] i18n ready, rendering React app');
-  
   ReactDOM.createRoot(document.getElementById('root')).render(
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={professionalTheme}>
@@ -21,6 +17,4 @@ i18nInitPromise.then(() => {
       </ThemeProvider>
     </StyledEngineProvider>
   );
-  
-  console.log('[index.jsx] React app rendered');
 });

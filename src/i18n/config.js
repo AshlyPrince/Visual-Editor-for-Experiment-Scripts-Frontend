@@ -11,8 +11,6 @@ const getInitialLanguage = () => {
 };
 
 export const i18nInitPromise = new Promise((resolve) => {
-  console.log('[i18n] Starting initialization...');
-  
   i18n
     .use(HttpBackend)
     .use(initReactI18next)
@@ -39,11 +37,6 @@ export const i18nInitPromise = new Promise((resolve) => {
       if (err) {
         console.error('[i18n] Initialization error:', err);
       }
-      console.log('[i18n] Initialized and translations loaded');
-      console.log('[i18n] Available languages:', i18n.languages);
-      console.log('[i18n] Current language:', i18n.language);
-      console.log('[i18n] Has en translations:', i18n.hasResourceBundle('en', 'translation'));
-      console.log('[i18n] Has de translations:', i18n.hasResourceBundle('de', 'translation'));
       resolve(i18n);
     });
 });

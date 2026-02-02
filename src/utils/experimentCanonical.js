@@ -268,16 +268,9 @@ export const toWizardState = (sections) => {
 export const fromWizardState = (wizardState, selectedSections) => {
   if (!wizardState || !selectedSections) return [];
   
-  console.log('[fromWizardState] Input wizardState:', wizardState);
-  console.log('[fromWizardState] Input selectedSections:', selectedSections);
-  
   return selectedSections.map(sectionDef => {
     const fieldValues = wizardState[sectionDef.id] || {};
     const schemaDef = getSectionDefinition(sectionDef.id);
-    
-    console.log(`[fromWizardState] Processing section: ${sectionDef.id}`);
-    console.log(`[fromWizardState] Field values for ${sectionDef.id}:`, fieldValues);
-    console.log(`[fromWizardState] Schema definition for ${sectionDef.id}:`, schemaDef);
     
     if (!schemaDef) {
       // Custom section - include both content and media
@@ -326,12 +319,9 @@ export const fromWizardState = (wizardState, selectedSections) => {
         
       case 'steps':
       case 'procedure-steps':
-        
-        console.log(`[fromWizardState] Processing procedure-steps for ${sectionDef.id}, steps:`, fieldValues.steps);
         canonical.content = {
           steps: fieldValues.steps || []
         };
-        
         
         if (fieldValues.media && Array.isArray(fieldValues.media) && fieldValues.media.length > 0) {
           canonical.media = fieldValues.media;
@@ -353,7 +343,6 @@ export const fromWizardState = (wizardState, selectedSections) => {
         }
     }
     
-    console.log(`[fromWizardState] Canonical output for ${sectionDef.id}:`, canonical);
     return canonical;
   }).filter(section => section !== null);
 };

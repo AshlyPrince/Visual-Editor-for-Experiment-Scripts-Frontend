@@ -202,14 +202,10 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
     try {
       setLoading(true);
       
-      console.log('[Dashboard] Refreshing dashboard data...');
-      
       const response = await experimentService.getExperiments({ 
         page: 1,
         limit: 1000 
       });
-      
-      console.log('[Dashboard Refresh] Raw response:', response);
       
       let allExperimentData = [];
       
@@ -218,8 +214,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
       } else if (response && typeof response === 'object') {
         allExperimentData = response.data || response.experiments || response.results || [];
       }
-      
-      console.log('[Dashboard Refresh] Extracted experiments:', allExperimentData.length);
       
       allExperimentData = allExperimentData.map(exp => ({
         ...exp,
@@ -261,7 +255,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         totalExperiments: visibleExperiments.length
       });
 
-      console.log('[Dashboard Refresh] Refresh complete. Total experiments:', allExperimentData.length);
       setError(null);
     } catch (err) {
       console.error('[Dashboard Refresh] Error refreshing dashboard:', err);
@@ -284,7 +277,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
   
   useEffect(() => {
     if (!i18nReady) {
-      console.log('[Dashboard] Waiting for i18n initialization...');
       return;
     }
 
@@ -293,21 +285,12 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         setLoading(true);
         setError(null);
         
-        console.log('[Dashboard] i18n ready, starting to load experiments...');
-        
         const userInfo = keycloakService.getUserInfo();
-        console.log('[Dashboard] User info:', userInfo);
-        
         
         const response = await experimentService.getExperiments({ 
           page: 1,
           limit: 1000 
         });
-        
-        console.log('[Dashboard] Raw API response:', response);
-        console.log('[Dashboard] Response type:', typeof response);
-        console.log('[Dashboard] Is array?', Array.isArray(response));
-        
         
         let allExperimentData = [];
         
@@ -318,17 +301,10 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           allExperimentData = response.data || response.experiments || response.results || [];
         }
         
-        console.log('[Dashboard] Extracted experiments:', allExperimentData);
-        console.log('[Dashboard] Number of experiments:', allExperimentData.length);
-        
-        
-        
         allExperimentData = allExperimentData.map(exp => ({
           ...exp,
           autoTags: extractTagsFromExperiment(exp)
         }));
-        
-        console.log('[Dashboard] Experiments with tags:', allExperimentData.length);
         
         // Filter experiments based on visibility permissions
         const currentUser = keycloakService.getUserInfo();
@@ -352,26 +328,19 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
           return true;
         });
         
-        console.log('[Dashboard] Filtered visible experiments:', visibleExperiments.length, 'out of', allExperimentData.length);
-        
-        
         setAllExperiments(visibleExperiments);
         setFilteredExperiments(visibleExperiments);
         setTotalExperiments(visibleExperiments.length);
         
-        
         const startIndex = page * rowsPerPage;
         const endIndex = startIndex + rowsPerPage;
         const paginatedExperiments = visibleExperiments.slice(startIndex, endIndex);
-        
-        console.log('[Dashboard] Paginated experiments for display:', paginatedExperiments.length);
         
         setExperiments(paginatedExperiments);
         setStats({
           totalExperiments: visibleExperiments.length
         });
 
-        console.log('[Dashboard] State updated successfully. Total experiments:', allExperimentData.length);
         setError(null);
       } catch (err) {
         console.error('[Dashboard] Error loading dashboard data:', err);
@@ -408,7 +377,6 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         setFilteredExperiments([]);
         setTotalExperiments(0);
       } finally {
-        console.log('[Dashboard] Loading complete, setting loading to false');
         setLoading(false);
       }
     };

@@ -14,12 +14,7 @@ export const KeycloakProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        console.log('[KeycloakContext] Starting Keycloak initialization...');
         const isAuthenticated = await keycloakService.initialize();
-        
-        console.log('[KeycloakContext] Initialization complete. Authenticated:', isAuthenticated);
-        console.log('[KeycloakContext] User info:', keycloakService.userInfo);
-        console.log('[KeycloakContext] Has token:', !!keycloakService.getToken());
         
         setKeycloak(keycloakService.keycloak);
         setAuthenticated(isAuthenticated);
@@ -32,7 +27,6 @@ export const KeycloakProvider = ({ children }) => {
         if (isAuthenticated) {
           const savedRedirect = sessionStorage.getItem('keycloak_redirect_uri');
           if (savedRedirect && savedRedirect !== '/login' && savedRedirect !== '/') {
-            console.log('[KeycloakContext] Restoring saved location:', savedRedirect);
             sessionStorage.removeItem('keycloak_redirect_uri');
             window.location.href = savedRedirect;
           }

@@ -634,12 +634,7 @@ const ModularExperimentWizard = ({
       setIsCreating(true);
       setCreationError(null);
 
-      console.log('[Wizard] Section content before conversion:', sectionContent);
-      console.log('[Wizard] Selected sections:', selectedSections);
-
       const canonicalSections = fromWizardState(sectionContent, selectedSections);
-
-      console.log('[Wizard] Canonical sections after conversion:', canonicalSections);
 
       // Get or create permissions
       const userInfo = keycloakService.getUserInfo();
@@ -663,16 +658,12 @@ const ModularExperimentWizard = ({
         permissions: experimentPermissions
       };
 
-      console.log('[Wizard] Final experiment data being sent:', experimentData);
-
       let result;
       if (existingExperiment) {
         result = await experimentService.updateFromWizard(existingExperiment.id, experimentData);
       } else {
         result = await experimentService.createFromWizard(experimentData);
       }
-      
-      console.log('[Wizard] Server response:', result);
       
       setCreatedExperiment(result);
       setIsCreating(false);

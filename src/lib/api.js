@@ -32,13 +32,11 @@ const isNetworkError = (error) => {
 const retryRequest = async (config, retries = 3, delay = 2000) => {
   for (let i = 0; i < retries; i++) {
     try {
-      console.log(`[API] Attempt ${i + 1}/${retries} for ${config.url}`);
       return await api(config);
     } catch (error) {
       const isLastAttempt = i === retries - 1;
       
       if (isNetworkError(error) && !isLastAttempt) {
-        console.log(`[API] Retrying in ${delay}ms due to network error...`);
         await sleep(delay);
         delay *= 1.5;
       } else {
@@ -75,7 +73,6 @@ api.interceptors.response.use(
     
     if (isNetworkError(error) && !originalRequest._retried) {
       originalRequest._retried = true;
-      console.log('[API] Network error detected, attempting retry with backoff...');
       return retryRequest(originalRequest, 3, 2000);
     }
     

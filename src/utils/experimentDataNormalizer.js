@@ -229,7 +229,9 @@ export function denormalizeExperiment(experiment, sections) {
         gradeLevel: experiment.program || experiment.content?.config?.gradeLevel || ''
       },
       
-      sections: sections.map(section => denormalizeSection(section))
+      sections: sections.map(section => denormalizeSection(section)),
+      // Explicitly preserve permissions
+      permissions: experiment.content?.permissions || experiment.permissions
     },
     
     sections: sections.map(section => denormalizeSection(section))

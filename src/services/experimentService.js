@@ -173,7 +173,9 @@ class ExperimentService {
           subject: wizardData.subject || '',
           gradeLevel: wizardData.gradeLevel || ''
         },
-        sections: wizardData.sections
+        sections: wizardData.sections,
+        // Preserve permissions from wizardData or existing experiment
+        permissions: wizardData.permissions || canonical.content.permissions
       },
       html_content: this.generateHTMLFromSections(
         wizardData.sections, 

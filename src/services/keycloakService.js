@@ -78,7 +78,6 @@ class KeycloakService {
       }
 
       if (this.authenticated) {
-        console.log('[Keycloak] User authenticated successfully');
         this.extractUserInfo();
         this.setupTokenRefresh();
         // Clear the init attempted flag on successful auth
@@ -91,10 +90,8 @@ class KeycloakService {
           sessionStorage.setItem('kc_token', this.keycloak.token);
           sessionStorage.setItem('kc_refreshToken', this.keycloak.refreshToken);
           sessionStorage.setItem('kc_idToken', this.keycloak.idToken);
-          console.log('[Keycloak] Tokens stored in sessionStorage for persistence');
         }
       } else {
-        console.log('[Keycloak] No active session found - user needs to log in');
         // Clear any stale tokens
         sessionStorage.removeItem('kc_token');
         sessionStorage.removeItem('kc_refreshToken');
@@ -138,15 +135,12 @@ class KeycloakService {
         this.keycloak.updateToken(60)
           .then((refreshed) => {
             if (refreshed) {
-              console.log('[Keycloak] Token refreshed successfully');
               this.extractUserInfo(); // Update user info with new token
               
               // Update stored tokens
               sessionStorage.setItem('kc_token', this.keycloak.token);
               sessionStorage.setItem('kc_refreshToken', this.keycloak.refreshToken);
               sessionStorage.setItem('kc_idToken', this.keycloak.idToken);
-            } else {
-              console.log('[Keycloak] Token is still valid');
             }
           })
           .catch((error) => {

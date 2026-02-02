@@ -75,17 +75,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       setError(null);
       
       const rawData = await experimentService.getExperiment(experimentId);
-      console.log('[ExperimentViewer] Raw data from backend:', rawData);
-      console.log('[ExperimentViewer] Raw data sections:', rawData.sections);
-      console.log('[ExperimentViewer] Raw data content:', rawData.content);
       
       const procedureSection = (rawData.sections || rawData.content?.sections || []).find(s => s.id === 'procedure');
-      console.log('[ExperimentViewer] Raw procedure section from backend:', procedureSection);
-      if (procedureSection) {
-        console.log('[ExperimentViewer] Raw procedure section content:', procedureSection.content);
-        console.log('[ExperimentViewer] Raw procedure section content type:', typeof procedureSection.content);
-      }
-      
       
       let actualVersionNumber = rawData.current_version_number || rawData.version_number || 1;
       try {
@@ -104,28 +95,17 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
         
       }
       
-      
       const canonical = toCanonical(rawData);
-      console.log('[ExperimentViewer] After toCanonical transformation:', canonical);
-      console.log('[ExperimentViewer] Canonical sections:', canonical.content?.sections);
       
       const canonicalProcedureSection = (canonical.content?.sections || []).find(s => s.id === 'procedure');
-      console.log('[ExperimentViewer] Canonical procedure section:', canonicalProcedureSection);
-      if (canonicalProcedureSection) {
-        console.log('[ExperimentViewer] Canonical procedure section content:', canonicalProcedureSection.content);
-      }
-      
       
       canonical.version_number = actualVersionNumber;
-      
-      
       
       canonical.sections = canonical.content.sections;
       canonical.estimated_duration = canonical.content.config.duration;
       canonical.course = canonical.content.config.subject;
       canonical.program = canonical.content.config.gradeLevel;
       
-      console.log('[ExperimentViewer] Final experiment object being set:', canonical);
       setExperiment(canonical);
     } catch (err) {
       setError(err.message || t('messages.loadError'));
@@ -674,21 +654,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
   };
 
   const renderProcedureSection = (section) => {
-    console.log('[ExperimentViewer] Rendering procedure section:', section);
-    console.log('[ExperimentViewer] Section content:', section.content);
-    console.log('[ExperimentViewer] Section content type:', typeof section.content);
-    
-    if (section.content && section.content.steps) {
-      console.log('[ExperimentViewer] Procedure steps found:', section.content.steps);
-      console.log('[ExperimentViewer] Steps type:', typeof section.content.steps);
-      console.log('[ExperimentViewer] Is array?', Array.isArray(section.content.steps));
-      if (Array.isArray(section.content.steps) && section.content.steps.length > 0) {
-        console.log('[ExperimentViewer] First step:', section.content.steps[0]);
-      }
-    } else {
-      console.log('[ExperimentViewer] No steps found in section.content');
-    }
-    
     return renderSectionContent(section);
   };
 
@@ -706,19 +671,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   
   const renderSectionContent = (section) => {
-    console.log('[ExperimentViewer] renderSectionContent called for section:', section.id, section.name);
-    console.log('[ExperimentViewer] Full section object:', section);
-    console.log('[ExperimentViewer] section.media:', section.media);
-    
     const sectionContent = section.content || {};
-    console.log('[ExperimentViewer] sectionContent:', sectionContent);
-    console.log('[ExperimentViewer] sectionContent.media:', sectionContent.media);
-    console.log('[ExperimentViewer] sectionContent keys:', Object.keys(sectionContent));
-    console.log('[ExperimentViewer] sectionContent values:', Object.values(sectionContent));
-    
-    Object.entries(sectionContent).forEach(([key, value]) => {
-      console.log(`[ExperimentViewer] Key "${key}":`, value, 'Type:', Array.isArray(value) ? 'Array' : typeof value);
-    });
     
     const hasContent = () => {
       if (typeof sectionContent === 'string' && sectionContent.trim()) {
@@ -741,7 +694,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
     };
     
     if (!hasContent()) {
-      console.log(`[ExperimentViewer] Section "${section.name}" has no content, skipping render`);
       return null;
     }
     
@@ -1123,50 +1075,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             
             return null;
           })}
-          
-          {((section.media && Array.isArray(section.media) && section.media.length > 0) ||
-            (sectionContent.media && Array.isArray(sectionContent.media) && sectionContent.media.length > 0)) && 
-            section.id === 'safety' && (
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ 
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 1.5,
-                maxWidth: '600px'
-              }}>
-                {(section.media || sectionContent.media || []).map((mediaItem, index) => (
-                  <Box key={index} sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80px' }}>
-                    {mediaItem.type?.startsWith('image/') && (
-                      <Box
-                        component="img"
-                        src={mediaItem.url || mediaItem.data}
-                        alt={mediaItem.caption || mediaItem.name || `Safety icon ${index + 1}`}
-                        sx={{
-                          width: 80,
-                          height: 80,
-                          borderRadius: 0,
-                          objectFit: 'contain',
-                          mb: 0.5
-                        }}
-                      />
-                    )}
-                    {mediaItem.caption && (
-                      <Typography 
-                        variant="caption"
-                        sx={{ 
-                          color: 'text.secondary',
-                          fontSize: '0.7rem',
-                          lineHeight: 1.2
-                        }}
-                      >
-                        {mediaItem.caption}
-                      </Typography>
-                    )}
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          )}
         </Box>
       </Box>
     );
@@ -1191,14 +1099,10 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
 
   // Check permissions for current user
   const currentUser = keycloakService.getUserInfo();
-  console.log('[ExperimentViewer] Current user:', currentUser);
-  console.log('[ExperimentViewer] Experiment permissions:', experiment?.content?.permissions);
   const userIsOwner = experiment ? isUserOwner(experiment, currentUser) : false;
-  console.log('[ExperimentViewer] User is owner?', userIsOwner);
   const canEditExp = experiment ? canAccessRestrictedFeature(experiment, 'edit', currentUser) : false;
   const canExport = experiment ? canAccessRestrictedFeature(experiment, 'export', currentUser) : false;
   const canViewHistory = experiment ? canAccessRestrictedFeature(experiment, 'versionControl', currentUser) : false;
-  console.log('[ExperimentViewer] Permissions - canEdit:', canEditExp, 'canExport:', canExport, 'canViewHistory:', canViewHistory);
 
   return (
     <Container maxWidth="lg" onClick={handleLinkClick}>

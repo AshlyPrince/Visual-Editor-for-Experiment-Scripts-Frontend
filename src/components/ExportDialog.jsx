@@ -28,22 +28,15 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
   const [exportSuccess, setExportSuccess] = useState(false);
 
   const generateHTML = () => {
-    console.log('=== [EXPORT] generateHTML CALLED ===');
     if (!experiment) return '';
-
-    console.log('[EXPORT] Experiment data:', experiment);
 
     const content = typeof experiment.content === 'string' 
       ? JSON.parse(experiment.content) 
       : experiment.content;
     
-    console.log('[EXPORT] Parsed content:', content);
-    
     const actualContent = content?.content || content;
     const config = actualContent?.config || {};
     const sections = actualContent?.sections || [];
-    
-    console.log('[EXPORT] Sections to process:', sections.length);
     
     let htmlContent = `
 <!DOCTYPE html>
@@ -506,53 +499,37 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
     sections.forEach(section => {
       if (!section) return;
       
-      console.log(`[Export] Processing section: ${section.id}`, section);
-      
       let sectionContent = section.content;
       
       if (typeof sectionContent === 'string') {
         try {
           const parsed = JSON.parse(sectionContent);
-          console.log(`[Export] Parsed JSON string content for ${section.id}:`, parsed);
           sectionContent = parsed;
         } catch (e) {
-          console.log(`[Export] Content for ${section.id} is string (not JSON):`, sectionContent.substring(0, 100));
         }
       }
       
-      console.log(`[Export] Initial section content for ${section.id}:`, sectionContent);
-      console.log(`[Export] Content type:`, typeof sectionContent, 'Is array:', Array.isArray(sectionContent));
-      
       if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
         if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
-          console.log(`[Export] Extracting steps array for ${section.id}:`, sectionContent.steps);
           sectionContent = sectionContent.steps;
         } else if (sectionContent.items && Array.isArray(sectionContent.items)) {
-          console.log(`[Export] Extracting items array for ${section.id}:`, sectionContent.items);
           sectionContent = sectionContent.items;
         }
       }
       
-      console.log(`[Export] Final section content for ${section.id}:`, sectionContent);
-      
       if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
         if (sectionContent.content) {
-          console.log(`[Export] Found nested content.content for ${section.id}:`, sectionContent.content);
           sectionContent = sectionContent.content;
           
           if (sectionContent && typeof sectionContent === 'object' && !Array.isArray(sectionContent)) {
             if (sectionContent.steps && Array.isArray(sectionContent.steps)) {
-              console.log(`[Export] Extracting nested steps for ${section.id}:`, sectionContent.steps);
               sectionContent = sectionContent.steps;
             } else if (sectionContent.items && Array.isArray(sectionContent.items)) {
-              console.log(`[Export] Extracting nested items for ${section.id}:`, sectionContent.items);
               sectionContent = sectionContent.items;
             }
           }
         }
       }
-      
-      console.log(`[Export] After unwrapping, section content for ${section.id}:`, sectionContent);
       
       let sectionMedia = section.media || [];
       if ((!sectionMedia || sectionMedia.length === 0) && section.content && typeof section.content === 'object' && section.content.media) {
@@ -585,7 +562,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
       };
       
       if (!hasContent()) {
-        console.log(`[Export] Section "${section.name || section.id}" has no content, skipping`);
         return;
       }
       
@@ -756,16 +732,9 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
 
       
       if (Array.isArray(sectionContent)) {
-        console.log(`[Export] Section content is array for ${section.id}, length:`, sectionContent.length);
-        if (sectionContent.length > 0) {
-          console.log(`[Export] First item in array:`, sectionContent[0]);
-        }
-        
         const isProcedureSteps = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null && ('text' in sectionContent[0] || 'instruction' in sectionContent[0]);
         
         const isMaterialsList = sectionContent.length > 0 && typeof sectionContent[0] === 'object' && sectionContent[0] !== null;
-        
-        console.log(`[Export] isProcedureSteps:`, isProcedureSteps, 'isMaterialsList:', isMaterialsList);
         
         if (isProcedureSteps) {
           htmlContent += `
@@ -815,24 +784,15 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </ol>
 `;
         } else if (isMaterialsList) {
-          console.log(`[Export] Rendering materials list for ${section.id}, items:`, sectionContent);
           htmlContent += `
             <ul class="materials-list">
                 ${sectionContent.map((item, idx) => {
-                  console.log(`[Export] Processing item ${idx}:`, item, 'Type:', typeof item);
-                  
                   if (typeof item === 'string' || typeof item === 'number') {
-                    console.log(`[Export] Item ${idx} is string/number:`, item);
                     const text = String(item).trim();
                     return text ? `<li>${text}</li>` : '';
                   } else if (typeof item === 'object' && item !== null) {
-                    console.log(`[Export] Item ${idx} is object, keys:`, Object.keys(item));
-                    console.log(`[Export] Item ${idx} values:`, Object.values(item));
-                    
                     if (item.item && Array.isArray(item.item)) {
-                      console.log(`[Export] Item ${idx} has nested array in .item property:`, item.item);
                       return item.item.map((nestedItem, nestedIdx) => {
-                        console.log(`[Export] Processing nested item ${nestedIdx}:`, nestedItem);
                         if (typeof nestedItem === 'string' || typeof nestedItem === 'number') {
                           const text = String(nestedItem).trim();
                           return text ? `<li>${text}</li>` : '';
@@ -856,8 +816,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                       itemText = item.title.trim();
                     }
                     
-                    console.log(`[Export] Extracted itemText for ${idx}:`, itemText);
-                    
                     if (item.quantity) {
                       itemText += ` (${item.quantity})`;
                     }
@@ -867,11 +825,9 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     }
                     
                     if (!itemText) {
-                      console.log(`[Export] No itemText found, trying to extract from values`);
                       const keys = Object.keys(item);
                       if (keys.length > 0) {
                         itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').map(v => String(v).trim()).filter(v => v).join(' ');
-                        console.log(`[Export] Extracted from values:`, itemText);
                       }
                     }
                     
@@ -879,7 +835,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     
                     // Add media if present
                     if (item.media && item.media.data) {
-                      console.log(`[Export] Item ${idx} has media attachment:`, item.media);
                       let imageSrc = item.media.data;
                       if (imageSrc && !imageSrc.startsWith('data:') && !imageSrc.startsWith('http')) {
                         imageSrc = new URL(imageSrc, window.location.origin).href;
@@ -892,7 +847,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                     }
                     
                     result += itemText ? `</li>` : '';
-                    console.log(`[Export] Final HTML for item ${idx}:`, result);
                     return result;
                   }
                   return '';
@@ -929,8 +883,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
           const keyLabel = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
           
           if (Array.isArray(value)) {
-            console.log(`[Export] Processing array value for key "${key}":`, value);
-            
             const isProcedureSteps = value.length > 0 && typeof value[0] === 'object' && value[0] !== null && ('text' in value[0] || 'instruction' in value[0]);
             
             const isObjectList = value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
@@ -986,24 +938,16 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
             </div>
 `;
             } else if (isObjectList) {
-              console.log(`[Export] Rendering object list for key "${key}":`, value);
               htmlContent += `
             <div class="subsection">
                 <div class="subsection-title">${keyLabel}</div>
                 <ul class="materials-list">
                     ${value.map((item, idx) => {
-                      console.log(`[Export] [Subsection] Processing item ${idx} for key "${key}":`, item, 'Type:', typeof item);
-                      
                       if (typeof item === 'string' || typeof item === 'number') {
-                        console.log(`[Export] [Subsection] Item ${idx} is string/number:`, item);
                         const text = String(item).trim();
                         return text ? `<li>${text}</li>` : '';
                       } else if (typeof item === 'object' && item !== null) {
-                        console.log(`[Export] [Subsection] Item ${idx} is object, keys:`, Object.keys(item));
-                        console.log(`[Export] [Subsection] Item ${idx} values:`, Object.values(item));
-                        
                         let itemText = (item.name || item.text || item.title || item.item || '').trim();
-                        console.log(`[Export] [Subsection] Extracted itemText for ${idx}:`, itemText);
                         
                         if (item.quantity) {
                           itemText += ` (${item.quantity})`;
@@ -1014,16 +958,13 @@ const ExportDialog = ({ open, onClose, experiment, onExported }) => {
                         }
                         
                         if (!itemText) {
-                          console.log(`[Export] [Subsection] No itemText found for ${idx}, trying to extract from values`);
                           const keys = Object.keys(item);
                           if (keys.length > 0) {
                             itemText = Object.values(item).filter(v => typeof v === 'string' || typeof v === 'number').map(v => String(v).trim()).filter(v => v).join(' ');
-                            console.log(`[Export] [Subsection] Extracted from values for ${idx}:`, itemText);
                           }
                         }
                         
                         const result = itemText ? `<li>${itemText}</li>` : '';
-                        console.log(`[Export] [Subsection] Final HTML for item ${idx}:`, result);
                         return result;
                       }
                       return '';

@@ -45,6 +45,15 @@ const EXCLUDED_FIELDS = [
   'description',
   'fields',
   'isCustom',
+  'permissions',
+  'userPermissions',
+  'visibility',
+  'allowViewDetails',
+  'allowExport',
+  'allowVersionControl',
+  'allowEdit',
+  'allowSimplify',
+  'allowDelete',
 ];
 
 const removeExcludedFields = (obj) => {
