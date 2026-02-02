@@ -708,19 +708,27 @@ const ModularExperimentWizard = ({
       <Typography variant="body2" color="text.secondary" paragraph>
         {t('wizard.steps.basicInfoDesc')}
       </Typography>
+      
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          💡 {t('emptyStates.noExperiments.tip', 'Tip: Use the wizard if you\'re new to creating experiments!')}
+        </Typography>
+      </Alert>
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid item xs={12}>
-          <TextField
-            fullWidth
-            required
-            label={t('wizard.basicInfo.experimentTitle')}
-            value={basicInfo.title}
-            onChange={(e) => updateBasicInfo('title', e.target.value)}
-            error={touched.title && !basicInfo.title.trim()}
-            helperText={touched.title && !basicInfo.title.trim() ? t('wizard.basicInfo.titleRequired') : ''}
-            placeholder={t('wizard.basicInfo.titlePlaceholder')}
-          />
+          <Tooltip title={t('tooltips.wizard.titleHelp', 'Give your experiment a clear, descriptive title')} arrow placement="top">
+            <TextField
+              fullWidth
+              required
+              label={t('wizard.basicInfo.experimentTitle')}
+              value={basicInfo.title}
+              onChange={(e) => updateBasicInfo('title', e.target.value)}
+              error={touched.title && !basicInfo.title.trim()}
+              helperText={touched.title && !basicInfo.title.trim() ? t('wizard.basicInfo.titleRequired') : t('tooltips.wizard.titleHelp', 'Give your experiment a clear, descriptive title')}
+              placeholder={t('wizard.basicInfo.titlePlaceholder')}
+            />
+          </Tooltip>
         </Grid>
 
         <Grid item xs={12}>
@@ -743,29 +751,34 @@ const ModularExperimentWizard = ({
                 letterSpacing: 0.5
               }}
             >
-              {t('wizard.basicInfo.additionalDetails')}
+              {t('wizard.basicInfo.additionalDetails')} 
+              <Chip label={t('tooltips.wizard.optionalField', 'Optional but recommended')} size="small" sx={{ ml: 1 }} />
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label={t('wizard.basicInfo.duration')}
-                  value={basicInfo.duration}
-                  onChange={(e) => updateBasicInfo('duration', e.target.value)}
-                  placeholder={t('wizard.basicInfo.durationPlaceholder')}
-                  size="small"
-                />
+                <Tooltip title={t('tooltips.wizard.durationHelp', 'Estimate how long students will need')} arrow>
+                  <TextField
+                    fullWidth
+                    label={t('wizard.basicInfo.duration')}
+                    value={basicInfo.duration}
+                    onChange={(e) => updateBasicInfo('duration', e.target.value)}
+                    placeholder={t('wizard.basicInfo.durationPlaceholder')}
+                    size="small"
+                  />
+                </Tooltip>
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label={t('wizard.basicInfo.course')}
-                  value={basicInfo.course}
-                  onChange={(e) => updateBasicInfo('course', e.target.value)}
-                  placeholder={t('wizard.basicInfo.coursePlaceholder')}
-                  size="small"
-                />
+                <Tooltip title={t('tooltips.wizard.courseHelp', 'Specify the course or curriculum')} arrow>
+                  <TextField
+                    fullWidth
+                    label={t('wizard.basicInfo.course')}
+                    value={basicInfo.course}
+                    onChange={(e) => updateBasicInfo('course', e.target.value)}
+                    placeholder={t('wizard.basicInfo.coursePlaceholder')}
+                    size="small"
+                  />
+                </Tooltip>
               </Grid>
 
               <Grid item xs={12}>
@@ -799,6 +812,17 @@ const ModularExperimentWizard = ({
       <Typography variant="body2" color="text.secondary" paragraph>
         {t('wizard.steps.selectSectionsDesc')}
       </Typography>
+      
+      <Alert severity="info" icon={<InfoIcon />} sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          💡 {t('tooltips.wizard.selectSection', 'Choose sections to include in your experiment')}
+        </Typography>
+        <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
+          ⭐ = {t('tooltips.wizard.sectionRequired', 'Required')} | 
+          ✨ = {t('tooltips.wizard.sectionRecommended', 'Recommended')} | 
+          ⚡ = {t('tooltips.wizard.sectionOptional', 'Optional')}
+        </Typography>
+      </Alert>
 
       <Box sx={{ mb: 4 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
@@ -809,30 +833,33 @@ const ModularExperimentWizard = ({
             .filter(section => section.category === 'optional')
             .map(section => {
               const isSelected = selectedSections.some(s => s.id === section.id);
+              const helpText = t(`tooltips.wizard.${section.id}Help`, section.description);
               return (
                 <Grid item xs={12} md={6} key={section.id}>
-                  <SectionCard 
-                    selected={isSelected} 
-                    locked={false}
-                    onClick={() => toggleSection(section)}
-                  >
-                    <CardContent>
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Typography variant="h4">{section.emoji}</Typography>
-                        <Box flex={1}>
-                          <Typography variant="h6">{section.name}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {section.description}
-                          </Typography>
+                  <Tooltip title={helpText} arrow placement="top">
+                    <SectionCard 
+                      selected={isSelected} 
+                      locked={false}
+                      onClick={() => toggleSection(section)}
+                    >
+                      <CardContent>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Typography variant="h4">{section.emoji}</Typography>
+                          <Box flex={1}>
+                            <Typography variant="h6">{section.name}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {section.description}
+                            </Typography>
+                          </Box>
+                          <Checkbox
+                            checked={isSelected}
+                            icon={<UncheckIcon />}
+                            checkedIcon={<CheckIcon />}
+                          />
                         </Box>
-                        <Checkbox
-                          checked={isSelected}
-                          icon={<UncheckIcon />}
-                          checkedIcon={<CheckIcon />}
-                        />
-                      </Box>
-                    </CardContent>
-                  </SectionCard>
+                      </CardContent>
+                    </SectionCard>
+                  </Tooltip>
                 </Grid>
               );
             })}
@@ -1969,24 +1996,30 @@ const ModularExperimentWizard = ({
         </StepContent>
 
         <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between' }}>
-          <SecondaryButton
-            onClick={handleBack}
-            disabled={currentStep === 0}
-            startIcon={<BackIcon />}
-          >
-            {t('wizard.navigation.back')}
-          </SecondaryButton>
+          <Tooltip title={t('tooltips.wizard.previousStep', 'Go back to previous step')} arrow>
+            <span>
+              <SecondaryButton
+                onClick={handleBack}
+                disabled={currentStep === 0}
+                startIcon={<BackIcon />}
+              >
+                {t('wizard.navigation.back')}
+              </SecondaryButton>
+            </span>
+          </Tooltip>
 
           <Box display="flex" gap={2}>
             {onCancel && (
-              <SecondaryButton onClick={handleCancel}>
-                {t('wizard.navigation.cancel')}
-              </SecondaryButton>
+              <Tooltip title={t('tooltips.wizard.saveProgress', 'Save your progress and continue later')} arrow>
+                <SecondaryButton onClick={handleCancel}>
+                  {t('wizard.navigation.cancel')}
+                </SecondaryButton>
+              </Tooltip>
             )}
             
             {currentStep < wizardSteps.length - 1 && (
               <Tooltip 
-                title={!validateStep(currentStep) ? getValidationMessage(currentStep) : ''}
+                title={!validateStep(currentStep) ? getValidationMessage(currentStep) : t('tooltips.wizard.nextStep', 'Continue to next step')}
                 arrow
                 placement="top"
               >

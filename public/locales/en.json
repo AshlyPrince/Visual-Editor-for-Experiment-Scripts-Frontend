@@ -1461,5 +1461,167 @@
     "aiNote": "Note: AI-simplified content preserves scientific accuracy while adjusting language complexity.",
     "simplifiedBy": "Simplified to {{level}} level",
     "complexityLevel": "Complexity Level"
+  },
+  "tooltips": {
+    "dashboard": {
+      "createExperiment": "Create a new experiment from scratch",
+      "continueDraft": "Resume working on your saved draft",
+      "searchExperiments": "Search by title, tags, or content",
+      "clearSearch": "Clear search filters",
+      "refreshList": "Reload experiment list",
+      "gridView": "Switch to grid view",
+      "listView": "Switch to list view",
+      "filterByTag": "Filter experiments by tags",
+      "sortBy": "Change sorting order"
+    },
+    "experiment": {
+      "edit": "Edit experiment details and content",
+      "view": "View experiment in read-only mode",
+      "delete": "Permanently delete this experiment",
+      "export": "Export to PDF or HTML format",
+      "duplicate": "Create a copy of this experiment",
+      "share": "Share with other users",
+      "versionHistory": "View all previous versions",
+      "managePermissions": "Control who can access this experiment",
+      "requestAccess": "Request permission to view or edit",
+      "viewDetails": "See complete experiment information"
+    },
+    "editor": {
+      "save": "Save your changes as a new version",
+      "cancel": "Discard changes and return",
+      "addSection": "Add a new section to your experiment",
+      "removeSection": "Remove this section",
+      "moveUp": "Move section up",
+      "moveDown": "Move section down",
+      "richTextFormat": "Format text with bold, italic, lists, and more",
+      "addMedia": "Upload images or videos",
+      "addSafetyIcon": "Add safety warning symbols",
+      "aiAssistant": "Get AI suggestions for improvement",
+      "polishText": "Improve text with AI assistance",
+      "checkConsistency": "Verify content consistency across sections",
+      "simplifyLanguage": "Adjust language complexity level",
+      "previewExperiment": "See how your experiment will look"
+    },
+    "wizard": {
+      "nextStep": "Continue to next step",
+      "previousStep": "Go back to previous step",
+      "saveProgress": "Save your progress and continue later - Your work is auto-saved every 30 seconds",
+      "clearDraft": "Delete saved draft and start fresh",
+      "selectSection": "Choose sections to include in your experiment",
+      "requiredField": "This field is required to continue",
+      "optionalField": "This field is optional but recommended",
+      "aiHelp": "Get AI assistance with this content",
+      "titleHelp": "Give your experiment a clear, descriptive title (e.g., 'Acid-Base Titration with Phenolphthalein')",
+      "descriptionHelp": "Briefly describe what students will learn and do in this experiment",
+      "subjectHelp": "Select the primary subject area for this experiment",
+      "gradeLevelHelp": "Choose the appropriate education level for your students",
+      "durationHelp": "Estimate how long students will need to complete this experiment",
+      "courseHelp": "Specify the course or curriculum this experiment belongs to",
+      "programHelp": "Select the educational program or grade level",
+      "objectivesHelp": "List what students should be able to do after completing this experiment",
+      "backgroundHelp": "Provide context and theory students need to understand before starting",
+      "materialsHelp": "List all equipment, chemicals, and supplies needed",
+      "safetyHelp": "Include all safety warnings, precautions, and required protective equipment",
+      "procedureHelp": "Write clear, numbered steps students should follow",
+      "observationsHelp": "Describe what students should observe and record during the experiment",
+      "resultsHelp": "Explain how to analyze and interpret the data collected",
+      "conclusionsHelp": "Guide students in drawing conclusions and connecting to learning objectives",
+      "discussionHelp": "Add questions for critical thinking and deeper understanding",
+      "referencesHelp": "Cite sources, textbooks, or additional reading materials",
+      "sectionOptional": "This section is optional - you can skip it or add it later",
+      "sectionRequired": "This section is required for a complete experiment",
+      "sectionRecommended": "This section is highly recommended for student understanding",
+      "addMediaHelp": "Upload images or videos to illustrate procedures and expected results",
+      "richTextHelp": "Use formatting tools: Bold for emphasis, lists for steps, headings for organization",
+      "polishAllHelp": "AI will review and improve all your content for clarity and scientific accuracy",
+      "checkConsistencyHelp": "AI will verify that terminology and content are consistent across sections",
+      "publicPermissionHelp": "Everyone can view this experiment - Great for sharing with the wider community",
+      "privatePermissionHelp": "Only you can access this experiment - Ideal while still developing content",
+      "restrictedPermissionHelp": "Control exactly who can access and what they can do - Best for collaborative work",
+      "previewHelp": "Review your complete experiment before creating it - You can still edit after creation"
+    },
+    "permissions": {
+      "public": "Anyone can view this experiment",
+      "private": "Only you can access this experiment",
+      "restricted": "Specific users can access with permissions",
+      "allowEdit": "Users can modify the experiment",
+      "allowExport": "Users can download in PDF/HTML format",
+      "allowVersionControl": "Users can create new versions",
+      "allowViewDetails": "Users can see full experiment details",
+      "allowSimplify": "Users can simplify language complexity",
+      "addUser": "Grant access to a specific user",
+      "removeUser": "Revoke user's access",
+      "ownerBadge": "You created this experiment"
+    },
+    "version": {
+      "createVersion": "Save current state as a new version",
+      "compareVersions": "See differences between versions",
+      "restoreVersion": "Revert to this version",
+      "viewVersion": "See this version's content",
+      "versionNumber": "Version identifier",
+      "commitMessage": "Description of what changed"
+    },
+    "media": {
+      "uploadImage": "Add image file (JPG, PNG, GIF)",
+      "uploadVideo": "Add video file (MP4, WebM)",
+      "removeMedia": "Delete this media item",
+      "addCaption": "Describe what's shown in the media",
+      "reorderMedia": "Drag to change display order"
+    },
+    "general": {
+      "help": "Open help guide",
+      "close": "Close this dialog",
+      "cancel": "Cancel and go back",
+      "confirm": "Confirm this action",
+      "loading": "Please wait while we load the content",
+      "retry": "Try again",
+      "moreOptions": "See more options",
+      "expandSection": "Click to expand",
+      "collapseSection": "Click to collapse",
+      "copyToClipboard": "Copy to clipboard",
+      "openInNewTab": "Open in a new browser tab"
+    }
+  },
+  "emptyStates": {
+    "noExperiments": {
+      "title": "No experiments yet",
+      "description": "Start by creating your first experiment. You can use the wizard for a guided experience or start from scratch.",
+      "tip": "💡 Tip: Use the wizard if you're new to creating experiments!"
+    },
+    "noSearchResults": {
+      "title": "No experiments found",
+      "description": "Try adjusting your search terms or filters.",
+      "tip": "💡 Tip: Use tags to organize and find experiments easier!"
+    },
+    "noVersionHistory": {
+      "title": "No version history",
+      "description": "Create your first version by saving your changes.",
+      "tip": "💡 Tip: Add descriptive commit messages to track changes!"
+    },
+    "noMediaUploaded": {
+      "title": "No media added",
+      "description": "Upload images or videos to illustrate your experiment.",
+      "tip": "💡 Tip: Visual aids help students understand procedures better!"
+    },
+    "noSectionsSelected": {
+      "title": "No sections selected",
+      "description": "Choose at least one section to include in your experiment.",
+      "tip": "💡 Tip: Required sections are marked with a star (⭐)"
+    },
+    "noAccessRequests": {
+      "title": "No access requests",
+      "description": "When users request access to your experiment, they'll appear here.",
+      "tip": "💡 Tip: You can manage permissions in the experiment settings!"
+    },
+    "noChatHistory": {
+      "title": "Start a conversation",
+      "description": "Ask the AI assistant for help with content improvement, suggestions, or questions.",
+      "tip": "💡 Tip: Be specific in your requests for better results!"
+    },
+    "noDrafts": {
+      "title": "No saved drafts",
+      "description": "Your work-in-progress experiments will be saved here automatically.",
+      "tip": "💡 Tip: The wizard auto-saves your progress every 30 seconds!"
+    }
   }
 }

@@ -1459,5 +1459,167 @@
     "aiNote": "Hinweis: KI-vereinfachter Inhalt bewahrt die wissenschaftliche Genauigkeit bei Anpassung der Sprachkomplexität.",
     "simplifiedBy": "Vereinfacht auf {{level}} Niveau",
     "complexityLevel": "Komplexitätsstufe"
+  },
+  "tooltips": {
+    "dashboard": {
+      "createExperiment": "Neues Experiment von Grund auf erstellen",
+      "continueDraft": "Arbeit an Ihrem gespeicherten Entwurf fortsetzen",
+      "searchExperiments": "Nach Titel, Tags oder Inhalt suchen",
+      "clearSearch": "Suchfilter löschen",
+      "refreshList": "Experimentliste neu laden",
+      "gridView": "Zur Rasteransicht wechseln",
+      "listView": "Zur Listenansicht wechseln",
+      "filterByTag": "Experimente nach Tags filtern",
+      "sortBy": "Sortierreihenfolge ändern"
+    },
+    "experiment": {
+      "edit": "Experimentdetails und Inhalt bearbeiten",
+      "view": "Experiment im Nur-Lese-Modus anzeigen",
+      "delete": "Dieses Experiment endgültig löschen",
+      "export": "Als PDF oder HTML exportieren",
+      "duplicate": "Eine Kopie dieses Experiments erstellen",
+      "share": "Mit anderen Benutzern teilen",
+      "versionHistory": "Alle vorherigen Versionen anzeigen",
+      "managePermissions": "Steuern, wer auf dieses Experiment zugreifen kann",
+      "requestAccess": "Berechtigung zum Anzeigen oder Bearbeiten anfordern",
+      "viewDetails": "Vollständige Experimentinformationen anzeigen"
+    },
+    "editor": {
+      "save": "Ihre Änderungen als neue Version speichern",
+      "cancel": "Änderungen verwerfen und zurückkehren",
+      "addSection": "Neuen Abschnitt zu Ihrem Experiment hinzufügen",
+      "removeSection": "Diesen Abschnitt entfernen",
+      "moveUp": "Abschnitt nach oben verschieben",
+      "moveDown": "Abschnitt nach unten verschieben",
+      "richTextFormat": "Text mit Fett, Kursiv, Listen und mehr formatieren",
+      "addMedia": "Bilder oder Videos hochladen",
+      "addSafetyIcon": "Sicherheitswarnungssymbole hinzufügen",
+      "aiAssistant": "KI-Vorschläge zur Verbesserung erhalten",
+      "polishText": "Text mit KI-Unterstützung verbessern",
+      "checkConsistency": "Inhaltskonsistenz über Abschnitte hinweg überprüfen",
+      "simplifyLanguage": "Sprachkomplexität anpassen",
+      "previewExperiment": "Sehen Sie, wie Ihr Experiment aussehen wird"
+    },
+    "wizard": {
+      "nextStep": "Zum nächsten Schritt fortfahren",
+      "previousStep": "Zum vorherigen Schritt zurückkehren",
+      "saveProgress": "Ihren Fortschritt speichern und später fortfahren - Ihre Arbeit wird automatisch alle 30 Sekunden gespeichert",
+      "clearDraft": "Gespeicherten Entwurf löschen und neu beginnen",
+      "selectSection": "Wählen Sie Abschnitte für Ihr Experiment aus",
+      "requiredField": "Dieses Feld ist erforderlich, um fortzufahren",
+      "optionalField": "Dieses Feld ist optional, aber empfohlen",
+      "aiHelp": "KI-Unterstützung für diesen Inhalt erhalten",
+      "titleHelp": "Geben Sie Ihrem Experiment einen klaren, beschreibenden Titel (z.B. 'Säure-Base-Titration mit Phenolphthalein')",
+      "descriptionHelp": "Beschreiben Sie kurz, was die Schüler lernen und in diesem Experiment tun werden",
+      "subjectHelp": "Wählen Sie das Hauptfachgebiet für dieses Experiment",
+      "gradeLevelHelp": "Wählen Sie das geeignete Bildungsniveau für Ihre Schüler",
+      "durationHelp": "Schätzen Sie, wie lange die Schüler für dieses Experiment benötigen",
+      "courseHelp": "Geben Sie den Kurs oder Lehrplan an, zu dem dieses Experiment gehört",
+      "programHelp": "Wählen Sie das Bildungsprogramm oder die Klassenstufe",
+      "objectivesHelp": "Listen Sie auf, was die Schüler nach Abschluss dieses Experiments können sollten",
+      "backgroundHelp": "Geben Sie Kontext und Theorie, die Schüler vor dem Start verstehen müssen",
+      "materialsHelp": "Listen Sie alle benötigten Geräte, Chemikalien und Materialien auf",
+      "safetyHelp": "Fügen Sie alle Sicherheitswarnungen, Vorsichtsmaßnahmen und erforderliche Schutzausrüstung hinzu",
+      "procedureHelp": "Schreiben Sie klare, nummerierte Schritte, denen die Schüler folgen sollen",
+      "observationsHelp": "Beschreiben Sie, was die Schüler während des Experiments beobachten und aufzeichnen sollen",
+      "resultsHelp": "Erklären Sie, wie die gesammelten Daten analysiert und interpretiert werden",
+      "conclusionsHelp": "Leiten Sie die Schüler beim Ziehen von Schlussfolgerungen und Verknüpfen mit Lernzielen an",
+      "discussionHelp": "Fügen Sie Fragen für kritisches Denken und tieferes Verständnis hinzu",
+      "referencesHelp": "Zitieren Sie Quellen, Lehrbücher oder zusätzliche Lesematerialien",
+      "sectionOptional": "Dieser Abschnitt ist optional - Sie können ihn überspringen oder später hinzufügen",
+      "sectionRequired": "Dieser Abschnitt ist für ein vollständiges Experiment erforderlich",
+      "sectionRecommended": "Dieser Abschnitt wird für das Verständnis der Schüler dringend empfohlen",
+      "addMediaHelp": "Laden Sie Bilder oder Videos hoch, um Verfahren und erwartete Ergebnisse zu veranschaulichen",
+      "richTextHelp": "Verwenden Sie Formatierungswerkzeuge: Fett für Betonung, Listen für Schritte, Überschriften für Organisation",
+      "polishAllHelp": "KI wird alle Ihre Inhalte auf Klarheit und wissenschaftliche Genauigkeit überprüfen und verbessern",
+      "checkConsistencyHelp": "KI wird überprüfen, dass Terminologie und Inhalt über alle Abschnitte hinweg konsistent sind",
+      "publicPermissionHelp": "Jeder kann dieses Experiment ansehen - Ideal zum Teilen mit der breiteren Community",
+      "privatePermissionHelp": "Nur Sie können auf dieses Experiment zugreifen - Ideal während der Inhaltsentwicklung",
+      "restrictedPermissionHelp": "Kontrollieren Sie genau, wer zugreifen kann und was sie tun können - Am besten für kollaborative Arbeit",
+      "previewHelp": "Überprüfen Sie Ihr vollständiges Experiment vor der Erstellung - Sie können nach der Erstellung noch bearbeiten"
+    },
+    "permissions": {
+      "public": "Jeder kann dieses Experiment ansehen",
+      "private": "Nur Sie können auf dieses Experiment zugreifen",
+      "restricted": "Bestimmte Benutzer können mit Berechtigungen zugreifen",
+      "allowEdit": "Benutzer können das Experiment ändern",
+      "allowExport": "Benutzer können im PDF/HTML-Format herunterladen",
+      "allowVersionControl": "Benutzer können neue Versionen erstellen",
+      "allowViewDetails": "Benutzer können vollständige Experimentdetails sehen",
+      "allowSimplify": "Benutzer können die Sprachkomplexität vereinfachen",
+      "addUser": "Zugriff für einen bestimmten Benutzer gewähren",
+      "removeUser": "Benutzerzugriff widerrufen",
+      "ownerBadge": "Sie haben dieses Experiment erstellt"
+    },
+    "version": {
+      "createVersion": "Aktuellen Zustand als neue Version speichern",
+      "compareVersions": "Unterschiede zwischen Versionen anzeigen",
+      "restoreVersion": "Zu dieser Version zurückkehren",
+      "viewVersion": "Inhalt dieser Version anzeigen",
+      "versionNumber": "Versionskennung",
+      "commitMessage": "Beschreibung der Änderungen"
+    },
+    "media": {
+      "uploadImage": "Bilddatei hinzufügen (JPG, PNG, GIF)",
+      "uploadVideo": "Videodatei hinzufügen (MP4, WebM)",
+      "removeMedia": "Dieses Medienelement löschen",
+      "addCaption": "Beschreiben Sie, was in den Medien zu sehen ist",
+      "reorderMedia": "Ziehen, um die Anzeigereihenfolge zu ändern"
+    },
+    "general": {
+      "help": "Hilfeleitfaden öffnen",
+      "close": "Diesen Dialog schließen",
+      "cancel": "Abbrechen und zurück",
+      "confirm": "Diese Aktion bestätigen",
+      "loading": "Bitte warten Sie, während wir den Inhalt laden",
+      "retry": "Erneut versuchen",
+      "moreOptions": "Weitere Optionen anzeigen",
+      "expandSection": "Klicken zum Erweitern",
+      "collapseSection": "Klicken zum Zusammenklappen",
+      "copyToClipboard": "In Zwischenablage kopieren",
+      "openInNewTab": "In neuem Browser-Tab öffnen"
+    }
+  },
+  "emptyStates": {
+    "noExperiments": {
+      "title": "Noch keine Experimente",
+      "description": "Beginnen Sie mit der Erstellung Ihres ersten Experiments. Sie können den Assistenten für eine geführte Erfahrung verwenden oder von Grund auf neu beginnen.",
+      "tip": "💡 Tipp: Verwenden Sie den Assistenten, wenn Sie neu im Erstellen von Experimenten sind!"
+    },
+    "noSearchResults": {
+      "title": "Keine Experimente gefunden",
+      "description": "Versuchen Sie, Ihre Suchbegriffe oder Filter anzupassen.",
+      "tip": "💡 Tipp: Verwenden Sie Tags, um Experimente einfacher zu organisieren und zu finden!"
+    },
+    "noVersionHistory": {
+      "title": "Keine Versionshistorie",
+      "description": "Erstellen Sie Ihre erste Version, indem Sie Ihre Änderungen speichern.",
+      "tip": "💡 Tipp: Fügen Sie beschreibende Commit-Nachrichten hinzu, um Änderungen zu verfolgen!"
+    },
+    "noMediaUploaded": {
+      "title": "Keine Medien hinzugefügt",
+      "description": "Laden Sie Bilder oder Videos hoch, um Ihr Experiment zu veranschaulichen.",
+      "tip": "💡 Tipp: Visuelle Hilfsmittel helfen Schülern, Verfahren besser zu verstehen!"
+    },
+    "noSectionsSelected": {
+      "title": "Keine Abschnitte ausgewählt",
+      "description": "Wählen Sie mindestens einen Abschnitt für Ihr Experiment aus.",
+      "tip": "💡 Tipp: Erforderliche Abschnitte sind mit einem Stern (⭐) gekennzeichnet"
+    },
+    "noAccessRequests": {
+      "title": "Keine Zugriffsanfragen",
+      "description": "Wenn Benutzer Zugriff auf Ihr Experiment anfordern, werden sie hier angezeigt.",
+      "tip": "💡 Tipp: Sie können Berechtigungen in den Experimenteinstellungen verwalten!"
+    },
+    "noChatHistory": {
+      "title": "Gespräch beginnen",
+      "description": "Fragen Sie den KI-Assistenten um Hilfe bei der Inhaltsverbesserung, Vorschlägen oder Fragen.",
+      "tip": "💡 Tipp: Seien Sie spezifisch in Ihren Anfragen für bessere Ergebnisse!"
+    },
+    "noDrafts": {
+      "title": "Keine gespeicherten Entwürfe",
+      "description": "Ihre laufenden Experimente werden hier automatisch gespeichert.",
+      "tip": "💡 Tipp: Der Assistent speichert Ihren Fortschritt automatisch alle 30 Sekunden!"
+    }
   }
 }

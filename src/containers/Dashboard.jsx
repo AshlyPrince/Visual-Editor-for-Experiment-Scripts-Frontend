@@ -693,68 +693,74 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
 
         <Box sx={{ display: 'flex', gap: 1 }}>
           {!loading && allExperiments.length > 0 && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={hasDraft ? <DraftIcon /> : <AddIcon />}
-              onClick={onCreateExperiment}
-              sx={{ 
-                fontWeight: 600,
-                px: 3,
-                py: 1.25,
-                borderRadius: 2,
-                textTransform: 'none',
-                fontSize: '0.95rem'
-              }}
-            >
-              {hasDraft ? t('experiment.continueDraft', 'Continue Draft') : t('experiment.createNew')}
-            </Button>
+            <Tooltip title={hasDraft ? t('tooltips.dashboard.continueDraft', 'Resume working on your saved draft') : t('tooltips.dashboard.createExperiment', 'Create a new experiment from scratch')} arrow>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={hasDraft ? <DraftIcon /> : <AddIcon />}
+                onClick={onCreateExperiment}
+                sx={{ 
+                  fontWeight: 600,
+                  px: 3,
+                  py: 1.25,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontSize: '0.95rem'
+                }}
+              >
+                {hasDraft ? t('experiment.continueDraft', 'Continue Draft') : t('experiment.createNew')}
+              </Button>
+            </Tooltip>
           )}
         </Box>
       </Box>
       
       {!loading && allExperiments.length > 0 && (
         <Box sx={{ mb: 3 }}>
-          <TextField
-            fullWidth
-            placeholder={t('common.search')}
-            value={searchQuery}
-            onChange={handleSearchChange}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-              endAdornment: searchQuery && (
-                <InputAdornment position="end">
-                  <IconButton
-                    size="small"
-                    onClick={handleClearSearch}
-                    edge="end"
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-              sx: {
-                borderRadius: 2,
-                bgcolor: 'background.paper',
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'divider'
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'primary.main'
+          <Tooltip title={t('tooltips.dashboard.searchExperiments', 'Search by title, tags, or content')} arrow placement="top">
+            <TextField
+              fullWidth
+              placeholder={t('common.search')}
+              value={searchQuery}
+              onChange={handleSearchChange}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: searchQuery && (
+                  <InputAdornment position="end">
+                    <Tooltip title={t('tooltips.dashboard.clearSearch', 'Clear search filters')} arrow>
+                      <IconButton
+                        size="small"
+                        onClick={handleClearSearch}
+                        edge="end"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+                sx: {
+                  borderRadius: 2,
+                  bgcolor: 'background.paper',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'divider'
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'primary.main'
+                  }
                 }
-              }
-            }}
-            sx={{
-              '& .MuiInputBase-input': {
-                py: 1.5
-              }
-            }}
-          />
+              }}
+              sx={{
+                '& .MuiInputBase-input': {
+                  py: 1.5
+                }
+              }}
+            />
+          </Tooltip>
           {searchQuery && (
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
               {totalExperiments} {totalExperiments === 1 ? t('dashboard.result') : t('dashboard.results')} {t('dashboard.found')}
@@ -777,22 +783,35 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
             ))}
           </Grid>
         ) : experiments.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
-            <ScienceIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              {t('experiment.noExperiments')}
+          <Box sx={{ textAlign: 'center', py: 8, px: 3 }}>
+            <ScienceIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5, color: 'primary.main' }} />
+            <Typography variant="h5" sx={{ mb: 1, fontWeight: 600 }}>
+              {searchQuery ? t('emptyStates.noSearchResults.title', 'No experiments found') : t('emptyStates.noExperiments.title', 'No experiments yet')}
             </Typography>
-            <Typography variant="body2" sx={{ mb: 3 }}>
-              {t('experiment.noExperimentsDesc')}
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, maxWidth: 500, mx: 'auto' }}>
+              {searchQuery ? t('emptyStates.noSearchResults.description', 'Try adjusting your search terms or filters.') : t('emptyStates.noExperiments.description', 'Start by creating your first experiment. You can use the wizard for a guided experience or start from scratch.')}
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={hasDraft ? <DraftIcon /> : <AddIcon />}
-              onClick={onCreateExperiment}
-            >
-              {hasDraft ? t('experiment.continueDraft', 'Continue Draft') : t('experiment.createNew')}
-            </Button>
+            {!searchQuery && (
+              <Box sx={{ mb: 3, p: 2, bgcolor: 'info.lighter', borderRadius: 2, maxWidth: 500, mx: 'auto' }}>
+                <Typography variant="body2" color="info.dark">
+                  {searchQuery ? t('emptyStates.noSearchResults.tip', '💡 Tip: Use tags to organize and find experiments easier!') : t('emptyStates.noExperiments.tip', '💡 Tip: Use the wizard if you\'re new to creating experiments!')}
+                </Typography>
+              </Box>
+            )}
+            {!searchQuery && (
+              <Tooltip title={hasDraft ? t('tooltips.dashboard.continueDraft', 'Resume working on your saved draft') : t('tooltips.dashboard.createExperiment', 'Create a new experiment from scratch')} arrow>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  startIcon={hasDraft ? <DraftIcon /> : <AddIcon />}
+                  onClick={onCreateExperiment}
+                  sx={{ mt: 2 }}
+                >
+                  {hasDraft ? t('experiment.continueDraft', 'Continue Draft') : t('experiment.createNew')}
+                </Button>
+              </Tooltip>
+            )}
           </Box>
         ) : (
           <>
