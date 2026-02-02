@@ -1121,85 +1121,106 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
       <Box sx={{ 
         display: 'flex', 
         flexDirection: { xs: 'column', sm: 'row' },
-        justifyContent: { xs: 'flex-start', sm: 'space-between' },
+        justifyContent: 'space-between',
         alignItems: { xs: 'stretch', sm: 'center' },
-        gap: { xs: 1.5, sm: 0 },
+        gap: 2,
         mb: 3 
       }}>
+        {/* Left side - Back button */}
         <Button
           variant="outlined"
           startIcon={<ArrowBack />}
           onClick={onClose}
-          sx={{ order: { xs: 1, sm: 0 } }}
+          sx={{ 
+            flexShrink: 0,
+            minWidth: { xs: '100%', sm: 'auto' }
+          }}
         >
           {t('buttons.backToDashboard')}
         </Button>
+
+        {/* Right side - Action buttons */}
         <Box sx={{ 
           display: 'flex', 
-          flexDirection: { xs: 'column', sm: 'row' },
+          flexWrap: 'wrap',
           gap: 1,
-          order: { xs: 0, sm: 1 }
+          justifyContent: { xs: 'stretch', sm: 'flex-end' },
+          flex: 1
         }}>
+          {/* Primary action - Edit (most important) */}
+          {onEdit && (
+            <Tooltip 
+              title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+              arrow
+            >
+              <span style={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
+                <Button
+                  variant="contained"
+                  startIcon={<EditIcon />}
+                  onClick={() => onEdit(experiment)}
+                  disabled={!canEditExp}
+                  fullWidth
+                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+                >
+                  {t('experiment.editExperiment')}
+                </Button>
+              </span>
+            </Tooltip>
+          )}
+          
+          {/* Secondary actions - grouped together */}
           <Tooltip 
             title={!canViewHistory ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
             arrow
           >
-            <span>
+            <span style={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '0 0 auto' } }}>
               <Button
                 variant="outlined"
                 startIcon={<HistoryIcon />}
                 onClick={() => setHistoryOpen(true)}
                 disabled={!canViewHistory}
+                fullWidth
+                sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
               >
                 {t('version.versionHistory')}
               </Button>
             </span>
           </Tooltip>
           
-          {userIsOwner && (
-            <Tooltip 
-              title={t('permissions.managePermissionsTooltip', 'Manage who can access and edit this experiment')}
-              arrow
-            >
-              <Button
-                variant="outlined"
-                startIcon={<LockIcon />}
-                onClick={() => setPermissionsOpen(true)}
-              >
-                {t('permissions.managePermissions', 'Permissions')}
-              </Button>
-            </Tooltip>
-          )}
-          
           <Tooltip 
             title={!canExport ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
             arrow
           >
-            <span>
+            <span style={{ flex: { xs: '1 1 calc(50% - 4px)', sm: '0 0 auto' } }}>
               <Button
                 variant="outlined"
                 startIcon={<ExportIcon />}
                 onClick={() => setExportOpen(true)}
                 disabled={!canExport}
+                fullWidth
+                sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
               >
                 {t('common.export')}
               </Button>
             </span>
           </Tooltip>
           
-          {onEdit && (
+          {/* Admin action - Permissions (only for owner) */}
+          {userIsOwner && (
             <Tooltip 
-              title={!canEditExp ? t('permissions.featureRestricted', 'This feature has been restricted by the experiment creator') : ''}
+              title={t('permissions.managePermissionsTooltip', 'Manage who can access and edit this experiment')}
               arrow
             >
-              <span>
+              <span style={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>
                 <Button
-                  variant="contained"
-                  startIcon={<EditIcon />}
-                  onClick={() => onEdit(experiment)}
-                  disabled={!canEditExp}
+                  variant="outlined"
+                  color="secondary"
+                  startIcon={<LockIcon />}
+                  onClick={() => setPermissionsOpen(true)}
+                  fullWidth
+                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
                 >
-                  {t('experiment.editExperiment')}
+                  {t('permissions.managePermissions', 'Permissions')}
                 </Button>
               </span>
             </Tooltip>

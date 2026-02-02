@@ -139,7 +139,7 @@ const ModularExperimentWizard = ({
     { id: 'sections', label: t('wizard.selectSections'), description: t('wizard.selectSectionsDesc') },
     { id: 'content', label: t('wizard.fillContent'), description: t('wizard.fillContentDesc') },
     { id: 'content_review', label: t('wizard.contentReview'), description: t('wizard.contentReviewDesc') },
-    { id: 'permissions', label: 'Sharing & Access', description: 'Set who can view and edit your experiment' },
+    { id: 'permissions', label: t('wizard.steps.permissions'), description: t('wizard.steps.permissionsDesc') },
     { id: 'preview', label: t('wizard.previewCreate'), description: t('wizard.previewCreateDesc') }
   ];
 
@@ -1313,17 +1313,17 @@ const ModularExperimentWizard = ({
     
     // Helper to get visibility description
     const getVisibilityDescription = () => {
-      if (currentPermissions.visibility === 'private') return 'Only you';
-      if (currentPermissions.visibility === 'public') return 'Everyone can view and access all features';
+      if (currentPermissions.visibility === 'private') return t('wizard.permissions.descriptions.private');
+      if (currentPermissions.visibility === 'public') return t('wizard.permissions.descriptions.public');
       if (currentPermissions.visibility === 'restricted') {
         const restrictedFeatures = [];
-        if (!currentPermissions.allowViewDetails) restrictedFeatures.push('viewing details');
-        if (!currentPermissions.allowExport) restrictedFeatures.push('export');
-        if (!currentPermissions.allowVersionControl) restrictedFeatures.push('version history');
+        if (!currentPermissions.allowViewDetails) restrictedFeatures.push(t('wizard.permissions.restrictedFeatures.viewingDetails'));
+        if (!currentPermissions.allowExport) restrictedFeatures.push(t('wizard.permissions.restrictedFeatures.export'));
+        if (!currentPermissions.allowVersionControl) restrictedFeatures.push(t('wizard.permissions.restrictedFeatures.versionHistory'));
         
         return restrictedFeatures.length > 0 
-          ? `Limited access (restricted: ${restrictedFeatures.join(', ')})`
-          : 'Visible with some restrictions';
+          ? t('wizard.permissions.descriptions.restricted', { features: restrictedFeatures.join(', ') })
+          : t('wizard.permissions.descriptions.restrictedDefault');
       }
       return '';
     };
@@ -1331,10 +1331,10 @@ const ModularExperimentWizard = ({
     return (
       <Box sx={{ maxWidth: 700, mx: 'auto', py: 2 }}>
         <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
-          Sharing & Access
+          {t('wizard.permissions.title')}
         </Typography>
         <Typography variant="body2" color="text.secondary" paragraph>
-          Control who can see and work with your experiment
+          {t('wizard.permissions.subtitle')}
         </Typography>
 
         <Paper 
@@ -1351,12 +1351,13 @@ const ModularExperimentWizard = ({
           <Stack spacing={2.5}>
             <Box>
               <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
-                Who can see your experiment?
+                {t('wizard.permissions.whoCanSee')}
               </Typography>
               <Stack spacing={1}>
                 <Chip 
-                  label={currentPermissions.visibility === 'private' ? 'Private' : 
-                         currentPermissions.visibility === 'public' ? 'Public' : 'Restricted'}
+                  label={currentPermissions.visibility === 'private' ? t('wizard.permissions.visibility.private') : 
+                         currentPermissions.visibility === 'public' ? t('wizard.permissions.visibility.public') : 
+                         t('wizard.permissions.visibility.restricted')}
                   color={currentPermissions.visibility === 'public' ? 'success' : 
                          currentPermissions.visibility === 'restricted' ? 'warning' : 'default'}
                   icon={currentPermissions.visibility === 'private' ? <LockIcon /> : <LockOpenIcon />}
@@ -1375,7 +1376,7 @@ const ModularExperimentWizard = ({
                 size="large"
                 onClick={() => setPermissionsDialogOpen(true)}
               >
-                Customize Settings
+                {t('wizard.permissions.customizeSettings')}
               </Button>
             </Box>
           </Stack>
@@ -1383,7 +1384,7 @@ const ModularExperimentWizard = ({
 
         <Alert severity="info" icon={false} sx={{ borderRadius: 2, bgcolor: 'grey.50' }}>
           <Typography variant="body2">
-            💡 <strong>Tip:</strong> Default settings work for most cases. You can change these anytime after creating your experiment.
+            💡 <strong>Tip:</strong> {t('wizard.permissions.tip')}
           </Typography>
         </Alert>
       </Box>
