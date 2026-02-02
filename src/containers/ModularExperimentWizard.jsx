@@ -1305,92 +1305,94 @@ const ModularExperimentWizard = ({
     const userInfo = keycloakService.getUserInfo();
     const currentPermissions = permissions || getDefaultPermissions(userInfo);
     
-    // Simple summary of current settings
-    const visibilityLabel = currentPermissions.visibility === 'private' 
-      ? 'Private - Only you have access'
-      : currentPermissions.visibility === 'public' 
-        ? 'Public - Everyone can view' 
-        : 'Restricted - Limited access';
-    
-    const visibilityColor = currentPermissions.visibility === 'public' ? 'success' : 
-                           currentPermissions.visibility === 'restricted' ? 'warning' : 'default';
+    // Helper to get visibility description
+    const getVisibilityDescription = () => {
+      if (currentPermissions.visibility === 'private') return 'Only you';
+      if (currentPermissions.visibility === 'public') return 'Everyone can view and access all features';
+      if (currentPermissions.visibility === 'restricted') {
+        const restrictedFeatures = [];
+        if (!currentPermissions.allowViewDetails) restrictedFeatures.push('viewing details');
+        if (!currentPermissions.allowExport) restrictedFeatures.push('export');
+        if (!currentPermissions.allowVersionControl) restrictedFeatures.push('version history');
+        
+        return restrictedFeatures.length > 0 
+          ? `Limited access (restricted: ${restrictedFeatures.join(', ')})`
+          : 'Visible with some restrictions';
+      }
+      return '';
+    };
     
     return (
-      <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-        <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-          <LockOpenIcon color="primary" />
+      <Box sx={{ maxWidth: 700, mx: 'auto', py: 2 }}>
+        <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
           Sharing & Access
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          Control who can see and work with your experiment
         </Typography>
 
         <Paper 
           elevation={0} 
           sx={{ 
-            p: 4, 
-            mb: 3, 
-            border: '1px solid', 
-            borderColor: 'divider',
-            borderRadius: 2 
+            p: 3, 
+            mb: 2, 
+            border: '2px solid', 
+            borderColor: 'primary.light',
+            borderRadius: 2,
+            bgcolor: 'primary.50'
           }}
         >
-          <Stack spacing={3}>
-            {/* Simple visibility display */}
+          <Stack spacing={2.5}>
             <Box>
-              <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-                <Box flex={1}>
-                  <Typography variant="h6" gutterBottom>
-                    Who can access your experiment?
-                  </Typography>
-                  <Chip 
-                    label={visibilityLabel}
-                    color={visibilityColor}
-                    size="medium"
-                    icon={currentPermissions.visibility === 'private' ? <LockIcon /> : <LockOpenIcon />}
-                    sx={{ fontSize: '0.9rem', py: 2.5 }}
-                  />
-                </Box>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  onClick={() => setPermissionsDialogOpen(true)}
-                  sx={{ minWidth: 140 }}
-                >
-                  Change Settings
-                </Button>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+                Who can see your experiment?
+              </Typography>
+              <Stack spacing={1}>
+                <Chip 
+                  label={currentPermissions.visibility === 'private' ? 'Private' : 
+                         currentPermissions.visibility === 'public' ? 'Public' : 'Restricted'}
+                  color={currentPermissions.visibility === 'public' ? 'success' : 
+                         currentPermissions.visibility === 'restricted' ? 'warning' : 'default'}
+                  icon={currentPermissions.visibility === 'private' ? <LockIcon /> : <LockOpenIcon />}
+                  sx={{ fontSize: '0.95rem', fontWeight: 500, py: 2.5, px: 2 }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  {getVisibilityDescription()}
+                </Typography>
               </Stack>
             </Box>
 
             <Divider />
 
-            {/* Simple feature summary */}
             <Box>
-              <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mb: 2 }}>
-                Current features:
-              </Typography>
-              <Stack spacing={1.5}>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <CheckIcon fontSize="small" color={currentPermissions.allowDuplication ? 'success' : 'disabled'} />
-                  <Typography variant="body2" color={currentPermissions.allowDuplication ? 'text.primary' : 'text.secondary'}>
-                    Others can duplicate this experiment
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <CheckIcon fontSize="small" color={currentPermissions.allowLinkSharing ? 'success' : 'disabled'} />
-                  <Typography variant="body2" color={currentPermissions.allowLinkSharing ? 'text.primary' : 'text.secondary'}>
-                    Share via link enabled
-                  </Typography>
-                </Box>
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                {currentPermissions.allowDuplication ? (
+                  <CheckIcon fontSize="small" color="success" />
+                ) : (
+                  <CloseIcon fontSize="small" color="disabled" />
+                )}
+                <Typography variant="body2">
+                  Others {currentPermissions.allowDuplication ? 'can' : 'cannot'} make a copy
+                </Typography>
               </Stack>
+            </Box>
+
+            <Box sx={{ pt: 1 }}>
+              <Button
+                variant="outlined"
+                fullWidth
+                size="large"
+                onClick={() => setPermissionsDialogOpen(true)}
+              >
+                Customize Settings
+              </Button>
             </Box>
           </Stack>
         </Paper>
 
-        <Alert severity="info" icon={false} sx={{ borderRadius: 2 }}>
-          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-            <span>💡</span>
-            <span>
-              <strong>Default settings applied.</strong> You can skip this step or click "Change Settings" to customize access control. 
-              You can always modify these settings later after creating the experiment.
-            </span>
+        <Alert severity="info" icon={false} sx={{ borderRadius: 2, bgcolor: 'grey.50' }}>
+          <Typography variant="body2">
+            💡 <strong>Tip:</strong> Default settings work for most cases. You can change these anytime after creating your experiment.
           </Typography>
         </Alert>
       </Box>
