@@ -108,21 +108,35 @@ export function isOwner(userPermissions) {
  */
 export function canAccessRestrictedFeature(experiment, feature, currentUser) {
   if (!experiment || !experiment.content || !experiment.content.permissions) {
+    console.log('[Permissions] canAccessRestrictedFeature: No permissions set, allowing access');
     // No permissions set, allow access (backward compatibility)
     return true;
   }
 
   const permissions = experiment.content.permissions;
   
+  console.log('[Permissions] canAccessRestrictedFeature:', {
+    feature,
+    currentUser: currentUser?.email || currentUser?.preferred_username,
+    visibility: permissions.visibility,
+    allowExport: permissions.allowExport,
+    allowEdit: permissions.allowEdit,
+    allowViewDetails: permissions.allowViewDetails,
+    allowVersionControl: permissions.allowVersionControl,
+    allowSimplify: permissions.allowSimplify
+  });
+  
   // ALWAYS check if user is owner first - owners have full access regardless of visibility
   const isExperimentOwner = isUserOwner(experiment, currentUser);
   
   if (isExperimentOwner) {
+    console.log('[Permissions] User is owner, granting full access');
     return true; // Owner always has full access to everything
   }
   
   // If experiment is private, only owner can access (already checked above)
   if (permissions.visibility === 'private') {
+    console.log('[Permissions] Experiment is private, denying access to non-owner');
     return false;
   }
   
@@ -153,6 +167,7 @@ export function canAccessRestrictedFeature(experiment, feature, currentUser) {
       hasAccess = true;
   }
   
+  console.log(`[Permissions] Feature '${feature}' access: ${hasAccess}`);
   return hasAccess;
 }
 
