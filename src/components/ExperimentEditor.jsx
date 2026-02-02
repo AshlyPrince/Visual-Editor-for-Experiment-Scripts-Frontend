@@ -42,6 +42,7 @@ import {
   DragIndicator,
   GetApp as ExportIcon,
   Chat as ChatIcon,
+  Lock as LockIcon,
 } from '@mui/icons-material';
 import experimentService from '../services/experimentService.js';
 import RichTextEditor from './RichTextEditor.jsx';
@@ -53,6 +54,7 @@ import ExportDialog from './ExportDialog.jsx';
 import VersionConflictDialog from './VersionConflictDialog.jsx';
 import MediaUploader from './MediaUploader.jsx';
 import ChatAssistant from './ChatAssistant.jsx';
+import PermissionsManager from './PermissionsManager.jsx';
 import { normalizeExperiment, denormalizeExperiment, denormalizeSection, getContentSummary } from '../utils/experimentDataNormalizer.js';
 import aiAssistantIcon from '../assets/icons/ai_assistant.png';
 
@@ -91,6 +93,8 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const [conflictDetails, setConflictDetails] = useState(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
+  const [permissionsOpen, setPermissionsOpen] = useState(false);
+  const [currentPermissions, setCurrentPermissions] = useState(null);
 
   useEffect(() => {
     if (experimentId) {
@@ -130,6 +134,7 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
       setDuration(normalizedData.estimated_duration || '');
       setCourse(normalizedData.course || '');
       setProgram(normalizedData.program || '');
+      setCurrentPermissions(normalizedData.content?.permissions || null);
       
       if (normalizedData.sections && normalizedData.sections.length > 0) {
         setSections(normalizedData.sections);
@@ -239,8 +244,10 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
     updatedExperiment.course = course;
     updatedExperiment.program = program;
     
-    // Preserve permissions if they exist
-    if (experiment?.content?.permissions) {
+    // Use current permissions (may have been updated in editor)
+    if (currentPermissions) {
+      updatedExperiment.content.permissions = currentPermissions;
+    } else if (experiment?.content?.permissions) {
       updatedExperiment.content.permissions = experiment.content.permissions;
     }
     
@@ -322,6 +329,16 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
   const handleVersionRestored = async () => {
     await loadExperiment();
     setHasUnsavedChanges(false);
+  };
+
+  const handleSavePermissions = (permissionsData) => {
+    console.log('[ExperimentEditor] Updating permissions in editor:', permissionsData);
+    setCurrentPermissions(permissionsData);
+    setHasUnsavedChanges(true);
+    setPermissionsOpen(false);
+    
+    // Show info that permissions will be saved with next version
+    alert(t('editor.permissionsWillBeSavedWithVersion', 'Permissions updated. They will be saved when you create a new version.'));
   };
 
   if (loading) {
@@ -649,6 +666,14 @@ const ExperimentEditor = ({ experimentId, onClose, onSaved }) => {
               onClick={onClose}
             >
               {t('common.close')}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<LockIcon />}
+              onClick={() => setPermissionsOpen(true)}
+              color="secondary"
+            >
+              {t('permissions.managePermissions', 'Manage Permissions')}
             </Button>
           </Box>
           <Button
@@ -999,6 +1024,15 @@ Be specific to THIS experiment - don't give generic advice. If sections are inco
           />
         </DialogContent>
       </Dialog>
+
+      <PermissionsManager
+        open={permissionsOpen}
+        onClose={() => setPermissionsOpen(false)}
+        experimentId={experimentId}
+        currentPermissions={currentPermissions}
+        isNewExperiment={false}
+        onSave={handleSavePermissions}
+      />
     </Container>
   );
 };

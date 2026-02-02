@@ -288,9 +288,24 @@ class ExperimentService {
     return response.data;
   }
 
+  /**
+   * Update experiment permissions
+   * 
+   * ⚠️ KNOWN ISSUE: Backend does not currently support updating permissions
+   * through the regular experiment update endpoint. The permissions field
+   * is ignored in PUT /api/experiments/:id requests.
+   * 
+   * BACKEND FIX NEEDED: Backend needs to either:
+   * 1. Add PATCH /api/experiments/:id/permissions endpoint, OR
+   * 2. Make PUT /api/experiments/:id accept and save the permissions field
+   * 
+   * Current behavior: This function will attempt to update but permissions
+   * will not persist. The backend returns the old permissions instead.
+   */
   async updateExperimentPermissions(experimentId, permissionsData) {
     console.log('[experimentService] Updating permissions for experiment:', experimentId);
     console.log('[experimentService] New permissions data:', permissionsData);
+    console.warn('[experimentService] ⚠️ WARNING: Backend does not support permissions updates yet!');
     
     // Try PATCH method with only permissions field
     // PATCH is typically used for partial updates
@@ -352,6 +367,7 @@ class ExperimentService {
       }
       
       console.log('[experimentService] Sending full PUT with permissions at top level');
+      console.warn('[experimentService] ⚠️ Backend will likely ignore permissions field');
       
       const response = await this.updateExperiment(experimentId, updatePayload);
       
@@ -359,8 +375,14 @@ class ExperimentService {
         id: response.id,
         title: response.title,
         hasTopLevelPermissions: !!response.permissions,
-        savedVisibility: response.permissions?.visibility || 'not found'
+        savedVisibility: response.permissions?.visibility || 'not found',
+        requestedVisibility: permissionsData.visibility
       });
+      
+      if (response.permissions?.visibility !== permissionsData.visibility) {
+        console.error('[experimentService] ❌ PERMISSIONS NOT SAVED - Backend returned different visibility!');
+        console.error('[experimentService] Requested:', permissionsData.visibility, '| Got:', response.permissions?.visibility);
+      }
       
       return response;
     }
