@@ -1718,58 +1718,97 @@ const ModularExperimentWizard = ({
                                             </Box>
                                           </Box>
                                           
-                                          {mediaItem.type?.startsWith('image/') && mediaItem.data ? (
-                                            <Box sx={{ 
-                                              width: `${mediaItem.displaySize || 100}%`,
-                                              mx: 'auto'
-                                            }}>
-                                              <Box
-                                                component="img"
-                                                src={mediaItem.data}
-                                                alt={mediaItem.caption || `Step ${stepIndex + 1} - Figure ${mediaIndex + 1}`}
-                                                onError={(e) => {
-                                                  console.error('[Preview] Image failed to load:', {
-                                                    stepIndex,
-                                                    mediaIndex,
-                                                    dataLength: mediaItem.data?.length,
-                                                    type: mediaItem.type
-                                                  });
-                                                  e.target.style.display = 'none';
-                                                }}
-                                                sx={{
-                                                  width: '100%',
-                                                  height: 'auto',
-                                                  borderRadius: 1,
-                                                  objectFit: 'cover',
-                                                  border: '1px solid',
-                                                  borderColor: 'divider',
-                                                  mb: 1.5,
-                                                  transition: 'all 0.3s ease'
-                                                }}
-                                              />
-                                            </Box>
-                                          ) : mediaItem.type?.startsWith('video/') ? (
-                                            <Box sx={{ 
-                                              width: `${mediaItem.displaySize || 100}%`,
-                                              mx: 'auto'
-                                            }}>
-                                              <Box
-                                                component="video"
-                                                controls
-                                                sx={{
-                                                  width: '100%',
-                                                  height: 'auto',
-                                                  borderRadius: 1,
-                                                  border: '1px solid',
-                                                  borderColor: 'divider',
-                                                  mb: 1.5
-                                                }}
-                                              >
-                                                <source src={mediaItem.data} type={mediaItem.type} />
-                                                Your browser does not support the video tag.
-                                              </Box>
-                                            </Box>
-                                          ) : null}
+                                          {(() => {
+                                            const imageSrc = mediaItem.data || mediaItem.url;
+                                            const isImage = mediaItem.type?.startsWith('image') || mediaItem.type?.includes('image') || !mediaItem.type;
+                                            const isVideo = mediaItem.type?.startsWith('video') || mediaItem.type?.includes('video');
+                                            
+                                            console.log('[Preview] Media item check:', {
+                                              stepIndex,
+                                              mediaIndex,
+                                              type: mediaItem.type,
+                                              isImage,
+                                              isVideo,
+                                              hasData: !!mediaItem.data,
+                                              hasUrl: !!mediaItem.url,
+                                              hasSrc: !!imageSrc,
+                                              dataLength: mediaItem.data?.length,
+                                              name: mediaItem.name
+                                            });
+                                            
+                                            if (!imageSrc) {
+                                              console.warn('[Preview] No image source available');
+                                              return null;
+                                            }
+                                            
+                                            if (isImage) {
+                                              return (
+                                                <Box sx={{ 
+                                                  width: `${mediaItem.displaySize || 100}%`,
+                                                  mx: 'auto'
+                                                }}>
+                                                  <Box
+                                                    component="img"
+                                                    src={imageSrc}
+                                                    alt={mediaItem.caption || `Step ${stepIndex + 1} - Figure ${mediaIndex + 1}`}
+                                                    onLoad={() => {
+                                                      console.log('[Preview] Image loaded successfully:', {
+                                                        stepIndex,
+                                                        mediaIndex,
+                                                        name: mediaItem.name
+                                                      });
+                                                    }}
+                                                    onError={(e) => {
+                                                      console.error('[Preview] Image failed to load:', {
+                                                        stepIndex,
+                                                        mediaIndex,
+                                                        src: imageSrc.substring(0, 100),
+                                                        type: mediaItem.type,
+                                                        error: e
+                                                      });
+                                                    }}
+                                                    sx={{
+                                                      width: '100%',
+                                                      height: 'auto',
+                                                      borderRadius: 1,
+                                                      objectFit: 'cover',
+                                                      border: '1px solid',
+                                                      borderColor: 'divider',
+                                                      mb: 1.5,
+                                                      transition: 'all 0.3s ease'
+                                                    }}
+                                                  />
+                                                </Box>
+                                              );
+                                            }
+                                            
+                                            if (isVideo) {
+                                              return (
+                                                <Box sx={{ 
+                                                  width: `${mediaItem.displaySize || 100}%`,
+                                                  mx: 'auto'
+                                                }}>
+                                                  <Box
+                                                    component="video"
+                                                    controls
+                                                    sx={{
+                                                      width: '100%',
+                                                      height: 'auto',
+                                                      borderRadius: 1,
+                                                      border: '1px solid',
+                                                      borderColor: 'divider',
+                                                      mb: 1.5
+                                                    }}
+                                                  >
+                                                    <source src={imageSrc} type={mediaItem.type} />
+                                                    Your browser does not support the video tag.
+                                                  </Box>
+                                                </Box>
+                                              );
+                                            }
+                                            
+                                            return null;
+                                          })()}
                                           
                                           {mediaItem.caption && (
                                             <Typography 

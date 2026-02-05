@@ -974,29 +974,60 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                             
                             {step.media && step.media.length > 0 && (
                               <Box sx={{ mt: 2 }}>
-                                {step.media.map((mediaItem, mediaIdx) => (
-                                  <Box key={mediaIdx} sx={{ mb: 2 }}>
-                                    {mediaItem.type?.startsWith('image') && (
-                                      <Box
-                                        component="img"
-                                        src={mediaItem.data || mediaItem.url}
-                                        alt={mediaItem.name || `Step ${index + 1} image`}
-                                        sx={{
-                                          maxWidth: '100%',
-                                          height: 'auto',
-                                          borderRadius: 1,
-                                          border: '1px solid',
-                                          borderColor: 'divider'
-                                        }}
-                                      />
-                                    )}
-                                    {mediaItem.name && (
-                                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                                        {mediaItem.name}
-                                      </Typography>
-                                    )}
-                                  </Box>
-                                ))}
+                                {step.media.map((mediaItem, mediaIdx) => {
+                                  console.log('[ExperimentViewer] Step media item:', { 
+                                    stepIndex: index, 
+                                    mediaIdx, 
+                                    type: mediaItem.type,
+                                    hasData: !!mediaItem.data,
+                                    hasUrl: !!mediaItem.url,
+                                    name: mediaItem.name
+                                  });
+                                  
+                                  const imageSrc = mediaItem.data || mediaItem.url;
+                                  const isImage = mediaItem.type?.startsWith('image') || mediaItem.type?.includes('image');
+                                  
+                                  if (!imageSrc) {
+                                    console.warn('[ExperimentViewer] No image source for media item:', mediaItem);
+                                    return null;
+                                  }
+                                  
+                                  return (
+                                    <Box key={mediaIdx} sx={{ mb: 2 }}>
+                                      {isImage && (
+                                        <Box
+                                          component="img"
+                                          src={imageSrc}
+                                          alt={mediaItem.caption || mediaItem.name || `Step ${index + 1} Figure ${mediaIdx + 1}`}
+                                          onError={(e) => {
+                                            console.error('[ExperimentViewer] Image failed to load:', {
+                                              src: imageSrc,
+                                              error: e,
+                                              mediaItem
+                                            });
+                                          }}
+                                          sx={{
+                                            maxWidth: '100%',
+                                            height: 'auto',
+                                            borderRadius: 1,
+                                            border: '1px solid',
+                                            borderColor: 'divider'
+                                          }}
+                                        />
+                                      )}
+                                      {mediaItem.caption && (
+                                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, fontStyle: 'italic' }}>
+                                          {mediaItem.caption}
+                                        </Typography>
+                                      )}
+                                      {mediaItem.name && !mediaItem.caption && (
+                                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                                          {mediaItem.name}
+                                        </Typography>
+                                      )}
+                                    </Box>
+                                  );
+                                })}
                               </Box>
                             )}
                           </Box>

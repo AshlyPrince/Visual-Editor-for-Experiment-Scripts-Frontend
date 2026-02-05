@@ -587,8 +587,10 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   return {
     ...experimentData,
     content: {
-      ...actualContent,
-      sections: simplifiedSections
+      content: {
+        ...actualContent,
+        sections: simplifiedSections
+      }
     }
   };
   
