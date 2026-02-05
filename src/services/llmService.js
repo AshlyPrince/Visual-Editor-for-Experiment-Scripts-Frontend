@@ -627,66 +627,81 @@ const simplifyText = async (text, targetLevel, t) => {
   
   const levelInstructions = {
     'beginner': {
-      system: 'You are a language simplification expert who adjusts vocabulary complexity while preserving ALL original structure, formatting, and content.',
-      instruction: `Adjust ONLY the vocabulary and word choice in the following text to match a simple reading level (ages 8-12):
+      system: 'You are a language simplification expert. Your ONLY job is to replace difficult words with simple everyday words while keeping everything else EXACTLY the same.',
+      instruction: `Rewrite this text using ONLY simple, easy words that children (ages 8-12) can understand:
 
-⚠️ CRITICAL RULES - YOU MUST FOLLOW EXACTLY:
-1. KEEP THE SAME LANGUAGE - If the text is in German, output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
-2. PRESERVE the EXACT SAME structure, length, and flow - do NOT break into smaller paragraphs or shorten
-3. KEEP the SAME number of sentences and paragraphs - do NOT restructure
-4. ONLY replace complex/difficult words with simpler everyday words IN THE SAME LANGUAGE
-5. KEEP all HTML formatting tags (like <p>, <strong>, <em>, <ul>, <ol>, <li>) EXACTLY as they are
-6. KEEP all numbers, measurements, units, chemical formulas, and safety warnings EXACTLY as written
-7. KEEP any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
-8. Use simple, everyday vocabulary (avoid academic jargon) but keep sentence structure similar
-9. Replace technical terms with common words that young students would understand IN THE SAME LANGUAGE
-10. DO NOT summarize, DO NOT shorten, DO NOT reorganize - ONLY swap difficult words for easier ones
+🚫 FORBIDDEN - DO NOT DO THESE:
+- DO NOT translate to another language
+- DO NOT make sentences shorter
+- DO NOT break text into more paragraphs
+- DO NOT remove any information
+- DO NOT summarize or cut content
+- DO NOT change the structure
 
-Example of what to do:
-Original: "The apparatus must be calibrated precisely before commencing the experimental procedure."
-Correct: "The equipment must be set up exactly right before starting the experiment."
-WRONG: "Set up equipment. Start experiment." (too short, changed structure)
+✅ REQUIRED - YOU MUST DO THESE:
+1. Keep text in the SAME LANGUAGE (German stays German, English stays English)
+2. Keep the EXACT SAME number of sentences
+3. Keep the EXACT SAME number of paragraphs
+4. Keep the EXACT SAME text length and flow
+5. ONLY replace hard/difficult words → simple everyday words
+6. Use words children know from daily life (NOT academic or scientific words)
+7. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
+8. Short sentences are better (8-12 words max per sentence when possible)
 
-DO NOT translate. DO NOT rewrite. DO NOT reorganize. ONLY simplify vocabulary in the SAME LANGUAGE.`
+EXAMPLE FOR GERMAN:
+❌ WRONG: "Der Apparat muss präzise kalibriert werden, bevor die experimentelle Prozedur kommenziert wird."
+✅ CORRECT: "Das Gerät muss genau eingestellt werden, bevor das Experiment anfängt."
+
+EXAMPLE FOR ENGLISH:  
+❌ WRONG: "The apparatus requires precise calibration prior to experimental commencement."
+✅ CORRECT: "The equipment needs to be set up exactly right before the experiment starts."
+
+Remember: SAME language, SAME structure, SAME length - ONLY easier words!`
     },
     'intermediate': {
-      system: 'You are a language simplification expert who adjusts vocabulary complexity while preserving ALL original structure, formatting, and content.',
-      instruction: `Adjust ONLY the vocabulary and word choice in the following text to match a moderate reading level (ages 13-16):
+      system: 'You are a language simplification expert. Your ONLY job is to replace difficult words with clearer everyday words while keeping everything else EXACTLY the same.',
+      instruction: `Rewrite this text using clearer, more accessible vocabulary for teenagers (ages 13-16):
 
-⚠️ CRITICAL RULES - YOU MUST FOLLOW EXACTLY:
-1. KEEP THE SAME LANGUAGE - If the text is in German, output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
-2. PRESERVE the EXACT SAME structure, length, and flow - do NOT break into smaller paragraphs or shorten
-3. KEEP the SAME number of sentences and paragraphs - do NOT restructure
-4. ONLY replace overly complex/technical words with clearer everyday words IN THE SAME LANGUAGE
-5. KEEP all HTML formatting tags (like <p>, <strong>, <em>, <ul>, <ol>, <li>) EXACTLY as they are
-6. KEEP all numbers, measurements, units, chemical formulas, and safety warnings EXACTLY as written
-7. KEEP any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
-8. Use clear, accessible vocabulary while maintaining professional tone
-9. Technical terms can be kept if they're commonly known, or replaced with simpler alternatives IN THE SAME LANGUAGE
-10. DO NOT summarize, DO NOT shorten, DO NOT reorganize - ONLY swap difficult words for clearer ones
+🚫 FORBIDDEN - DO NOT DO THESE:
+- DO NOT translate to another language
+- DO NOT make sentences shorter
+- DO NOT break text into more paragraphs
+- DO NOT remove any information
+- DO NOT summarize or cut content
+- DO NOT change the structure
 
-Example of what to do:
-Original: "The experiment necessitates meticulous observation and documentation of all phenomena."
-Correct: "The experiment requires careful observation and recording of all events."
-WRONG: "Observe carefully and write notes." (too short, changed structure)
+✅ REQUIRED - YOU MUST DO THESE:
+1. Keep text in the SAME LANGUAGE (German stays German, English stays English)
+2. Keep the EXACT SAME number of sentences
+3. Keep the EXACT SAME number of paragraphs
+4. Keep the EXACT SAME text length and flow
+5. ONLY replace overly complex/technical words → clearer everyday words
+6. Use vocabulary that high school students understand
+7. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
+8. Sentences can be moderate length (15-20 words are okay)
 
-DO NOT translate. DO NOT rewrite. DO NOT reorganize. ONLY simplify vocabulary in the SAME LANGUAGE.`
+EXAMPLE FOR GERMAN:
+❌ WRONG: "Das Experiment erfordert eine akkurate Beobachtung sämtlicher Phänomene."
+✅ CORRECT: "Das Experiment braucht eine genaue Beobachtung aller Vorgänge."
+
+EXAMPLE FOR ENGLISH:
+❌ WRONG: "The experiment necessitates meticulous observation of phenomena."
+✅ CORRECT: "The experiment requires careful observation of all events."
+
+Remember: SAME language, SAME structure, SAME length - ONLY clearer words!`
     },
     'advanced': {
-      system: 'You are a language expert who maintains academic language while ensuring clarity and preserving the original language.',
-      instruction: `Keep the following text at its CURRENT academic level with minimal changes:
+      system: 'You are a language expert who maintains academic language while ensuring absolute clarity.',
+      instruction: `Keep this text at its current academic level with minimal changes:
 
-⚠️ CRITICAL RULES - YOU MUST FOLLOW EXACTLY:
-1. KEEP THE SAME LANGUAGE - If the text is in German, output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
-2. PRESERVE the EXACT SAME structure, content, and academic level
-3. KEEP all scientific terminology and technical vocabulary in the SAME language
-4. KEEP all HTML formatting tags EXACTLY as they are
-5. KEEP all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-6. KEEP any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
-7. ONLY fix obvious grammar errors or awkward phrasing if present
-8. Maintain the professional, academic tone throughout
+✅ REQUIRED - YOU MUST DO THESE:
+1. Keep text in the EXACT SAME LANGUAGE (do NOT translate)
+2. Keep ALL scientific and technical vocabulary
+3. Keep the EXACT SAME structure and length
+4. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
+5. Only fix obvious grammar errors if present
 
-DO NOT translate. DO NOT simplify. DO NOT restructure. Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
+Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
     }
   };
   
@@ -708,24 +723,25 @@ DO NOT translate. DO NOT simplify. DO NOT restructure. Return the text mostly un
         { role: 'system', content: level.system },
         { role: 'user', content: `${level.instruction}
 
-🌍 LANGUAGE DETECTION: This text appears to be in ${detectedLanguage}.
-⚠️ YOU MUST RESPOND IN THE SAME LANGUAGE: ${detectedLanguage}
-⚠️ DO NOT TRANSLATE TO ANY OTHER LANGUAGE!
+🌍 DETECTED LANGUAGE: ${detectedLanguage}
+⚠️ YOUR OUTPUT MUST BE IN: ${detectedLanguage}
 
-IMPORTANT: 
-- Return ONLY the simplified text in ${detectedLanguage}
-- Do NOT add phrases like "Here is the simplified version"
-- Do NOT add explanations or commentary
-- Do NOT translate to English or any other language
-- Keep all placeholder markers EXACTLY as they appear
-${containsHTML ? '\n⚠️ WARNING: This text contains HTML formatting. You MUST preserve all HTML tags exactly as they appear!' : ''}
+CRITICAL REMINDERS:
+- Same language as input (${detectedLanguage})
+- Same number of sentences and paragraphs
+- Same text length and structure
+- ONLY replace difficult words with easier words
+- NO translation, NO summarizing, NO restructuring
+${containsHTML ? '- Keep all HTML tags exactly as they are' : ''}
 
-Original text (in ${detectedLanguage}):
-${processedText}` }
+TEXT TO SIMPLIFY:
+${processedText}
+
+NOW REWRITE THE ABOVE TEXT USING SIMPLER WORDS IN ${detectedLanguage}:` }
       ],
       { 
-        temperature: 0.3,  
-        max_tokens: 2000   
+        temperature: 0.2,  // Lower temperature for more consistent adherence to instructions
+        max_tokens: 4000   // Increased token limit for longer texts
       },
       t
     );
