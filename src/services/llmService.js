@@ -648,6 +648,14 @@ const simplifyText = async (text, targetLevel, t) => {
 7. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
 8. Short sentences are better (8-12 words max per sentence when possible)
 
+⚠️ CRITICAL - NEVER CHANGE THESE SCIENTIFIC TERMS:
+- ALL measurements with units (ml, mmHg, cm, mg, °C, etc.) - KEEP EXACTLY
+- ALL numbers and values (220, 120/70, 0.5, etc.) - KEEP EXACTLY
+- Medical/scientific equipment names (Stethoskop, Manometer, Pipette, Spritze, etc.) - KEEP EXACTLY
+- Chemical compound names (NaCl, H2O, CO2, etc.) - KEEP EXACTLY
+- Body part names (Arterie, Vene, etc.) - You CAN simplify these if there's a simpler word
+- Safety-critical action verbs when precision matters - BE CAREFUL
+
 EXAMPLE FOR GERMAN:
 ❌ WRONG: "Der Apparat muss präzise kalibriert werden, bevor die experimentelle Prozedur kommenziert wird."
 ✅ CORRECT: "Das Gerät muss genau eingestellt werden, bevor das Experiment anfängt."
@@ -656,7 +664,7 @@ EXAMPLE FOR ENGLISH:
 ❌ WRONG: "The apparatus requires precise calibration prior to experimental commencement."
 ✅ CORRECT: "The equipment needs to be set up exactly right before the experiment starts."
 
-Remember: SAME language, SAME structure, SAME length - ONLY easier words!`
+Remember: SAME language, SAME structure, SAME length - ONLY easier words! NEVER change measurements, numbers, or equipment names!`
     },
     'intermediate': {
       system: 'You are a language simplification expert. Your ONLY job is to replace difficult words with clearer everyday words while keeping everything else EXACTLY the same.',
@@ -680,6 +688,13 @@ Remember: SAME language, SAME structure, SAME length - ONLY easier words!`
 7. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
 8. Sentences can be moderate length (15-20 words are okay)
 
+⚠️ CRITICAL - NEVER CHANGE THESE SCIENTIFIC TERMS:
+- ALL measurements with units (ml, mmHg, cm, mg, °C, etc.) - KEEP EXACTLY
+- ALL numbers and values (220, 120/70, 0.5, etc.) - KEEP EXACTLY
+- Medical/scientific equipment names (Stethoskop, Manometer, Pipette, Spritze, etc.) - KEEP EXACTLY
+- Chemical compound names (NaCl, H2O, CO2, etc.) - KEEP EXACTLY
+- Specialized scientific terms that don't have simpler alternatives - KEEP
+
 EXAMPLE FOR GERMAN:
 ❌ WRONG: "Das Experiment erfordert eine akkurate Beobachtung sämtlicher Phänomene."
 ✅ CORRECT: "Das Experiment braucht eine genaue Beobachtung aller Vorgänge."
@@ -688,7 +703,7 @@ EXAMPLE FOR ENGLISH:
 ❌ WRONG: "The experiment necessitates meticulous observation of phenomena."
 ✅ CORRECT: "The experiment requires careful observation of all events."
 
-Remember: SAME language, SAME structure, SAME length - ONLY clearer words!`
+Remember: SAME language, SAME structure, SAME length - ONLY clearer words! NEVER change measurements, numbers, or equipment names!`
     },
     'advanced': {
       system: 'You are a language expert who maintains academic language while ensuring absolute clarity.',
@@ -699,7 +714,8 @@ Remember: SAME language, SAME structure, SAME length - ONLY clearer words!`
 2. Keep ALL scientific and technical vocabulary
 3. Keep the EXACT SAME structure and length
 4. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
-5. Only fix obvious grammar errors if present
+5. Keep ALL equipment names, chemical names, and specialized terms
+6. Only fix obvious grammar errors if present
 
 Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
     }

@@ -84,11 +84,15 @@ const LanguageSimplificationDialog = ({
   };
 
   const handleExport = async () => {
-    if (!simplifiedData) return;
+    if (!simplifiedData) {
+      console.warn('[LanguageSimplificationDialog] No simplified data to export');
+      return;
+    }
     
     try {
+      console.log('[LanguageSimplificationDialog] Exporting simplified data:', simplifiedData);
+      
       if (onExport) {
-
         await onExport(simplifiedData, targetLevel);
       }
 

@@ -1437,7 +1437,15 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             setSimplifiedData(null); 
             setAutoExportFormat(null);
           }}
-          experiment={simplifiedData || experiment} 
+          experiment={(() => {
+            const dataToExport = simplifiedData || experiment;
+            console.log('[ExperimentViewer] Passing to ExportDialog:', {
+              hasSimplifiedData: !!simplifiedData,
+              experimentTitle: experiment.title,
+              dataToExportTitle: dataToExport.title
+            });
+            return dataToExport;
+          })()}
           autoExportFormat={autoExportFormat} 
           onExported={(type) => {
             
@@ -1457,14 +1465,16 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           }}
           experimentData={experiment}
           onExport={async (simplifiedExperiment, level) => {
-            // Set simplified data first and wait for state to update
+            // Set simplified data first
+            console.log('[ExperimentViewer] Setting simplified data:', simplifiedExperiment);
             setSimplifiedData(simplifiedExperiment);
             setSimplifyOpen(false);
             
-            // Use setTimeout to ensure state is updated before opening export dialog
+            // Use setTimeout with a longer delay to ensure state is fully updated
             setTimeout(() => {
+              console.log('[ExperimentViewer] Opening export dialog with simplified data');
               setExportOpen(true);
-            }, 0);
+            }, 100);
           }}
         />
       )}
