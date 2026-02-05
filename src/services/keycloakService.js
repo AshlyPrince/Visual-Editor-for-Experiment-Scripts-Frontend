@@ -51,7 +51,7 @@ class KeycloakService {
         checkLoginIframeInterval: 5,
         pkceMethod: 'S256',
         flow: 'standard',
-        enableLogging: true,
+        enableLogging: false,
         promiseType: 'native',
 
         token: sessionStorage.getItem('kc_token') || undefined,
