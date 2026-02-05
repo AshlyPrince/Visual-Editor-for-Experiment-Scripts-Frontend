@@ -30,6 +30,17 @@ const ProcedureStepsEditor = ({ steps = [], onChange }) => {
     const newExpandedSteps = {};
     const newExpandedMedia = {};
     
+    // Ensure all steps have a media array
+    const normalizedSteps = steps.map(step => ({
+      ...step,
+      media: step.media || []
+    }));
+    
+    // Only update if normalization changed something
+    if (JSON.stringify(normalizedSteps) !== JSON.stringify(steps)) {
+      onChange(normalizedSteps);
+    }
+    
     steps.forEach((step, index) => {
       
       if (step.notes && step.notes.trim()) {

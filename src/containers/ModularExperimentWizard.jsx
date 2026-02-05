@@ -1670,6 +1670,20 @@ const ModularExperimentWizard = ({
                                       gap: 3,
                                       alignItems: 'center'
                                     }}>
+                                      {(() => {
+                                        console.log('[Preview] Rendering step media:', {
+                                          stepIndex,
+                                          mediaCount: step.media.length,
+                                          media: step.media.map((m, i) => ({
+                                            index: i,
+                                            hasData: !!m.data,
+                                            dataPrefix: m.data?.substring(0, 50),
+                                            type: m.type,
+                                            name: m.name
+                                          }))
+                                        });
+                                        return null;
+                                      })()}
                                       {step.media.map((mediaItem, mediaIndex) => (
                                         <Box 
                                           key={mediaIndex} 
@@ -1704,7 +1718,7 @@ const ModularExperimentWizard = ({
                                             </Box>
                                           </Box>
                                           
-                                          {mediaItem.type?.startsWith('image/') ? (
+                                          {mediaItem.type?.startsWith('image/') && mediaItem.data ? (
                                             <Box sx={{ 
                                               width: `${mediaItem.displaySize || 100}%`,
                                               mx: 'auto'
@@ -1713,6 +1727,15 @@ const ModularExperimentWizard = ({
                                                 component="img"
                                                 src={mediaItem.data}
                                                 alt={mediaItem.caption || `Step ${stepIndex + 1} - Figure ${mediaIndex + 1}`}
+                                                onError={(e) => {
+                                                  console.error('[Preview] Image failed to load:', {
+                                                    stepIndex,
+                                                    mediaIndex,
+                                                    dataLength: mediaItem.data?.length,
+                                                    type: mediaItem.type
+                                                  });
+                                                  e.target.style.display = 'none';
+                                                }}
                                                 sx={{
                                                   width: '100%',
                                                   height: 'auto',
