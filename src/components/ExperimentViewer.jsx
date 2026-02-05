@@ -975,20 +975,10 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                             {step.media && step.media.length > 0 && (
                               <Box sx={{ mt: 2 }}>
                                 {step.media.map((mediaItem, mediaIdx) => {
-                                  console.log('[ExperimentViewer] Step media item:', { 
-                                    stepIndex: index, 
-                                    mediaIdx, 
-                                    type: mediaItem.type,
-                                    hasData: !!mediaItem.data,
-                                    hasUrl: !!mediaItem.url,
-                                    name: mediaItem.name
-                                  });
-                                  
                                   const imageSrc = mediaItem.data || mediaItem.url;
                                   const isImage = mediaItem.type?.startsWith('image') || mediaItem.type?.includes('image');
                                   
                                   if (!imageSrc) {
-                                    console.warn('[ExperimentViewer] No image source for media item:', mediaItem);
                                     return null;
                                   }
                                   
@@ -999,13 +989,6 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
                                           component="img"
                                           src={imageSrc}
                                           alt={mediaItem.caption || mediaItem.name || `Step ${index + 1} Figure ${mediaIdx + 1}`}
-                                          onError={(e) => {
-                                            console.error('[ExperimentViewer] Image failed to load:', {
-                                              src: imageSrc,
-                                              error: e,
-                                              mediaItem
-                                            });
-                                          }}
                                           sx={{
                                             maxWidth: '100%',
                                             height: 'auto',
@@ -1465,24 +1448,16 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           open={exportOpen}
           onClose={() => {
             setExportOpen(false);
-            // Reset simplified data when export dialog closes
             setSimplifiedData(null); 
             setAutoExportFormat(null);
           }}
           experiment={(() => {
             const dataToExport = simplifiedData || experiment;
-            console.log('[ExperimentViewer] Passing to ExportDialog:', {
-              hasSimplifiedData: !!simplifiedData,
-              experimentTitle: experiment?.title,
-              dataToExportTitle: dataToExport?.title,
-              simplifiedDataSections: simplifiedData?.content?.sections?.length || 0
-            });
             return dataToExport;
           })()}
           autoExportFormat={autoExportFormat} 
           onExported={(type) => {
             console.log('[ExperimentViewer] Export completed:', type);
-            // Keep simplified data until dialog closes
           }}
         />
       )}
@@ -1492,12 +1467,9 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           open={simplifyOpen}
           onClose={() => {
             setSimplifyOpen(false);
-            // Don't reset simplifiedData here - it might be needed for export
-            // It will be reset when export dialog closes
           }}
           experimentData={experiment}
           onExport={async (simplifiedExperiment, level) => {
-            // Set simplified data first
             console.log('[ExperimentViewer] Setting simplified data:', simplifiedExperiment);
             setSimplifiedData(simplifiedExperiment);
             setSimplifyOpen(false);

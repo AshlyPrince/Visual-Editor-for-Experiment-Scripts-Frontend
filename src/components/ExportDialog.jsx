@@ -39,8 +39,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
 
   const generateHTML = () => {
     if (!experiment) return '';
-
-    console.log('[ExportDialog] generateHTML called with experiment:', experiment);
     
     const content = typeof experiment.content === 'string' 
       ? JSON.parse(experiment.content) 
@@ -49,11 +47,6 @@ const ExportDialog = ({ open, onClose, experiment, onExported, autoExportFormat 
     const actualContent = content?.content || content;
     const config = actualContent?.config || {};
     const sections = actualContent?.sections || [];
-    
-    console.log('[ExportDialog] Sections to export:', sections?.length, 'sections');
-    if (sections.length > 0) {
-      console.log('[ExportDialog] First section sample:', sections[0]);
-    }
     
     let htmlContent = `
 <!DOCTYPE html>

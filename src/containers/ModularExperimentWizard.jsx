@@ -1670,20 +1670,6 @@ const ModularExperimentWizard = ({
                                       gap: 3,
                                       alignItems: 'center'
                                     }}>
-                                      {(() => {
-                                        console.log('[Preview] Rendering step media:', {
-                                          stepIndex,
-                                          mediaCount: step.media.length,
-                                          media: step.media.map((m, i) => ({
-                                            index: i,
-                                            hasData: !!m.data,
-                                            dataPrefix: m.data?.substring(0, 50),
-                                            type: m.type,
-                                            name: m.name
-                                          }))
-                                        });
-                                        return null;
-                                      })()}
                                       {step.media.map((mediaItem, mediaIndex) => (
                                         <Box 
                                           key={mediaIndex} 
@@ -1723,21 +1709,7 @@ const ModularExperimentWizard = ({
                                             const isImage = mediaItem.type?.startsWith('image') || mediaItem.type?.includes('image') || !mediaItem.type;
                                             const isVideo = mediaItem.type?.startsWith('video') || mediaItem.type?.includes('video');
                                             
-                                            console.log('[Preview] Media item check:', {
-                                              stepIndex,
-                                              mediaIndex,
-                                              type: mediaItem.type,
-                                              isImage,
-                                              isVideo,
-                                              hasData: !!mediaItem.data,
-                                              hasUrl: !!mediaItem.url,
-                                              hasSrc: !!imageSrc,
-                                              dataLength: mediaItem.data?.length,
-                                              name: mediaItem.name
-                                            });
-                                            
                                             if (!imageSrc) {
-                                              console.warn('[Preview] No image source available');
                                               return null;
                                             }
                                             
@@ -1751,22 +1723,6 @@ const ModularExperimentWizard = ({
                                                     component="img"
                                                     src={imageSrc}
                                                     alt={mediaItem.caption || `Step ${stepIndex + 1} - Figure ${mediaIndex + 1}`}
-                                                    onLoad={() => {
-                                                      console.log('[Preview] Image loaded successfully:', {
-                                                        stepIndex,
-                                                        mediaIndex,
-                                                        name: mediaItem.name
-                                                      });
-                                                    }}
-                                                    onError={(e) => {
-                                                      console.error('[Preview] Image failed to load:', {
-                                                        stepIndex,
-                                                        mediaIndex,
-                                                        src: imageSrc.substring(0, 100),
-                                                        type: mediaItem.type,
-                                                        error: e
-                                                      });
-                                                    }}
                                                     sx={{
                                                       width: '100%',
                                                       height: 'auto',

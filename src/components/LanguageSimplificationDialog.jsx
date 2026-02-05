@@ -87,20 +87,16 @@ const LanguageSimplificationDialog = ({
 
   const handleExport = async () => {
     if (!simplifiedData) {
-      console.warn('[LanguageSimplificationDialog] No simplified data to export');
       return;
     }
     
     try {
-      console.log('[LanguageSimplificationDialog] Exporting simplified data:', simplifiedData);
-      
       if (onExport) {
         await onExport(simplifiedData, targetLevel);
       }
 
       handleClose();
     } catch (err) {
-      console.error('Export error:', err);
       setError(err.message || t('simplification.exportError', 'Unable to export the simplified experiment.'));
     }
   };
@@ -272,26 +268,34 @@ const LanguageSimplificationDialog = ({
             
             <Paper elevation={2} sx={{ p: 3, maxHeight: 400, overflow: 'auto' }}>
               <Typography variant="h6" gutterBottom>
-                {simplifiedData?.title || simplifiedData?.content?.config?.title}
+                {simplifiedData?.title}
               </Typography>
               
-              {(simplifiedData?.estimated_duration || simplifiedData?.content?.config?.duration) && (
+              {simplifiedData?.estimated_duration && (
                 <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {t('experiment.duration', 'Duration')}: {simplifiedData.estimated_duration || simplifiedData.content?.config?.duration}
+                  {t('experiment.duration', 'Duration')}: {simplifiedData.estimated_duration}
                 </Typography>
               )}
 
               <Divider sx={{ my: 2 }} />
 
-              {(simplifiedData?.content?.sections || simplifiedData?.sections || []).map((section, idx) => (
-                <Box key={section.id || idx} sx={{ mb: 3 }}>
-                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                    {section.icon && <span>{section.icon} </span>}
-                    {section.name || section.title || section.type}
-                  </Typography>
-                  {renderContent(section.content)}
-                </Box>
-              ))}
+              {(() => {
+                const content = typeof simplifiedData?.content === 'string' 
+                  ? JSON.parse(simplifiedData.content) 
+                  : simplifiedData?.content;
+                const actualContent = content?.content || content;
+                const sections = actualContent?.sections || [];
+                
+                return sections.map((section, idx) => (
+                  <Box key={section.id || idx} sx={{ mb: 3 }}>
+                    <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                      {section.icon && <span>{section.icon} </span>}
+                      {section.name || section.title || section.type}
+                    </Typography>
+                    {renderContent(section.content)}
+                  </Box>
+                ));
+              })()}
             </Paper>
           </Box>
 

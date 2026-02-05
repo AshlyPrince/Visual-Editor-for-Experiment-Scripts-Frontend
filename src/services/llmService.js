@@ -446,7 +446,6 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
     const actualContent = content?.content || content;
     const sections = actualContent?.sections || [];
 
-    // Sections that should NOT be simplified (technical/specific content that must remain exact)
     const skipSimplificationSections = [
       'materials',
       'equipment',
@@ -461,7 +460,6 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i];
       
-      // Check if this section should be skipped (materials, equipment, chemicals, reagents only)
       const shouldSkip = skipSimplificationSections.some(skipId => 
         section.id === skipId || 
         section.type === skipId ||
@@ -471,7 +469,6 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
         section.name?.toLowerCase().includes('reagent')
       );
 
-      // If section should be skipped, keep it as-is without simplification
       if (shouldSkip) {
         console.log(`[LLM Service] Skipping section: ${section.name || section.id}`);
         simplifiedSections.push({ ...section });
@@ -609,7 +606,6 @@ const simplifyText = async (text, targetLevel, t, uiLanguage = 'en') => {
   const preservedElements = [];
   let processedText = text;
 
-  // Step 1: Protect HTML elements (tables, images, videos, links)
   processedText = processedText.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
     const placeholder = `___TABLE_PLACEHOLDER_${preservedElements.length}___`;
     preservedElements.push(match);
@@ -634,26 +630,21 @@ const simplifyText = async (text, targetLevel, t, uiLanguage = 'en') => {
     return placeholder;
   });
 
-  // Step 2: Protect measurements, numbers with units, chemical formulas, ratios
   const protectedTokens = [];
   
-  // Protect numbers with units: 10 ml, 37°C, 5%, 2 min, etc.
   processedText = processedText.replace(/\b(\d+(?:[.,]\d+)?)\s*(ml|mg|g|kg|l|°C|°F|mmHg|cm|mm|m|min|sec|h|%|pH)\b/gi, (match) => {
     const placeholder = `___TOKEN_${protectedTokens.length}___`;
     protectedTokens.push(match);
     return placeholder;
   });
   
-  // Protect ratios: 120/80, 1/2, etc.
   processedText = processedText.replace(/\b(\d+)\/(\d+)\b/g, (match) => {
     const placeholder = `___TOKEN_${protectedTokens.length}___`;
     protectedTokens.push(match);
     return placeholder;
   });
   
-  // Protect chemical formulas: H2O, NaCl, CO2, etc.
   processedText = processedText.replace(/\b([A-Z][a-z]?\d*)+\b/g, (match) => {
-    // Only protect if it looks like a chemical formula (has numbers or multiple caps)
     if (/\d/.test(match) || /[A-Z].*[A-Z]/.test(match)) {
       const placeholder = `___TOKEN_${protectedTokens.length}___`;
       protectedTokens.push(match);
@@ -662,7 +653,6 @@ const simplifyText = async (text, targetLevel, t, uiLanguage = 'en') => {
     return match;
   });
   
-  // Protect standalone numbers that might be measurements
   processedText = processedText.replace(/\b(\d+(?:[.,]\d+)?)\b/g, (match) => {
     const placeholder = `___TOKEN_${protectedTokens.length}___`;
     protectedTokens.push(match);
@@ -782,7 +772,6 @@ ${processedText}`
       return text;
     }
 
-    // Remove inline explanatory notes that might have slipped through
     const notePatterns = [
       /\(Note:\s*[^)]+\)/gi,
       /\(Hinweis:\s*[^)]+\)/gi,
