@@ -1434,6 +1434,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           open={exportOpen}
           onClose={() => {
             setExportOpen(false);
+            // Reset simplified data when export dialog closes
             setSimplifiedData(null); 
             setAutoExportFormat(null);
           }}
@@ -1441,16 +1442,16 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             const dataToExport = simplifiedData || experiment;
             console.log('[ExperimentViewer] Passing to ExportDialog:', {
               hasSimplifiedData: !!simplifiedData,
-              experimentTitle: experiment.title,
-              dataToExportTitle: dataToExport.title
+              experimentTitle: experiment?.title,
+              dataToExportTitle: dataToExport?.title,
+              simplifiedDataSections: simplifiedData?.content?.sections?.length || 0
             });
             return dataToExport;
           })()}
           autoExportFormat={autoExportFormat} 
           onExported={(type) => {
-            
-            setSimplifiedData(null);
-            setAutoExportFormat(null);
+            console.log('[ExperimentViewer] Export completed:', type);
+            // Keep simplified data until dialog closes
           }}
         />
       )}
@@ -1460,8 +1461,8 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           open={simplifyOpen}
           onClose={() => {
             setSimplifyOpen(false);
-            setSimplifiedData(null); 
-            setAutoExportFormat(null);
+            // Don't reset simplifiedData here - it might be needed for export
+            // It will be reset when export dialog closes
           }}
           experimentData={experiment}
           onExport={async (simplifiedExperiment, level) => {
@@ -1470,7 +1471,7 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
             setSimplifiedData(simplifiedExperiment);
             setSimplifyOpen(false);
             
-            // Use setTimeout with a longer delay to ensure state is fully updated
+            // Use setTimeout to ensure state is fully updated before opening export
             setTimeout(() => {
               console.log('[ExperimentViewer] Opening export dialog with simplified data');
               setExportOpen(true);
