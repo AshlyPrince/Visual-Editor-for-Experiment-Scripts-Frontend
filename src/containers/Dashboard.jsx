@@ -811,7 +811,22 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
             <Grid container spacing={3} sx={{ mb: 4 }}>
             {experiments.map((experiment) => {
               const currentUser = keycloakService.getUserInfo();
-              const canViewDetails = canAccessRestrictedFeature(experiment, 'viewDetails', currentUser);
+              const permissions = experiment.content?.permissions;
+              
+              let hasAccess = true;
+              
+              if (permissions && permissions.visibility === 'restricted') {
+                const isOwner = isUserOwner(experiment, currentUser);
+                if (!isOwner) {
+                  const userName = currentUser?.preferred_username || currentUser?.id;
+                  const userPerms = permissions.userPermissions?.find(up => 
+                    up.username === userName || up.userId === userName || up.email === currentUser?.email
+                  );
+                  hasAccess = userPerms !== null;
+                }
+              }
+              
+              const canViewDetails = hasAccess && canAccessRestrictedFeature(experiment, 'viewDetails', currentUser);
               const isClickable = canViewDetails;
               
               return (
@@ -820,11 +835,22 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                   onClick={isClickable ? () => handleCardClick(experiment) : undefined}
                   sx={{
                     filter: menuAnchor && selectedExperiment?.id !== experiment.id ? 'blur(2px)' : 'none',
-                    opacity: menuAnchor && selectedExperiment?.id !== experiment.id ? 0.7 : (!isClickable ? 0.6 : 1),
+                    opacity: menuAnchor && selectedExperiment?.id !== experiment.id ? 0.7 : (!isClickable ? 0.5 : 1),
                     transition: 'filter 0.2s ease, opacity 0.2s ease',
                     cursor: isClickable ? 'pointer' : 'not-allowed',
                     pointerEvents: isClickable ? 'auto' : 'none',
-                    backgroundColor: !isClickable ? 'action.disabledBackground' : 'background.paper'
+                    backgroundColor: !isClickable ? 'action.disabledBackground' : 'background.paper',
+                    position: 'relative',
+                    '&::after': !isClickable ? {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                      pointerEvents: 'none'
+                    } : {}
                   }}
                 >
                   <CardContent sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
@@ -841,7 +867,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                           lineHeight: 1.4,
                           minHeight: '2.8em', 
                           pr: 1,
-                          color: (experiment.title === 'Untitled Experiment' || !experiment.title) ? 'text.secondary' : 'text.primary'
+                          color: !isClickable ? 'text.disabled' : (experiment.title === 'Untitled Experiment' || !experiment.title) ? 'text.secondary' : 'text.primary'
                         }}
                       >
                         {experiment.title && experiment.title !== 'Untitled Experiment' 
@@ -867,10 +893,27 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                     </Box>
 
                     <Box sx={{ mt: 'auto' }}>
+                      {!isClickable && permissions?.visibility === 'restricted' && (
+                        <Typography 
+                          variant="caption" 
+                          sx={{ 
+                            display: 'block',
+                            mb: 1,
+                            color: 'warning.main',
+                            fontWeight: 500,
+                            backgroundColor: 'warning.lighter',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1
+                          }}
+                        >
+                          🔒 {t('dashboard.restrictedAccess', 'Restricted Access')}
+                        </Typography>
+                      )}
                       {(experiment.created_by_name || experiment.creator_name || experiment.username) && (
                         <Typography 
                           variant="body2" 
-                          color="text.secondary"
+                          color={!isClickable ? 'text.disabled' : 'text.secondary'}
                           sx={{ 
                             mb: 1,
                             display: 'flex',
@@ -882,7 +925,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                           {experiment.created_by_name || experiment.creator_name || experiment.username}
                         </Typography>
                       )}
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color={!isClickable ? 'text.disabled' : 'text.secondary'}>
                         {t('dashboard.lastUpdated')}: {formatDate(experiment.updated_at)}
                       </Typography>
                     </Box>

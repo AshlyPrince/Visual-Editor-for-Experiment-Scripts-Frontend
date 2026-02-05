@@ -470,7 +470,6 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
       );
 
       if (shouldSkip) {
-        console.log(`[LLM Service] Skipping section: ${section.name || section.id}`);
         simplifiedSections.push({ ...section });
         continue;
       }
@@ -575,7 +574,6 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
         );
       }
     } catch (error) {
-      console.error('[LLM Service] Error simplifying section:', error);
     }
     
     simplifiedSections.push(simplifiedSection);
@@ -592,8 +590,6 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   };
   
   } catch (error) {
-    console.error('[LLM Service] Error in simplifyLanguage:', error);
-    // Return original data if simplification fails
     return experimentData;
   }
 };
@@ -752,7 +748,6 @@ ${processedText}`
         try {
           parsedResponse = JSON.parse(jsonMatch[0]);
         } catch (e) {
-          console.warn('[LLM Service] Failed to parse extracted JSON, using original text');
           return text;
         }
       } else {
@@ -768,7 +763,6 @@ ${processedText}`
     
     // Sanity check: if output is too short, return original
     if (simplifiedText.trim().length < text.trim().length * 0.3) {
-      console.warn('[LLM Service] Simplified text too short, returning original');
       return text;
     }
 
@@ -815,8 +809,6 @@ ${processedText}`
     return simplifiedText;
     
   } catch (error) {
-    console.error('[LLM Service] Error simplifying text:', error);
-    // Return original text on error
     return text;
   }
 };

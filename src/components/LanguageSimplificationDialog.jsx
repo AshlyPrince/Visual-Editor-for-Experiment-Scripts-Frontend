@@ -78,7 +78,6 @@ const LanguageSimplificationDialog = ({
       setSimplifiedData(simplified);
       setStep('preview'); 
     } catch (err) {
-      console.error('Simplification error:', err);
       setError(err.message || t('simplification.error', 'Failed to simplify language'));
     } finally {
       setSimplifying(false);
