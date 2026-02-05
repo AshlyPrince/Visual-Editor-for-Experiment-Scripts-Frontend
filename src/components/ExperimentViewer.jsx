@@ -1457,11 +1457,14 @@ const ExperimentViewer = ({ experimentId, onClose, onEdit }) => {
           }}
           experimentData={experiment}
           onExport={async (simplifiedExperiment, level) => {
-            
+            // Set simplified data first and wait for state to update
             setSimplifiedData(simplifiedExperiment);
             setSimplifyOpen(false);
             
-            setExportOpen(true);
+            // Use setTimeout to ensure state is updated before opening export dialog
+            setTimeout(() => {
+              setExportOpen(true);
+            }, 0);
           }}
         />
       )}

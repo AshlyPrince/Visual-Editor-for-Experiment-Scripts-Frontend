@@ -445,10 +445,36 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
   const actualContent = content?.content || content;
   const sections = actualContent?.sections || [];
 
+  // Sections that should NOT be simplified (technical/specific content that must remain exact)
+  const skipSimplificationSections = [
+    'materials',
+    'equipment',
+    'chemicals',
+    'reagents',
+    'materials_equipment',
+    'chemicals_reagents'
+  ];
+
   const simplifiedSections = [];
   
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
+    
+    // Check if this section should be skipped (materials, equipment, chemicals, reagents only)
+    const shouldSkip = skipSimplificationSections.some(skipId => 
+      section.id === skipId || 
+      section.type === skipId ||
+      section.name?.toLowerCase().includes('material') ||
+      section.name?.toLowerCase().includes('equipment') ||
+      section.name?.toLowerCase().includes('chemical') ||
+      section.name?.toLowerCase().includes('reagent')
+    );
+
+    // If section should be skipped, keep it as-is without simplification
+    if (shouldSkip) {
+      simplifiedSections.push({ ...section });
+      continue;
+    }
     
     const simplifiedSection = { ...section };
     
@@ -601,51 +627,66 @@ const simplifyText = async (text, targetLevel, t) => {
   
   const levelInstructions = {
     'beginner': {
-      system: 'You are a science educator who simplifies scientific text for primary school children while preserving all original content structure and language.',
-      instruction: `Simplify ONLY the language complexity of the following text for young children (ages 6-10):
+      system: 'You are a language simplification expert who adjusts vocabulary complexity while preserving ALL original structure, formatting, and content.',
+      instruction: `Adjust ONLY the vocabulary and word choice in the following text to match a simple reading level (ages 8-12):
 
-⚠️ CRITICAL RULES - MUST FOLLOW:
-1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
-2. PRESERVE ALL original content - do not add or remove information
-3. Keep the SAME meaning and facts - only make words simpler in the SAME language
-4. Keep all HTML formatting tags (like <p>, <strong>, <em>, etc.) EXACTLY as they are
-5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-6. Keep any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
-7. Use very simple words in the SAME language (maximum 8-10 words per sentence)
-8. Replace complex scientific terms with everyday words that children know IN THE SAME LANGUAGE
+⚠️ CRITICAL RULES - YOU MUST FOLLOW EXACTLY:
+1. KEEP THE SAME LANGUAGE - If the text is in German, output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
+2. PRESERVE the EXACT SAME structure, length, and flow - do NOT break into smaller paragraphs or shorten
+3. KEEP the SAME number of sentences and paragraphs - do NOT restructure
+4. ONLY replace complex/difficult words with simpler everyday words IN THE SAME LANGUAGE
+5. KEEP all HTML formatting tags (like <p>, <strong>, <em>, <ul>, <ol>, <li>) EXACTLY as they are
+6. KEEP all numbers, measurements, units, chemical formulas, and safety warnings EXACTLY as written
+7. KEEP any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
+8. Use simple, everyday vocabulary (avoid academic jargon) but keep sentence structure similar
+9. Replace technical terms with common words that young students would understand IN THE SAME LANGUAGE
+10. DO NOT summarize, DO NOT shorten, DO NOT reorganize - ONLY swap difficult words for easier ones
 
-DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text in its ORIGINAL LANGUAGE.`
+Example of what to do:
+Original: "The apparatus must be calibrated precisely before commencing the experimental procedure."
+Correct: "The equipment must be set up exactly right before starting the experiment."
+WRONG: "Set up equipment. Start experiment." (too short, changed structure)
+
+DO NOT translate. DO NOT rewrite. DO NOT reorganize. ONLY simplify vocabulary in the SAME LANGUAGE.`
     },
     'intermediate': {
-      system: 'You are a science educator who makes scientific text clearer and more accessible while preserving all original content and language.',
-      instruction: `Simplify ONLY the language complexity of the following text to make it easier to understand:
+      system: 'You are a language simplification expert who adjusts vocabulary complexity while preserving ALL original structure, formatting, and content.',
+      instruction: `Adjust ONLY the vocabulary and word choice in the following text to match a moderate reading level (ages 13-16):
 
-⚠️ CRITICAL RULES - MUST FOLLOW:
-1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
-2. PRESERVE ALL original content - do not add or remove information
-3. Keep the SAME meaning and facts - only make the language clearer in the SAME language
-4. Keep all HTML formatting tags (like <p>, <strong>, <em>, etc.) EXACTLY as they are
-5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-6. Keep any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
-7. Use clear, everyday language in the SAME language (maximum 15-20 words per sentence)
-8. Explain or replace technical terms with simpler words IN THE SAME LANGUAGE
+⚠️ CRITICAL RULES - YOU MUST FOLLOW EXACTLY:
+1. KEEP THE SAME LANGUAGE - If the text is in German, output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
+2. PRESERVE the EXACT SAME structure, length, and flow - do NOT break into smaller paragraphs or shorten
+3. KEEP the SAME number of sentences and paragraphs - do NOT restructure
+4. ONLY replace overly complex/technical words with clearer everyday words IN THE SAME LANGUAGE
+5. KEEP all HTML formatting tags (like <p>, <strong>, <em>, <ul>, <ol>, <li>) EXACTLY as they are
+6. KEEP all numbers, measurements, units, chemical formulas, and safety warnings EXACTLY as written
+7. KEEP any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
+8. Use clear, accessible vocabulary while maintaining professional tone
+9. Technical terms can be kept if they're commonly known, or replaced with simpler alternatives IN THE SAME LANGUAGE
+10. DO NOT summarize, DO NOT shorten, DO NOT reorganize - ONLY swap difficult words for clearer ones
 
-DO NOT translate. DO NOT write new content. DO NOT answer questions. ONLY simplify the existing text in its ORIGINAL LANGUAGE.`
+Example of what to do:
+Original: "The experiment necessitates meticulous observation and documentation of all phenomena."
+Correct: "The experiment requires careful observation and recording of all events."
+WRONG: "Observe carefully and write notes." (too short, changed structure)
+
+DO NOT translate. DO NOT rewrite. DO NOT reorganize. ONLY simplify vocabulary in the SAME LANGUAGE.`
     },
     'advanced': {
-      system: 'You are a science educator who maintains academic rigor while ensuring clarity and preserving the original language.',
-      instruction: `Keep the following text at its CURRENT academic level, only improving clarity if needed:
+      system: 'You are a language expert who maintains academic language while ensuring clarity and preserving the original language.',
+      instruction: `Keep the following text at its CURRENT academic level with minimal changes:
 
-⚠️ CRITICAL RULES - MUST FOLLOW:
-1. KEEP THE SAME LANGUAGE - If the text is in German, your output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
-2. PRESERVE ALL original content exactly - this is the original/advanced level
-3. Keep all scientific terminology and academic language in the SAME language
-4. Keep all HTML formatting tags EXACTLY as they are
-5. Keep all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
-6. Keep any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
-7. Only fix obvious grammar or clarity issues
+⚠️ CRITICAL RULES - YOU MUST FOLLOW EXACTLY:
+1. KEEP THE SAME LANGUAGE - If the text is in German, output MUST be in German. If English, stay in English. DO NOT TRANSLATE.
+2. PRESERVE the EXACT SAME structure, content, and academic level
+3. KEEP all scientific terminology and technical vocabulary in the SAME language
+4. KEEP all HTML formatting tags EXACTLY as they are
+5. KEEP all numbers, measurements, chemical formulas, and safety warnings EXACTLY as written
+6. KEEP any placeholder markers (like ___TABLE_PLACEHOLDER_0___) EXACTLY as they appear
+7. ONLY fix obvious grammar errors or awkward phrasing if present
+8. Maintain the professional, academic tone throughout
 
-DO NOT translate. DO NOT simplify the language. DO NOT write new content. Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
+DO NOT translate. DO NOT simplify. DO NOT restructure. Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
     }
   };
   

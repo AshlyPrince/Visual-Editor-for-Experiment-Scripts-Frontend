@@ -1663,43 +1663,106 @@ const ModularExperimentWizard = ({
                                     />
                                   )}
                                   {typeof step === 'object' && step.media && step.media.length > 0 && (
-                                    <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                    <Box sx={{ 
+                                      mt: 3,
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: 3,
+                                      alignItems: 'center'
+                                    }}>
                                       {step.media.map((mediaItem, mediaIndex) => (
-                                        <Box key={mediaIndex} sx={{ maxWidth: 300 }}>
+                                        <Box 
+                                          key={mediaIndex} 
+                                          sx={{ 
+                                            textAlign: 'center',
+                                            maxWidth: '700px',
+                                            width: '100%'
+                                          }}
+                                        >
+                                          <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'center' }}>
+                                            <Typography variant="caption" color="text.secondary">
+                                              Size:
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                              {[50, 75, 100].map((size) => (
+                                                <Button
+                                                  key={size}
+                                                  size="small"
+                                                  variant={mediaItem.displaySize === size || (!mediaItem.displaySize && size === 100) ? 'contained' : 'outlined'}
+                                                  onClick={() => {
+                                                    const updatedSteps = [...section.content.steps];
+                                                    const updatedMedia = [...updatedSteps[stepIndex].media];
+                                                    updatedMedia[mediaIndex] = { ...mediaItem, displaySize: size };
+                                                    updatedSteps[stepIndex] = { ...updatedSteps[stepIndex], media: updatedMedia };
+                                                    updateSectionContent(section.id, 'steps', updatedSteps);
+                                                  }}
+                                                  sx={{ minWidth: 'auto', px: 1.5, py: 0.5 }}
+                                                >
+                                                  {size}%
+                                                </Button>
+                                              ))}
+                                            </Box>
+                                          </Box>
+                                          
                                           {mediaItem.type?.startsWith('image/') ? (
-                                            <img
-                                              src={mediaItem.data}
-                                              alt={mediaItem.caption || `Media ${mediaIndex + 1}`}
-                                              style={{
-                                                width: '100%',
-                                                height: 'auto',
-                                                borderRadius: '8px',
-                                                objectFit: 'cover'
-                                              }}
-                                            />
+                                            <Box sx={{ 
+                                              width: `${mediaItem.displaySize || 100}%`,
+                                              mx: 'auto'
+                                            }}>
+                                              <Box
+                                                component="img"
+                                                src={mediaItem.data}
+                                                alt={mediaItem.caption || `Step ${stepIndex + 1} - Figure ${mediaIndex + 1}`}
+                                                sx={{
+                                                  width: '100%',
+                                                  height: 'auto',
+                                                  borderRadius: 1,
+                                                  objectFit: 'cover',
+                                                  border: '1px solid',
+                                                  borderColor: 'divider',
+                                                  mb: 1.5,
+                                                  transition: 'all 0.3s ease'
+                                                }}
+                                              />
+                                            </Box>
                                           ) : mediaItem.type?.startsWith('video/') ? (
-                                            <video
-                                              controls
-                                              style={{
-                                                width: '100%',
-                                                height: 'auto',
-                                                borderRadius: '8px'
-                                              }}
-                                            >
-                                              <source src={mediaItem.data} type={mediaItem.type} />
-                                              Your browser does not support the video tag.
-                                            </video>
+                                            <Box sx={{ 
+                                              width: `${mediaItem.displaySize || 100}%`,
+                                              mx: 'auto'
+                                            }}>
+                                              <Box
+                                                component="video"
+                                                controls
+                                                sx={{
+                                                  width: '100%',
+                                                  height: 'auto',
+                                                  borderRadius: 1,
+                                                  border: '1px solid',
+                                                  borderColor: 'divider',
+                                                  mb: 1.5
+                                                }}
+                                              >
+                                                <source src={mediaItem.data} type={mediaItem.type} />
+                                                Your browser does not support the video tag.
+                                              </Box>
+                                            </Box>
                                           ) : null}
+                                          
                                           {mediaItem.caption && (
                                             <Typography 
-                                              variant="caption" 
+                                              variant="body2"
                                               sx={{ 
-                                                display: 'block', 
-                                                mt: 1, 
-                                                color: 'text.secondary',
-                                                fontStyle: 'italic'
+                                                color: 'text.primary',
+                                                fontSize: '0.95rem',
+                                                lineHeight: 1.6,
+                                                textAlign: 'center',
+                                                maxWidth: '600px',
+                                                mx: 'auto'
                                               }}
                                             >
+                                              <Box component="span" sx={{ fontWeight: 600 }}>
+                                                Step {stepIndex + 1} - Figure {mediaIndex + 1}:
+                                              </Box>{' '}
                                               {mediaItem.caption}
                                             </Typography>
                                           )}
