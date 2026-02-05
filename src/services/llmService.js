@@ -435,46 +435,48 @@ ${p.format}`;
   }
 };
 
-export const simplifyLanguage = async (experimentData, targetLevel = 'intermediate', t = null) => {
+export const simplifyLanguage = async (experimentData, targetLevel = 'intermediate', t = null, uiLanguage = 'en') => {
   const errorMsg = (key, fallback) => t ? t(key) : fallback;
   
-  const content = typeof experimentData.content === 'string' 
-    ? JSON.parse(experimentData.content) 
-    : experimentData.content;
-  
-  const actualContent = content?.content || content;
-  const sections = actualContent?.sections || [];
-
-  // Sections that should NOT be simplified (technical/specific content that must remain exact)
-  const skipSimplificationSections = [
-    'materials',
-    'equipment',
-    'chemicals',
-    'reagents',
-    'materials_equipment',
-    'chemicals_reagents'
-  ];
-
-  const simplifiedSections = [];
-  
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
+  try {
+    const content = typeof experimentData.content === 'string' 
+      ? JSON.parse(experimentData.content) 
+      : experimentData.content;
     
-    // Check if this section should be skipped (materials, equipment, chemicals, reagents only)
-    const shouldSkip = skipSimplificationSections.some(skipId => 
-      section.id === skipId || 
-      section.type === skipId ||
-      section.name?.toLowerCase().includes('material') ||
-      section.name?.toLowerCase().includes('equipment') ||
-      section.name?.toLowerCase().includes('chemical') ||
-      section.name?.toLowerCase().includes('reagent')
-    );
+    const actualContent = content?.content || content;
+    const sections = actualContent?.sections || [];
 
-    // If section should be skipped, keep it as-is without simplification
-    if (shouldSkip) {
-      simplifiedSections.push({ ...section });
-      continue;
-    }
+    // Sections that should NOT be simplified (technical/specific content that must remain exact)
+    const skipSimplificationSections = [
+      'materials',
+      'equipment',
+      'chemicals',
+      'reagents',
+      'materials_equipment',
+      'chemicals_reagents'
+    ];
+
+    const simplifiedSections = [];
+    
+    for (let i = 0; i < sections.length; i++) {
+      const section = sections[i];
+      
+      // Check if this section should be skipped (materials, equipment, chemicals, reagents only)
+      const shouldSkip = skipSimplificationSections.some(skipId => 
+        section.id === skipId || 
+        section.type === skipId ||
+        section.name?.toLowerCase().includes('material') ||
+        section.name?.toLowerCase().includes('equipment') ||
+        section.name?.toLowerCase().includes('chemical') ||
+        section.name?.toLowerCase().includes('reagent')
+      );
+
+      // If section should be skipped, keep it as-is without simplification
+      if (shouldSkip) {
+        console.log(`[LLM Service] Skipping section: ${section.name || section.id}`);
+        simplifiedSections.push({ ...section });
+        continue;
+      }
     
     const simplifiedSection = { ...section };
     
@@ -486,7 +488,7 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
       const hasSteps = section.steps && Array.isArray(section.steps);
 
       if (hasTextContent && section.content) {
-        simplifiedSection.content = await simplifyText(section.content, targetLevel, t);
+        simplifiedSection.content = await simplifyText(section.content, targetLevel, t, uiLanguage);
       }
       
       else if (hasObjectContent) {
@@ -494,26 +496,26 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
         for (const [key, value] of Object.entries(section.content)) {
           if (typeof value === 'string' && value.trim().length > 0) {
             
-            simplifiedContent[key] = await simplifyText(value, targetLevel, t);
+            simplifiedContent[key] = await simplifyText(value, targetLevel, t, uiLanguage);
           } else if (Array.isArray(value)) {
             
             simplifiedContent[key] = await Promise.all(
               value.map(async (item) => {
                 if (typeof item === 'string') {
-                  return await simplifyText(item, targetLevel, t);
+                  return await simplifyText(item, targetLevel, t, uiLanguage);
                 } else if (typeof item === 'object' && item !== null) {
 
                   if (item.text || item.instruction || item.notes) {
                     return {
                       ...item, 
-                      text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
-                      instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
-                      notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
+                      text: item.text ? await simplifyText(item.text, targetLevel, t, uiLanguage) : item.text,
+                      instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t, uiLanguage) : item.instruction,
+                      notes: item.notes ? await simplifyText(item.notes, targetLevel, t, uiLanguage) : item.notes
                     };
                   } else if (item.name) {
                     return {
                       ...item, 
-                      name: await simplifyText(item.name, targetLevel, t)
+                      name: await simplifyText(item.name, targetLevel, t, uiLanguage)
                     };
                   }
                 }
@@ -531,15 +533,15 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
         simplifiedSection.content = await Promise.all(
           section.content.map(async (item) => {
             if (typeof item === 'string') {
-              return await simplifyText(item, targetLevel, t);
+              return await simplifyText(item, targetLevel, t, uiLanguage);
             } else if (typeof item === 'object' && item !== null) {
               
               if (item.text || item.instruction || item.notes) {
                 return {
                   ...item, 
-                  text: item.text ? await simplifyText(item.text, targetLevel, t) : item.text,
-                  instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t) : item.instruction,
-                  notes: item.notes ? await simplifyText(item.notes, targetLevel, t) : item.notes
+                  text: item.text ? await simplifyText(item.text, targetLevel, t, uiLanguage) : item.text,
+                  instruction: item.instruction ? await simplifyText(item.instruction, targetLevel, t, uiLanguage) : item.instruction,
+                  notes: item.notes ? await simplifyText(item.notes, targetLevel, t, uiLanguage) : item.notes
                 };
               }
             }
@@ -552,7 +554,7 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
         simplifiedSection.items = await Promise.all(
           section.items.map(async (item, idx) => {
             if (typeof item === 'string') {
-              return await simplifyText(item, targetLevel, t);
+              return await simplifyText(item, targetLevel, t, uiLanguage);
             }
             return item;
           })
@@ -566,9 +568,9 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
             if (step.instruction || step.text || step.notes) {
               return {
                 ...step, 
-                instruction: step.instruction ? await simplifyText(step.instruction, targetLevel, t) : step.instruction,
-                text: step.text ? await simplifyText(step.text, targetLevel, t) : step.text,
-                notes: step.notes ? await simplifyText(step.notes, targetLevel, t) : step.notes
+                instruction: step.instruction ? await simplifyText(step.instruction, targetLevel, t, uiLanguage) : step.instruction,
+                text: step.text ? await simplifyText(step.text, targetLevel, t, uiLanguage) : step.text,
+                notes: step.notes ? await simplifyText(step.notes, targetLevel, t, uiLanguage) : step.notes
               };
             }
             return step;
@@ -589,9 +591,15 @@ export const simplifyLanguage = async (experimentData, targetLevel = 'intermedia
       sections: simplifiedSections
     }
   };
+  
+  } catch (error) {
+    console.error('[LLM Service] Error in simplifyLanguage:', error);
+    // Return original data if simplification fails
+    return experimentData;
+  }
 };
 
-const simplifyText = async (text, targetLevel, t) => {
+const simplifyText = async (text, targetLevel, t, uiLanguage = 'en') => {
   if (!text || text.trim().length === 0) {
     return text;
   }
@@ -599,6 +607,7 @@ const simplifyText = async (text, targetLevel, t) => {
   const preservedElements = [];
   let processedText = text;
 
+  // Step 1: Protect HTML elements (tables, images, videos, links)
   processedText = processedText.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
     const placeholder = `___TABLE_PLACEHOLDER_${preservedElements.length}___`;
     preservedElements.push(match);
@@ -623,137 +632,112 @@ const simplifyText = async (text, targetLevel, t) => {
     return placeholder;
   });
 
+  // Step 2: Protect measurements, numbers with units, chemical formulas, ratios
+  const protectedTokens = [];
+  
+  // Protect numbers with units: 10 ml, 37°C, 5%, 2 min, etc.
+  processedText = processedText.replace(/\b(\d+(?:[.,]\d+)?)\s*(ml|mg|g|kg|l|°C|°F|mmHg|cm|mm|m|min|sec|h|%|pH)\b/gi, (match) => {
+    const placeholder = `___TOKEN_${protectedTokens.length}___`;
+    protectedTokens.push(match);
+    return placeholder;
+  });
+  
+  // Protect ratios: 120/80, 1/2, etc.
+  processedText = processedText.replace(/\b(\d+)\/(\d+)\b/g, (match) => {
+    const placeholder = `___TOKEN_${protectedTokens.length}___`;
+    protectedTokens.push(match);
+    return placeholder;
+  });
+  
+  // Protect chemical formulas: H2O, NaCl, CO2, etc.
+  processedText = processedText.replace(/\b([A-Z][a-z]?\d*)+\b/g, (match) => {
+    // Only protect if it looks like a chemical formula (has numbers or multiple caps)
+    if (/\d/.test(match) || /[A-Z].*[A-Z]/.test(match)) {
+      const placeholder = `___TOKEN_${protectedTokens.length}___`;
+      protectedTokens.push(match);
+      return placeholder;
+    }
+    return match;
+  });
+  
+  // Protect standalone numbers that might be measurements
+  processedText = processedText.replace(/\b(\d+(?:[.,]\d+)?)\b/g, (match) => {
+    const placeholder = `___TOKEN_${protectedTokens.length}___`;
+    protectedTokens.push(match);
+    return placeholder;
+  });
+
   const containsHTML = /<[a-z][\s\S]*>/i.test(processedText);
+  
+  // Determine output language from UI (not auto-detection)
+  const outputLanguage = uiLanguage === 'de' ? 'German' : 'English';
+  const outputLanguageNative = uiLanguage === 'de' ? 'Deutsch' : 'English';
   
   const levelInstructions = {
     'beginner': {
-      system: 'You are a language simplification expert. Your ONLY job is to replace difficult words with simple everyday words while keeping everything else EXACTLY the same.',
-      instruction: `Rewrite this text using ONLY simple, easy words that children (ages 8-12) can understand:
+      system: `You are a text simplification expert. Output MUST be valid JSON format only.`,
+      instruction: `Simplify this ${outputLanguage} text for children (ages 8-12, A2-B1 level).
 
-🚫 FORBIDDEN - DO NOT DO THESE:
-- DO NOT translate to another language
-- DO NOT make sentences shorter
-- DO NOT break text into more paragraphs
-- DO NOT remove any information
-- DO NOT summarize or cut content
-- DO NOT change the structure
+RULES:
+1. Output language: ${outputLanguage} (${outputLanguageNative})
+2. You MAY split long sentences into shorter ones
+3. You MAY use simpler sentence structures
+4. Replace difficult words with everyday words
+5. Keep the SAME meaning and all facts
+6. Keep numbered steps in order (1, 2, 3...)
+7. Do NOT invent new information
+8. Preserve ALL placeholders (___TOKEN_X___, ___IMAGE_PLACEHOLDER_X___, etc.) EXACTLY
 
-✅ REQUIRED - YOU MUST DO THESE:
-1. Keep text in the SAME LANGUAGE (German stays German, English stays English)
-2. Keep the EXACT SAME number of sentences
-3. Keep the EXACT SAME number of paragraphs
-4. Keep the EXACT SAME text length and flow
-5. ONLY replace hard/difficult words → simple everyday words
-6. Use words children know from daily life (NOT academic or scientific words)
-7. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
-8. Short sentences are better (8-12 words max per sentence when possible)
+OUTPUT FORMAT - RESPOND ONLY WITH THIS JSON:
+{"simplified":"<your simplified text here>"}
 
-⚠️ CRITICAL - NEVER CHANGE THESE SCIENTIFIC TERMS:
-- ALL measurements with units (ml, mmHg, cm, mg, °C, etc.) - KEEP EXACTLY
-- ALL numbers and values (220, 120/70, 0.5, etc.) - KEEP EXACTLY
-- Medical/scientific equipment names (Stethoskop, Manometer, Pipette, Spritze, etc.) - KEEP EXACTLY
-- Chemical compound names (NaCl, H2O, CO2, etc.) - KEEP EXACTLY
-- Body part names (Arterie, Vene, etc.) - You CAN simplify these if there's a simpler word
-- Safety-critical action verbs when precision matters - BE CAREFUL
-
-EXAMPLE FOR GERMAN:
-❌ WRONG: "Der Apparat muss präzise kalibriert werden, bevor die experimentelle Prozedur kommenziert wird."
-✅ CORRECT: "Das Gerät muss genau eingestellt werden, bevor das Experiment anfängt."
-
-EXAMPLE FOR ENGLISH:  
-❌ WRONG: "The apparatus requires precise calibration prior to experimental commencement."
-✅ CORRECT: "The equipment needs to be set up exactly right before the experiment starts."
-
-Remember: SAME language, SAME structure, SAME length - ONLY easier words! NEVER change measurements, numbers, or equipment names!`
+Text to simplify:
+${processedText}`
     },
     'intermediate': {
-      system: 'You are a language simplification expert. Your ONLY job is to replace difficult words with clearer everyday words while keeping everything else EXACTLY the same.',
-      instruction: `Rewrite this text using clearer, more accessible vocabulary for teenagers (ages 13-16):
+      system: `You are a text simplification expert. Output MUST be valid JSON format only.`,
+      instruction: `Simplify this ${outputLanguage} text for teenagers (ages 13-16, B1-B2 level).
 
-🚫 FORBIDDEN - DO NOT DO THESE:
-- DO NOT translate to another language
-- DO NOT make sentences shorter
-- DO NOT break text into more paragraphs
-- DO NOT remove any information
-- DO NOT summarize or cut content
-- DO NOT change the structure
+RULES:
+1. Output language: ${outputLanguage} (${outputLanguageNative})
+2. Use clearer, more accessible vocabulary
+3. You MAY shorten overly complex sentences
+4. Keep the SAME meaning and all facts
+5. Keep numbered steps in order (1, 2, 3...)
+6. Do NOT invent new information
+7. Preserve ALL placeholders (___TOKEN_X___, ___IMAGE_PLACEHOLDER_X___, etc.) EXACTLY
 
-✅ REQUIRED - YOU MUST DO THESE:
-1. Keep text in the SAME LANGUAGE (German stays German, English stays English)
-2. Keep the EXACT SAME number of sentences
-3. Keep the EXACT SAME number of paragraphs
-4. Keep the EXACT SAME text length and flow
-5. ONLY replace overly complex/technical words → clearer everyday words
-6. Use vocabulary that high school students understand
-7. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
-8. Sentences can be moderate length (15-20 words are okay)
+OUTPUT FORMAT - RESPOND ONLY WITH THIS JSON:
+{"simplified":"<your simplified text here>"}
 
-⚠️ CRITICAL - NEVER CHANGE THESE SCIENTIFIC TERMS:
-- ALL measurements with units (ml, mmHg, cm, mg, °C, etc.) - KEEP EXACTLY
-- ALL numbers and values (220, 120/70, 0.5, etc.) - KEEP EXACTLY
-- Medical/scientific equipment names (Stethoskop, Manometer, Pipette, Spritze, etc.) - KEEP EXACTLY
-- Chemical compound names (NaCl, H2O, CO2, etc.) - KEEP EXACTLY
-- Specialized scientific terms that don't have simpler alternatives - KEEP
-
-EXAMPLE FOR GERMAN:
-❌ WRONG: "Das Experiment erfordert eine akkurate Beobachtung sämtlicher Phänomene."
-✅ CORRECT: "Das Experiment braucht eine genaue Beobachtung aller Vorgänge."
-
-EXAMPLE FOR ENGLISH:
-❌ WRONG: "The experiment necessitates meticulous observation of phenomena."
-✅ CORRECT: "The experiment requires careful observation of all events."
-
-Remember: SAME language, SAME structure, SAME length - ONLY clearer words! NEVER change measurements, numbers, or equipment names!`
+Text to simplify:
+${processedText}`
     },
     'advanced': {
-      system: 'You are a language expert who maintains academic language while ensuring absolute clarity.',
-      instruction: `Keep this text at its current academic level with minimal changes:
+      system: `You are a text clarity expert. Output MUST be valid JSON format only.`,
+      instruction: `Keep this ${outputLanguage} text at academic level, only improve clarity if needed.
 
-✅ REQUIRED - YOU MUST DO THESE:
-1. Keep text in the EXACT SAME LANGUAGE (do NOT translate)
-2. Keep ALL scientific and technical vocabulary
-3. Keep the EXACT SAME structure and length
-4. Keep ALL numbers, measurements, formulas, HTML tags exactly as written
-5. Keep ALL equipment names, chemical names, and specialized terms
-6. Only fix obvious grammar errors if present
+RULES:
+1. Output language: ${outputLanguage} (${outputLanguageNative})
+2. Keep academic/scientific terminology
+3. Only fix obvious grammar or clarity issues
+4. Preserve ALL placeholders (___TOKEN_X___, ___IMAGE_PLACEHOLDER_X___, etc.) EXACTLY
 
-Return the text mostly unchanged in its ORIGINAL LANGUAGE.`
+OUTPUT FORMAT - RESPOND ONLY WITH THIS JSON:
+{"simplified":"<your simplified text here>"}
+
+Text to simplify:
+${processedText}`
     }
   };
   
   const level = levelInstructions[targetLevel] || levelInstructions['intermediate'];
-
-  const textLower = text.toLowerCase();
-  let detectedLanguage = 'English';
-
-  if (textLower.includes('die ') || textLower.includes('der ') || textLower.includes('das ') || 
-      textLower.includes('und ') || textLower.includes('mit ') || textLower.includes('für ') ||
-      textLower.includes('sie ') || textLower.includes('wie ') || textLower.includes('ist ') ||
-      text.includes('ä') || text.includes('ö') || text.includes('ü') || text.includes('ß')) {
-    detectedLanguage = 'German (Deutsch)';
-  }
   
   try {
     const response = await sendChatConversation(
       [
         { role: 'system', content: level.system },
-        { role: 'user', content: `${level.instruction}
-
-🌍 DETECTED LANGUAGE: ${detectedLanguage}
-⚠️ YOUR OUTPUT MUST BE IN: ${detectedLanguage}
-
-CRITICAL REMINDERS:
-- Same language as input (${detectedLanguage})
-- Same number of sentences and paragraphs
-- Same text length and structure
-- ONLY replace difficult words with easier words
-- NO translation, NO summarizing, NO restructuring
-${containsHTML ? '- Keep all HTML tags exactly as they are' : ''}
-
-TEXT TO SIMPLIFY:
-${processedText}
-
-NOW REWRITE THE ABOVE TEXT USING SIMPLER WORDS IN ${detectedLanguage}:` }
+        { role: 'user', content: level.instruction }
       ],
       { 
         temperature: 0.2,  // Lower temperature for more consistent adherence to instructions
@@ -764,35 +748,69 @@ NOW REWRITE THE ABOVE TEXT USING SIMPLER WORDS IN ${detectedLanguage}:` }
     
     let simplifiedText = response.choices[0].message.content.trim();
 
-    const instructionPatterns = [
-      /⚠️\s*IMPORTANT RULES[^]*?(?=\n\n[A-Z]|$)/gi,
-      /⚠️\s*CRITICAL RULES[^]*?(?=\n\n[A-Z]|$)/gi,
-      /⚠️\s*WARNING:[^]*?(?=\n\n[A-Z]|$)/gi,
-      /🌍\s*LANGUAGE DETECTION:[^]*?(?=\n\n[A-Z]|$)/gi,
-      /⚠️\s*YOU MUST[^]*?(?=\n\n[A-Z]|$)/gi,
-      /IMPORTANT:[^]*?(?=Original text|$)/gi,
-      /DO NOT translate[^]*?(?=\n\n[A-Z]|$)/gi,
-      /- Return ONLY[^]*?(?=\n\n[A-Z]|Original text|$)/gi
+    // Try to parse as JSON
+    let parsedResponse;
+    try {
+      // First try direct JSON parse
+      parsedResponse = JSON.parse(simplifiedText);
+    } catch (jsonError) {
+      // Try to extract JSON from wrapped text
+      const jsonMatch = simplifiedText.match(/\{[^{}]*"simplified"[^{}]*\}/);
+      if (jsonMatch) {
+        try {
+          parsedResponse = JSON.parse(jsonMatch[0]);
+        } catch (e) {
+          console.warn('[LLM Service] Failed to parse extracted JSON, using original text');
+          return text;
+        }
+      } else {
+        // Fallback: treat the whole response as simplified text (strip meta commentary)
+        simplifiedText = simplifiedText.replace(/^here is[^:]*:\s*/i, '');
+        simplifiedText = simplifiedText.replace(/^simplified[^:]*:\s*/i, '');
+        parsedResponse = { simplified: simplifiedText };
+      }
+    }
+
+    // Extract simplified text from JSON
+    simplifiedText = parsedResponse.simplified || text;
+    
+    // Sanity check: if output is too short, return original
+    if (simplifiedText.trim().length < text.trim().length * 0.3) {
+      console.warn('[LLM Service] Simplified text too short, returning original');
+      return text;
+    }
+
+    // Remove inline explanatory notes that might have slipped through
+    const notePatterns = [
+      /\(Note:\s*[^)]+\)/gi,
+      /\(Hinweis:\s*[^)]+\)/gi,
+      /\[Note:\s*[^\]]+\]/gi,
+      /\[Hinweis:\s*[^\]]+\]/gi,
+      /\(I replaced[^)]+\)/gi,
+      /\(I changed[^)]+\)/gi,
+      /\(Ich habe[^)]+\)/gi,
+      /\.\s*Ich habe[^.]+\./gi,
+      /\.\s*I made[^.]+\./gi,
+      /\.\s*I kept[^.]+\./gi
     ];
     
-    for (const pattern of instructionPatterns) {
+    for (const pattern of notePatterns) {
       simplifiedText = simplifiedText.replace(pattern, '');
     }
 
-    const metaPatterns = [
-      /^here is the simplified version:?\s*/i,
-      /^here is the rewritten version:?\s*/i,
-      /^here's the rewritten version:?\s*/i,
-      /^simplified version:?\s*/i,
-      /^rewritten version:?\s*/i,
-      /^here is the text:?\s*/i,
-      /^here's the text:?\s*/i
-    ];
-    
-    for (const pattern of metaPatterns) {
-      simplifiedText = simplifiedText.replace(pattern, '');
+    // Clean up any double spaces or punctuation left by note removal
+    simplifiedText = simplifiedText.replace(/\s{2,}/g, ' ');
+    simplifiedText = simplifiedText.replace(/\.\s*\./g, '.');
+    simplifiedText = simplifiedText.replace(/\s+([.,;:!?])/g, '$1');
+    simplifiedText = simplifiedText.trim();
+
+    // Restore protected tokens (numbers, units, formulas)
+    for (let i = protectedTokens.length - 1; i >= 0; i--) {
+      const placeholder = `___TOKEN_${i}___`;
+      simplifiedText = simplifiedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), protectedTokens[i]);
     }
 
+    // Restore preserved HTML elements
     for (let i = preservedElements.length - 1; i >= 0; i--) {
       const element = preservedElements[i];
       const placeholderName = element.includes('<table') ? 'TABLE' :
@@ -800,25 +818,14 @@ NOW REWRITE THE ABOVE TEXT USING SIMPLER WORDS IN ${detectedLanguage}:` }
                               element.includes('<video') ? 'VIDEO' :
                               element.includes('<a') ? 'LINK' : 'TABLE';
       const placeholder = `___${placeholderName}_PLACEHOLDER_${i}___`;
-
       simplifiedText = simplifiedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), element);
     }
-    
-    simplifiedText = simplifiedText.trim();
 
-    if (!containsHTML) {
-      simplifiedText = simplifiedText
-        .replace(/\n\n+/g, '\n\n')
-        .replace(/([.!?])\n(?=[A-Z])/g, '$1 ')
-        .replace(/\n(?=[A-Z])/g, ' ');
-    }
-
-    if (!simplifiedText || simplifiedText.length < 10) {
-      return text;
-    }
-    
     return simplifiedText;
+    
   } catch (error) {
+    console.error('[LLM Service] Error simplifying text:', error);
+    // Return original text on error
     return text;
   }
 };

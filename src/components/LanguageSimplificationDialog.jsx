@@ -35,7 +35,7 @@ const LanguageSimplificationDialog = ({
   experimentData,
   onExport
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [targetLevel, setTargetLevel] = useState('intermediate');
   const [simplifying, setSimplifying] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -72,7 +72,9 @@ const LanguageSimplificationDialog = ({
     setError(null);
 
     try {
-      const simplified = await simplifyLanguage(experimentData, targetLevel, t);
+      // Pass UI language (de or en) to simplification
+      const uiLanguage = i18n.language || 'en';
+      const simplified = await simplifyLanguage(experimentData, targetLevel, t, uiLanguage);
       setSimplifiedData(simplified);
       setStep('preview'); 
     } catch (err) {
