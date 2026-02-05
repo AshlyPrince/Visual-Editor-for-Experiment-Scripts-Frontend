@@ -598,14 +598,31 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
         autoTags: extractTagsFromExperiment(exp)
       }));
       
-      setAllExperiments(allExperimentData);
-      setFilteredExperiments(allExperimentData);
-      setTotalExperiments(allExperimentData.length);
-      setStats({ totalExperiments: allExperimentData.length });
+      const currentUser = keycloakService.getUserInfo();
+      const visibleExperiments = allExperimentData.filter(exp => {
+        const permissions = exp.content?.permissions;
+
+        if (!permissions) return true;
+
+        if (permissions.visibility === 'public') return true;
+
+        if (permissions.visibility === 'restricted') return true;
+
+        if (permissions.visibility === 'private') {
+          return isUserOwner(exp, currentUser);
+        }
+        
+        return true;
+      });
+      
+      setAllExperiments(visibleExperiments);
+      setFilteredExperiments(visibleExperiments);
+      setTotalExperiments(visibleExperiments.length);
+      setStats({ totalExperiments: visibleExperiments.length });
       
       const startIndex = page * rowsPerPage;
       const endIndex = startIndex + rowsPerPage;
-      const paginatedExperiments = allExperimentData.slice(startIndex, endIndex);
+      const paginatedExperiments = visibleExperiments.slice(startIndex, endIndex);
       setExperiments(paginatedExperiments);
       
       if (paginatedExperiments.length === 0 && page > 0) {
@@ -813,7 +830,7 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
               const currentUser = keycloakService.getUserInfo();
               const permissions = experiment.content?.permissions;
               
-              let hasAccess = true;
+              let hasViewAccess = true;
               
               if (permissions && permissions.visibility === 'restricted') {
                 const isOwner = isUserOwner(experiment, currentUser);
@@ -822,11 +839,23 @@ const Dashboard = ({ onCreateExperiment, onViewExperiments, onViewExperiment, on
                   const userPerms = permissions.userPermissions?.find(up => 
                     up.username === userName || up.userId === userName || up.email === currentUser?.email
                   );
-                  hasAccess = userPerms !== null;
+                  
+                  if (userPerms) {
+                    const rolePermissions = {
+                      'viewer': ['view'],
+                      'commenter': ['view', 'comment'],
+                      'editor': ['view', 'comment', 'edit'],
+                      'admin': ['view', 'comment', 'edit', 'delete', 'manage_permissions']
+                    };
+                    const allowedPermissions = rolePermissions[userPerms.role] || [];
+                    hasViewAccess = allowedPermissions.includes('view');
+                  } else {
+                    hasViewAccess = false;
+                  }
                 }
               }
               
-              const canViewDetails = hasAccess && canAccessRestrictedFeature(experiment, 'viewDetails', currentUser);
+              const canViewDetails = hasViewAccess && canAccessRestrictedFeature(experiment, 'viewDetails', currentUser);
               const isClickable = canViewDetails;
               
               return (
